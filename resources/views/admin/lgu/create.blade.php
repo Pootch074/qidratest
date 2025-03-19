@@ -38,33 +38,39 @@
                             <!-- Region -->
                             <div class="sm:col-span-2">
                                 <label class="block text-sm text-[#75777C]">Region</label>
-                                <select type="text" x-model="newLgu.region_id" name="region_id"
+                                <select type="text" x-model="newLgu.region_id" name="region_id" required
                                         class="mt-1 block w-full px-3 py-2 border border-[#CDCFD2] text-[#101828] rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Please select</option>
                                     @foreach($regions as $region)
-                                        <option value="{{ $region->id }}">{{ $region->name }}</option>
+                                        <option value="{{ (string) $region->id }}">{{ $region->name }}</option>
                                     @endforeach
                                 </select>
+                                <input type="hidden" x-model="newLgu.region" name="region">
                             </div>
 
                             <!-- Province -->
                             <div class="sm:col-span-2">
                                 <label class="block text-sm text-[#75777C]">Province</label>
-                                <select type="text" x-model="newLgu.province_id" name="province_id"
+                                <select type="text" x-model="newLgu.province_id" name="province_id" required
                                         class="mt-1 block w-full px-3 py-2 border border-[#CDCFD2] text-[#101828] rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Please select</option>
                                     @foreach($provinces as $province)
-                                        <option value="{{ $province->id }}">{{ $province->name }}</option>
+                                        <option value="{{ (string) $province->id }}">{{ $province->name }}</option>
                                     @endforeach
+                                    <input type="hidden" x-model="newLgu.province" name="province">
                                 </select>
                             </div>
 
                             <!-- Team Leader -->
                             <div class="sm:col-span-2">
-                                <label class="block text-sm text-[#75777C]">Type</label>
-                                <select type="text" x-model="newLgu.lgu_type" name="lgu_type"
+                                <label class="block text-sm text-[#75777C]">LGU Type</label>
+                                <select type="text" x-model="newLgu.lgu_type" name="lgu_type" required
                                         class="mt-1 block w-full px-3 py-2 border border-[#CDCFD2] text-[#101828] rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Please select</option>
                                     @foreach($lguTypes as $id => $type)
                                         <option value="{{ $id }}">{{ $type }}</option>
                                     @endforeach
+                                    <input type="hidden" x-model="newLgu.lgu_type" name="lgu_type">
                                 </select>
                             </div>
                         </div>

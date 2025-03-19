@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Rmt;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -12,16 +13,16 @@ class RmtController extends Controller
 {
     public function get()
     {
-        return response()->json(User::all()->map(function ($user) {
+        return response()->json(Rmt::all()->map(function ($rmt) {
             $lgu = 'N/A';
             return [
-                'id' => $user->id,
-                'email' => $user->email,
-                'name' => $user->first_name . ' ' . $user->last_name,
-                'user_type' => $user->getUserType($user->user_type),
-                'position' => $user->position,
+                'id' => $rmt->id,
+                'user_id' => $rmt->user_id,
+                'name' => $rmt->user->first_name . ' ' . $rmt->user->last_name,
+                'user_type' => $rmt->user->getUserType($rmt->user->user_type),
+                'position' => $rmt->user->position,
                 'lgu' => $lgu,
-                'status' => $user->getStatus($user->status)
+                'status' => $rmt->user->getStatus($rmt->user->status)
             ];
         }));
     }
@@ -44,17 +45,17 @@ class RmtController extends Controller
 
         $validatedData['created_at'] = $validatedData['updated_at'] = Carbon::now();
         $validatedData['password'] = '-';
-        $user = User::create($validatedData);
+        $rmt->user = User::create($validatedData);
 
-        return response()->json(['message' => 'User added successfully!', 'user' => $user], 201);
+        return response()->json(['message' => 'User added successfully!', 'user' => $rmt->user], 201);
     }
 
     public function put($id, Request $request)
     {
 
-        $user = User::find($id); // Find the user
+        $rmt->user = User::find($id); // Find the user
 
-        if (!$user) {
+        if (!$rmt->user) {
             return response()->json(['message' => 'User not found'], 404);
         }
 
@@ -75,23 +76,23 @@ class RmtController extends Controller
 
         // Update user details
         $validatedData['updated_at'] = Carbon::now();
-        $updated = $user->update($validatedData);
+        $updated = $rmt->user->update($validatedData);
 
         return response()->json([
             'message' => 'User updated successfully!',
-            'user' => $user // Return the updated user
+            'user' => $rmt->user // Return the updated user
         ]);
     }
 
     public function delete($id)
     {
-        $user = User::find($id); // Find the user by ID
+        $rmt->user = User::find($id); // Find the user by ID
 
-        if (!$user) {
+        if (!$rmt->user) {
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        $user->delete(); // Delete the user
+        $rmt->user->delete(); // Delete the user
 
         return response()->json(['message' => 'User deleted successfully']);
     }

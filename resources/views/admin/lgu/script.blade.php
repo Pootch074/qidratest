@@ -2,18 +2,65 @@
     document.addEventListener("alpine:init", () => {
         Alpine.data("lguTable", () => ({
             lgus: [],
+            regions: @json($regions),
+            provinces: @json($provinces),
+            lgu_types: @json($lguTypes),
             showModal: false,
             editMode: false,
             newLgu: {
                 id: null,
                 name: "",
                 province_id: "",
+                province: "",
                 region_id: "",
+                region: "",
                 lgu_type: "",
+                type: "",
                 office_address: "",
                 telephone: "",
                 mobile_number: "",
                 email_address: ""
+            },
+
+            updateProvince(id)
+            {
+                let provinceName = "-"; // Default value in case no match is found
+
+                for (let i = 0; i < this.provinces.length; i++) {
+                    let province = this.provinces[i]; // Get the current province object
+
+                    // Convert both to the same type for a reliable comparison
+                    if (province.id == id) {
+                        provinceName = province.name; // Assign the matched name
+                        break; // Stop looping once a match is found
+                    }
+                }
+
+                return provinceName
+            },
+
+            updateRegion(id)
+            {
+                let regionName = "-"; // Default value in case no match is found
+
+                for (let i = 0; i < this.regions.length; i++) {
+                    let region = this.regions[i]; // Get the current province object
+
+                    // Convert both to the same type for a reliable comparison
+                    if (region.id == id) {
+                        regionName = region.name; // Assign the matched name
+                        break; // Stop looping once a match is found
+                    }
+                }
+
+                return regionName
+            },
+
+            updateLguType()
+            {
+                console.log('updating lgu type')
+                let selectedLguType = this.lgu_types.find(f => f.id === this.newLgu.lgu_type);
+                this.newLgu.lgu_type = selectedLguType ? selectedLguType.name : "";
             },
 
             async fetchLgus() {
@@ -46,6 +93,7 @@
 
             async addLgu() {
                 try {
+
                     const response = await fetch("http://localhost/api/lgu", {
                         method: "POST",
                         headers: {
@@ -57,7 +105,15 @@
                     if (!response.ok) throw new Error("Failed to add profile");
 
                     const addedLgu = await response.json();
-                    this.lgus.push(addedLgu.lgu); // Append new LGU to table
+
+                    let lguUpdated = {
+                        ...addedLgu.lgu,
+                        region: this.updateRegion(addedLgu.lgu.region_id),
+                        province: this.updateProvince(addedLgu.lgu.province_id)
+                    };
+
+                    this.lgus.push(lguUpdated);
+
                     this.showModal = false; // Close modal
                 } catch (error) {
                     console.error("Error adding profile:", error);

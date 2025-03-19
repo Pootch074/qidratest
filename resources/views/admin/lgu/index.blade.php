@@ -70,7 +70,7 @@
                     <td class="border border-gray-200 px-4 py-2 text-sm" x-text="lgu.name"></td>
                     <td class="border border-gray-200 px-4 py-2 text-sm text-[#667085]" x-text="lgu.region"></td>
                     <td class="border border-gray-200 px-4 py-2 text-sm text-[#667085]" x-text="lgu.province"></td>
-                    <td class="border border-gray-200 px-4 py-2 text-sm text-[#667085]" x-text="lgu.type"></td>
+                    <td class="border border-gray-200 px-4 py-2 text-sm text-[#667085]" x-text="lgu.lgu_type"></td>
                     <td class="border border-gray-200 px-4 py-2 text-sm">
                         <a href="#" @click.prevent="editLgu(lgu)"
                            class="border border-[#667085] hover:bg-blue-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">

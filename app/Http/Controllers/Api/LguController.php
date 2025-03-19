@@ -47,8 +47,8 @@ class LguController extends Controller
             return response()->json(['errors' => $e->errors()], 422);
         }
 
-        $validatedData['created_at'] = $validatedData['updated_at'] = Carbon::now();
-        $lgu = Lgu::create($validatedData);
+        $validate['created_at'] = $validate['updated_at'] = Carbon::now();
+        $lgu = Lgu::create($validate);
 
         return response()->json(['message' => 'Profile added successfully!', 'lgu' => $lgu], 201);
     }
