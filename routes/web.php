@@ -1,20 +1,44 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
+// use App\Http\Controllers\Auth\GoogleController;
+use Laravel\Socialite\Facades\Socialite;
+use Symfony\Component\HttpFoundation\Request;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect(route('login'));
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/auth/login', [LoginController::class, 'login'])->name('login');
+Route::post('/auth/login', [LoginController::class, 'authenticate'])->name('authenticate');
+Route::get('/auth/redirect', [GoogleController::class, 'redirect']);
+Route::get('/auth/callback', [GoogleController::class, 'callback'] );
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// Protected Routes (Require Authentication)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'dashboard'] )->name('dashboard');
+
+    Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    Route::get('/profile', function() {
+        return view('rmt/assessment/profile');
+    })->name('profile');
+
+    Route::get('/assessments', function() {
+        return view('rmt/assessment/assessments');
+    })->name('assessments');
+
+    Route::get('deadlines', function() {
+        return view('rmt/deadlines');
+    })->name('deadlines');
+
+
+    // admin
+    Route::get('users', [UsersController::class, 'index'])->name('users');
+    Route::get('rmt', [UsersController::class, 'rmt'])->name('rmt');
+    Route::get('lgu', [UsersController::class, 'lgu'])->name('lgu');
 });
-
-require __DIR__.'/auth.php';

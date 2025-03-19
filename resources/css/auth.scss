@@ -1,0 +1,77 @@
+#modal-login {
+
+    .modal-content {
+        background-color: #2E3192;
+        color: #fff;
+
+        .modal-header {
+            border: 0 none;
+
+            .modal-title {
+                font-family: 'Poppins', sans-serif;
+                font-weight: 500;
+                font-size: 40px;
+            }
+        }
+
+        .modal-body {
+            font-size: 15px;
+            padding-bottom: 0;
+
+            #login-divider * {
+                color: #fff !important;
+            }
+
+            .input-group-text {
+                background-color: #f8f9fa;
+
+                &:-webkit-autofill {
+                    background-color: #f8f9fa !important; /* Set your preferred color */
+                    -webkit-box-shadow: 0 0 0px 1000px #f8f9fa inset !important; /* Ensures background override */
+                }
+            }
+
+            input {
+                background-color: #f8f9fa;
+                border-left: 0 none;
+                margin-bottom: 0;
+
+                &:-webkit-autofill {
+                    background-color: #f8f9fa !important; /* Set your preferred color */
+                    color: black !important; /* Adjust text color if needed */
+                    -webkit-box-shadow: 0 0 0px 1000px #f8f9fa inset !important; /* Ensures background override */
+                }
+            }
+
+            .btn-primary {
+                border: 1px solid #DB0C16;
+                background-color: #DB0C16;
+                font-size: 18px;
+            }
+        }
+
+        .modal-footer {
+            display: block;
+            border: 0 none;
+            text-align: center;
+            font-size: 15px;
+
+            a {
+                color: #FFCC00;
+                text-decoration: none;
+
+                &.btn-primary {
+                    color: #000;
+                    background-color: #fff;
+
+                    img {
+                        width: 18px;
+                        margin-top: -3px;
+                        margin-right: 3px;
+                    }
+                }
+            }
+
+        }
+    }
+}
