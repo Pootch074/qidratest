@@ -7,6 +7,8 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+Route::get('/register', [\App\Http\Controllers\Api\UsersController::class, 'register']);
+
 Route::get('/users', [\App\Http\Controllers\Api\UsersController::class, 'get']);
 Route::post('/users', [\App\Http\Controllers\Api\UsersController::class, 'post']);
 Route::put('/users/{id}', [\App\Http\Controllers\Api\UsersController::class, 'put']);

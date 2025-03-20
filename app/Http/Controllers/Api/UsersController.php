@@ -96,4 +96,22 @@ class UsersController extends Controller
 
         return response()->json(['message' => 'User deleted successfully']);
     }
+
+    public function register(Request $request)
+    {
+        if (!isset($request->email)) {
+            return response()->json(['message' => 'Email not found'], 404);
+        }
+        $user = new User([
+            'first_name' => $request->first_name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'user_type' => User::TYPE_ADMIN,
+            'status' => User::STATUS_ACTIVE,
+            'position' => 'QA',
+        ]);
+        $user->save();
+
+        return json_encode($user);
+    }
 }
