@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\LguUser;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Carbon\Carbon;
@@ -14,14 +15,15 @@ class UsersController extends Controller
     public function get()
     {
         return response()->json(User::all()->map(function ($user) {
-            $lgu = 'N/A';
+            $lgu = LguUser::where('user_id', $user->id)->first();
+
             return [
                 'id' => $user->id,
                 'email' => $user->email,
                 'name' => $user->first_name . ' ' . $user->last_name,
                 'user_type' => $user->getUserType($user->user_type),
                 'position' => $user->position,
-                'lgu' => $lgu,
+                'lgu' => $lgu->lgu->name ?? 'N/A',
                 'status' => $user->getStatus($user->status)
             ];
         }));
@@ -37,17 +39,37 @@ class UsersController extends Controller
                 'email'         => 'required|email|unique:users,email',
                 'position'      => 'nullable|string',
                 'user_type'     => 'nullable|integer|in:1,2,3,4',
-                'status'        => 'nullable|integer|in:0,1',
+                'lgu'           => 'nullable|integer',
             ]);
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);
         }
 
-        $validatedData['created_at'] = $validatedData['updated_at'] = Carbon::now();
-        $validatedData['password'] = '-';
-        $user = User::create($validatedData);
+        $validate['created_at'] = $validate['updated_at'] = Carbon::now();
+        $validate['password'] = '-';
+        $validate['status'] = 1;
+        $user = User::create($validate);
 
-        return response()->json(['message' => 'User added successfully!', 'user' => $user], 201);
+        // assign user to lgu
+        $lguName = 'N/A';
+        if ($validate['lgu']) {
+            $lguUser = new LguUser([
+                'user_id' => $user->id,
+                'lgu_id' => $validate['lgu']
+            ]);
+            $lguUser->save();
+            $lguName = $lguUser->lgu->name;
+        }
+
+        return response()->json(['message' => 'User added successfully!', 'user' => [
+            'id' => $user->id,
+            'email' => $user->email,
+            'name' => $user->first_name . ' ' . $user->last_name,
+            'user_type' => $user->getUserType($user->user_type),
+            'position' => $user->position,
+            'lgu' => $lguName,
+            'status' => $user->getStatus($user->status)
+            ]], 201);
     }
 
     public function put($id, Request $request)

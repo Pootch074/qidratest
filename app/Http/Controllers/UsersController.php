@@ -13,7 +13,7 @@ class UsersController extends Controller
     public function index()
     {
         $userTypes = User::getUserTypes();
-        $lgus = [];
+        $lgus = Lgu::all();
         return view('admin.users.index', compact('userTypes', 'lgus'));
     }
 

@@ -68,10 +68,15 @@
                             </div>
 
                             <!-- LGU Name -->
-                            <div class="sm:col-span-2">
+                            <div class="sm:col-span-2" x-show="newUser.user_type == 2" x-transition>
                                 <label class="block text-sm text-[#75777C]">Assigned LGU</label>
                                 <select type="text" x-model="newUser.lgu" name="lgu"
                                     class="mt-1 block w-full px-3 py-2 border border-[#CDCFD2] text-[#101828] rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Please select</option>
+                                    @foreach($lgus as $lgu)
+                                        <option value="{{ (string) $lgu->id }}">{{ $lgu->name }}</option>
+                                    @endforeach
+                                    <input type="hidden" x-model="newUser.lgu" name="lgu">
                                 </select>
                             </div>
                         </div>

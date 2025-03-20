@@ -8,10 +8,11 @@
                 id: null,
                 first_name: "",
                 last_name: "",
+                email: "",
                 user_type: "",
                 position: "",
                 lgu: "",
-                status: "active"
+                status: "Active"
             },
 
             async fetchUsers() {
@@ -32,10 +33,11 @@
                         id: null,
                         first_name: "",
                         last_name: "",
+                        email: "",
                         user_type: "",
                         position: "",
                         lgu: "",
-                        status: "active"
+                        status: "Active"
                     };
                 }
             },
