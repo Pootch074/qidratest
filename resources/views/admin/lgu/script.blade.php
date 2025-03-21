@@ -170,7 +170,28 @@
                 } catch (error) {
                     console.error("Error deleting profile:", error);
                 }
-            }
+            },
+
+            //-- for pagination
+            perPage: 10,
+            currentPage: 1,
+            get paginatedLgus() {
+                const start = (this.currentPage - 1) * this.perPage;
+                const end = start + this.perPage;
+                return this.lgus.slice(start, end);
+            },
+            get totalPages() {
+                return Math.ceil(this.lgus.length / this.perPage);
+            },
+            goToPage(page) {
+                if (page >= 1 && page <= this.totalPages) {
+                    this.currentPage = page;
+                }
+            },
+            init() {
+                this.fetchLgus();
+            },
+            //-- end for pagination
         }));
     });
 </script>

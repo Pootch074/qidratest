@@ -9,28 +9,28 @@
             <span class="block text-gray-700">Total Assessment</span>
             <div class="flex justify-between items-center mt-2">
                 <p class="text-4xl font-bold">004</p>
-                <div class="p-4 rounded-[15px] bg-[#2E3192]">@include('svg.dashboard-aggregate')</div>
+                <div class="p-2 rounded-[15px] bg-[#DB0C16]"><img src="{{ Vite::asset('resources/assets/icons/icon-assessment.svg') }}" alt="Search" class="h-7 w-7"></div>
             </div>
         </div>
         <div class="bg-white shadow-md rounded-lg p-4">
             <span class="block text-gray-700">Pending Assessments</span>
             <div class="flex justify-between items-center mt-2">
                 <p class="text-4xl font-bold">004</p>
-                <div class="p-4 rounded-[15px] bg-[#2E3192]">@include('svg.dashboard-aggregate')</div>
+                <div class="p-2 rounded-[15px] bg-[#DB0C16]"><img src="{{ Vite::asset('resources/assets/icons/icon-assessment.svg') }}" alt="Search" class="h-7 w-7"></div>
             </div>
         </div>
         <div class="bg-white shadow-md rounded-lg p-4">
             <span class="block text-gray-700">Completed Assessments</span>
             <div class="flex justify-between items-center mt-2">
                 <p class="text-4xl font-bold">004</p>
-                <div class="p-4 rounded-[15px] bg-[#2E3192]">@include('svg.dashboard-aggregate')</div>
+                <div class="p-2 rounded-[15px] bg-[#DB0C16]"><img src="{{ Vite::asset('resources/assets/icons/icon-assessment.svg') }}" alt="Search" class="h-7 w-7"></div>
             </div>
         </div>
         <div class="bg-white shadow-md rounded-lg p-4">
             <span class="block text-gray-700">Extension Request</span>
             <div class="flex justify-between items-center mt-2">
                 <p class="text-4xl font-bold">014</p>
-                <div class="p-4 rounded-[15px] bg-[#2E3192]">@include('svg.dashboard-aggregate')</div>
+                <div class="p-2 rounded-[15px] bg-[#DB0C16]"><img src="{{ Vite::asset('resources/assets/icons/icon-assessment.svg') }}" alt="Search" class="h-7 w-7"></div>
             </div>
         </div>
     </div>

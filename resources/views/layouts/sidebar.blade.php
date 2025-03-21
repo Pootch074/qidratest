@@ -8,6 +8,6 @@
 
     <!-- Navigation -->
     <ul class="space-y-1">
-        @include('layouts.sidebar.' . auth()->user()->getUserTypeName())
+        @include('layouts.sidebar.' . Str::lower(auth()->user()->getUserTypeName()))
     </ul>
 </div>

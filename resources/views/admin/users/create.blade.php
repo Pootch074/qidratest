@@ -57,6 +57,7 @@
                                     @foreach ($userTypes as $id => $type)
                                         <option value="{{ $id }}">{{ $type }}</option>
                                     @endforeach
+                                    <input type="hidden" x-model="newUser.user_type_id" name="user_type_id">
                                 </select>
                             </div>
 
@@ -76,7 +77,7 @@
                                     @foreach($lgus as $lgu)
                                         <option value="{{ (string) $lgu->id }}">{{ $lgu->name }}</option>
                                     @endforeach
-                                    <input type="hidden" x-model="newUser.lgu" name="lgu">
+                                    <input type="hidden" x-model="newUser.lgu_id" name="lgu_id">
                                 </select>
                             </div>
                         </div>

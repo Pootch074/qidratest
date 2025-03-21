@@ -2,6 +2,8 @@
     document.addEventListener("alpine:init", () => {
         Alpine.data("userTable", () => ({
             users: [],
+            user_types: @json($userTypes),
+            lgus: @json($lgus),
             showModal: false,
             editMode: false,
             newUser: {
@@ -22,6 +24,48 @@
                 } catch (error) {
                     console.error("Error fetching users:", error);
                 }
+            },
+
+            updateLgu(id)
+            {
+                let lguName = "-"; // Default value in case no match is found
+
+                for (let i = 0; i < this.lgus.length; i++) {
+                    let lgu = this.lgus[i]; // Get the current province object
+
+                    // Convert both to the same type for a reliable comparison
+                    if (lgu.id == id) {
+                        lguName = lgu.name; // Assign the matched name
+                        break; // Stop looping once a match is found
+                    }
+                }
+
+                return lguName
+            },
+
+            updateUserType(id)
+            {
+
+                let userTypeName = '-';
+
+                let userTypesArray = Object.entries(this.user_types).map(([id, name]) => ({
+                    id: Number(id),
+                    name
+                }));
+
+
+                for (let i = 0; i < userTypesArray.length; i++) {
+                    let type = userTypesArray[i]; // Get the current object
+
+                    // Convert both to the same type for a reliable comparison
+                    if (type.id == id) {
+                        userTypeName = type.name; // Assign the matched name
+                        break; // Stop looping once a match is found
+                    }
+                }
+
+                return userTypeName;
+
             },
 
             openModal(isEdit) {
@@ -55,7 +99,15 @@
                     if (!response.ok) throw new Error("Failed to add user");
 
                     const addedUser = await response.json();
-                    this.users.push(addedUser.user); // Append new user to table
+
+                    let userUpdated = {
+                        ...addedUser.user,
+                        user_type: this.updateUserType(addedUser.user.user_type_id),
+                        lgu: this.updateLgu(addedUser.user.lgu_id)
+                    };
+
+                    this.users.push(userUpdated);
+
                     this.showModal = false; // Close modal
                 } catch (error) {
                     console.error("Error adding user:", error);
@@ -67,6 +119,7 @@
                 this.newUser = {
                     ...user
                 }; // Load selected user into form
+
                 this.editMode = true;
                 this.showModal = true;
             },
@@ -83,9 +136,24 @@
                             body: JSON.stringify(this.newUser),
                         });
 
-                    if (!response.ok) throw new Error("Failed to update user");
+                    if (!response.ok) throw new Error("Failed to update profile");
 
-                    // Find and update the user in the list
+                    // user types
+                    let userTypesArray = Object.entries(this.user_types).map(([id, name]) => ({
+                        id: Number(id),
+                        name
+                    }));
+
+                    let selectedUserType = userTypesArray.find(u => u.id === Number(this.newUser.user_type)); // Convert to number
+                    this.newUser.user_type = selectedUserType ? selectedUserType.name : "";
+                    // end user types
+
+                    // lgu
+                    let selectedLgu = this.lgus.find(l => l.id === Number(this.newUser.lgu)); // Convert to number
+                    this.newUser.lgu = selectedLgu ? selectedLgu.name : "";
+                    // end lgu
+
+                    // Find and update the profile in the list
                     const index = this.users.findIndex(user => user.id === this.newUser.id);
                     if (index !== -1) this.users[index] = {
                         ...this.newUser
@@ -112,7 +180,28 @@
                 } catch (error) {
                     console.error("Error deleting user:", error);
                 }
-            }
+            },
+
+            //-- for pagination
+            perPage: 10,
+            currentPage: 1,
+            get paginatedUsers() {
+                const start = (this.currentPage - 1) * this.perPage;
+                const end = start + this.perPage;
+                return this.users.slice(start, end);
+            },
+            get totalPages() {
+                return Math.ceil(this.users.length / this.perPage);
+            },
+            goToPage(page) {
+                if (page >= 1 && page <= this.totalPages) {
+                    this.currentPage = page;
+                }
+            },
+            init() {
+                this.fetchUsers();
+            },
+            //-- end for pagination
         }));
     });
 </script>

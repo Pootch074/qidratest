@@ -15,15 +15,26 @@ class UsersController extends Controller
     public function get()
     {
         return response()->json(User::all()->map(function ($user) {
-            $lgu = LguUser::where('user_id', $user->id)->first();
+            $lguId = 0;
+            $lguName = 'N/A';
+
+            if ($user->user_type == User::TYPE_LGU) {
+                $lgu = LguUser::where('user_id', $user->id)->first();
+                $lguId = $lgu->lgu_id;
+                $lguName = $lgu->lgu->name;
+            }
 
             return [
                 'id' => $user->id,
                 'email' => $user->email,
                 'name' => $user->first_name . ' ' . $user->last_name,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
                 'user_type' => $user->getUserType($user->user_type),
+                'user_type_id' => $user->user_type,
                 'position' => $user->position,
-                'lgu' => $lgu->lgu->name ?? 'N/A',
+                'lgu' => $lguName,
+                'lgu_id' => $lguId,
                 'status' => $user->getStatus($user->status)
             ];
         }));
@@ -52,12 +63,14 @@ class UsersController extends Controller
 
         // assign user to lgu
         $lguName = 'N/A';
-        if ($validate['lgu']) {
+        $lguId = 0;
+        if ($validate['user_type'] == User::TYPE_LGU && $validate['lgu']) {
             $lguUser = new LguUser([
                 'user_id' => $user->id,
                 'lgu_id' => $validate['lgu']
             ]);
             $lguUser->save();
+            $lguId = $lguUser->lgu_id;
             $lguName = $lguUser->lgu->name;
         }
 
@@ -65,9 +78,13 @@ class UsersController extends Controller
             'id' => $user->id,
             'email' => $user->email,
             'name' => $user->first_name . ' ' . $user->last_name,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
             'user_type' => $user->getUserType($user->user_type),
+            'user_type_id' => $user->user_type,
             'position' => $user->position,
             'lgu' => $lguName,
+            'lgu_id' => $lguId,
             'status' => $user->getStatus($user->status)
             ]], 201);
     }
@@ -90,7 +107,6 @@ class UsersController extends Controller
                 'user_type'   => 'nullable|integer|in:1,2,3,4',
                 'position'    => 'nullable|string',
                 'lgu'         => 'nullable|string',
-                'status'      => 'nullable|integer|in:0,1',
             ]);
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);
@@ -98,11 +114,37 @@ class UsersController extends Controller
 
         // Update user details
         $validatedData['updated_at'] = Carbon::now();
-        $updated = $user->update($validatedData);
+        $validatedData['status'] = 1;
+        $user->update($validatedData);
+
+        // assign user to lgu
+        $lguName = 'N/A';
+        $lguId = 0;
+        if ($validatedData['user_type'] == User::TYPE_LGU && $validatedData['lgu']) {
+            $lguUser = new LguUser([
+                'user_id' => $id,
+                'lgu_id' => $validatedData['lgu']
+            ]);
+            $lguUser->save();
+            $lguId = $lguUser->lgu_id;
+            $lguName = $lguUser->lgu->name;
+        }
 
         return response()->json([
             'message' => 'User updated successfully!',
-            'user' => $user // Return the updated user
+            'user' => [
+                'id' => $id,
+                'email' => $validatedData['email'],
+                'name' => $validatedData['first_name'] . ' ' . $validatedData['last_name'],
+                'first_name' => $validatedData['first_name'],
+                'last_name' => $validatedData['last_name'],
+                'user_type' => $user->getUserType($validatedData['user_type']),
+                'user_type_id' => $user->user_type,
+                'position' => $validatedData['position'],
+                'lgu' => $lguName,
+                'lgu_id' => $lguId,
+                'status' => $user->getStatus($validatedData['status'])
+            ]
         ]);
     }
 
