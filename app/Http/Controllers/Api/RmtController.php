@@ -86,7 +86,7 @@ class RmtController extends Controller
 
     public function delete($id)
     {
-        $rmt->user = User::find($id); // Find the user by ID
+        $rmt = User::find($id); // Find the user by ID
 
         if (!$rmt->user) {
             return response()->json(['message' => 'User not found'], 404);

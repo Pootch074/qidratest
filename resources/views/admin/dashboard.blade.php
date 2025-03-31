@@ -5,29 +5,29 @@
 
 <div class="container mx-auto p-4">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white shadow-md rounded-lg p-4">
-            <span class="block text-gray-700">Total Assessment</span>
+        <div class="bg-white shadow-md rounded-2xl px-4 py-10">
+            <span class="block text-[#94969B]">Total Assessment</span>
             <div class="flex justify-between items-center mt-2">
                 <p class="text-4xl font-bold">004</p>
                 <div class="p-2 rounded-[15px] bg-[#DB0C16]"><img src="{{ Vite::asset('resources/assets/icons/icon-assessment.svg') }}" alt="Search" class="h-7 w-7"></div>
             </div>
         </div>
-        <div class="bg-white shadow-md rounded-lg p-4">
-            <span class="block text-gray-700">Pending Assessments</span>
+        <div class="bg-white shadow-md rounded-2xl px-4 py-10">
+            <span class="block  text-[#94969B]">Pending Assessments</span>
             <div class="flex justify-between items-center mt-2">
                 <p class="text-4xl font-bold">004</p>
                 <div class="p-2 rounded-[15px] bg-[#DB0C16]"><img src="{{ Vite::asset('resources/assets/icons/icon-assessment.svg') }}" alt="Search" class="h-7 w-7"></div>
             </div>
         </div>
-        <div class="bg-white shadow-md rounded-lg p-4">
-            <span class="block text-gray-700">Completed Assessments</span>
+        <div class="bg-white shadow-md rounded-2xl px-4 py-10">
+            <span class="block  text-[#94969B]">Completed Assessments</span>
             <div class="flex justify-between items-center mt-2">
                 <p class="text-4xl font-bold">004</p>
                 <div class="p-2 rounded-[15px] bg-[#DB0C16]"><img src="{{ Vite::asset('resources/assets/icons/icon-assessment.svg') }}" alt="Search" class="h-7 w-7"></div>
             </div>
         </div>
-        <div class="bg-white shadow-md rounded-lg p-4">
-            <span class="block text-gray-700">Extension Request</span>
+        <div class="bg-white shadow-md rounded-2xl px-4 py-10">
+            <span class="block  text-[#94969B]">Extension Request</span>
             <div class="flex justify-between items-center mt-2">
                 <p class="text-4xl font-bold">014</p>
                 <div class="p-2 rounded-[15px] bg-[#DB0C16]"><img src="{{ Vite::asset('resources/assets/icons/icon-assessment.svg') }}" alt="Search" class="h-7 w-7"></div>
@@ -48,7 +48,7 @@
                         <input type="text" placeholder="Search" class="pl-10 pr-4 py-2 w-full border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div class="flex items-center space-x-2 mt-2 md:mt-0">
-                        <img src="{{ Vite::asset('resources/assets/icons/icon-filter.png') }}" alt="Filter" class="h-5 w-5">
+                        <img src="{{ Vite::asset('resources/assets/icons/icon-filter.svg') }}" alt="Filter" class="h-5 w-5">
                         <span class="text-gray-700">Filters</span>
                     </div>
                 </div>

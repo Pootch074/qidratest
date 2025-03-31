@@ -1,18 +1,18 @@
 @extends('layouts.main')
-@section('title', 'User Management')
+@section('title', 'Questionnaires')
 
 @section('content')
 
-    <div x-data="userTable" x-init="fetchUsers()" class="container mx-auto p-4 bg-white rounded-xl">
+    <div x-data="qTable" x-init="fetchQ()" class="container mx-auto p-4 bg-white rounded-xl">
 
-        @include('admin.users.search')
+        @include('admin.questionnaires.search')
 
         <table id="table" class="w-full border-collapse border border-gray-200" x-data="{ selectAll: false, selected: [] }">
             <thead>
             <tr class="bg-gray-100">
 {{--                <th class="border border-gray-200 px-4 py-2 text-left">--}}
 {{--                    <input type="checkbox" x-model="selectAll"--}}
-{{--                           @change="selected = selectAll ? users.map(user => user.id) : []"/>--}}
+{{--                           @change="selected = selectAll ? questionnaires.map(q => q.id) : []"/>--}}
 {{--                </th>--}}
                 <th class="border border-gray-200 px-4 py-2 text-left">
                     <div class="flex items-center space-x-1 text-xs text-[#667085] font-normal">
@@ -26,37 +26,7 @@
                 </th>
                 <th class="border border-gray-200 px-4 py-2 text-left">
                     <div class="flex items-center space-x-1 text-xs text-[#667085] font-normal">
-                        <span>Email</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1"
-                             stroke="currentColor" class="size-3">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                  d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3"/>
-                        </svg>
-                    </div>
-                </th>
-                <th class="border border-gray-200 px-4 py-2 text-left">
-                    <div class="flex items-center space-x-1 text-xs text-[#667085] font-normal">
-                        <span>User Type</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1"
-                             stroke="currentColor" class="size-3">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                  d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3"/>
-                        </svg>
-                    </div>
-                </th>
-                <th class="border border-gray-200 px-4 py-2 text-left">
-                    <div class="flex items-center space-x-1 text-xs text-[#667085] font-normal">
-                        <span>Position</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1"
-                             stroke="currentColor" class="size-3">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                  d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3"/>
-                        </svg>
-                    </div>
-                </th>
-                <th class="border border-gray-200 px-4 py-2 text-left">
-                    <div class="flex items-center space-x-1 text-xs text-[#667085] font-normal">
-                        <span>Assigned LGU</span>
+                        <span>Effectivity Date</span>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1"
                              stroke="currentColor" class="size-3">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -82,29 +52,25 @@
             </tr>
             </thead>
             <tbody>
-            <template x-for="user in paginatedUsers" :key="user.id">
+            <template x-for="q in questionnaires" :key="q.id">
                 <tr class="hover:bg-gray-50">
 {{--                    <td class="border border-gray-200 px-4 py-2 text-sm">--}}
-{{--                        <input type="checkbox" :id="'user-' + user.id" :value="user.id" x-model="selected"/>--}}
+{{--                        <input type="checkbox" :id="'q-' + q.id" :value="q.id" x-model="selected"/>--}}
 {{--                    </td>--}}
-                    <td class="border border-gray-200 px-4 py-2 text-sm"
-                        x-text="user.name"></td>
-                    <td class="border border-gray-200 px-4 py-2 text-sm text-[#667085]" x-text="user.email"></td>
-                    <td class="border border-gray-200 px-4 py-2 text-sm text-[#667085]" x-text="user.user_type"></td>
-                    <td class="border border-gray-200 px-4 py-2 text-sm text-[#667085]" x-text="user.position"></td>
-                    <td class="border border-gray-200 px-4 py-2 text-sm text-[#667085]" x-text="user.lgu"></td>
-                    <td class="border border-gray-200 px-4 py-2 text-sm text-[#667085]" x-text="user.status"></td>
+                    <td class="border border-gray-200 px-4 py-2 text-sm" x-text="q.questionnaire_name"></td>
+                    <td class="border border-gray-200 px-4 py-2 text-sm text-[#667085]" x-text="q.effectivity_date"></td>
+                    <td class="border border-gray-200 px-4 py-2 text-sm text-[#667085]" x-text="q.status"></td>
                     <td class="border border-gray-200 px-4 py-2 text-sm">
-                        <a href="#" @click.prevent="editUser(user)"
+                        <a href="#" @click.prevent="editQ(q)"
                            class="border border-[#667085] hover:bg-blue-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
                             <img src="{{ Vite::asset('resources/assets/icons/icon-edit.svg') }}" class="h-4 w-4"
-                                 alt="Edit User">
+                                 alt="Edit Questionnaire">
                             <span class="text-[#667085] text-xs">Edit</span>
                         </a>
-                        <a href="#" @click.prevent="deleteUser(user.id)"
+                        <a href="#" @click.prevent="deleteQ(q.id)"
                            class="border border-[#667085] hover:bg-red-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
                             <img src="{{ Vite::asset('resources/assets/icons/icon-edit.svg') }}" class="h-4 w-4"
-                                 alt="Delete User">
+                                 alt="Delete Questionnaire">
                             <span class="text-[#667085] text-xs">Delete</span>
                         </a>
                     </td>
@@ -116,7 +82,7 @@
         <div class="mt-4 flex justify-between items-center">
             <div>
                 <p class="text-sm text-gray-700">
-                    Showing <span x-text="(currentPage - 1) * perPage + 1"></span> to <span x-text="Math.min(currentPage * perPage, users.length)"></span> of <span x-text="users.length"></span> results
+                    Showing <span x-text="(currentPage - 1) * perPage + 1"></span> to <span x-text="Math.min(currentPage * perPage, questionnaires.length)"></span> of <span x-text="questionnaires.length"></span> results
                 </p>
             </div>
             <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
@@ -144,5 +110,5 @@
 @endsection
 
 @section('script')
-    @include('admin.users.script')
+    @include('admin.questionnaires.script')
 @endsection

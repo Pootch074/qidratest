@@ -1,6 +1,7 @@
 <script>
     document.addEventListener("alpine:init", () => {
         Alpine.data("userTable", () => ({
+            search: '',
             users: [],
             user_types: @json($userTypes),
             lgus: @json($lgus),
@@ -19,7 +20,7 @@
 
             async fetchUsers() {
                 try {
-                    const response = await fetch("http://localhost/api/users");
+                    const response = await fetch("{{ route('api-users-get') }}");
                     this.users = await response.json();
                 } catch (error) {
                     console.error("Error fetching users:", error);
@@ -88,7 +89,7 @@
 
             async addUser() {
                 try {
-                    const response = await fetch("http://localhost/api/users", {
+                    const response = await fetch("{{ route('api-users-post') }}", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
@@ -128,7 +129,7 @@
                 try {
 
                     const response = await fetch(
-                        'http://localhost/api/users/' + this.newUser.id, {
+                            "{{ route('api-users-put', ':id') }}".replace(':id', this.newUser.id), {
                             method: "PUT",
                             headers: {
                                 "Content-Type": "application/json"
@@ -169,7 +170,7 @@
                 if (!confirm("Are you sure you want to delete this user?")) return;
 
                 try {
-                    const response = await fetch(`http://localhost/api/users/${userId}`, {
+                    const response = await fetch(`{{ url('api/users')  }}/${userId}`, {
                         method: "DELETE",
                     });
 
@@ -182,24 +183,50 @@
                 }
             },
 
-            //-- for pagination
+            //-- for pagination and search
+            get filteredUsers() {
+                console.log('Users:', this.users); // Debug: Check if users are populated
+                console.log('Search Query:', this.search); // Debug: Check the search query
+
+                if (!this.users || this.users.length === 0) return []; // Prevent errors if users are empty
+
+                return this.users.filter(user =>
+                    Object.values(user).some(value => {
+                        if (value === null || value === undefined) return false; // Skip null/undefined values
+                        return String(value).toLowerCase().includes(this.search.toLowerCase());
+                    })
+                );
+            },
+
             perPage: 10,
             currentPage: 1,
+
             get paginatedUsers() {
                 const start = (this.currentPage - 1) * this.perPage;
                 const end = start + this.perPage;
-                return this.users.slice(start, end);
+
+                return this.filteredUsers.slice(start, end);
             },
+
             get totalPages() {
-                return Math.ceil(this.users.length / this.perPage);
+                return Math.ceil(this.filteredUsers.length / this.perPage);
             },
+
             goToPage(page) {
                 if (page >= 1 && page <= this.totalPages) {
                     this.currentPage = page;
                 }
             },
+
             init() {
                 this.fetchUsers();
+            },
+
+            watch: {
+                search(value) {
+                    console.log('Search updated:', value);
+                    this.currentPage = 1; // Reset to first page on search
+                }
             },
             //-- end for pagination
         }));

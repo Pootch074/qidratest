@@ -114,7 +114,6 @@ class UsersController extends Controller
 
         // Update user details
         $validatedData['updated_at'] = Carbon::now();
-        $validatedData['status'] = 1;
         $user->update($validatedData);
 
         // assign user to lgu
@@ -143,7 +142,7 @@ class UsersController extends Controller
                 'position' => $validatedData['position'],
                 'lgu' => $lguName,
                 'lgu_id' => $lguId,
-                'status' => $user->getStatus($validatedData['status'])
+                'status' => $user->getStatus($user['status'])
             ]
         ]);
     }

@@ -41,4 +41,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('users', [UsersController::class, 'index'])->name('users');
     Route::get('rmt', [UsersController::class, 'rmt'])->name('rmt');
     Route::get('lgu', [UsersController::class, 'lgu'])->name('lgu');
+    Route::get('questionnaires', [\App\Http\Controllers\QuestionnairesController::class, 'index'])->name('questionnaires');
 });

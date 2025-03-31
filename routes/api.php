@@ -9,10 +9,10 @@ Route::get('/user', function (Request $request) {
 
 Route::get('/register', [\App\Http\Controllers\Api\UsersController::class, 'register']);
 
-Route::get('/users', [\App\Http\Controllers\Api\UsersController::class, 'get']);
-Route::post('/users', [\App\Http\Controllers\Api\UsersController::class, 'post']);
-Route::put('/users/{id}', [\App\Http\Controllers\Api\UsersController::class, 'put']);
-Route::delete('/users/{id}', [\App\Http\Controllers\Api\UsersController::class, 'delete']);
+Route::get('/users', [\App\Http\Controllers\Api\UsersController::class, 'get'])->name('api-users-get');
+Route::post('/users', [\App\Http\Controllers\Api\UsersController::class, 'post'])->name('api-users-post');
+Route::put('/users/{id}', [\App\Http\Controllers\Api\UsersController::class, 'put'])->name('api-users-put');
+Route::delete('/users/{id}', [\App\Http\Controllers\Api\UsersController::class, 'delete'])->name('api-users-delete');
 
 Route::get('/rmt', [\App\Http\Controllers\Api\RmtController::class, 'get']);
 Route::post('/rmt', [\App\Http\Controllers\Api\RmtController::class, 'post']);
@@ -23,3 +23,8 @@ Route::get('/lgu', [\App\Http\Controllers\Api\LguController::class, 'get']);
 Route::post('/lgu', [\App\Http\Controllers\Api\LguController::class, 'post']);
 Route::put('/lgu/{id}', [\App\Http\Controllers\Api\LguController::class, 'put']);
 Route::delete('/lgu/{id}', [\App\Http\Controllers\Api\LguController::class, 'delete']);
+
+Route::get('/questionnaires', [\App\Http\Controllers\Api\QuestionnairesController::class, 'get']);
+Route::post('/questionnaires', [\App\Http\Controllers\Api\QuestionnairesController::class, 'post']);
+Route::put('/questionnaires/{id}', [\App\Http\Controllers\Api\QuestionnairesController::class, 'put']);
+Route::delete('/questionnaires/{id}', [\App\Http\Controllers\Api\QuestionnairesController::class, 'delete']);

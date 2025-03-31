@@ -10,10 +10,10 @@
         <table class="w-full border-collapse border border-gray-200" x-data="{ selectAll: false, selected: [] }">
             <thead>
             <tr class="bg-gray-100">
-                <th class="border border-gray-200 px-4 py-2 text-left">
-                    <input type="checkbox" x-model="selectAll"
-                           @change="selected = selectAll ? users.map(user => user.id) : []"/>
-                </th>
+{{--                <th class="border border-gray-200 px-4 py-2 text-left">--}}
+{{--                    <input type="checkbox" x-model="selectAll"--}}
+{{--                           @change="selected = selectAll ? users.map(user => user.id) : []"/>--}}
+{{--                </th>--}}
                 <th class="border border-gray-200 px-4 py-2 text-left">
                     <div class="flex items-center space-x-1 text-xs text-[#667085] font-normal">
                         <span>LGU Name</span>
@@ -64,9 +64,9 @@
             <tbody>
             <template x-for="user in users" :key="user.id">
                 <tr class="hover:bg-gray-50">
-                    <td class="border border-gray-200 px-4 py-2 text-sm">
-                        <input type="checkbox" :id="'user-' + user.id" :value="user.id" x-model="selected"/>
-                    </td>
+{{--                    <td class="border border-gray-200 px-4 py-2 text-sm">--}}
+{{--                        <input type="checkbox" :id="'user-' + user.id" :value="user.id" x-model="selected"/>--}}
+{{--                    </td>--}}
                     <td class="border border-gray-200 px-4 py-2 text-sm"
                         x-text="user.name"></td>
                     <td class="border border-gray-200 px-4 py-2 text-sm text-[#667085]" x-text="user.email"></td>
