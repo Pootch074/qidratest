@@ -14,7 +14,7 @@
 
             async fetchQ() {
                 try {
-                    const response = await fetch("http://localhost/api/questionnaires");
+                    const response = await fetch("{{ route('api-questionnaires-get') }}");
                     this.questionnaires = await response.json();
                 } catch (error) {
                     console.error("Error fetching questionnaires:", error);
@@ -37,7 +37,7 @@
 
             async addQ() {
                 try {
-                    const response = await fetch("http://localhost/api/questionnaires", {
+                    const response = await fetch("{{ route('api-questionnaires-post') }}", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
@@ -69,7 +69,7 @@
                 try {
 
                     const response = await fetch(
-                        'http://localhost/api/questionnaires/' + this.newQ.id, {
+                        "{{ route('api-questionnaires-put', ':id') }}".replace(':id', this.newQ.id), {
                             method: "PUT",
                             headers: {
                                 "Content-Type": "application/json"
@@ -94,7 +94,7 @@
                 if (!confirm("Are you sure you want to delete this questionnaire?")) return;
 
                 try {
-                    const response = await fetch(`http://localhost/api/questionnaires/${qId}`, {
+                    const response = await fetch(`{{ url('api/questionnaires')  }}/${qId}`, {
                         method: "DELETE",
                     });
 

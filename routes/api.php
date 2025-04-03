@@ -24,7 +24,7 @@ Route::post('/lgu', [\App\Http\Controllers\Api\LguController::class, 'post']);
 Route::put('/lgu/{id}', [\App\Http\Controllers\Api\LguController::class, 'put']);
 Route::delete('/lgu/{id}', [\App\Http\Controllers\Api\LguController::class, 'delete']);
 
-Route::get('/questionnaires', [\App\Http\Controllers\Api\QuestionnairesController::class, 'get']);
-Route::post('/questionnaires', [\App\Http\Controllers\Api\QuestionnairesController::class, 'post']);
-Route::put('/questionnaires/{id}', [\App\Http\Controllers\Api\QuestionnairesController::class, 'put']);
-Route::delete('/questionnaires/{id}', [\App\Http\Controllers\Api\QuestionnairesController::class, 'delete']);
+Route::get('/questionnaires', [\App\Http\Controllers\Api\QuestionnairesController::class, 'get'])->name('api-questionnaires-get');
+Route::post('/questionnaires', [\App\Http\Controllers\Api\QuestionnairesController::class, 'post'])->name('api-questionnaires-post');
+Route::put('/questionnaires/{id}', [\App\Http\Controllers\Api\QuestionnairesController::class, 'put'])->name('api-questionnaires-put');
+Route::delete('/questionnaires/{id}', [\App\Http\Controllers\Api\QuestionnairesController::class, 'delete'])->name('api-questionnaires-delete');

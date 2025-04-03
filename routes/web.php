@@ -22,6 +22,7 @@ Route::get('/auth/callback', [GoogleController::class, 'callback'] );
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'] )->name('dashboard');
 
+
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
     Route::get('/profile', function() {

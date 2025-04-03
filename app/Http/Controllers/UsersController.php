@@ -17,6 +17,11 @@ class UsersController extends Controller
         return view('admin.users.index', compact('userTypes', 'lgus'));
     }
 
+    public function profile()
+    {
+
+    }
+
     public function rmt()
     {
         return view('admin.rmt.index');
