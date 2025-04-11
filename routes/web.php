@@ -5,7 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
-// use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\QuestionnairesController;
 use Laravel\Socialite\Facades\Socialite;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -42,5 +42,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('users', [UsersController::class, 'index'])->name('users');
     Route::get('rmt', [UsersController::class, 'rmt'])->name('rmt');
     Route::get('lgu', [UsersController::class, 'lgu'])->name('lgu');
-    Route::get('questionnaires', [\App\Http\Controllers\QuestionnairesController::class, 'index'])->name('questionnaires');
+    Route::get('questionnaires', [QuestionnairesController::class, 'index'])->name('questionnaires');
+    Route::get('questionnaires/manage/{id}', [QuestionnairesController::class, 'manageQuestionnaires'])->name('manage-questionnaires');
 });

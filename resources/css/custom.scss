@@ -75,6 +75,111 @@ body {
     background-size: cover;
     background-position: center;
     font-family: 'Poppins', sans-serif;
+}
 
+.nav-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    //justify-content: center;
+}
 
+.divider {
+    width: 100%;
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 10px 0;
+}
+
+.ref {
+    width: 60px;
+    height: 35px;
+    background-color: #fff;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+    color: #B0B2B7;
+    font-size: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.status {
+    width: 60px;
+    height: 35px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+
+    &.incomplete {
+        background-color: #FF3B30;
+    }
+    &.complete {
+        background-color: #CDCFD2;
+    }
+}
+
+.nav-item {
+    border-radius: 5px; // matches the .ref/.status rounding visually
+
+    &.active {
+        .ref,
+        .status {
+            border: 2px solid #2E3192;
+        }
+
+        .ref {
+            background-color: #2E3192;
+            color: white;
+            border-bottom: none; // avoid double thickness where .ref and .status meet
+        }
+
+        .status {
+            border-top: none;
+        }
+    }
+}
+
+.options-container {
+    border: 1px solid rgba(46,49,146,.10);
+    border-radius: 15px;
+    overflow: hidden;
+
+    .option {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.7rem 1.1rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+
+        &:not(:last-child) {
+            border-bottom: 1px solid rgba(46, 49, 146, 0.10);
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+        }
+
+        &.selected {
+            background-color: rgba(46,49,146,.10); // dark gray
+        }
+
+        .custom-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #999;
+            background-color: transparent;
+            cursor: pointer;
+            transition: background-color 0.2s;
+
+            &:checked {
+                background-color: #2E3192; // fill color when checked
+                border-color: #2E3192;
+            }
+        }
+    }
 }

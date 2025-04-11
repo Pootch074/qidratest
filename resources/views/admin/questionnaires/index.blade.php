@@ -73,6 +73,12 @@
                                  alt="Delete Questionnaire">
                             <span class="text-[#667085] text-xs">Delete</span>
                         </a>
+                        <a :href="'/questionnaires/manage/' + q.id"
+                           class="border border-[#667085] hover:bg-red-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
+                            <img src="{{ Vite::asset('resources/assets/icons/icon-edit.svg') }}" class="h-4 w-4"
+                                 alt="View">
+                            <span class="text-[#667085] text-xs">View</span>
+                        </a>
                     </td>
                 </tr>
             </template>
