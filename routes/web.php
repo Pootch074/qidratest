@@ -43,5 +43,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('rmt', [UsersController::class, 'rmt'])->name('rmt');
     Route::get('lgu', [UsersController::class, 'lgu'])->name('lgu');
     Route::get('questionnaires', [QuestionnairesController::class, 'index'])->name('questionnaires');
+
     Route::get('questionnaires/manage/{id}', [QuestionnairesController::class, 'manageQuestionnaires'])->name('manage-questionnaires');
+    Route::get('questionnaires/manage/{id}/ref/{id2}', [QuestionnairesController::class, 'getReference'])->name('get-reference');
 });

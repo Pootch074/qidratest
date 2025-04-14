@@ -1,4 +1,4 @@
-<div id="sidebar" class="flex flex-col bg-[#2E3192] border-r border-[#2E3192]-300 flex-shrink-0 p-3 w-72 min-h-screen relative">
+<div id="sidebar" class="flex flex-col bg-[#2E3192] border-r border-[#2E3192]-300 flex-shrink-0 p-3 w-72 h-full">
     <!-- Logo -->
     <a href="/" class="flex items-center mb-3 mx-auto pt-1">
         <img src="{{ Vite::asset('resources/images/dswd-sdca-white.png') }}" alt="DSWD - SDCA" class="h-12">

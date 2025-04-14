@@ -13,6 +13,11 @@ class RegionsSeeder extends Seeder
      */
     public function run(): void
     {
+        // let's clear all data first before adding
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('regions')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         $regions = [
             'name' => 'Region XI'
         ];

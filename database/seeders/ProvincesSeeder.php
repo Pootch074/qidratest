@@ -13,6 +13,11 @@ class ProvincesSeeder extends Seeder
      */
     public function run(): void
     {
+        // let's clear all data first before adding
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('provinces')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         $provinces = [
             ['name' => 'N/A (Highly Urbanized)'],
             ['name' => 'Davao del Norte'],

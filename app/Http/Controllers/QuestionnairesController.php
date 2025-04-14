@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MeansOfVerification;
 use App\Models\Questionnaire;
+use App\Models\QuestionnaireLevel;
 use App\Models\QuestionnaireTree;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,18 +18,54 @@ class QuestionnairesController extends Controller
         return view('admin.questionnaires.index', compact('questionnaires'));
     }
 
-    public function manageQuestionnaires($id, Request $request)
+    public function manageQuestionnaires($questionnaireId)
     {
-        $data = [];
-        $questionnaireTree = QuestionnaireTree::find($id);
-        $parents = Questionnaire::where('questionnaire_tree_id', $questionnaireTree->id)
-            ->where('parent_id', 0)->get();
 
-        foreach ($parents as $parent) {
-            $data[] = $this->buildTree($parent);
-        }
+        $references = $this->getNavigation($questionnaireId);
+        $child = $this->getFirstQuestionnaire($questionnaireId);
+        $parent = $child->parent;
 
-        return view('questionnaires.view', compact('data'));
+        $means = MeansOfVerification::where('questionnaire_id', $child->id)->get();
+        $levels = QuestionnaireLevel::where('questionnaire_id', $child->id)->get();
+
+        return view('questionnaires.view', compact('questionnaireId', 'child', 'parent', 'references', 'means', 'levels'));
+    }
+
+    public function getReference($questionnaireId, $referenceId)
+    {
+        $references = $this->getNavigation($questionnaireId);
+        $child = $this->getSingleQuestionnaire($referenceId);
+        $parent = $child->parent;
+
+        $means = MeansOfVerification::where('questionnaire_id', $child->id)->get();
+        $levels = QuestionnaireLevel::where('questionnaire_id', $child->id)->get();
+
+        return view('questionnaires.view', compact('questionnaireId', 'child', 'parent', 'references', 'means', 'levels'));
+    }
+
+    private function getNavigation($id)
+    {
+        return Questionnaire::where('questionnaire_tree_id', $id)
+            ->select('id', 'parent_id', 'reference_number')
+            ->where('reference_number', '!=', '')
+            ->orderBy('parent_id')
+            ->orderBy('weight')
+            ->get()
+            ->toArray();
+    }
+
+    private function getFirstQuestionnaire($id)
+    {
+        return Questionnaire::where('questionnaire_tree_id', $id)
+            ->where('reference_number', '!=', '')
+            ->orderBy('parent_id')
+            ->orderBy('weight')
+            ->first();
+    }
+
+    private function getSingleQuestionnaire($id)
+    {
+        return Questionnaire::find($id);
     }
 
     private function buildTree($parent): array
@@ -39,8 +77,7 @@ class QuestionnairesController extends Controller
             ->get();
 
         return [
-            'parent' => $parent,
-            'means' => $means,
+            'parent' => $parent->toArray(),
             'children' => $children->map(function ($item) {
                 return $this->buildTree($item);
             })
