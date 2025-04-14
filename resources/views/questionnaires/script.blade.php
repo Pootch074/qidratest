@@ -1,4 +1,5 @@
 <script>
+
     document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', e => {
             e.preventDefault();
@@ -6,4 +7,5 @@
             item.classList.add('active');
         });
     });
+
 </script>

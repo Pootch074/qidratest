@@ -60,26 +60,8 @@
 
 <div class="bg-white p-3 rounded-lg my-5">
     <h3 class="font-medium text-xl inline-block align-middle ml-2 text-[#1B1D21]">Remarks</h3>
-    <small class="block ml-2 text-[#677489]">Observations and Suggestions</small>
+    <small class="block ml-2 mb-5 mb text-[#677489]">Observations and Suggestions</small>
 
-    <table class="min-w-full w-full border-separate border-spacing-0 my-5 ">
-        <tbody class="bg-white">
-        <tr class="border-b border border-gray-400">
-            <td class="px-6 py-4 text-sm text-gray-700">Row 1: Lorem ipsum</td>
-        </tr>
-        <tr class="border-b border border-gray-400">
-            <td class="px-6 py-4 text-sm text-gray-700">Row 2: Dolor sit amet</td>
-        </tr>
-        <tr class="border-b border border-gray-400">
-            <td class="px-6 py-4 text-sm text-gray-700">Row 3: Consectetur</td>
-        </tr>
-        <tr class="border-b border border-gray-400">
-            <td class="px-6 py-4 text-sm text-gray-700">Row 4: Adipiscing elit</td>
-        </tr>
-        <tr class="border-b border border-gray-400">
-            <td class="px-6 py-4 text-sm text-gray-700">Row 5: Sed do eiusmod</td>
-        </tr>
-        </tbody>
-    </table>
+    <div id="remarks" class="wysiwyg bg-white mt-5 h-60"></div>
 </div>
 </div>

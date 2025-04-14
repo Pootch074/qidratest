@@ -160,6 +160,7 @@ body {
         input[type="checkbox"] {
             width: 20px;
             height: 20px;
+            border-radius: 3px;
         }
 
         &.selected {
@@ -180,6 +181,32 @@ body {
                 background-color: #2E3192; // fill color when checked
                 border-color: #2E3192;
             }
+
+            &[type="radio"] {
+                width: 20px;
+                height: 20px;
+                border-radius: 18px;
+            }
         }
     }
 }
+
+.ql-toolbar {
+    border-top-right-radius: 15px;
+    border-top-left-radius: 15px;
+    border: 1px solid rgba(46, 49, 146, 0.1) !important;
+}
+
+.wysiwyg {
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 15px;
+    border: 1px solid rgba(46, 49, 146, 0.1) !important;
+
+    .ql-editor {
+        min-height: 100px;
+        font-family: 'Inter', sans-serif;
+        font-size: 16px;
+    }
+}
+
+//.ql-container.ql-snow
