@@ -5,8 +5,8 @@
 
 
     <h2 class="mb-5">
-        <span class="bg-[#2E3192] text-l inline-flex items-center gap-2 border px-4 py-2 font-medium text-white rounded-full">LGU Name</span>
-        <span class="font-medium text-xl inline-block align-middle ml-2 text-[#1B1D21]">Administration and Organization</span>
+        <span class="bg-[#2E3192] text-l inline-flex items-center gap-2 border px-4 py-2 font-medium text-white rounded-full">{{ $questionnaire->questionnaire_name }}</span>
+        <span class="font-medium text-xl inline-block align-middle ml-2 text-[#1B1D21]">{{ $root->name }}</span>
     </h2>
 
     <div class="flex mb-4">

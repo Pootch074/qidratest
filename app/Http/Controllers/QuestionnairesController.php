@@ -21,26 +21,30 @@ class QuestionnairesController extends Controller
     public function manageQuestionnaires($questionnaireId)
     {
 
+        $questionnaire = QuestionnaireTree::find($questionnaireId);
         $references = $this->getNavigation($questionnaireId);
         $child = $this->getFirstQuestionnaire($questionnaireId);
         $parent = $child->parent;
+        $root = $this->getRootQuestionnaire($child);
 
         $means = MeansOfVerification::where('questionnaire_id', $child->id)->get();
         $levels = QuestionnaireLevel::where('questionnaire_id', $child->id)->get();
 
-        return view('questionnaires.view', compact('questionnaireId', 'child', 'parent', 'references', 'means', 'levels'));
+        return view('questionnaires.view', compact('root', 'questionnaire', 'child', 'parent', 'references', 'means', 'levels'));
     }
 
     public function getReference($questionnaireId, $referenceId)
     {
+        $questionnaire = QuestionnaireTree::find($questionnaireId);
         $references = $this->getNavigation($questionnaireId);
         $child = $this->getSingleQuestionnaire($referenceId);
         $parent = $child->parent;
+        $root = $this->getRootQuestionnaire($child);
 
         $means = MeansOfVerification::where('questionnaire_id', $child->id)->get();
         $levels = QuestionnaireLevel::where('questionnaire_id', $child->id)->get();
 
-        return view('questionnaires.view', compact('questionnaireId', 'child', 'parent', 'references', 'means', 'levels'));
+        return view('questionnaires.view', compact('root', 'questionnaire', 'child', 'parent', 'references', 'means', 'levels'));
     }
 
     private function getNavigation($id)
@@ -66,6 +70,16 @@ class QuestionnairesController extends Controller
     private function getSingleQuestionnaire($id)
     {
         return Questionnaire::find($id);
+    }
+
+    private function getRootQuestionnaire($child)
+    {
+        if ($child->parent_id == 0) {
+            return $child;
+        }
+
+        $parent = $child->parent()->first();
+        return $this->getRootQuestionnaire($parent);
     }
 
     private function buildTree($parent): array

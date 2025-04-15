@@ -55,7 +55,7 @@
                 @else
                     <p><b>Low</b></p>
                 @endif
-                <small>{{ $level->remarks }}</small>
+                <small>{!! $level->remarks !!}</small>
             </div>
         </div>
         @endforeach
