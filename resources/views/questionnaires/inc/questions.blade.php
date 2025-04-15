@@ -24,7 +24,7 @@
                     x-model="checked"
                     class="custom-checkbox"
                 />
-                <span>{{ $mean->means }}</span>
+                <span>{!! $mean->means !!}</span>
             </div>
         @endforeach
     </div>
