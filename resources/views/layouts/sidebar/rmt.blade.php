@@ -6,7 +6,7 @@
 </li>
 
 <li class="mx-1 my-2">
-    <a href="{{ route('profile') }}" class="transition-colors duration-200 flex items-center p-3 rounded-lg text-white hover:bg-[#DB0C16] {{ Request::is('profile') ? 'bg-[#DB0C16]' : '' }}">
+    <a href="{{ route('questionnaires') }}" class="transition-colors duration-200 flex items-center p-3 rounded-lg text-white hover:bg-[#DB0C16] {{ Request::is('profile') ? 'bg-[#DB0C16]' : '' }}">
         <img src="{{ Vite::asset('resources/assets/icons/icon-assessment.png') }}" alt="Assessment" class="h-5 w-5 mr-2">
         <span class="text-sm">Assessment Management</span>
     </a>
