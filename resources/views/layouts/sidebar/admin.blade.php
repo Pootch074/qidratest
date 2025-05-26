@@ -34,7 +34,7 @@
         class="ml-6 space-y-1 overflow-hidden">
 
         <li class="my-2">
-            <a href="#" class="transition-colors duration-200 flex items-center p-3 rounded-lg text-white hover:bg-[#DB0C16] {{ Request::is('assessments') ? 'bg-[#DB0C16]' : '' }}">
+            <a href="{{ route('period-management') }}" class="transition-colors duration-200 flex items-center p-3 rounded-lg text-white hover:bg-[#DB0C16] {{ Request::is('assessments') ? 'bg-[#DB0C16]' : '' }}">
                 <img src="{{ Vite::asset('resources/assets/icons/icon-sidebar.svg') }}" alt="Cycle Management" class="h-5 w-5 mr-2">
                 <span class="text-sm">Period Management</span>
             </a>

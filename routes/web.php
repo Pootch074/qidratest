@@ -4,8 +4,10 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UsersController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QuestionnairesController;
+use App\Http\Controllers\PeriodsController;
+
+use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -43,6 +45,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('rmt', [UsersController::class, 'rmt'])->name('rmt');
     Route::get('lgu', [UsersController::class, 'lgu'])->name('lgu');
     Route::get('questionnaires', [QuestionnairesController::class, 'index'])->name('questionnaires');
+    Route::get('period-management', [PeriodsController::class, 'index'])->name('period-management');
 
     Route::get('questionnaires/manage/{id}', [QuestionnairesController::class, 'manageQuestionnaires'])->name('manage-questionnaires');
     Route::get('questionnaires/manage/{id}/ref/{id2}', [QuestionnairesController::class, 'getReference'])->name('get-reference');

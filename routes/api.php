@@ -28,3 +28,8 @@ Route::get('/questionnaires', [\App\Http\Controllers\Api\QuestionnairesControlle
 Route::post('/questionnaires', [\App\Http\Controllers\Api\QuestionnairesController::class, 'post'])->name('api-questionnaires-post');
 Route::put('/questionnaires/{id}', [\App\Http\Controllers\Api\QuestionnairesController::class, 'put'])->name('api-questionnaires-put');
 Route::delete('/questionnaires/{id}', [\App\Http\Controllers\Api\QuestionnairesController::class, 'delete'])->name('api-questionnaires-delete');
+
+Route::get('/periods', [\App\Http\Controllers\Api\PeriodsController::class, 'get'])->name('api-periods-get');
+Route::post('/periods', [\App\Http\Controllers\Api\PeriodsController::class, 'post'])->name('api-periods-post');
+Route::put('/periods/{id}', [\App\Http\Controllers\Api\PeriodsController::class, 'put'])->name('api-periods-put');
+Route::delete('/periods/{id}', [\App\Http\Controllers\Api\PeriodsController::class, 'delete'])->name('api-periods-delete');

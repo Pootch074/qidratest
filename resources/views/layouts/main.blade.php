@@ -3,7 +3,7 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'DSWD - SDCA') }} - RTM Portal</title>
+    <title>{{ config('app.name', 'DSWD - SDCA') }} - {{ strtoupper(auth()->user()->getUserTypeName()) }} Portal</title>
     @vite(['resources/css/app.css', 'resources/css/custom.scss', 'resources/js/app.js'])
     @yield('header')
     <style>

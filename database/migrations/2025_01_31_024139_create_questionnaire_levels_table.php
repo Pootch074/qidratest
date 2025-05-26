@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('questionnaire_levels', function (Blueprint $table) {
             $table->id();
             $table->foreignId('questionnaire_id')->constrained();
-            $table->foreignId('sdca_level_id')->constrained();
+            $table->integer('sdca_level_id')->constrained();
             $table->text('remarks')->nullable();
             $table->timestamps();
         });

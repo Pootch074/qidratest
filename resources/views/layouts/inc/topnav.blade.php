@@ -2,7 +2,7 @@
 <header class="bg-white text-[#202224] py-4 px-10 flex justify-between items-center">
     <h1 class="text-[32px] font-medium">
         @yield('title')
-        <span class="text-white text-xs rounded-full border-[#CDCFD2] bg-[#CDCFD2] px-3 py-1 ml-2 align-middle font-light">{{ auth()->user()->getUserTypeName() }}</span>
+        <span class="text-black text-xs rounded-full border-[#CDCFD2] bg-[#CDCFD2] px-3 py-1 ml-2 align-middle font-light">{{ auth()->user()->getUserTypeName() }}</span>
     </h1>
 
     <!-- Profile Dropdown -->

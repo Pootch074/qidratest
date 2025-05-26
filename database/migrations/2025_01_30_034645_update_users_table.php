@@ -27,7 +27,7 @@ return new class extends Migration
     {
         //
         Schema::table('users', function(Blueprint $table) {
-            $table->dropColumn('first_name', 'name');
+            $table->renameColumn('first_name', 'name');
             $table->dropColumn('last_name');
             $table->dropColumn('user_type');
             $table->dropColumn('rmt_token');

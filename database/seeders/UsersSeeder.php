@@ -15,15 +15,19 @@ class UsersSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('users')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         $user = [
             'first_name' => 'Super',
             'last_name' => 'Admin',
-            'email' => 'admin@admin.com',
+            'email' => env('ADMIN_EMAIL', 'admin@admin.com'),
             'position' => 'Admin',
             'user_type' => 1,
             'status' => 1,
             'email_verified_at' => Carbon::now(),
-            'password' => Hash::make('A7X9B2KQ'),
+            'password' => Hash::make(env('ADMIN_PASSWORD', 'A7X9B2KQ')),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ];

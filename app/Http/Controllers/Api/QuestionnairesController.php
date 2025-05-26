@@ -66,7 +66,7 @@ class QuestionnairesController extends Controller
         $validate['updated_at'] = Carbon::now();
         $q->update($validate);
 
-        return response()->json(['message' => 'User added successfully!', 'questionnaire' => [
+        return response()->json(['message' => 'Questionnaire added successfully!', 'questionnaire' => [
             'questionnaire_name' => $q['questionnaire_name'],
             'effectivity_date' => $q['effectivity_date'],
             'status' => $q['status']

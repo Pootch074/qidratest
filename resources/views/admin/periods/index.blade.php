@@ -1,22 +1,22 @@
 @extends('layouts.main')
-@section('title', 'Questionnaires')
+@section('title', 'Period Management')
 
 @section('content')
 
-    <div x-data="qTable" x-init="fetchQ()" class="container mx-auto p-4 bg-white rounded-xl">
+    <div x-data="pTable" x-init="fetchP()" class="container mx-auto p-4 bg-white rounded-xl">
 
-        @include('admin.questionnaires.search')
+        @include('admin.periods.search')
 
         <table id="table" class="w-full border-collapse border border-gray-200" x-data="{ selectAll: false, selected: [] }">
             <thead>
             <tr class="bg-gray-100">
 {{--                <th class="border border-gray-200 px-4 py-2 text-left">--}}
 {{--                    <input type="checkbox" x-model="selectAll"--}}
-{{--                           @change="selected = selectAll ? questionnaires.map(q => q.id) : []"/>--}}
+{{--                           @change="selected = selectAll ? periods.map(p => p.id) : []"/>--}}
 {{--                </th>--}}
                 <th class="border border-gray-200 px-4 py-2 text-left">
                     <div class="flex items-center space-x-1 text-xs text-[#667085] font-normal">
-                        <span>Name</span>
+                        <span>Period</span>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1"
                              stroke="currentColor" class="size-3">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -26,7 +26,17 @@
                 </th>
                 <th class="border border-gray-200 px-4 py-2 text-left">
                     <div class="flex items-center space-x-1 text-xs text-[#667085] font-normal">
-                        <span>Effectivity Date</span>
+                        <span>Start Date</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1"
+                             stroke="currentColor" class="size-3">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3"/>
+                        </svg>
+                    </div>
+                </th>
+                <th class="border border-gray-200 px-4 py-2 text-left">
+                    <div class="flex items-center space-x-1 text-xs text-[#667085] font-normal">
+                        <span>End Date</span>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1"
                              stroke="currentColor" class="size-3">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -52,49 +62,51 @@
             </tr>
             </thead>
             <tbody>
-            <template x-for="q in questionnaires" :key="q.id">
+            <template x-for="p in periods" :key="p.id">
                 <tr class="hover:bg-gray-50">
 {{--                    <td class="border border-gray-200 px-4 py-2 text-sm">--}}
-{{--                        <input type="checkbox" :id="'q-' + q.id" :value="q.id" x-model="selected"/>--}}
+{{--                        <input type="checkbox" :id="'p-' + p.id" :value="p.id" x-model="selected"/>--}}
 {{--                    </td>--}}
-                    <td class="border border-gray-200 px-4 py-2 text-sm" x-text="q.questionnaire_name"></td>
+                    <td class="border border-gray-200 px-4 py-2 text-sm" x-text="p.name"></td>
                     <td
                         class="border border-gray-200 px-4 py-2 text-sm text-[#667085]"
-                        x-text="new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(q.effectivity_date))"
+                        x-text="new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(p.start_date))"
+                    ></td>
+                    <td
+                        class="border border-gray-200 px-4 py-2 text-sm text-[#667085]"
+                        x-text="new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(p.end_date))"
                     ></td>
                     <td class="border border-gray-200 px-4 py-2 text-sm text-[#667085]">
                         <span
                             class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium"
                             :class="{
-                                'bg-green-100 text-green-800': q.status === 'published',
-                                'bg-yellow-100 text-yellow-800': q.status === 'ended',
-                                'bg-gray-200 text-gray-800': q.status === 'unpublished'
+                                'bg-green-100 text-green-800': p.status === 'ongoing',
+                                'bg-gray-100 text-yellow-800': p.status === 'completed'
                             }"
                         >
-                            <span x-text="q.status === 'published' ? '⬤' : (q.status === 'ended' ? '⬤' : '⬤')"
+                            <span x-text="p.status === 'published' ? '⬤' : (p.status === 'ended' ? '⬤' : '⬤')"
                                   :class="{
-                                      'text-green-500': q.status === 'published',
-                                      'text-yellow-500': q.status === 'ended',
-                                      'text-gray-500': q.status === 'unpublished'
+                                      'text-green-500': p.status === 'ongoing',
+                                      'text-gray-500': p.status === 'completed'
                                   }"
                             ></span>
-                            <span x-text="q.status.charAt(0).toUpperCase() + q.status.slice(1)"></span>
+                            <span x-text="p.status.charAt(0).toUpperCase() + p.status.slice(1)"></span>
                         </span>
                     </td>
                     <td class="border border-gray-200 px-4 py-2 text-sm">
-                        <a href="#" @click.prevent="editQ(q)"
+                        <a href="#" @click.prevent="editP(p)"
                            class="border border-[#667085] hover:bg-blue-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
                             <img src="{{ Vite::asset('resources/assets/icons/icon-edit.svg') }}" class="h-4 w-4"
-                                 alt="Edit Questionnaire">
+                                 alt="Edit Period">
                             <span class="text-[#667085] text-xs">Edit</span>
                         </a>
-                        <a href="#" @click.prevent="deleteQ(q.id)"
+                        <a href="#" @click.prevent="deleteP(p.id)"
                            class="border border-[#667085] hover:bg-red-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
                             <img src="{{ Vite::asset('resources/assets/icons/icon-edit.svg') }}" class="h-4 w-4"
-                                 alt="Delete Questionnaire">
+                                 alt="Delete Period">
                             <span class="text-[#667085] text-xs">Delete</span>
                         </a>
-                        <a :href="'/questionnaires/manage/' + q.id"
+                        <a :href="'/periods/manage/' + p.id"
                            class="border border-[#667085] hover:bg-red-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
                             <img src="{{ Vite::asset('resources/assets/icons/icon-edit.svg') }}" class="h-4 w-4"
                                  alt="View">
@@ -109,7 +121,7 @@
         <div class="mt-4 flex justify-between items-center">
             <div>
                 <p class="text-sm text-gray-700">
-                    Showing <span x-text="(currentPage - 1) * perPage + 1"></span> to <span x-text="Math.min(currentPage * perPage, questionnaires.length)"></span> of <span x-text="questionnaires.length"></span> results
+                    Showing <span x-text="(currentPage - 1) * perPage + 1"></span> to <span x-text="Math.min(currentPage * perPage, periods.length)"></span> of <span x-text="periods.length"></span> results
                 </p>
             </div>
             <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
@@ -137,5 +149,5 @@
 @endsection
 
 @section('script')
-    @include('admin.questionnaires.script')
+    @include('admin.periods.script')
 @endsection
