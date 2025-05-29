@@ -12,12 +12,16 @@
     </a>
 </li>
 
-<li x-data="{ isOpen: false }" class="mx-1 my-2 relative">
+@php
+    $isAssessmentSectionActive = Request::is('period-management') || Request::is('period-assessments');
+@endphp
+
+<li x-data="{ isOpen: {{ $isAssessmentSectionActive ? 'true' : 'false' }} }" class="mx-1 my-2 relative">
     <a href="#"
        class="transition-colors duration-200 flex items-center p-3 rounded-lg text-white hover:bg-[#DB0C16]"
        :class="{ 'bg-[#851E54]': isOpen }"
        @click.prevent="isOpen = !isOpen">
-        <img src="{{ Vite::asset('resources/assets/icons/icon-sidebar.svg') }}" alt="Questionnaire" class="h-5 w-5 mr-2">
+        <img src="{{ Vite::asset('resources/assets/icons/icon-sidebar.svg') }}" alt="Assessment Management" class="h-5 w-5 mr-2">
         <span class="text-sm">Assessment Management</span>
         <img src="{{ Vite::asset('resources/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle"
              class="h-5 w-5 mr-2 absolute right-1 transition-transform duration-300"
@@ -34,14 +38,16 @@
         class="ml-6 space-y-1 overflow-hidden">
 
         <li class="my-2">
-            <a href="{{ route('period-management') }}" class="transition-colors duration-200 flex items-center p-3 rounded-lg text-white hover:bg-[#DB0C16] {{ Request::is('assessments') ? 'bg-[#DB0C16]' : '' }}">
+            <a href="{{ route('period-management') }}"
+               class="transition-colors duration-200 flex items-center p-3 rounded-lg text-white hover:bg-[#DB0C16] {{ Request::is('period-management') ? 'bg-[#DB0C16]' : '' }}">
                 <img src="{{ Vite::asset('resources/assets/icons/icon-sidebar.svg') }}" alt="Cycle Management" class="h-5 w-5 mr-2">
                 <span class="text-sm">Period Management</span>
             </a>
         </li>
 
         <li class="my-2">
-            <a href="#" class="transition-colors duration-200 flex items-center p-3 rounded-lg text-white hover:bg-[#DB0C16]">
+            <a href="{{ route('period-assessments') }}"
+               class="transition-colors duration-200 flex items-center p-3 rounded-lg text-white hover:bg-[#DB0C16] {{ Request::is('period-assessments') ? 'bg-[#DB0C16]' : '' }}">
                 <img src="{{ Vite::asset('resources/assets/icons/icon-sidebar.svg') }}" alt="Assessments" class="h-5 w-5 mr-2">
                 <span class="text-sm">Assessments</span>
             </a>
@@ -50,7 +56,8 @@
 </li>
 
 <li class="mx-1 my-2">
-    <a href="#" class="transition-colors duration-200 flex items-center p-3 rounded-lg text-white hover:bg-[#DB0C16] {{ Request::is('rmt') ? 'bg-[#DB0C16]' : '' }}">
+    <a href="{{ route('rmt') }}"
+       class="transition-colors duration-200 flex items-center p-3 rounded-lg text-white hover:bg-[#DB0C16] {{ Request::is('rmt') ? 'bg-[#DB0C16]' : '' }}">
         <img src="{{ Vite::asset('resources/assets/icons/icon-rmt.svg') }}" alt="Orders" class="h-5 w-5 mr-2">
         <span class="text-sm">RMT Management</span>
     </a>

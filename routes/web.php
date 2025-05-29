@@ -7,6 +7,7 @@ use App\Http\Controllers\UsersController;
 use App\Http\Controllers\QuestionnairesController;
 use App\Http\Controllers\PeriodsController;
 
+use App\Http\Middleware\CheckUserType;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,13 +40,17 @@ Route::middleware(['auth'])->group(function () {
         return view('rmt/deadlines');
     })->name('deadlines');
 
+});
 
-    // admin
+// Routes Admin
+Route::middleware(['auth', CheckUserType::class . ':1'])->group(function () {
     Route::get('users', [UsersController::class, 'index'])->name('users');
-    Route::get('rmt', [UsersController::class, 'rmt'])->name('rmt');
+//    Route::get('rmt', [UsersController::class, 'rmt'])->name('rmt');
     Route::get('lgu', [UsersController::class, 'lgu'])->name('lgu');
     Route::get('questionnaires', [QuestionnairesController::class, 'index'])->name('questionnaires');
     Route::get('period-management', [PeriodsController::class, 'index'])->name('period-management');
+    Route::get('period-assessments', [PeriodsController::class, 'assessments'])->name('period-assessments');
+    Route::get('rmt', [PeriodsController::class, 'assignments'])->name('rmt');
 
     Route::get('questionnaires/manage/{id}', [QuestionnairesController::class, 'manageQuestionnaires'])->name('manage-questionnaires');
     Route::get('questionnaires/manage/{id}/ref/{id2}', [QuestionnairesController::class, 'getReference'])->name('get-reference');

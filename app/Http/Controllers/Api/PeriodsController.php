@@ -119,4 +119,5 @@ class PeriodsController extends Controller
 
         return response()->json(['message' => 'Assessment period deleted successfully']);
     }
+
 }

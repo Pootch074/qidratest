@@ -22,6 +22,7 @@ class ProvincesSeeder extends Seeder
             ['name' => 'N/A (Highly Urbanized)'],
             ['name' => 'Davao del Norte'],
             ['name' => 'Davao del Sur'],
+            ['name' => 'Davao de Oro'],
             ['name' => 'Davao Oriental'],
             ['name' => 'Davao Occidental']
         ];
