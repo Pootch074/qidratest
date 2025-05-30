@@ -26,9 +26,7 @@ class PeriodsController extends Controller
 
     public function assignments(Request $request)
     {
-        // Get current active period or latest inactive
-        $assignments = $this->getPeriodAssessments();
-        return view('admin.periods.assignments', compact('assignments'));
+        return view('admin.periods.assignments');
     }
 
     private function getPeriodAssessments(Period $period = null)

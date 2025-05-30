@@ -6,8 +6,7 @@
     <title>{{ config('app.name', 'DSWD - SDCA') }} - {{ strtoupper(auth()->user()->getUserTypeName()) }} Portal</title>
     @vite(['resources/css/app.css', 'resources/css/custom.scss', 'resources/js/app.js'])
     @yield('header')
-    <style>
-    </style>
+    @livewireStyles
 </head>
 
 <body class="min-h-screen flex flex-col">
@@ -50,6 +49,6 @@
     </div>
 
     @yield('script')
-
+    @livewireScripts
 </body>
 </html>
