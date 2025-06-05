@@ -85,7 +85,7 @@
 </li>
 
 <li class="mx-1 my-2">
-    <a href="#" class="transition-colors duration-200 flex items-center p-3 rounded-lg text-white hover:bg-[#DB0C16]">
+    <a href="{{ route('reports') }}" class="transition-colors duration-200 flex items-center p-3 rounded-lg text-white hover:bg-[#DB0C16] {{ Request::is('reports') ? 'bg-[#DB0C16]' : '' }}">
         <img src="{{ Vite::asset('resources/assets/icons/icon-report.svg') }}" alt="Settings" class="h-5 w-5 mr-2">
         <span class="text-sm">Reports</span>
     </a>

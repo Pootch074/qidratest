@@ -11,7 +11,8 @@
         :class="{ 'shadow-lg bg-gray-800/30 p-2 rounded-lg': isAnyOpen }">
         @include('layouts.sidebar.' . Str::lower(auth()->user()->getUserTypeName()))
     </ul>
-
+    
+    <!--
     <a href="#" id="sidebar-doc" class="rounded-2xl p-4 text-white flex flex-col mt-5 group block w-64 transition-colors
         duration-200 ease-in-out bg-[#060B28] hover:bg-[#DB0C16]
         absolute bottom-25">
@@ -22,4 +23,6 @@
         Documentation
     </span>
     </a>
+    -->
+    
 </div>
