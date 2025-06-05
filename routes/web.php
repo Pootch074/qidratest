@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\QuestionnairesController;
 use App\Http\Controllers\PeriodsController;
+use App\Http\Controllers\ReportsController;
 
 use App\Http\Middleware\CheckUserType;
 use Illuminate\Support\Facades\Route;
@@ -17,27 +18,26 @@ Route::get('/', function () {
 Route::get('/auth/login', [LoginController::class, 'login'])->name('login');
 Route::post('/auth/login', [LoginController::class, 'authenticate'])->name('authenticate');
 Route::get('/auth/redirect', [GoogleController::class, 'redirect']);
-Route::get('/auth/callback', [GoogleController::class, 'callback'] );
+Route::get('/auth/callback', [GoogleController::class, 'callback']);
 
 // Protected Routes (Require Authentication)
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'dashboard'] )->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
 
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
-    Route::get('/profile', function() {
+    Route::get('/profile', function () {
         return view('rmt/assessment/profile');
     })->name('profile');
 
-    Route::get('/assessments', function() {
+    Route::get('/assessments', function () {
         return view('rmt/assessment/assessments');
     })->name('assessments');
 
-    Route::get('deadlines', function() {
+    Route::get('deadlines', function () {
         return view('rmt/deadlines');
     })->name('deadlines');
-
 });
 
 // Routes Admin
@@ -51,4 +51,6 @@ Route::middleware(['auth', CheckUserType::class . ':1'])->group(function () {
 
     Route::get('questionnaires/manage/{id}', [QuestionnairesController::class, 'manageQuestionnaires'])->name('manage-questionnaires');
     Route::get('questionnaires/manage/{id}/ref/{id2}', [QuestionnairesController::class, 'getReference'])->name('get-reference');
+
+    Route::get('reports', [ReportsController::class, 'index'])->name('reports');
 });
