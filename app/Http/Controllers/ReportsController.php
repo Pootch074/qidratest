@@ -11,9 +11,18 @@ use Illuminate\Support\Facades\DB;
 
 class ReportsController extends Controller
 {
-    //
-    public function index()
+    // public function index()
+    // {
+    //     return view('admin.reports.index');
+    // }
+
+    public function paramReport()
     {
-        return view('admin.reports.index');
+        return view('admin.reports.parameter');
+    }
+
+    public function complMonitor()
+    {
+        return view('admin.reports.compliance');
     }
 }
