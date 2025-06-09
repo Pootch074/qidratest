@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('title', 'Parameter Report')
+@section('title', 'Parameter Result')
 
 @section('content')
 
@@ -35,7 +35,7 @@
                         <tr class="bg-white text-center uppercase border-b border-gray-200">
                             <td class="border px-6 py-4 w-2/6 font-medium text-gray-900 whitespace-nowrap"></td>
                             <td class="border px-6 py-4 w-1/6">Level</td>
-                            <td class="border px-6 py-4 w-2/6">Remarks</td>
+                            <td class="border px-6 py-4 w-2/6">Description</td>
                             <td class="border px-6 py-4 w-1/6">New Index Score</td>
                         </tr>
                         <tr>

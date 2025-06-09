@@ -120,7 +120,7 @@
             <a href="{{ route('parameter-report') }}"
             class="transition-colors duration-200 flex items-center p-3 rounded-lg text-white hover:bg-[#DB0C16] {{ Request::is('parameter-report') ? 'bg-[#DB0C16]' : '' }}">
             <img src="{{ Vite::asset('resources/assets/icons/icon-sidebar.svg') }}" alt="parameter" class="h-5 w-5 mr-2">
-                <span class="text-sm">Parameter Report</span>
+                <span class="text-sm">Parameter Result</span>
             </a>
         </li>
         
