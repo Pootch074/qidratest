@@ -63,12 +63,12 @@
     </a>
 </li>
 
-{{-- <li class="mx-1 my-2">
+<li class="mx-1 my-2">
     <a href="{{ route('lgu') }}" class="transition-colors duration-200 flex items-center p-3 rounded-lg text-white hover:bg-[#DB0C16] {{ Request::is('lgu') ? 'bg-[#DB0C16]' : '' }}">
         <img src="{{ Vite::asset('resources/assets/icons/icon-lgu.svg') }}" alt="Deadlines" class="h-5 w-5 mr-2">
         <span class="text-sm">LGU Profiling</span>
     </a>
-</li> --}}
+</li>
 
 {{-- <li class="mx-1 my-2">
     <a href="#" class="transition-colors duration-200 flex items-center p-3 rounded-lg text-white hover:bg-[#DB0C16]">
@@ -88,7 +88,7 @@
 @endphp
 
 <li x-data="{ isOpen: {{ $isParameterSectionActive ? 'true' : 'false' }} }" class="mx-1 my-2 relative">
-    <a href="" 
+    <a href=""
     class="transition-colors duration-200 flex items-center p-3 rounded-lg text-white hover:bg-[#DB0C16]"
     :class="{ 'bg-[#851E54]': isOpen }"
     @click.prevent="isOpen = !isOpen">
@@ -98,7 +98,7 @@
              class="h-5 w-5 mr-2 absolute right-1 transition-transform duration-300"
              :class="{ 'rotate-180': isOpen }">
     </a>
-    
+
     <ul x-show="isOpen"
         x-transition:enter="transition-all duration-300 ease-out"
         x-transition:enter-start="opacity-0 max-h-0"
@@ -123,7 +123,7 @@
                 <span class="text-sm">Parameter Result</span>
             </a>
         </li>
-        
+
 
     </ul>
 </li>

@@ -51,7 +51,26 @@
                 </th>
             </tr>
             </thead>
-            <tbody>
+            <tbody
+                x-data="{
+                    questionnaires: @js($questionnaires),
+                    baseToggleUrl: '{{ route('toggle-questionnaire-status', ['id' => '__ID__']) }}',
+                    toggleStatus(q) {
+                        const url = this.baseToggleUrl.replace('__ID__', q.id)
+                        fetch(url)
+                            .then(response => {
+                                if (!response.ok) throw new Error('Failed to toggle status')
+                                return response.json()
+                            })
+                            .then(data => {
+                                q.status = data.status // update the status locally
+                            })
+                            .catch(error => {
+                                alert('Error toggling status: ' + error.message)
+                            })
+                    }
+                }"
+            >
             <template x-for="q in questionnaires" :key="q.id">
                 <tr class="hover:bg-gray-50">
 {{--                    <td class="border border-gray-200 px-4 py-2 text-sm">--}}
@@ -63,24 +82,28 @@
                         x-text="new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(q.effectivity_date))"
                     ></td>
                     <td class="border border-gray-200 px-4 py-2 text-sm text-[#667085]">
-                        <span
-                            class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium"
-                            :class="{
-                                'bg-green-100 text-green-800': q.status === 'published',
-                                'bg-yellow-100 text-yellow-800': q.status === 'ended',
-                                'bg-gray-200 text-gray-800': q.status === 'unpublished'
-                            }"
-                        >
-                            <span x-text="q.status === 'published' ? '⬤' : (q.status === 'ended' ? '⬤' : '⬤')"
-                                  :class="{
-                                      'text-green-500': q.status === 'published',
-                                      'text-yellow-500': q.status === 'ended',
-                                      'text-gray-500': q.status === 'unpublished'
-                                  }"
-                            ></span>
-                            <span x-text="q.status.charAt(0).toUpperCase() + q.status.slice(1)"></span>
-                        </span>
+                        <a href="#" @click.prevent="toggleStatus(q)">
+                            <span
+                                class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium cursor-pointer"
+                                :class="{
+                                    'bg-green-100 text-green-800': q.status === 'published',
+                                    'bg-yellow-100 text-yellow-800': q.status === 'ended',
+                                    'bg-gray-200 text-gray-800': q.status === 'unpublished'
+                                }"
+                            >
+                                <span
+                                    x-text="q.status === 'published' ? '⬤' : (q.status === 'ended' ? '⬤' : '⬤')"
+                                    :class="{
+                                        'text-green-500': q.status === 'published',
+                                        'text-yellow-500': q.status === 'ended',
+                                        'text-gray-500': q.status === 'unpublished'
+                                    }"
+                                ></span>
+                                <span x-text="q.status.charAt(0).toUpperCase() + q.status.slice(1)"></span>
+                            </span>
+                        </a>
                     </td>
+
                     <td class="border border-gray-200 px-4 py-2 text-sm">
                         <a href="#" @click.prevent="editQ(q)"
                            class="border border-[#667085] hover:bg-blue-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
@@ -88,12 +111,12 @@
                                  alt="Edit Questionnaire">
                             <span class="text-[#667085] text-xs">Edit</span>
                         </a>
-                        <a href="#" @click.prevent="deleteQ(q.id)"
+                        {{-- <a href="#" @click.prevent="deleteQ(q.id)"
                            class="border border-[#667085] hover:bg-red-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
                             <img src="{{ Vite::asset('resources/assets/icons/icon-edit.svg') }}" class="h-4 w-4"
                                  alt="Delete Questionnaire">
                             <span class="text-[#667085] text-xs">Delete</span>
-                        </a>
+                        </a> --}}
                         <a :href="'/questionnaires/manage/' + q.id"
                            class="border border-[#667085] hover:bg-red-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
                             <img src="{{ Vite::asset('resources/assets/icons/icon-edit.svg') }}" class="h-4 w-4"

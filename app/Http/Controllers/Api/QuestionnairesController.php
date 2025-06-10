@@ -35,14 +35,31 @@ class QuestionnairesController extends Controller
             return response()->json(['errors' => $e->errors()], 422);
         }
 
-        $validate['created_at'] = $validate['updated_at'] = Carbon::now();
-        $validate['status'] = 'Unpublished'; // Published, Ended
-        $questionnaire = QuestionnaireTree::create($validate);
+        $sourceTreeId = QuestionnaireTree::whereIn('id', function ($query) {
+            $query->select('questionnaire_tree_id')
+                ->from('questionnaires');
+        })
+        ->orderByDesc('id')
+        ->value('id');
 
+        $validate['created_at'] = $validate['updated_at'] = Carbon::now();
+        $validate['status'] = 'published'; // Published, Ended
+        $questionnaire = QuestionnaireTree::create($validate);
+        $newTreeId = $questionnaire->id;
+
+        // clone questionnaires for the new tree
+        $sourceQuestionnaires = Questionnaire::where('questionnaire_tree_id', $sourceTreeId)->get();
+        foreach ($sourceQuestionnaires as $questionnaire) {
+            $newQuestionnaire = $questionnaire->replicate(); // clones attributes
+            $newQuestionnaire->questionnaire_tree_id = $newTreeId; // set to new tree ID
+            $newQuestionnaire->save();
+        }
+
+        // return new questionnaire
         return response()->json(['message' => 'Questionnaire added successfully!', 'questionnaire' => [
             'questionnaire_name' => $questionnaire['questionnaire_name'],
             'effectivity_date' => $questionnaire['effectivity_date'],
-            'status' => $questionnaire['status']
+            'status' => strtolower($questionnaire['status'])
         ]], 201);
     }
 
@@ -86,5 +103,21 @@ class QuestionnairesController extends Controller
         $q->delete(); // Delete the user
 
         return response()->json(['message' => 'Questionnaire deleted successfully']);
+    }
+
+    public function toggleStatus($id)
+    {
+        $q = QuestionnaireTree::find($id); // Find the user by ID
+
+        if (!$q) {
+            return response()->json(['message' => 'Questionnaire not found'], 404);
+        }
+
+        $q->status = $q->status == 'published' ? 'unpublished' : 'published';
+        $q->save();
+
+        return response()->json([
+            'status' => $q->status, // 'published' or 'unpublished'
+        ]);
     }
 }

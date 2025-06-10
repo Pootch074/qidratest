@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Helpers\PeriodHelper;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\PeriodAssessment;
@@ -47,6 +48,7 @@ class AdminAssignments extends Component
                         ->orWhere('users.last_name', 'like', '%' . $this->search . '%');
                 });
             })
+            ->where('period_id', PeriodHelper::currentPeriodId())
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate(10);
 

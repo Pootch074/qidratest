@@ -50,7 +50,15 @@
                     if (!response.ok) throw new Error("Failed to add assessment period");
 
                     const addedP = await response.json();
-                    this.periods.push(addedP.period); // Append new period to table
+
+                    // 1. Mark all existing periods as 'Completed'
+                    this.periods = this.periods.map(p => ({
+                        ...p,
+                        status: 'completed'
+                    }));
+
+                    // 2. Append the newly added period (with 'Ongoing' status)
+                    this.periods.push(addedP.period);
                     this.showModal = false; // Close modal
                 } catch (error) {
                     console.error("Error adding period:", error);

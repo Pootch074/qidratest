@@ -28,6 +28,7 @@ Route::get('/questionnaires', [\App\Http\Controllers\Api\QuestionnairesControlle
 Route::post('/questionnaires', [\App\Http\Controllers\Api\QuestionnairesController::class, 'post'])->name('api-questionnaires-post');
 Route::put('/questionnaires/{id}', [\App\Http\Controllers\Api\QuestionnairesController::class, 'put'])->name('api-questionnaires-put');
 Route::delete('/questionnaires/{id}', [\App\Http\Controllers\Api\QuestionnairesController::class, 'delete'])->name('api-questionnaires-delete');
+Route::get('/questionnaires/{id}/toggle', [\App\Http\Controllers\Api\QuestionnairesController::class, 'toggleStatus'])->name('toggle-questionnaire-status');
 
 Route::get('/periods', [\App\Http\Controllers\Api\PeriodsController::class, 'get'])->name('api-periods-get');
 Route::post('/periods', [\App\Http\Controllers\Api\PeriodsController::class, 'post'])->name('api-periods-post');
