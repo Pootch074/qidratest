@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\PeriodHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Lgu;
+use App\Models\PeriodAssessment;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -12,7 +14,7 @@ class LguController extends Controller
 {
     public function get()
     {
-        return response()->json(Lgu::all()->map(function ($lgu) {
+        return response()->json(Lgu::orderBy('name')->get()->map(function ($lgu) {
             return [
                 'id' => $lgu->id,
                 'name' => $lgu->name,
@@ -49,6 +51,13 @@ class LguController extends Controller
 
         $validate['created_at'] = $validate['updated_at'] = Carbon::now();
         $lgu = Lgu::create($validate);
+
+        // add new lgu in rmt management
+        $periodAssessment = new PeriodAssessment();
+        $periodAssessment->period_id = PeriodHelper::currentPeriodId();
+        $periodAssessment->lgu_id = $lgu->id;
+        $periodAssessment->status = 'pending';
+        $periodAssessment->save();
 
         return response()->json(['message' => 'Profile added successfully!', 'lgu' => $lgu], 201);
     }

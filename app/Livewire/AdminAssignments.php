@@ -39,7 +39,8 @@ class AdminAssignments extends Component
                 'period_assessments.id',
                 'lgus.name as lgu_name',
                 'users.first_name as rmt_first_name',
-                'users.last_name as rmt_last_name'
+                'users.last_name as rmt_last_name',
+                'period_assessments.status'
             )
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
