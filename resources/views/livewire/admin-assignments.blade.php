@@ -43,6 +43,11 @@
             </th>
             <th class="border border-gray-200 px-4 py-2 text-left">
                 <div class="flex items-center space-x-1 text-xs text-[#667085] font-normal">
+                    <span>Status</span>
+                </div>
+            </th>
+            <th class="border border-gray-200 px-4 py-2 text-left">
+                <div class="flex items-center space-x-1 text-xs text-[#667085] font-normal">
                     <span>Actions</span>
                 </div>
             </th>
@@ -54,12 +59,45 @@
                 <td class="border border-gray-200 px-4 py-2 text-sm">{{ $a->lgu_name }}</td>
                 <td class="border border-gray-200 px-4 py-2 text-sm">{{ $a->rmt_first_name }} {{ $a->rmt_last_name }}</td>
                 <td class="border border-gray-200 px-4 py-2 text-sm">{{ $a->rmt_first_name }} {{ $a->rmt_last_name }}</td>
+                <td
+                    class="border border-gray-200 px-4 py-2 text-sm text-[#667085]"
+                    x-data="{
+                        status: '{{ $a->status }}',
+                        toggleStatus() {
+                            // Send a Livewire call to update status
+                            $wire.toggleStatus({{ $a->id }})
+                        }
+                    }"
+                >
+                    <a href="#" @click.prevent="toggleStatus">
+                        <span
+                            class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium cursor-pointer"
+                            :class="{
+                                'bg-green-100 text-green-800': status === 'completed',
+                                'bg-yellow-100 text-yellow-800': status === 'on-going',
+                                'bg-gray-200 text-gray-800': status === 'pending',
+                                'bg-red-200 text-red-800': status === 'request_for_extension',
+                            }"
+                        >
+                            <span
+                                x-text="status === 'completed' ? '⬤' : (status === 'pending' ? '⬤' : '⬤')"
+                                :class="{
+                                    'text-green-500': status === 'completed',
+                                    'text-yellow-500': status === 'on-going',
+                                    'text-gray-500': status === 'pending',
+                                    'text-red-500': status === 'request_for_extension'
+                                }"
+                            ></span>
+                            <span x-text="status.charAt(0).toUpperCase() + status.slice(1).replaceAll('_', ' ')"></span>
+                        </span>
+                    </a>
+                </td>
                 <td class="border border-gray-200 px-4 py-2 text-sm space-x-2">
-                    <a href="{{ url('/periods/manage/' . $a->id) }}"
+                    {{-- <a href="{{ url('/periods/manage/' . $a->id) }}"
                        class="border border-[#667085] hover:bg-red-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
                         <img src="{{ Vite::asset('resources/assets/icons/icon-edit.svg') }}" class="h-4 w-4" alt="Edit">
                         <span class="text-[#667085] text-xs">Edit</span>
-                    </a>
+                    </a> --}}
                     <a href="{{ url('/periods/manage/' . $a->id) }}"
                        class="border border-[#667085] hover:bg-red-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
                         <img src="{{ Vite::asset('resources/assets/icons/icon-edit.svg') }}" class="h-4 w-4" alt="Assign">
