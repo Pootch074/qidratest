@@ -24,7 +24,6 @@ Route::get('/auth/callback', [GoogleController::class, 'callback']);
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
-
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
     Route::get('/profile', function () {
@@ -47,7 +46,7 @@ Route::middleware(['auth', CheckUserType::class . ':1'])->group(function () {
     Route::get('questionnaires', [QuestionnairesController::class, 'index'])->name('questionnaires');
     Route::get('period-management', [PeriodsController::class, 'index'])->name('period-management');
     Route::get('period-assessments', [PeriodsController::class, 'assessments'])->name('period-assessments');
-    Route::get('rmt', [PeriodsController::class, 'assignments'])->name('rmt');
+    Route::get('rmt-assignments', [PeriodsController::class, 'assignments'])->name('rmt-assignments');
 
     Route::get('questionnaires/manage/{id}', [QuestionnairesController::class, 'manageQuestionnaires'])->name('manage-questionnaires');
     Route::get('questionnaires/manage/{id}/ref/{id2}', [QuestionnairesController::class, 'getReference'])->name('get-reference');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Period;
+use App\Models\PeriodAssessment;
 use App\Models\QuestionnaireTree;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -118,6 +119,12 @@ class PeriodsController extends Controller
         $p->delete(); // Delete the user
 
         return response()->json(['message' => 'Assessment period deleted successfully']);
+    }
+
+    public function assign(Request $request)
+    {
+        dd($request->all());
+        // $p = PeriodAssessment::find($id); // Find the user by ID
     }
 
 }

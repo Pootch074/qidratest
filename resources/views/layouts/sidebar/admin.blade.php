@@ -56,8 +56,8 @@
 </li>
 
 <li class="mx-1 my-2">
-    <a href="{{ route('rmt') }}"
-       class="transition-colors duration-200 flex items-center p-3 rounded-lg text-white hover:bg-[#DB0C16] {{ Request::is('rmt') ? 'bg-[#DB0C16]' : '' }}">
+    <a href="{{ route('rmt-assignments') }}"
+       class="transition-colors duration-200 flex items-center p-3 rounded-lg text-white hover:bg-[#DB0C16] {{ Request::is('rmt-assignments') ? 'bg-[#DB0C16]' : '' }}">
         <img src="{{ Vite::asset('resources/assets/icons/icon-rmt.svg') }}" alt="Orders" class="h-5 w-5 mr-2">
         <span class="text-sm">RMT Management</span>
     </a>

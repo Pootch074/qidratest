@@ -6,6 +6,7 @@ use App\Helpers\PeriodHelper;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\PeriodAssessment;
+use App\Models\User;
 
 class AdminAssignments extends Component
 {
@@ -14,6 +15,15 @@ class AdminAssignments extends Component
     public $search = '';
     public $sortField = 'lgus.name';
     public $sortDirection = 'asc';
+
+    public $teamLeaders = [];
+    public $rmts = [];
+
+    public function mount()
+    {
+        $this->teamLeaders = User::teamLeaders()->active()->get();
+        $this->rmts = User::rmts()->active()->get();
+    }
 
     public function updatingSearch()
     {
@@ -52,6 +62,8 @@ class AdminAssignments extends Component
             ->where('period_id', PeriodHelper::currentPeriodId())
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate(10);
+
+
 
         return view('livewire.admin-assignments', [
             'assignments' => $assignments

@@ -14,6 +14,7 @@ class LguController extends Controller
 {
     public function get()
     {
+
         return response()->json(Lgu::orderBy('name')->get()->map(function ($lgu) {
             return [
                 'id' => $lgu->id,

@@ -16,7 +16,7 @@
 
             async fetchUsers() {
                 try {
-                    const response = await fetch("http://localhost/api/users");
+                    const response = await fetch("{{ route('api-users-get') }}");
                     this.users = await response.json();
                 } catch (error) {
                     console.error("Error fetching users:", error);
@@ -42,7 +42,7 @@
 
             async addUser() {
                 try {
-                    const response = await fetch("http://localhost/api/users", {
+                    const response = await fetch("{{ route('api-users-get') }}", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
@@ -73,7 +73,7 @@
                 try {
 
                     const response = await fetch(
-                        'http://localhost/api/users/' + this.newUser.id, {
+                        "{{ route('api-users-get') }}" + this.newUser.id, {
                             method: "PUT",
                             headers: {
                                 "Content-Type": "application/json"
@@ -99,7 +99,7 @@
                 if (!confirm("Are you sure you want to delete this user?")) return;
 
                 try {
-                    const response = await fetch(`http://localhost/api/users/${userId}`, {
+                    const response = await fetch(`{{ route('api-users-get') }}/${userId}`, {
                         method: "DELETE",
                     });
 

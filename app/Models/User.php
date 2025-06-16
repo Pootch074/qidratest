@@ -104,4 +104,19 @@ class User extends Authenticatable
         }
     }
 
+    public function scopeActive($query)
+    {
+        return $query->where('status', self::STATUS_ACTIVE);
+    }
+
+    public function scopeTeamLeaders($query)
+    {
+        return $query->where('user_type', self::TYPE_TL);
+    }
+
+    public function scopeRmts($query)
+    {
+        return $query->where('user_type', self::TYPE_RMT);
+    }
+
 }

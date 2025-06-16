@@ -65,7 +65,7 @@
 
             async fetchLgus() {
                 try {
-                    const response = await fetch("http://localhost/api/lgu");
+                    const response = await fetch("{{ route('api-lgu-get') }}");
                     this.lgus = await response.json();
                 } catch (error) {
                     console.error("Error fetching lgus:", error);
@@ -94,7 +94,7 @@
             async addLgu() {
                 try {
 
-                    const response = await fetch("http://localhost/api/lgu", {
+                    const response = await fetch("{{ route('api-lgu-post') }}", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
@@ -133,7 +133,7 @@
                 try {
 
                     const response = await fetch(
-                        'http://localhost/api/lgu/' + this.newLgu.id, {
+                        '{{ route("api-lgu-get")}}/' + this.newLgu.id, {
                             method: "PUT",
                             headers: {
                                 "Content-Type": "application/json"
@@ -159,7 +159,7 @@
                 if (!confirm("Are you sure you want to delete this profile?")) return;
 
                 try {
-                    const response = await fetch(`http://localhost/api/lgu/${lguId}`, {
+                    const response = await fetch(`{{ route("api-lgu-get")}}/${lguId}`, {
                         method: "DELETE",
                     });
 
