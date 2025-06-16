@@ -59,7 +59,7 @@
             <tr class="hover:bg-gray-50">
                 <td class="border border-gray-200 px-4 py-2 text-sm">{{ $a->lgu_name }}</td>
                 <td class="border border-gray-200 px-4 py-2 text-sm">{{ $a->rmt_first_name }} {{ $a->rmt_last_name }}</td>
-                <td class="border border-gray-200 px-4 py-2 text-sm">{{ $a->rmt_first_name }} {{ $a->rmt_last_name }}</td>
+                <td class="border border-gray-200 px-4 py-2 text-sm">{!! $this->getAssesstors($a->id) !!}</td>
                 <td class="border border-gray-200 px-4 py-2 text-sm text-[#667085]"
                     x-data="{
                         status: '{{ $a->status }}',
@@ -67,22 +67,20 @@
                     }">
                     <a href="#" @click.prevent="toggleStatus">
                         <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium cursor-pointer"
-                            :class="{
-                                'bg-green-100 text-green-800': status === 'completed',
-                                'bg-yellow-100 text-yellow-800': status === 'on-going',
-                                'bg-gray-200 text-gray-800': status === 'pending',
-                                'bg-red-200 text-red-800': status === 'request_for_extension',
-                            }">
+                              :class="{
+                                  'bg-green-100 text-green-800': status === 'completed',
+                                  'bg-yellow-100 text-yellow-800': status === 'on-going',
+                                  'bg-gray-200 text-gray-800': status === 'pending',
+                                  'bg-red-200 text-red-800': status === 'request_for_extension',
+                              }">
                             <span x-text="status.charAt(0).toUpperCase() + status.slice(1).replaceAll('_', ' ')"></span>
                         </span>
                     </a>
                 </td>
-
-                <!-- ACTION BUTTON -->
                 <td class="border border-gray-200 px-4 py-2 text-sm space-x-2">
                     <a href="#"
-                    @click.prevent="openModal({ id: '{{ $a->lgu_id }}', name: '{{ $a->lgu_name }}' })"
-                    class="border border-[#667085] hover:bg-red-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
+                       @click.prevent="openModal({ id: '{{ $a->id }}', lgu_name: '{{ $a->lgu_name }}' })"
+                       class="border border-[#667085] hover:bg-red-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
                         <img src="{{ Vite::asset('resources/assets/icons/icon-edit.svg') }}" class="h-4 w-4" alt="Assign">
                         <span class="text-[#667085] text-xs">Assign</span>
                     </a>
@@ -101,42 +99,11 @@
     </div>
 
     <!-- MODAL -->
-    <div x-data="{
-        showModal: false,
-        selectedTeamLeader: '',
-        selectedRmts: [],
-        currentData: { id: null, lgu_name: '' },
-        openModal(data) {
-            this.currentData = data;
-            this.showModal = true;
-        },
-        assign() {
-            fetch('{{ route('api-periods-assign') }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    lgu_id: this.currentData.id,
-                    team_leader: this.selectedTeamLeader,
-                    members: this.selectedRmts
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-                this.closeModal();
-            })
-            .catch(error => console.error('Error:', error));
-        },
-        closeModal() { this.showModal = false; }
-    }">
-        <form x-data="assignForm()" @submit.prevent="assign" method="POST" action="{{ route('api-periods-assign') }}">
-            <input type="hidden" name="lgu_id" :value="currentData.id">
-
-            <div x-show="showModal" x-transition class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 z-50">
-                <h2 class="text-xl font-semibold mb-4">Assign Team</h2>
+    <div x-show="showModal" class="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 mt-[-4rem]">
+            <h2 class="text-xl font-semibold mb-4">Assign Team</h2>
+            <form @submit.prevent="assign">
+                <input type="hidden" name="id" :value="currentData.id">
 
                 <div class="mb-4">
                     <p>Assigning for: <strong x-text="currentData.lgu_name"></strong></p>
@@ -171,29 +138,27 @@
 
                 <div class="flex justify-end space-x-2">
                     <button type="submit" class="bg-[#2E3192] text-white px-4 py-2 rounded">Assign</button>
-                    <button type="button" @click="closeModal" class="bg-gray-300 text-black px-4 py-2 rounded">Cancel</button>
+                    <a href="#" @click="closeModal" class="bg-gray-300 text-black px-4 py-2 rounded">Cancel</a>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-
 </div>
 
 <!-- AlpineJS Controller -->
 <script>
-    function assignForm() {
+    function assignmentModal() {
         return {
             showModal: false,
             selectedTeamLeader: '',
             selectedRmts: [],
-            currentData: {
-                lgu_id: null,
-                lgu_name: ''
-            },
+            currentData: { id: null, lgu_name: '' },
+
             openModal(data) {
                 this.currentData = data;
                 this.showModal = true;
             },
+
             assign() {
                 fetch("{{ route('api-periods-assign') }}", {
                     method: "POST",
@@ -202,7 +167,7 @@
                         "X-CSRF-TOKEN": "{{ csrf_token() }}"
                     },
                     body: JSON.stringify({
-                        lgu_id: this.currentData.id,
+                        id: this.currentData.id,
                         team_leader: this.selectedTeamLeader,
                         members: this.selectedRmts
                     })
@@ -210,12 +175,14 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log("Success:", data);
-                    this.closeModal();
+                    // this.closeModal();
+                    location.reload();
                 })
                 .catch(error => {
                     console.error("Error:", error);
                 });
             },
+
             closeModal() {
                 this.showModal = false;
             }

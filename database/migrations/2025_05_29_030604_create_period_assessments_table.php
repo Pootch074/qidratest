@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('period_id')->constrained();
             $table->foreignId('lgu_id')->nullable()->constrained();
-            $table->foreignId('rmt_id')->nullable()->constrained();
+            $table->foreignId('user_id')->nullable()->constrained();
             $table->date('assessment_start_date')->nullable();
             $table->date('assessment_end_date')->nullable();
             $table->string('status')->default('pending'); // pending, on-going, completed, request_for_extension

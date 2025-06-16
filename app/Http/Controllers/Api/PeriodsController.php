@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\PeriodHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Period;
 use App\Models\PeriodAssessment;
+use App\Models\PeriodAssessor;
 use App\Models\QuestionnaireTree;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -107,24 +109,50 @@ class PeriodsController extends Controller
 
     }
 
-    public function delete($id)
-    {
-
-        $p = Period::find($id); // Find the user by ID
-
-        if (!$p) {
-            return response()->json(['message' => 'Assessment period not found'], 404);
-        }
-
-        $p->delete(); // Delete the user
-
-        return response()->json(['message' => 'Assessment period deleted successfully']);
-    }
-
     public function assign(Request $request)
     {
-        dd($request->all());
-        // $p = PeriodAssessment::find($id); // Find the user by ID
+        $data = $request->all();
+
+        $periodId = PeriodHelper::currentPeriodId();
+        $id = $data['id'];
+        $teamLeader = $data['team_leader'];
+        $rmts = $data['members']; // array of user IDs to assign
+
+        $periodAssessment = PeriodAssessment::find($id);
+
+        // Assign team leader only if different
+        if ($periodAssessment->user_id !== $teamLeader) {
+            $periodAssessment->user_id = $teamLeader;
+            $periodAssessment->save();
+        }
+
+        // Get currently assigned RMT user IDs
+        $currentRmts = PeriodAssessor::where('period_assessment_id', $id)
+            ->pluck('user_id')
+            ->toArray();
+
+        // Users to remove: in DB but not in new list
+        $toRemove = array_diff($currentRmts, $rmts);
+
+        // Users to add: in new list but not in DB
+        $toAdd = array_diff($rmts, $currentRmts);
+
+        // Remove outdated users
+        if (!empty($toRemove)) {
+            PeriodAssessor::where('period_assessment_id', $id)
+                ->whereIn('user_id', $toRemove)
+                ->delete();
+        }
+
+        // Add new users
+        foreach ($toAdd as $userId) {
+            PeriodAssessor::create([
+                'period_assessment_id' => $id,
+                'user_id' => $userId,
+            ]);
+        }
+
+        return response()->json(['message' => 'RMT Management is completed.'], 200);
     }
 
 }

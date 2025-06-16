@@ -23,6 +23,6 @@ class PeriodAssessment extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'rmt_id');
+        return $this->belongsTo(User::class);
     }
 }

@@ -100,12 +100,12 @@
                                  alt="Edit Period">
                             <span class="text-[#667085] text-xs">Edit</span>
                         </a>
-                        <a href="#" @click.prevent="deleteP(p.id)"
+                        {{-- <a href="#" @click.prevent="deleteP(p.id)"
                            class="border border-[#667085] hover:bg-red-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
                             <img src="{{ Vite::asset('resources/assets/icons/icon-edit.svg') }}" class="h-4 w-4"
                                  alt="Delete Period">
                             <span class="text-[#667085] text-xs">Delete</span>
-                        </a>
+                        </a> --}}
                         <a :href="'/periods/manage/' + p.id"
                            class="border border-[#667085] hover:bg-red-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
                             <img src="{{ Vite::asset('resources/assets/icons/icon-edit.svg') }}" class="h-4 w-4"
