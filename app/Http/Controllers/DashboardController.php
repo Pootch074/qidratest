@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\DashboardHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Helpers\PeriodHelper;
@@ -17,6 +18,8 @@ class DashboardController extends Controller
             return redirect()->route('period-management');
         }
 
-        return view((Str::lower(auth()->user()->getUserTypeName())) . '/dashboard');
+        $userType = DashboardHelper::currentView();
+
+        return view(($userType) . '/dashboard');
     }
 }

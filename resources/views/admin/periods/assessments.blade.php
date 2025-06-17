@@ -74,7 +74,7 @@
             </thead>
             <tbody>
             @php
-                $filtered = $assessments->filter(fn($a) => $a->rmt_id);
+                $filtered = $assessments->filter(fn($a) => $a->user_id);
             @endphp
             @forelse ($filtered as $a)
 
@@ -82,10 +82,10 @@
                     <td class="border border-gray-200 px-4 py-2 text-sm">{{ $a->lgu->name ?? '' }}</td>
                     <td class="border border-gray-200 px-4 py-2 text-sm">{{ $a->user->first_name ?? '' }} {{ $a->user->last_name ?? '' }}</td>
                     <td class="border border-gray-200 px-4 py-2 text-sm text-[#667085]">
-                        {{ \Carbon\Carbon::parse($a->assessment_start_date)->format('M d, Y') }}
+                        {{ $a->assessment_start_date ? \Carbon\Carbon::parse($a->assessment_start_date)->format('M d, Y') : "" }}
                     </td>
                     <td class="border border-gray-200 px-4 py-2 text-sm text-[#667085]">
-                        {{ \Carbon\Carbon::parse($a->assessment_end_date)->format('M d, Y') }}
+                        {{$a->assessment_end_date ? \Carbon\Carbon::parse($a->assessment_end_date)->format('M d, Y') : "" }}
                     </td>
                     <td class="border border-gray-200 px-4 py-2 text-sm text-[#667085]">
             <span
@@ -115,7 +115,7 @@
                 <tr class="hover:bg-gray-50">
                     <td colspan="6" class="border border-gray-200 px-4 py-2 text-sm">
                         No LGU assigned to RMT yet.
-                        <a class="text-blue-900 font-medium" href="{{ route('rmt') }}">Go to RMT Management</a>
+                        <a class="text-blue-900 font-medium" href="{{ route('rmt-assignments') }}">Go to RMT Management</a>
                     </td>
                 </tr>
             @endforelse

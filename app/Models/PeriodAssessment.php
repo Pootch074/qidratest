@@ -9,7 +9,7 @@ class PeriodAssessment extends Model
 {
     protected $table = 'period_assessments';
     protected $primaryKey = 'id';
-    protected $fillable = ['period_id', 'lgu_id', 'rmt_id', 'assessment_start_date', 'assessment_end_date', 'status'];
+    protected $fillable = ['period_id', 'lgu_id', 'user_id', 'assessment_start_date', 'assessment_end_date', 'status'];
     protected $dates = ['assessment_start_date', 'assessment_end_date'];
 
     public function period(): BelongsTo

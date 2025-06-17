@@ -9,7 +9,7 @@
     <!-- Navigation -->
     <ul x-data="{ isAnyOpen: false }" class="space-y-2 overflow-hidden transition-all duration-300"
         :class="{ 'shadow-lg bg-gray-800/30 p-2 rounded-lg': isAnyOpen }">
-        @include('layouts.sidebar.' . Str::lower(auth()->user()->getUserTypeName()))
+        @include('layouts.sidebar.' . \App\Helpers\DashboardHelper::currentView() )
     </ul>
 
     <a href="#" id="sidebar-doc" class="rounded-2xl p-4 text-white flex flex-col mt-5 group block w-64 transition-colors

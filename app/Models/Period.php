@@ -33,7 +33,7 @@ class Period extends Model
                 $rows = $lguIds->map(fn ($id) => [
                     'period_id'  => $period->id,
                     'lgu_id'     => $id,
-                    'rmt_id'     => null,
+                    'user_id'     => null,
                     'created_at' => now(),
                     'updated_at' => now()
                 ])->all();
