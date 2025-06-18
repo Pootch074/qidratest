@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DeadlinesController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\QuestionnairesController;
 use App\Http\Controllers\PeriodsController;
@@ -55,4 +56,9 @@ Route::middleware(['auth', CheckUserType::class . ':1'])->group(function () {
     Route::get('reports', [ReportsController::class, 'index'])->name('reports');
     Route::get('parameter-report', [ReportsController::class, 'paramReport'])->name('parameter-report');
     Route::get('compliance-monitoring', [ReportsController::class, 'complMonitor'])->name('compliance-monitoring');
+});
+
+// Routes RMT and TL
+Route::middleware(['auth', CheckUserType::class . ':3,4'])->group(function () {
+    Route::get('deadlines', [DeadlinesController::class, 'index'])->name('deadlines');
 });
