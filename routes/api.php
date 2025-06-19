@@ -36,3 +36,5 @@ Route::put('/periods/{id}', [\App\Http\Controllers\Api\PeriodsController::class,
 Route::delete('/periods/{id}', [\App\Http\Controllers\Api\PeriodsController::class, 'delete'])->name('api-periods-delete');
 
 Route::post('/period/assign', [\App\Http\Controllers\Api\PeriodsController::class, 'assign'])->name('api-periods-assign');
+
+Route::get('/deadlines/{id}', [\App\Http\Controllers\Api\DeadlinesController::class, 'get'])->name('api-deadlines-get');

@@ -65,7 +65,7 @@ class AdminAssignments extends Component
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate(10);
 
-        if (count($assignments) == 0) {
+        if ($assignments->isEmpty()) {
             // if there are no data, let's repopulate
             $periodId = PeriodHelper::currentPeriodId();
             $assessments = Lgu::pluck('id')->map(function ($lguId) use ($periodId) {
