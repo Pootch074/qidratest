@@ -8,6 +8,7 @@ use App\Http\Controllers\UsersController;
 use App\Http\Controllers\QuestionnairesController;
 use App\Http\Controllers\PeriodsController;
 use App\Http\Controllers\ReportsController;
+use App\Http\Controllers\AssessmentsController;
 
 use App\Http\Middleware\CheckUserType;
 use Illuminate\Support\Facades\Route;
@@ -28,11 +29,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
     Route::get('/profile', function () {
-        return view('rmt/assessment/profile');
+        return view('rmt.assessments.profile');
     })->name('profile');
 
     Route::get('/assessments', function () {
-        return view('rmt/assessment/assessments');
+        return view('rmts.assessments.assessments');
     })->name('assessments');
 
     Route::get('deadlines', function () {
@@ -61,4 +62,5 @@ Route::middleware(['auth', CheckUserType::class . ':1'])->group(function () {
 // Routes RMT and TL
 Route::middleware(['auth', CheckUserType::class . ':3,4'])->group(function () {
     Route::get('deadlines', [DeadlinesController::class, 'index'])->name('deadlines');
+    Route::get('assessment-management', [AssessmentsController::class, 'management'])->name('assessment-management');
 });

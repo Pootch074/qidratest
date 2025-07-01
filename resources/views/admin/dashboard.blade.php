@@ -3,7 +3,7 @@
 
 @section('content')
 
-<div class="container mx-auto p-4">
+{{-- <div class="container mx-auto p-4">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="bg-white shadow-md rounded-2xl px-4 py-10">
             <span class="block text-[#94969B]">Total Assessment</span>
@@ -157,6 +157,6 @@
 
         </div>
     </div>
-</div>
+</div> --}}
 
 @endsection

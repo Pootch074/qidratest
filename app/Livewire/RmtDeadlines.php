@@ -18,24 +18,7 @@ class RmtDeadlines extends Component
     public function mount()
     {
         $userId = auth()->user()->id;
-
-        $assessors = PeriodAssessor::where('user_id', $userId)
-            ->pluck('period_assessment_id');
-
-        $currentPeriodId = PeriodHelper::currentPeriodId();
-
-        $lguIdsRMT = PeriodAssessment::whereIn('id', $assessors)
-            ->where('period_id', $currentPeriodId)
-            ->pluck('lgu_id');
-
-        $lguIdsTL = PeriodAssessment::where('user_id', $userId)
-            ->where('period_id', $currentPeriodId)
-            ->pluck('lgu_id');
-
-        $lguIds = array_unique(array_merge(
-            $lguIdsRMT->toArray(),
-            $lguIdsTL->toArray()
-        ));
+        $lguIds = PeriodHelper::getLgus($userId)->pluck('id')->toArray();
 
         $this->lgus = Lgu::whereIn('id', $lguIds)->get()->toArray();
     }

@@ -7,81 +7,149 @@
         <span class="font-medium text-xl inline-block align-middle ml-2 text-[#1B1D21]">{{ $child->name }}</span>
     </h2>
 
-<hr class="my-5 border-[#CDCFD2] border-1">
+    <hr class="my-5 border-[#CDCFD2] border-1">
 
-<div class="bg-white p-3 rounded-lg my-5">
-    <h3 class="font-medium text-xl inline-block align-middle ml-2 text-[#1B1D21]">Means of Verification</h3>
+    <div class="bg-white p-3 rounded-lg my-5">
+        <h3 class="font-medium text-xl inline-block align-middle ml-2 text-[#1B1D21]">Means of Verification</h3>
 
-    <div class="options-container mt-5">
-        @foreach ($means as $mean)
+        <div class="options-container mt-5">
+            @foreach ($means as $mean)
+                <div
+                    x-data="movToggle({
+                        route: '{{ route('api-assessment-mov') }}',
+                        user_id: '{{ auth()->user()->id }}',
+                        period_id: '{{ $periodId }}',
+                        questionnaire_id: '{{ $questionnaireId }}',
+                        lgu_id: '{{ $lguId }}',
+                        mov_id: {{ $mean->id }},
+                        initialChecked: {{ in_array($mean->id, $checkedMeans ?? []) ? 'true' : 'false' }}
+                    })"
+                    @click="toggle()"
+                    :class="checked ? 'option selected' : 'option'"
+                    class="option"
+                >
+                    <input
+                        type="checkbox"
+                        x-model="checked"
+                        class="custom-checkbox"
+                        :value="{{ $mean->id }}"
+                    />
+                    <span>{!! $mean->means !!}</span>
+                </div>
+            @endforeach
+        </div>
+    </div>
+
+
+    <div class="bg-white p-3 rounded-lg my-5">
+        <h3 class="font-medium text-xl inline-block align-middle ml-2 text-[#1B1D21]">Service Performance Level</h3>
+
+        <div class="options-container mt-5">
+            @foreach ($levels as $level)
+                <div
+                    x-data="levelToggle({
+                        route: '{{ route('api-assessment-level') }}',
+                        user_id: '{{ auth()->user()->id }}',
+                        period_id: '{{ $periodId }}',
+                        questionnaire_id: '{{ $questionnaireId }}',
+                        lgu_id: '{{ $lguId }}',
+                        level_id: {{ $level->id }},
+                        initialChecked: {{ $selectedLevelId == $level->id ? 'true' : 'false' }}
+                    })"
+                    @click="toggle()"
+                    :class="checked ? 'option selected' : 'option'"
+                    class="option"
+                >
+                    <input
+                        type="radio"
+                        x-model="checked"
+                        class="custom-checkbox"
+                        :value="{{ $level->id }}"
+                        name="level_option"
+                    />
+                    <div class="option-text">
+                        <p><b>
+                            {{ $level->level > 0 ? "Level $level->level" : "Low" }}
+                        </b></p>
+                        <small>{!! $level->remarks !!}</small>
+                    </div>
+                </div>
+            @endforeach
+
+            {{-- Optional: Not Applicable --}}
             <div
-                x-data="{ checked: false }"
-                @click="checked = !checked"
+                x-data="levelToggle({
+                    route: '{{ route('api-assessment-level') }}',
+                    user_id: '{{ auth()->user()->id }}',
+                    period_id: '{{ $periodId }}',
+                    questionnaire_id: '{{ $questionnaireId }}',
+                    lgu_id: '{{ $lguId }}',
+                    level_id: 9,
+                    initialChecked: {{ $selectedLevelId == 9 ? 'true' : 'false' }}
+                })"
+                @click="toggle()"
                 :class="checked ? 'option selected' : 'option'"
+                class="option"
             >
                 <input
-                    type="checkbox"
+                    type="radio"
                     x-model="checked"
                     class="custom-checkbox"
+                    value="9"
+                    name="level_option"
                 />
-                <span>{!! $mean->means !!}</span>
-            </div>
-        @endforeach
-    </div>
-
-</div>
-
-
-<div class="bg-white p-3 rounded-lg my-5">
-    <h3 class="font-medium text-xl inline-block align-middle ml-2 text-[#1B1D21]">Service Performance Level</h3>
-
-
-    <div class="options-container mt-5" x-data="{ checked: null }">
-        @foreach ($levels as $level)
-        <div
-            @click="checked = {{ $level->level }}"
-            :class="checked === {{ $level->level }} ? 'option selected' : 'option'"
-        >
-            <input
-                type="radio"
-                :value="{{ $level->level }}"
-                name="options"
-                x-model="checked"
-                class="custom-checkbox"
-            />
-            <div class="option-text">
-                @if ($level->level > 0)
-                    <p><b>Level {{ $level->level }}</b></p>
-                @else
-                    <p><b>Low</b></p>
-                @endif
-                <small>{!! $level->remarks !!}</small>
-            </div>
-        </div>
-        @endforeach
-        <div
-            @click="checked = 9"
-            :class="checked === 9 ? 'option selected' : 'option'"
-        >
-            <input
-                type="radio"
-                :value="9"
-                name="options"
-                x-model="checked"
-                class="custom-checkbox"
-            />
-            <div class="option-text">
-                <p><b>Not Applicable</b></p>
-                <small>Indicator not applicable to LGU</small>
+                <div class="option-text">
+                    <p><b>Not Applicable</b></p>
+                    <small>Indicator not applicable to LGU</small>
+                </div>
             </div>
         </div>
     </div>
-</div>
+    
+    <div 
+        class="bg-white p-3 rounded-lg my-5"
+        x-data="remarksEditor({
+            route: '{{ route('api-assessment-remarks') }}',
+            initialContent: `{!! addslashes($existingRemarks ?? '') !!}`,
+            period_id: {{ $periodId }},
+            lgu_id: {{ $lguId }},
+            questionnaire_id: {{ $questionnaireId }},
+            user_id: {{ auth()->user()->id }}
+        })"
+        x-init="init"
+    >
+        <h3 class="font-medium text-xl inline-block align-middle ml-2 text-[#1B1D21]">Remarks</h3>
+        <small class="block ml-2 mb-5 text-[#677489]">Observations and Suggestions</small>
 
-<div class="bg-white p-3 rounded-lg my-5">
-    <h3 class="font-medium text-xl inline-block align-middle ml-2 text-[#1B1D21]">Remarks</h3>
-    <small class="block ml-2 mb-5 mb text-[#677489]">Observations and Suggestions</small>
+        <div id="remarks" class="wysiwyg bg-white mt-5 h-60"></div>
 
-    <div id="remarks" class="wysiwyg bg-white mt-5 h-60"></div>
-</div>
+        <a href="#"
+        @click.prevent="save"
+        class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-2 mt-3 text-white rounded-xl">
+            Save
+        </a>
+    </div>
+
+    <div 
+        class="bg-white p-3 rounded-lg my-5"
+        x-data="recommendationsEditor({
+            route: '{{ route('api-assessment-recommendation') }}',
+            initialContent: `{!! addslashes($existingRecommendations ?? '') !!}`,
+            period_id: {{ $periodId }},
+            lgu_id: {{ $lguId }},
+            questionnaire_id: {{ $questionnaireId }},
+            user_id: {{ auth()->user()->id }}
+        })"
+    >
+        <h3 class="font-medium text-xl inline-block align-middle ml-2 text-[#1B1D21]">Recommendations</h3>
+        <small class="block ml-2 mb-5 text-[#677489]">Observations and Suggestions</small>
+
+        <div id="recommendations" class="wysiwyg bg-white mt-5 h-60"></div>
+
+        <a href="#"
+        @click.prevent="save"
+        class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-2 mt-3 text-white rounded-xl">
+            Save
+        </a>
+    </div>
 </div>

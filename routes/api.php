@@ -37,4 +37,9 @@ Route::delete('/periods/{id}', [\App\Http\Controllers\Api\PeriodsController::cla
 
 Route::post('/period/assign', [\App\Http\Controllers\Api\PeriodsController::class, 'assign'])->name('api-periods-assign');
 
-Route::get('/deadlines/{id}', [\App\Http\Controllers\Api\DeadlinesController::class, 'get'])->name('api-deadlines-get');
+Route::get('/deadlines/{userId}', [\App\Http\Controllers\Api\DeadlinesController::class, 'get'])->name('api-deadlines-get');
+
+Route::post('/assessment/mov', [\App\Http\Controllers\Api\AssessmentsController::class, 'mov'])->name('api-assessment-mov');
+Route::post('/assessment/level', [\App\Http\Controllers\Api\AssessmentsController::class, 'level'])->name('api-assessment-level');
+Route::post('/assessment/remarks', [\App\Http\Controllers\Api\AssessmentsController::class, 'remarks'])->name('api-assessment-remarks');
+Route::post('/assessment/recommendation', [\App\Http\Controllers\Api\AssessmentsController::class, 'recommendation'])->name('api-assessment-recommendation');

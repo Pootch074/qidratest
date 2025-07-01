@@ -10,13 +10,14 @@ use Illuminate\Http\Request;
 class DeadlinesController extends Controller
 {
     //
-    public function get($id, Request $request)
+    public function get($userId, Request $request)
     {
         $periodId = PeriodHelper::currentPeriodId();
+        $lguIds = PeriodHelper::getLgus($userId)->pluck('id')->toArray();
 
         $periodAssessments = PeriodAssessment::with('lgu')
             ->where('period_id', $periodId)
-            ->where('lgu_id', $id)
+            ->whereIn('lgu_id', $lguIds)
             ->get();
 
         $formatted = $periodAssessments->map(function ($item) {

@@ -31,6 +31,12 @@ class PeriodsController extends Controller
         }));
     }
 
+    /**
+     * Creates a new assessment period.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function post(Request $request)
     {
         if (!auth()->check()) {
@@ -48,6 +54,7 @@ class PeriodsController extends Controller
             return response()->json(['errors' => $e->errors()], 422);
         }
 
+        // Get the latest published questionnaire
         $questionnaire = QuestionnaireTree::orderByRaw("
             CASE
                 WHEN status = 'published' THEN 0
@@ -60,6 +67,7 @@ class PeriodsController extends Controller
             return response()->json(['error' => 'No questionnaire found.'], 404);
         }
 
+        // Add the questionnaire ID to the request data
         $validate['questionnaire_id'] = $questionnaire->id;
         $validate['status'] = 'ongoing';
         $validate['user_id'] = auth()->user()->id ?? $userId;

@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\PeriodHelper;
 use App\Models\Lgu;
+use App\Models\MeansOfVerification;
 use App\Models\Period;
 use App\Models\PeriodAssessment;
+use App\Models\Questionnaire;
+use App\Models\QuestionnaireLevel;
+use App\Models\QuestionnaireTree;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -29,7 +34,7 @@ class PeriodsController extends Controller
         return view('admin.periods.assignments');
     }
 
-    private function getPeriodAssessments(Period $period = null)
+    private function getPeriodAssessments(?Period $period = null)
     {
         if (is_null($period)) {
             $period = Period::orderByRaw("

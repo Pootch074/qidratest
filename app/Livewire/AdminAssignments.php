@@ -157,8 +157,12 @@ class AdminAssignments extends Component
             ->get();
 
         $names = $assessors->map(function ($assessor) {
-            return $assessor->user->first_name . ' ' . $assessor->user->last_name;
-        })->implode('<br>');
+            if ($assessor->user) {
+                return $assessor->user->first_name . ' ' . $assessor->user->last_name;
+            }
+            return ''; // or 'N/A', or null
+        })->filter() // remove empty values
+        ->implode('<br>');
 
         $userIds = $assessors->pluck('user_id')->implode(',');
 

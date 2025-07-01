@@ -24,8 +24,15 @@ class QuestionnairesController extends Controller
         }));
     }
 
+    /**
+     * Create a new questionnaire with the same structure as the latest published questionnaire
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function post(Request $request)
     {
+        // Validate the request
         try {
             $validate = $request->validate([
                 'questionnaire_name'    => 'required|string',
@@ -35,32 +42,51 @@ class QuestionnairesController extends Controller
             return response()->json(['errors' => $e->errors()], 422);
         }
 
+        // Get the latest published questionnaire
         $sourceTreeId = QuestionnaireTree::whereIn('id', function ($query) {
-            $query->select('questionnaire_tree_id')
-                ->from('questionnaires');
+            $query->select('questionnaire_tree_id')->from('questionnaires');
         })
         ->orderByDesc('id')
         ->value('id');
 
+        // Create a new tree with the same structure as the source tree
         $validate['created_at'] = $validate['updated_at'] = Carbon::now();
-        $validate['status'] = 'published'; // Published, Ended
-        $questionnaire = QuestionnaireTree::create($validate);
-        $newTreeId = $questionnaire->id;
+        $validate['status'] = 'published';
+        $newTree = QuestionnaireTree::create($validate);
+        $newTreeId = $newTree->id;
 
-        // clone questionnaires for the new tree
+        // Clone related questionnaires
         $sourceQuestionnaires = Questionnaire::where('questionnaire_tree_id', $sourceTreeId)->get();
         foreach ($sourceQuestionnaires as $questionnaire) {
-            $newQuestionnaire = $questionnaire->replicate(); // clones attributes
-            $newQuestionnaire->questionnaire_tree_id = $newTreeId; // set to new tree ID
+            $newQuestionnaire = $questionnaire->replicate();
+            $newQuestionnaire->questionnaire_tree_id = $newTreeId;
             $newQuestionnaire->save();
+
+            // Clone related questionnaire_levels
+            $levels = \App\Models\QuestionnaireLevel::where('questionnaire_id', $questionnaire->id)->get();
+            foreach ($levels as $level) {
+                $newLevel = $level->replicate();
+                $newLevel->questionnaire_id = $newQuestionnaire->id;
+                $newLevel->save();
+            }
+
+            // Clone related means_of_verification
+            $verifications = \App\Models\MeansOfVerification::where('questionnaire_id', $questionnaire->id)->get();
+            foreach ($verifications as $verification) {
+                $newVerification = $verification->replicate();
+                $newVerification->questionnaire_id = $newQuestionnaire->id;
+                $newVerification->save();
+            }
         }
 
-        // return new questionnaire
-        return response()->json(['message' => 'Questionnaire added successfully!', 'questionnaire' => [
-            'questionnaire_name' => $questionnaire['questionnaire_name'],
-            'effectivity_date' => $questionnaire['effectivity_date'],
-            'status' => strtolower($questionnaire['status'])
-        ]], 201);
+        return response()->json([
+            'message' => 'Questionnaire added successfully!',
+            'questionnaire' => [
+                'questionnaire_name' => $newTree['questionnaire_name'],
+                'effectivity_date' => $newTree['effectivity_date'],
+                'status' => strtolower($newTree['status'])
+            ]
+        ], 201);
     }
 
     public function put($id, Request $request)

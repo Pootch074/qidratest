@@ -50,6 +50,8 @@
                     const addedQ = await response.json();
                     this.questionnaires.push(addedQ.questionnaire); // Append new questionnaire to table
                     this.showModal = false; // Close modal
+
+                    location.reload();
                 } catch (error) {
                     console.error("Error adding questionnaire:", error);
                 }
