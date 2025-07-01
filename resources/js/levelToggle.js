@@ -11,6 +11,15 @@ export default function levelToggle({
         checked: initialChecked,
 
         toggle() {
+            // Remove 'selected' class from all other .option elements
+            document.querySelectorAll('.option.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+
+            // Add 'selected' class to the currently clicked .option
+            this.$root.classList.add('selected');
+
+            // Proceed with your fetch as before
             this.checked = level_id;
 
             fetch(route, {

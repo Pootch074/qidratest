@@ -1,5 +1,18 @@
 export default function recommendationsEditor({ route, initialContent, period_id, lgu_id, questionnaire_id, user_id }) {
     return {
+
+        init() {
+            const waitForQuill = () => {
+                const quill = window._quillEditors?.['recommendations'];
+                if (quill) {
+                    quill.root.innerHTML = initialContent;
+                } else {
+                    setTimeout(waitForQuill, 50);
+                }
+            };
+
+            waitForQuill();
+        },
         save() {
             const editorEl = document.querySelector('#recommendations .ql-editor');
             const content = editorEl ? editorEl.innerHTML : '';

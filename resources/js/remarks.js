@@ -3,12 +3,16 @@ export default function remarksEditor({ route, initialContent, period_id, lgu_id
         editorEl: null,
 
         init() {
-            // Delay setting content until Quill is initialized
-            this.editorEl = document.querySelector('#remarks .ql-editor');
+            const waitForQuill = () => {
+                const quill = window._quillEditors?.['remarks'];
+                if (quill) {
+                    quill.root.innerHTML = initialContent;
+                } else {
+                    setTimeout(waitForQuill, 50);
+                }
+            };
 
-            if (this.editorEl && initialContent) {
-                this.editorEl.innerHTML = initialContent;
-            }
+            waitForQuill();
         },
 
         save() {
