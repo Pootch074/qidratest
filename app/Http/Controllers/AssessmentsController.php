@@ -48,7 +48,16 @@ class AssessmentsController extends Controller
         if (!$rootId) {
             $currentRoot = $this->getCurrentRootQuestionnaire($child);
             $rootId = $currentRoot->id;
+
         }
+        $currentRoot = Questionnaire::find($rootId);
+        // rerun child and parent
+        $child = $this->getFirstQuestionnaire($questionnaireId, $rootId);
+        // dd($child, $questionnaireId, $rootId);
+        // $childId = $child->id;
+        // $parentId = $child->parent_id;
+            
+        // dd($rootId, $childId, $parentId);
 
         session([
             'rootId' => $rootId,
@@ -63,8 +72,9 @@ class AssessmentsController extends Controller
         $child = $this->getSingleQuestionnaire($childId);
         $parent = $this->getSingleQuestionnaire($parentId);
         $roots = $this->getRootQuestionnaires($questionnaireId);
-        $currentRoot = Questionnaire::find($rootId);
-        $references = $this->getNavigation($questionnaireId, $currentRoot->id);
+        $references = $this->getNavigation($questionnaireId, $rootId);
+
+        // dd($references, $parent, $child);
 
         $means = MeansOfVerification::where('questionnaire_id', $child->id)->get();
         $levels = QuestionnaireLevel::where('questionnaire_id', $child->id)->get();
@@ -126,11 +136,15 @@ class AssessmentsController extends Controller
             ->toArray();
     }
 
-    private function getFirstQuestionnaire($id)
+    private function getFirstQuestionnaire($id, $rootId = 0)
     {
         return Questionnaire::where('questionnaire_tree_id', $id)
-            ->where('reference_number', '!=', '')
-            ->where('parent_id', '!=', 0)
+            ->when($rootId !== 0, function ($query) use ($rootId) {
+                return $query->where('parent_id', $rootId);
+            }, function ($query) {
+                return $query->where('parent_id', '!=', 0)
+                        ->where('reference_number', '!=', '');
+            })
             ->orderBy('parent_id')
             ->orderBy('weight')
             ->first();
