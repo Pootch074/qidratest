@@ -16,8 +16,19 @@ class AssessmentsController extends Controller
 {
     //
 
-    public function management()
+    public function management(Request $request)
     {
+        if (isset($request->lgu_id)) {
+            session(['lguId' => $request->lgu_id]);
+
+            return redirect('assessment-management');
+        }
+
+        if (isset($request->root_id)) {
+            session(['rootId' => $request->root_id]);
+
+            return redirect('assessment-management');
+        }
 
         $currentPeriod = PeriodHelper::currentPeriod();
         $periodId = $currentPeriod->id;
@@ -33,7 +44,14 @@ class AssessmentsController extends Controller
             $parentId = $child->parent_id;
         }
 
+        $rootId = session('rootId');
+        if (!$rootId) {
+            $currentRoot = $this->getCurrentRootQuestionnaire($child);
+            $rootId = $currentRoot->id;
+        }
+
         session([
+            'rootId' => $rootId,
             'questionnaireId' => $questionnaireId,
             'lguId' => $lguId,
             'parentId' => $parentId,
@@ -45,7 +63,7 @@ class AssessmentsController extends Controller
         $child = $this->getSingleQuestionnaire($childId);
         $parent = $this->getSingleQuestionnaire($parentId);
         $roots = $this->getRootQuestionnaires($questionnaireId);
-        $currentRoot = $this->getCurrentRootQuestionnaire($child);
+        $currentRoot = Questionnaire::find($rootId);
         $references = $this->getNavigation($questionnaireId, $currentRoot->id);
 
         $means = MeansOfVerification::where('questionnaire_id', $child->id)->get();
@@ -80,9 +98,26 @@ class AssessmentsController extends Controller
     
     }
 
-    private function getNavigation($id, $rootId)
+    private function getNavigation($treeId, $rootId)
     {
-        return Questionnaire::where('questionnaire_tree_id', $id)
+        $ids = [];
+
+        $collectDescendants = function ($parentId) use (&$collectDescendants, &$ids, $treeId) {
+            $children = Questionnaire::where('questionnaire_tree_id', $treeId)
+                ->where('parent_id', $parentId)
+                ->pluck('id');
+
+            foreach ($children as $childId) {
+                $ids[] = $childId;
+                $collectDescendants($childId);
+            }
+        };
+
+        $ids[] = $rootId;
+        $collectDescendants($rootId);
+
+        return Questionnaire::where('questionnaire_tree_id', $treeId)
+            ->whereIn('id', $ids)
             ->select('id', 'parent_id', 'reference_number')
             ->where('reference_number', '!=', '')
             ->orderBy('parent_id')
@@ -90,10 +125,12 @@ class AssessmentsController extends Controller
             ->get()
             ->toArray();
     }
+
     private function getFirstQuestionnaire($id)
     {
         return Questionnaire::where('questionnaire_tree_id', $id)
             ->where('reference_number', '!=', '')
+            ->where('parent_id', '!=', 0)
             ->orderBy('parent_id')
             ->orderBy('weight')
             ->first();

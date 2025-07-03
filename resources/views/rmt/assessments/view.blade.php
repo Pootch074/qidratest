@@ -38,18 +38,21 @@
             </ul>
         </div>
 
-        <div x-data="{ currentRootId: {{ $currentRoot->id }} }" class="flex flex-wrap items-center gap-2">
-            @foreach ($roots as $root)
+        <div 
+            x-data="rootsComponent(@js($roots), {{ $currentRoot->id }})" 
+            x-init="init()" 
+            class="flex flex-wrap items-center gap-2"
+        >
+            <template x-for="root in roots" :key="root.id">
                 <button
-                    @click="currentRootId = {{ $root->id }}"
-                    :class="currentRootId === {{ $root->id }} 
+                    @click="select(root)"
+                    class="transition-colors duration-200 rounded-full px-4 py-2 flex items-center gap-2 focus:outline-none cursor-pointer"
+                    :class="currentRootId === root.id 
                         ? 'bg-[#2E3192] text-white' 
                         : 'text-[#B0B2B7]'"
-                    class="transition-colors duration-200 rounded-full px-4 py-2 flex items-center gap-2 focus:outline-none cursor-pointer"
-                >
-                    {{ $root->name }}
-                </button>
-            @endforeach
+                    x-text="root.name"
+                ></button>
+            </template>
         </div>
     </div>
     
@@ -123,6 +126,26 @@
                         console.error('Fetch error:', error);
                         this.deadlines = [];
                     });
+            }
+        };
+    };
+
+    window.rootsComponent = function(roots, initialRootId) {
+        return {
+            roots: roots,
+            currentRootId: initialRootId,
+            init() {
+                const savedId = localStorage.getItem('selected_root_id');
+                const match = this.roots.find(r => r.id == savedId);
+
+                if (match) {
+                    this.currentRootId = match.id;
+                }
+            },
+            select(option) {
+                this.currentRootId = option.id;
+                localStorage.setItem('selected_root_id', option.id);
+                window.location.href = `${assessmentManagementUrl}?root_id=${option.id}`;
             }
         };
     };

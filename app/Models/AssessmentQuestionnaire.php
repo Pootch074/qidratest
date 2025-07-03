@@ -14,6 +14,7 @@ class AssessmentQuestionnaire extends Model
         'questionnaire_level_id',
         'remarks',
         'recommendations',
-        'number_of_beneficiaries'
+        'number_of_beneficiaries',
+        'user_id'
     ];
 }

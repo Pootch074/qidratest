@@ -57,10 +57,14 @@ class QuestionnairesController extends Controller
 
         // Clone related questionnaires
         $sourceQuestionnaires = Questionnaire::where('questionnaire_tree_id', $sourceTreeId)->get();
+        $idMap = []; // [old_id => new_id]
         foreach ($sourceQuestionnaires as $questionnaire) {
             $newQuestionnaire = $questionnaire->replicate();
             $newQuestionnaire->questionnaire_tree_id = $newTreeId;
+            $newQuestionnaire->parent_id = 0; // temporarily default to 0
             $newQuestionnaire->save();
+
+            $idMap[$questionnaire->id] = $newQuestionnaire->id;
 
             // Clone related questionnaire_levels
             $levels = \App\Models\QuestionnaireLevel::where('questionnaire_id', $questionnaire->id)->get();
@@ -76,6 +80,17 @@ class QuestionnairesController extends Controller
                 $newVerification = $verification->replicate();
                 $newVerification->questionnaire_id = $newQuestionnaire->id;
                 $newVerification->save();
+            }
+        }
+
+        foreach ($sourceQuestionnaires as $questionnaire) {
+            $oldId = $questionnaire->id;
+            $newId = $idMap[$oldId];
+            $oldParentId = $questionnaire->parent_id;
+
+            if ($oldParentId && isset($idMap[$oldParentId])) {
+                $newParentId = $idMap[$oldParentId];
+                Questionnaire::where('id', $newId)->update(['parent_id' => $newParentId]);
             }
         }
 

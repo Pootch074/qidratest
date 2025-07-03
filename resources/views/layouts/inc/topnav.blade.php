@@ -1,9 +1,13 @@
 <!-- Header -->
 <header class="bg-white text-[#202224] py-4 px-10 flex justify-between items-center">
-    <h1 class="text-[32px] font-medium">
-        @yield('title')
-        <span class="text-black text-xs rounded-full border-[#CDCFD2] bg-[#CDCFD2] px-3 py-1 ml-2 align-middle font-light">{{ auth()->user()->getUserTypeName() }}</span>
-    </h1>
+    <div class="text-[32px] font-medium flex flex-col sm:flex-row sm:items-center">
+        <h1 class="leading-none">@yield('title')</h1>
+        <div class="mt-1 sm:mt-0 sm:ml-2">
+            <span class="inline-block text-black text-xs rounded-full border-[#CDCFD2] bg-[#CDCFD2] px-3 py-1 font-light">
+                {{ auth()->user()->getUserTypeName() }}
+            </span>
+        </div>
+    </div>
 
     <div class="text-[18px]">
         Current Period: <b>{{ $currentPeriod->name ?? "No existing period yet." }} </b>
