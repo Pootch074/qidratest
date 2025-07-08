@@ -182,7 +182,7 @@
                 <html>
                     <head>
                         <style>
-                            body { background-color:pink;        font-family: Arial, sans-serif; padding: 20px; margin:0;}
+                            body { font-family: Arial, sans-serif; padding: 20px; margin:0;}
                             table { width: 100%; border-collapse: collapse; }
                             th { border: 1px solid #ccc; padding: 8px; text-align: center; }
                             td { border: 1px solid #ccc; padding: 8px; }
