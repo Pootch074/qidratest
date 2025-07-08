@@ -3,7 +3,7 @@
 
 @section('content')
 
-    <div x-data="pTable" x-init="fetchP()" class="container mx-auto p-4 bg-white rounded-xl">
+    <div x-data="pTable" x-init="fetchP()" class="container mx-auto p-4 bg-white rounded-xl max-h-[80vh] overflow-y-auto">
         {{-- @include('admin.reports.search') --}}
         <div class="flex justify-between mb-4">
             <button class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-xl">
@@ -15,7 +15,7 @@
 
           <h2 class="text-center text-xl font-semibold mb-4">COMPLIANCE MONITORING</h2>
 
-  <div class="overflow-x-auto rounded-xl shadow">
+  <div class="overflow-x-auto max-h-[75vh] overflow-y-auto rounded-xl shadow">
     <table class="min-w-full border border-gray-300 text-sm text-left">
       <thead class="bg-green-100">
         <tr>
