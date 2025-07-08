@@ -10,15 +10,19 @@
                 2025 Monitoring Period
                 <img src="{{ Vite::asset('resources/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
             </button>
-            @include('admin.reports.create')
+             <button onclick="printScoring()"
+                class="bg-[#DB0C16] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-xl cursor-pointer">
+                <span>Print Scoring</span>
+                <img src="{{ Vite::asset('resources/assets/icons/icon-print.png') }}" class="h-5 w-5" alt="Print Scoring">
+            </button>
+
         </div>
 
-          <h2 class="text-center text-xl font-semibold mb-4">COMPLIANCE MONITORING</h2>
-
-  <div class="overflow-x-auto max-h-[75vh] overflow-y-auto rounded-xl shadow">
+  <div id="print-section" class="max-h-[75vh] rounded-xl shadow">
     <table class="min-w-full border border-gray-300 text-sm text-left">
+      <h2 class="text-center text-xl font-semibold mb-4">COMPLIANCE MONITORING</h2>
       <thead class="bg-green-100">
-        <tr>
+        <tr class=" text-center">
           <th class="border px-4 py-2 font-semibold">PARAMETER / FUNCTIONAL AREA</th>
           <th class="border px-4 py-2">WEIGHT PER INDICATOR</th>
           <th class="border px-4 py-2">PREVIOUS INDEX SCORE</th>
@@ -35,35 +39,35 @@
         </tr>
         <tr>
           <td class="border px-4 py-2">1. Vision, Mission, Goals and Organizational Structure</td>
-          <td class="border px-4 py-2">7.00%</td>
-          <td class="border px-4 py-2">7.00%</td>
-          <td class="border px-4 py-2">7.00%</td>
-          <td class="border px-4 py-2">Sustained</td>
-          <td class="border px-4 py-2">0.00</td>
+          <td class="border px-4 py-2 text-center">7.00%</td>
+          <td class="border px-4 py-2 text-center">7.00%</td>
+          <td class="border px-4 py-2 text-center">7.00%</td>
+          <td class="border px-4 py-2 text-center">Sustained</td>
+          <td class="border px-4 py-2 text-center">0.00</td>
         </tr>
         <tr class="bg-red-100">
           <td class="border px-4 py-2">2. Human Resource Management and Development</td>
-          <td class="border px-4 py-2">11.00%</td>
-          <td class="border px-4 py-2">11.00%</td>
-          <td class="border px-4 py-2">11.00%</td>
-          <td class="border px-4 py-2">Increased</td>
-          <td class="border px-4 py-2">0.001</td>
+          <td class="border px-4 py-2 text-center">11.00%</td>
+          <td class="border px-4 py-2 text-center">11.00%</td>
+          <td class="border px-4 py-2 text-center">11.00%</td>
+          <td class="border px-4 py-2 text-center">Increased</td>
+          <td class="border px-4 py-2 text-center">0.001</td>
         </tr>
         <tr class="bg-red-100">
           <td class="border px-4 py-2">3. Public Financial Management</td>
-          <td class="border px-4 py-2">9.00%</td>
-          <td class="border px-4 py-2">9.00%</td>
-          <td class="border px-4 py-2">3.00%</td>
-          <td class="border px-4 py-2">Increased</td>
-          <td class="border px-4 py-2">0.02</td>
+          <td class="border px-4 py-2 text-center">9.00%</td>
+          <td class="border px-4 py-2 text-center">9.00%</td>
+          <td class="border px-4 py-2 text-center">3.00%</td>
+          <td class="border px-4 py-2 text-center">Increased</td>
+          <td class="border px-4 py-2 text-center">0.02</td>
         </tr>
         <tr class="bg-red-100">
           <td class="border px-4 py-2">4. Support Services</td>
-          <td class="border px-4 py-2">8.00%</td>
-          <td class="border px-4 py-2">8.00%</td>
-          <td class="border px-4 py-2">9.00%</td>
-          <td class="border px-4 py-2">Sustained</td>
-          <td class="border px-4 py-2">0.00</td>
+          <td class="border px-4 py-2 text-center">8.00%</td>
+          <td class="border px-4 py-2 text-center">8.00%</td>
+          <td class="border px-4 py-2 text-center">9.00%</td>
+          <td class="border px-4 py-2 text-center">Sustained</td>
+          <td class="border px-4 py-2 text-center">0.00</td>
         </tr>
 
         <!-- Section B -->
@@ -72,43 +76,43 @@
         </tr>
         <tr>
           <td class="border px-4 py-2">1. Planning</td>
-          <td class="border px-4 py-2">16.00%</td>
-          <td class="border px-4 py-2">16.00%</td>
-          <td class="border px-4 py-2">16.00%</td>
-          <td class="border px-4 py-2">Sustained</td>
-          <td class="border px-4 py-2">0.00</td>
+          <td class="border px-4 py-2 text-center">16.00%</td>
+          <td class="border px-4 py-2 text-center">16.00%</td>
+          <td class="border px-4 py-2 text-center">16.00%</td>
+          <td class="border px-4 py-2 text-center">Sustained</td>
+          <td class="border px-4 py-2 text-center">0.00</td>
         </tr>
         <tr>
           <td class="border px-4 py-2">2. Implementation</td>
-          <td class="border px-4 py-2">9.00%</td>
-          <td class="border px-4 py-2">9.00%</td>
-          <td class="border px-4 py-2">9.00%</td>
-          <td class="border px-4 py-2">Increased</td>
-          <td class="border px-4 py-2">0.03</td>
+          <td class="border px-4 py-2 text-center">9.00%</td>
+          <td class="border px-4 py-2 text-center">9.00%</td>
+          <td class="border px-4 py-2 text-center">9.00%</td>
+          <td class="border px-4 py-2 text-center">Increased</td>
+          <td class="border px-4 py-2 text-center">0.03</td>
         </tr>
         <tr class="bg-blue-100">
           <td class="border px-4 py-2">3. Monitoring and Reporting</td>
-          <td class="border px-4 py-2">7.00%</td>
-          <td class="border px-4 py-2">7.00%</td>
-          <td class="border px-4 py-2">7.00%</td>
-          <td class="border px-4 py-2">Increased</td>
-          <td class="border px-4 py-2">0.04</td>
+          <td class="border px-4 py-2 text-center">7.00%</td>
+          <td class="border px-4 py-2 text-center">7.00%</td>
+          <td class="border px-4 py-2 text-center">7.00%</td>
+          <td class="border px-4 py-2 text-center">Increased</td>
+          <td class="border px-4 py-2 text-center">0.04</td>
         </tr>
         <tr class="bg-blue-100">
           <td class="border px-4 py-2">4. Case Management</td>
-          <td class="border px-4 py-2">7.00%</td>
-          <td class="border px-4 py-2">7.00%</td>
-          <td class="border px-4 py-2">7.00%</td>
-          <td class="border px-4 py-2">Increased</td>
-          <td class="border px-4 py-2">0.04</td>
+          <td class="border px-4 py-2 text-center">7.00%</td>
+          <td class="border px-4 py-2 text-center">7.00%</td>
+          <td class="border px-4 py-2 text-center">7.00%</td>
+          <td class="border px-4 py-2 text-center">Increased</td>
+          <td class="border px-4 py-2 text-center">0.04</td>
         </tr>
         <tr class="bg-blue-100">
           <td class="border px-4 py-2">5. Presidential Care and Community-Based Center</td>
-          <td class="border px-4 py-2">7.00%</td>
-          <td class="border px-4 py-2">7.00%</td>
-          <td class="border px-4 py-2">7.00%</td>
-          <td class="border px-4 py-2">Increased</td>
-          <td class="border px-4 py-2">0.04</td>
+          <td class="border px-4 py-2 text-center">7.00%</td>
+          <td class="border px-4 py-2 text-center">7.00%</td>
+          <td class="border px-4 py-2 text-center">7.00%</td>
+          <td class="border px-4 py-2 text-center">Increased</td>
+          <td class="border px-4 py-2 text-center">0.04</td>
         </tr>
 
         <!-- Section C -->
@@ -117,44 +121,82 @@
         </tr>
         <tr>
           <td class="border px-4 py-2">1. Functionality of Local Council for the Protection of Children</td>
-          <td class="border px-4 py-2">16.00%</td>
-          <td class="border px-4 py-2">16.00%</td>
-          <td class="border px-4 py-2">16.00%</td>
-          <td class="border px-4 py-2">Sustained</td>
-          <td class="border px-4 py-2">0.00</td>
+          <td class="border px-4 py-2 text-center">16.00%</td>
+          <td class="border px-4 py-2 text-center">16.00%</td>
+          <td class="border px-4 py-2 text-center">16.00%</td>
+          <td class="border px-4 py-2 text-center">Sustained</td>
+          <td class="border px-4 py-2 text-center">0.00</td>
         </tr>
         <tr>
           <td class="border px-4 py-2">2. Functionality of Local Committee on Anti-trafficking and Violence Against Women and their Children (LCAT-VAWC)</td>
-          <td class="border px-4 py-2">16.00%</td>
-          <td class="border px-4 py-2">16.00%</td>
-          <td class="border px-4 py-2">16.00%</td>
-          <td class="border px-4 py-2">Sustained</td>
-          <td class="border px-4 py-2">0.00</td>
+          <td class="border px-4 py-2 text-center">16.00%</td>
+          <td class="border px-4 py-2 text-center">16.00%</td>
+          <td class="border px-4 py-2 text-center">16.00%</td>
+          <td class="border px-4 py-2 text-center">Sustained</td>
+          <td class="border px-4 py-2 text-center">0.00</td>
         </tr>
         <tr>
           <td class="border px-4 py-2">3. Inter-office Collaboration</td>
-          <td class="border px-4 py-2">16.00%</td>
-          <td class="border px-4 py-2">16.00%</td>
-          <td class="border px-4 py-2">16.00%</td>
-          <td class="border px-4 py-2">Sustained</td>
-          <td class="border px-4 py-2">0.00</td>
+          <td class="border px-4 py-2 text-center">16.00%</td>
+          <td class="border px-4 py-2 text-center">16.00%</td>
+          <td class="border px-4 py-2 text-center">16.00%</td>
+          <td class="border px-4 py-2 text-center">Sustained</td>
+          <td class="border px-4 py-2 text-center">0.00</td>
         </tr>
         <tr>
           <td class="border px-4 py-2">4. Support to Civil Society Organizations</td>
-          <td class="border px-4 py-2">16.00%</td>
-          <td class="border px-4 py-2">16.00%</td>
-          <td class="border px-4 py-2">16.00%</td>
-          <td class="border px-4 py-2">Sustained</td>
-          <td class="border px-4 py-2">0.00</td>
+          <td class="border px-4 py-2 text-center">16.00%</td>
+          <td class="border px-4 py-2 text-center">16.00%</td>
+          <td class="border px-4 py-2 text-center">16.00%</td>
+          <td class="border px-4 py-2 text-center">Sustained</td>
+          <td class="border px-4 py-2 text-center">0.00</td>
+        </tr>
+        <tr class="font-semibold text-center text-lg bg-gray-100">
+          <td class="border px-4 py-2">TOTAL</td>
+          <td class="border px-4 py-2">100%</td>
+          <td class="border px-4 py-2">2.52</td>
+          <td class="border px-4 py-2">2.38</td>
+          <td class="border px-4 py-2">Decreased</td>
+          <td class="border px-4 py-2">-0.14</td>
+        </tr>
+        <tr class="font-semibold text-center text-lg bg-white">
+          <td class="border px-4 py-2">NEW RATING</td>
+          <td class="border px-4 py-2" colspan="2">LEVEL 2</td>
+          <td class="border px-4 py-2" colspan="3">BETTER SERVICE DELIVERY</td>
         </tr>
       </tbody>
     </table>
   </div>
-
-    </div>
+</div>
 
 @endsection
 
 @section('script')
     @include('admin.periods.script')
+
+    <script>
+        function printScoring() {
+            const printContent = document.getElementById('print-section').innerHTML;
+            const printWindow = window.open('', '', 'width=auto,height=auto,');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <style>
+                            body { background-color:pink;        font-family: Arial, sans-serif; padding: 20px; margin:0;}
+                            table { width: 100%; border-collapse: collapse; }
+                            th { border: 1px solid #ccc; padding: 8px; text-align: center; }
+                            td { border: 1px solid #ccc; padding: 8px; }
+                            th { background-color: #e6f4ea; }
+                            h2 { text-align: center; }
+                        </style>
+                    </head>
+                    ${printContent}
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.print();
+            printWindow.close();
+        }
+    </script>
 @endsection
