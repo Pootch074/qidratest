@@ -1,3 +1,5 @@
+import nProgress from "nprogress";
+
 export default function remarksEditor({ route, initialContent, period_id, lgu_id, questionnaire_id, user_id }) {
     return {
         editorEl: null,
@@ -16,7 +18,11 @@ export default function remarksEditor({ route, initialContent, period_id, lgu_id
         },
 
         save() {
-            const content = this.editorEl ? this.editorEl.innerHTML : '';
+            const editorEl = document.querySelector('#remarks .ql-editor');
+            const content = editorEl ? editorEl.innerHTML : '';
+
+            nProgress.configure({ showSpinner: false });
+            nProgress.start();
 
             fetch(route, {
                 method: 'POST',
@@ -35,12 +41,15 @@ export default function remarksEditor({ route, initialContent, period_id, lgu_id
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    alert('Remarks saved successfully.');
+                    // alert('Remarks saved successfully.');
                 } else {
-                    alert('Failed to save.');
+                    // alert('Failed to save.');
                 }
             })
-            .catch(() => alert('Error saving remarks.'));
+            .finally(() => {
+                nProgress.done();
+            });
+            // .catch(() => alert('Error saving remarks.'));
         }
     }
 }

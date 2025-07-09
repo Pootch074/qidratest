@@ -1,5 +1,8 @@
+import nProgress from "nprogress";
+
 export default function recommendationsEditor({ route, initialContent, period_id, lgu_id, questionnaire_id, user_id }) {
     return {
+        editorEl: null,
 
         init() {
             const waitForQuill = () => {
@@ -13,9 +16,13 @@ export default function recommendationsEditor({ route, initialContent, period_id
 
             waitForQuill();
         },
+        
         save() {
             const editorEl = document.querySelector('#recommendations .ql-editor');
             const content = editorEl ? editorEl.innerHTML : '';
+            
+            nProgress.configure({ showSpinner: false });
+            nProgress.start();
 
             fetch(route, {
                 method: 'POST',
@@ -39,7 +46,10 @@ export default function recommendationsEditor({ route, initialContent, period_id
                     // alert('Failed to save.');
                 }
             })
-            .catch(() => alert('Error saving recommendations.'));
+            .finally(() => {
+                nProgress.done();
+            });
+            // .catch(() => alert('Error saving recommendations.'));
         }
     }
 }

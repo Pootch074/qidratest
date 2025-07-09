@@ -1,8 +1,13 @@
+import nProgress from "nprogress";
+
 export default function movToggle({ route, user_id, period_id, questionnaire_id, lgu_id, mov_id, initialChecked = false }) {
     return {
         checked: initialChecked,
         toggle() {
             this.checked = !this.checked;
+                        
+            nProgress.configure({ showSpinner: false });
+            nProgress.start();
 
             fetch(route, { // Replace with your actual route if not injected
                 method: 'POST',
@@ -24,7 +29,8 @@ export default function movToggle({ route, user_id, period_id, questionnaire_id,
                 return response.json();
             })
             .then(data => console.log('Success:', data))
-            .catch(error => console.error('Error:', error));
+            .catch(error => console.error('Error:', error))
+            .finally(() => nProgress.done());
         }
     }
 }

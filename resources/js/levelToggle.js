@@ -1,3 +1,5 @@
+import nProgress from "nprogress";
+
 export default function levelToggle({
     route,
     user_id,
@@ -11,6 +13,10 @@ export default function levelToggle({
         checked: initialChecked,
 
         toggle() {
+                                
+            nProgress.configure({ showSpinner: false });
+            nProgress.start();
+
             // Remove 'selected' class from all other .option elements
             document.querySelectorAll('.option.selected').forEach(el => {
                 el.classList.remove('selected');
@@ -39,7 +45,8 @@ export default function levelToggle({
             })
             .then(res => res.json())
             .then(data => console.log('Level selected:', data))
-            .catch(error => console.error('Error:', error));
+            .catch(error => console.error('Error:', error))
+            .finally(() => nProgress.done());
         }
     };
 }

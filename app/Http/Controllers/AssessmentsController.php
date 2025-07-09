@@ -18,66 +18,86 @@ class AssessmentsController extends Controller
 
     public function management(Request $request)
     {
+
+        // Prerequisite: Get current period
+        $currentPeriod = PeriodHelper::currentPeriod();
+        $periodId = $currentPeriod->id;
+
+        // Preparation: Get questionnaire tree from the period
+        $questionnaireTreeId = session('questionnaireTreeId') ?? $currentPeriod->questionnaire_tree_id;
+
+        // Preparation: if lgu is selected from dropdown, update session for lgu_id
         if (isset($request->lgu_id)) {
             session(['lguId' => $request->lgu_id]);
 
             return redirect('assessment-management');
         }
+        $lguId = session('lguId') ?? PeriodHelper::getLgus(auth()->user()->id, true)->id;
 
+        // Preparation: if parent questionnaire is clicked, update session for root_id
         if (isset($request->root_id)) {
+
             session(['rootId' => $request->root_id]);
+
+            // for this change, we need to update childId and parentId based on rootId
+            $parent = $this->getFirstQuestionnaire(session('questionnaireTreeId'), $request->root_id);
+            $child = $this->getFirstChild($parent);
+
+            session(['childId' => $child->id]);
+            session(['parentId' => $parent->id]);
 
             return redirect('assessment-management');
         }
-
-        $currentPeriod = PeriodHelper::currentPeriod();
-        $periodId = $currentPeriod->id;
-        $questionnaireId = session('questionnaireId') ?? $currentPeriod->questionnaire_id;
-
-        $lguId = session('lguId') ?? PeriodHelper::getLgus(auth()->user()->id, true)->id;
+        $rootId = session('rootId');
+        if (!$rootId) {
+            // set again if rootId does not exist
+            $child = $this->getFirstQuestionnaire($questionnaireTreeId);
+            $currentRoot = $this->getCurrentRootQuestionnaire($child);
+            $rootId = $currentRoot->id;
+        }
+        $currentRoot = Questionnaire::find($rootId);
 
         $childId = session('childId');
         $parentId = session('parentId');
+        // Preparation: fallback for blank childId and parentId
         if (!$childId || !$parentId) {
-            $child = $this->getFirstQuestionnaire($questionnaireId);
+            $child = $this->getFirstQuestionnaire($questionnaireTreeId);
             $childId = $child->id;
             $parentId = $child->parent_id;
         }
 
-        $rootId = session('rootId');
-        if (!$rootId) {
-            $currentRoot = $this->getCurrentRootQuestionnaire($child);
-            $rootId = $currentRoot->id;
+        // Preparation: if reference is clicked, update the current childId
+        if (isset($request->ref)) {
+            session(['childId' => $request->ref]);
 
+            // make sure we have the correct parentId
+            $child = $this->getSingleQuestionnaire($request->ref);
+            session(['parentId' => $child->parent_id]);
+
+            return redirect('assessment-management');
         }
-        $currentRoot = Questionnaire::find($rootId);
-        // rerun child and parent
-        $child = $this->getFirstQuestionnaire($questionnaireId, $rootId);
-        // dd($child, $questionnaireId, $rootId);
-        // $childId = $child->id;
-        // $parentId = $child->parent_id;
-            
-        // dd($rootId, $childId, $parentId);
 
+        // Assemble: set session for all variables
         session([
             'rootId' => $rootId,
-            'questionnaireId' => $questionnaireId,
+            'questionnaireTreeId' => $questionnaireTreeId,
             'lguId' => $lguId,
             'parentId' => $parentId,
             'childId' => $childId,
         ]);
 
-        // get questionnaire id from current period
-        $questionnaire = QuestionnaireTree::find($questionnaireId);
+        // Process: get questionnaire id from current period
+        $questionnaire = QuestionnaireTree::find($questionnaireTreeId);
         $child = $this->getSingleQuestionnaire($childId);
         $parent = $this->getSingleQuestionnaire($parentId);
-        $roots = $this->getRootQuestionnaires($questionnaireId);
-        $references = $this->getNavigation($questionnaireId, $rootId);
+        $roots = $this->getRootQuestionnaires($questionnaireTreeId);
+        $references = $this->getNavigation($questionnaireTreeId, $rootId);
 
-        // dd($references, $parent, $child);
-
-        $means = MeansOfVerification::where('questionnaire_id', $child->id)->get();
-        $levels = QuestionnaireLevel::where('questionnaire_id', $child->id)->get();
+        // Process: get movs
+        $means = MeansOfVerification::where('questionnaire_id', $childId)->get();
+        // Process: get levels
+        $levels = QuestionnaireLevel::where('questionnaire_id', $childId)->get();
+        // dd($levels);
 
         $userId = auth()->user()->id;
         $lguIds = PeriodHelper::getLgus($userId)->pluck('id')->toArray();
@@ -85,13 +105,14 @@ class AssessmentsController extends Controller
 
         $assessment = AssessmentQuestionnaire::where('period_id', $periodId)
             ->where('lgu_id', $lguId)
-            ->where('questionnaire_id', $questionnaireId)
+            ->where('questionnaire_id', $childId)
             ->first();
 
         $selectedLevelId = $assessment->questionnaire_level_id ?? 0;
         $existingRemarks = $assessment->remarks ?? '';
         $existingRecommendations = $assessment->recommendations ?? '';
 
+        $questionnaireId = $childId;
         $checkedMeans = AssessmentMean::where('period_id', $periodId)
         ->where('lgu_id', $lguId)
         ->where('questionnaire_id', $questionnaireId)
@@ -138,7 +159,7 @@ class AssessmentsController extends Controller
 
     private function getFirstQuestionnaire($id, $rootId = 0)
     {
-        return Questionnaire::where('questionnaire_tree_id', $id)
+        $q = Questionnaire::where('questionnaire_tree_id', $id)
             ->when($rootId !== 0, function ($query) use ($rootId) {
                 return $query->where('parent_id', $rootId);
             }, function ($query) {
@@ -148,6 +169,8 @@ class AssessmentsController extends Controller
             ->orderBy('parent_id')
             ->orderBy('weight')
             ->first();
+        
+        return $q;
     }
 
     private function getSingleQuestionnaire($id)
@@ -181,5 +204,10 @@ class AssessmentsController extends Controller
 
         $parent = $child->parent()->first();
         return $this->getCurrentRootQuestionnaire($parent);
+    }
+
+    private function getFirstChild($parent)
+    {
+        return Questionnaire::where('parent_id', $parent->id)->orderBy('id')->first();
     }
 }

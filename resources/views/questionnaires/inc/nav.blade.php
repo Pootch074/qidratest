@@ -10,7 +10,7 @@
             @php $parent = $ref['parent_id'] @endphp
         @endif
 
-        <a href="{{ route('get-reference', ['id' => $questionnaire->id, 'id2' => $ref['id']]) }}" class="nav-item {{ $ref['id'] == $child->id ? 'active' : '' }}">
+        <a href="{{ route('assessment-management')}}?ref={{ $ref['id'] }}" class="nav-item {{ $ref['id'] == $child->id ? 'active' : '' }}">
             <div class="ref">{{ $ref['reference_number'] }}</div>
 
             <div class="status complete"></div>
