@@ -6,17 +6,23 @@
     <div x-data="pTable" x-init="fetchP()" class="container mx-auto p-4 bg-white rounded-xl max-h-[80vh] overflow-y-auto">
         {{-- @include('admin.reports.search') --}}
         <div class="flex justify-between mb-4">
-            <button class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-xl">
-                2025 Monitoring Period
-                <img src="{{ Vite::asset('resources/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
-            </button>
-             <button onclick="printScoring()"
+            <div class="flex items-center gap-3">
+                <button class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-3xl">
+                    2025 Monitoring Period
+                    <img src="{{ Vite::asset('resources/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
+                </button>
+                <button class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-3xl">
+                    Davao City
+                    <img src="{{ Vite::asset('resources/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
+                </button>
+            </div>
+            <button onclick="printScoring()"
                 class="bg-[#DB0C16] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-xl cursor-pointer">
                 <span>Print Scoring</span>
                 <img src="{{ Vite::asset('resources/assets/icons/icon-print.png') }}" class="h-5 w-5" alt="Print Scoring">
             </button>
-
         </div>
+
 
   <div id="print-section" class="max-h-[75vh] rounded-xl shadow">
     <table class="min-w-full border border-gray-300 text-sm text-left">
