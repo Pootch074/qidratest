@@ -16,7 +16,9 @@
     },
     "dependencies": {
         "@alpinejs/focus": "^3.14.8",
+        "@fullcalendar/daygrid": "^6.1.18",
         "alpinejs": "^3.14.8",
+        "fullcalendar": "^6.1.18",
         "nprogress": "^0.2.0",
         "quill": "^2.0.3"
     }

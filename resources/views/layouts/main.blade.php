@@ -9,6 +9,8 @@
     @yield('header')
     @livewireStyles
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    @yield('header')
 </head>
 
 <body class="min-h-screen flex flex-col">

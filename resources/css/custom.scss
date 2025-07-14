@@ -117,6 +117,16 @@ body {
     &.complete {
         background-color: #CDCFD2;
     }
+
+    &.pending, &.selected {
+        background-color: #CDCFD2;
+    }
+    &.inprogress {
+        background-color: #FF3B30;
+    }
+    &.completed {
+        background-color: #34C759;
+    }
 }
 
 .nav-item {

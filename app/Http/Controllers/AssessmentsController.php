@@ -16,6 +16,17 @@ class AssessmentsController extends Controller
 {
     //
 
+    /**
+     * Manages the assessment process by handling questionnaire navigation, 
+     * LGU selection, and session updates. Retrieves the current period, 
+     * questionnaire tree, and relevant assessments. Prepares data for the 
+     * assessment view including roots, current questionnaire, parent, child, 
+     * and related levels and means of verification.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\View\View
+     */
+
     public function management(Request $request)
     {
 
@@ -147,14 +158,53 @@ class AssessmentsController extends Controller
         $ids[] = $rootId;
         $collectDescendants($rootId);
 
-        return Questionnaire::where('questionnaire_tree_id', $treeId)
+        $questionnaires = Questionnaire::where('questionnaire_tree_id', $treeId)
             ->whereIn('id', $ids)
             ->select('id', 'parent_id', 'reference_number')
             ->where('reference_number', '!=', '')
             ->orderBy('parent_id')
             ->orderBy('weight')
-            ->get()
-            ->toArray();
+            ->get();
+
+        $questionnaireArray = [];
+
+        foreach ($questionnaires as $q) {
+            $existCount = 0;
+            // check if questionnaire_id exists in assessment_means
+            if (AssessmentMean::where('questionnaire_id', $q->id)->exists()) {
+                $existCount++;
+            }
+            // check if questionnaire_id has questionnaire_level in assessment_questionnaires
+            if (AssessmentQuestionnaire::where('questionnaire_id', $q->id)->where('questionnaire_level_id', '!=', '')->exists()) {
+                $existCount++;
+            }
+            
+            // check if questionnaire_id has remarks in assessment_questionnaires
+            if (AssessmentQuestionnaire::where('questionnaire_id', $q->id)->where('remarks', '!=', '')->exists()) {
+                $existCount++;
+            }
+            // check if questionnaire_id has recommendations in assessment_questionnaires
+            if (AssessmentQuestionnaire::where('questionnaire_id', $q->id)->where('recommendations', '!=', '')->exists()) {
+                $existCount++;
+            }
+
+            $status = 'pending';
+            if ($existCount > 0 && $existCount < 4) {
+                $status = 'inprogress';
+            }
+            if ($existCount > 3) {
+                $status = 'completed';
+            }
+            
+            $questionnaireArray[$q->id] = [
+                'id' => $q->id,
+                'parent_id' => $q->parent_id,
+                'reference_number' => $q->reference_number,
+                'status' => $status
+            ];
+        }
+
+        return $questionnaireArray;
     }
 
     private function getFirstQuestionnaire($id, $rootId = 0)

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\AssessmentMean;
 use App\Models\AssessmentQuestionnaire;
+use App\Models\PeriodAssessment;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -46,6 +48,9 @@ class AssessmentsController extends Controller
             }
         });
 
+        $this->checkFirstAssessment($request->period_id, $request->lgu_id);
+        $this->checkLastAssessment($request->period_id, $request->lgu_id);
+
         return response()->json([
             'success' => true,
             'created_id' => $createdId,
@@ -68,6 +73,9 @@ class AssessmentsController extends Controller
             ]
         );
 
+        $this->checkFirstAssessment($request->period_id, $request->lgu_id);
+        $this->checkLastAssessment($request->period_id, $request->lgu_id);
+
         return response()->json([
             'success' => true,
             'created_id' => $level->id,
@@ -89,6 +97,9 @@ class AssessmentsController extends Controller
             ]
         );
 
+        $this->checkFirstAssessment($request->period_id, $request->lgu_id);
+        $this->checkLastAssessment($request->period_id, $request->lgu_id);
+
         return response()->json(['success' => true, 'id' => $record->id]);
     }
 
@@ -106,7 +117,35 @@ class AssessmentsController extends Controller
             ]
         );
 
+        $this->checkFirstAssessment($request->period_id, $request->lgu_id);
+        $this->checkLastAssessment($request->period_id, $request->lgu_id);
+
         return response()->json(['success' => true, 'id' => $record->id]);
+    }
+
+    /**
+     * If this is the first assessment, set the start date to now.
+     *
+     * @param int $periodId
+     * @param int $lguId
+     * @return void
+     */
+    private function checkFirstAssessment($periodId, $lguId): void
+    {
+        $assessment = PeriodAssessment::where('period_id', $periodId)
+            ->where('lgu_id', $lguId)
+            ->first();
+
+        if ($assessment && is_null($assessment->assessment_start_date)) {
+            // Update the date to now
+            $assessment->assessment_start_date = Carbon::now();
+            $assessment->save();
+        }
+    }
+
+    private function checkLastAssessment($periodId, $lguId)
+    {
+
     }
 
 }

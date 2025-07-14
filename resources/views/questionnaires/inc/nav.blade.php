@@ -13,7 +13,7 @@
         <a href="{{ route('assessment-management')}}?ref={{ $ref['id'] }}" class="nav-item {{ $ref['id'] == $child->id ? 'active' : '' }}">
             <div class="ref">{{ $ref['reference_number'] }}</div>
 
-            <div class="status complete"></div>
+            <div class="status {!! $ref['status'] !!}"></div>
         </a>
     @endforeach
 </div>
