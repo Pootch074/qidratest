@@ -39,53 +39,76 @@
         </tr>
       </thead>
       <tbody>
-
-        <!-- Section A -->
         <tr class="bg-gray-100 font-semibold">
-          <td colspan="6" class="border px-4 py-2">A. Administration and Organization</td>
+          <td colspan="5" class="border px-4 py-2 pl-40 text-left">A. {{ $sdfty->name }}</td>
+        </tr>
+        @foreach ($mcyla as $mklj)
+        <tr>
+          <td class="border px-4 py-2 font-semibold">{{ $mklj->weight }}. {{ $mklj->name }}</td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center"></td>
+        </tr>
+        @endforeach
+
+        <tr class="bg-gray-100 font-semibold">
+          <td colspan="5" class="border px-4 py-2 pl-40 text-left">B. {{ $dsdsaa->name }}</td>
+        </tr>
+        @foreach ($errtt as $mklj)
+        <tr>
+          <td class="border px-4 py-2 font-semibold">{{ $mklj->weight }}. {{ $mklj->name }}</td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center"></td>
+        </tr>
+        @endforeach
+
+
+        <tr class="bg-gray-100 font-semibold">
+          <td colspan="5" class="border px-4 py-2 pl-40 text-left">C. {{ $skdud->name }}</td>
+        </tr>
+        @foreach ($nchusus as $mklj)
+        <tr>
+          <td class="border px-4 py-2 font-semibold">{{ $mklj->weight }}. {{ $mklj->name }}</td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center"></td>
+        </tr>
+        @endforeach
+
+        <tr>
+            <td class="border px-4 py-2 text-center font-bold align-middle" rowspan="2" colspan="2">
+                FINAL RATING
+            </td>
+            <td class="border px-4 py-2 text-left" colspan="2">
+                Information about the policies/guidelines on the implementation of LSWDO's programs and services, through manuals, citizen’s charter and the likes are available and accessible for use of staff and their clients but are not yet in the form of manual
+            </td>
+            <td class="border px-4 py-2 text-center font-bold bg-green-200 align-middle" rowspan="2" style="width: 80px;">
+                2.38
+            </td>
         </tr>
         <tr>
-          <td class="border px-4 py-2 font-semibold">1. Vision, Mission, Goals and Organizational Structure</td>
-          <td class="border px-4 py-2 text-center">7.00%</td>
-          <td class="border px-4 py-2 text-center">7.00%</td>
-          <td class="border px-4 py-2 text-center">7.00%</td>
-          <td class="border px-4 py-2 text-center">7.00%</td>
+            <td class="border px-4 py-2 text-center font-semibold" colspan="2">
+                Level 2
+            </td>
         </tr>
-        <tr>
-          <td class="border px-4 py-2">LSWDO VMGO</td>
-          <td class="border px-4 py-2 text-center">7.00%</td>
-          <td class="border px-4 py-2 text-center">7.00%</td>
-          <td class="border px-4 py-2 text-center">7.00%</td>
-          <td class="border px-4 py-2 text-center">7.00%</td>
-        </tr>
-        <tr>
-          <td class="border px-4 py-2 font-semibold">2. Human Resource Management and Development</td>
-          <td class="border px-4 py-2 text-center">11.00%</td>
-          <td class="border px-4 py-2 text-center">11.00%</td>
-          <td class="border px-4 py-2 text-center">11.00%</td>
-          <td class="border px-4 py-2 text-center">11.00%</td>
-        </tr>
-        <tr>
-          <td class="border px-4 py-2 font-semibold">3. Public Financial Management</td>
-          <td class="border px-4 py-2 text-center">9.00%</td>
-          <td class="border px-4 py-2 text-center">9.00%</td>
-          <td class="border px-4 py-2 text-center">3.00%</td>
-          <td class="border px-4 py-2 text-center">3.00%</td>
-        </tr>
-        <tr>
-          <td class="border px-4 py-2 font-semibold">4. Support Services</td>
-          <td class="border px-4 py-2 text-center">8.00%</td>
-          <td class="border px-4 py-2 text-center">8.00%</td>
-          <td class="border px-4 py-2 text-center">9.00%</td>
-          <td class="border px-4 py-2 text-center">9.00%</td>
-        </tr>
+
+
+
+
+
+
+
+
+
+
 
       </tbody>
     </table>
   </div>
-
-
-        
     </div>
 
 @endsection
