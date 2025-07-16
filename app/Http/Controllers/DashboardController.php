@@ -30,7 +30,7 @@ class DashboardController extends Controller
         $extension = AssessmentQuestionnaire::where('period_id', $period->id)->where('user_id', auth()->user()->id)->count();
 
         // assigned assessments
-        $assessments = PeriodAssessment::where('period_id', $period->id)->where('status', 'pending')->where('user_id', auth()->user()->id)->get();
+        $assessments = PeriodAssessment::where('period_id', $period->id)->where('user_id', auth()->user()->id)->get();
         $events = $assessments->map(function ($assessment) {
             $hue = ($assessment->lgu_id * 47) % 360;
             $color = "hsl($hue, 70%, 60%)";

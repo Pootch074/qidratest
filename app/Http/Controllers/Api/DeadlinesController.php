@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Helpers\PeriodHelper;
 use App\Http\Controllers\Controller;
 use App\Models\PeriodAssessment;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class DeadlinesController extends Controller
@@ -24,8 +25,8 @@ class DeadlinesController extends Controller
             return [
                 'id' => $item->id,
                 'lgu_name' => $item->lgu->name ?? 'N/A',
-                'start_date' => $item->start_date?->format('Y-m-d'),
-                'end_date' => $item->end_date?->format('Y-m-d'),
+                'assessment_start_date' => $item->assessment_start_date ? Carbon::parse($item->assessment_start_date)->format('Y-m-d') : '',
+                'assessment_end_date' => $item->assessment_end_date ? Carbon::parse($item->assessment_end_date)->format('Y-m-d') : '',
                 'status' => $item->status ?? 'Pending',
             ];
         });
