@@ -25,7 +25,7 @@ class Lgu extends Model
         'email_address'
     ];
 
-    protected $dates = ['deleted_at']; // Ensure Laravel treats it as a date
+    protected $dates = ['deleted_at'];
     const TYPE_CITY = 'City';
     const TYPE_MUNICIPALITY = 'Municipality';
     const TYPE_PROVINCIAL = 'Provincial';

@@ -7,14 +7,64 @@
         {{-- @include('admin.reports.search') --}}
         <div class="flex justify-between mb-4">
             <div class="flex items-center gap-3">
-                <button class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-3xl">
-                    2025 Monitoring Period
-                    <img src="{{ Vite::asset('resources/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
-                </button>
-                <button class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-3xl">
-                    Davao City
-                    <img src="{{ Vite::asset('resources/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
-                </button>
+                
+            
+            
+            
+            <div x-data="{ open: false }" class="relative">
+                    <button @click="open = !open"
+                        class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-3xl focus:outline-none">
+                        {{ request('lgu_name', 'Select Period') }}
+                        <img src="{{ Vite::asset('resources/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
+                    </button>
+
+                    <!-- <div x-show="open" @click.away="open = false"
+                        class="absolute z-50 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                        <ul class="py-1 max-h-60 overflow-auto">
+                            @foreach($lgus as $lgu)
+                                <li>
+                                    <a href="{{ route('compliance-monitoring', ['lgu_name' => $lgu->name]) }}"
+                                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        {{ $lgu->name }}
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div> -->
+                </div>
+            
+
+
+
+                <div x-data="{ open: false }" class="relative">
+                    <button @click="open = !open"
+                        class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-3xl focus:outline-none">
+                        {{ request('lgu_name', 'Select LGU') }}
+                        <img src="{{ Vite::asset('resources/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
+                    </button>
+
+                    <div x-show="open" @click.away="open = false"
+                        class="absolute z-50 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                        <ul class="py-1 max-h-60 overflow-auto">
+                            @foreach($lgus as $lgu)
+                                <li>
+                                    <a href="{{ route('compliance-monitoring', ['lgu_name' => $lgu->name]) }}"
+                                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        {{ $lgu->name }}
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+
             </div>
             <button onclick="printScoring()"
                 class="bg-[#DB0C16] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-xl cursor-pointer">
@@ -27,7 +77,7 @@
   <div id="print-section" class="max-h-[75vh] rounded-xl shadow">
     <table class="min-w-full border border-gray-300 text-sm text-left">
       <h2 class="text-center text-xl font-semibold mb-4">COMPLIANCE MONITORING</h2>
-      <thead class="bg-green-100">
+      <thead>
         <tr class=" text-center">
           <th class="border px-4 py-2 font-semibold">PARAMETER / FUNCTIONAL AREA</th>
           <th class="border px-4 py-2">WEIGHT PER INDICATOR</th>
@@ -38,138 +88,62 @@
         </tr>
       </thead>
       <tbody>
-
-        <!-- Section A -->
         <tr class="bg-gray-100 font-semibold">
-          <td colspan="6" class="border px-4 py-2">A. Administration and Organization</td>
+          <td colspan="6" class="border px-4 py-2" id="yui">A. {{ $trgfy->name }}</td>
         </tr>
+        @foreach ($bcdg as $mklj)
         <tr>
-          <td class="border px-4 py-2">1. Vision, Mission, Goals and Organizational Structure</td>
-          <td class="border px-4 py-2 text-center">7.00%</td>
-          <td class="border px-4 py-2 text-center">7.00%</td>
-          <td class="border px-4 py-2 text-center">7.00%</td>
-          <td class="border px-4 py-2 text-center">Sustained</td>
-          <td class="border px-4 py-2 text-center">0.00</td>
+          <td class="border px-4 py-2" id="zxc">{{ $mklj->weight }}. {{ $mklj->name }}</td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center"></td>
         </tr>
-        <tr class="bg-red-100">
-          <td class="border px-4 py-2">2. Human Resource Management and Development</td>
-          <td class="border px-4 py-2 text-center">11.00%</td>
-          <td class="border px-4 py-2 text-center">11.00%</td>
-          <td class="border px-4 py-2 text-center">11.00%</td>
-          <td class="border px-4 py-2 text-center">Increased</td>
-          <td class="border px-4 py-2 text-center">0.001</td>
-        </tr>
-        <tr class="bg-red-100">
-          <td class="border px-4 py-2">3. Public Financial Management</td>
-          <td class="border px-4 py-2 text-center">9.00%</td>
-          <td class="border px-4 py-2 text-center">9.00%</td>
-          <td class="border px-4 py-2 text-center">3.00%</td>
-          <td class="border px-4 py-2 text-center">Increased</td>
-          <td class="border px-4 py-2 text-center">0.02</td>
-        </tr>
-        <tr class="bg-red-100">
-          <td class="border px-4 py-2">4. Support Services</td>
-          <td class="border px-4 py-2 text-center">8.00%</td>
-          <td class="border px-4 py-2 text-center">8.00%</td>
-          <td class="border px-4 py-2 text-center">9.00%</td>
-          <td class="border px-4 py-2 text-center">Sustained</td>
-          <td class="border px-4 py-2 text-center">0.00</td>
-        </tr>
+        @endforeach
 
-        <!-- Section B -->
-        <tr class="bg-gray-100 font-semibold">
-          <td colspan="6" class="border px-4 py-2">B. Program Management</td>
-        </tr>
-        <tr>
-          <td class="border px-4 py-2">1. Planning</td>
-          <td class="border px-4 py-2 text-center">16.00%</td>
-          <td class="border px-4 py-2 text-center">16.00%</td>
-          <td class="border px-4 py-2 text-center">16.00%</td>
-          <td class="border px-4 py-2 text-center">Sustained</td>
-          <td class="border px-4 py-2 text-center">0.00</td>
-        </tr>
-        <tr>
-          <td class="border px-4 py-2">2. Implementation</td>
-          <td class="border px-4 py-2 text-center">9.00%</td>
-          <td class="border px-4 py-2 text-center">9.00%</td>
-          <td class="border px-4 py-2 text-center">9.00%</td>
-          <td class="border px-4 py-2 text-center">Increased</td>
-          <td class="border px-4 py-2 text-center">0.03</td>
-        </tr>
-        <tr class="bg-blue-100">
-          <td class="border px-4 py-2">3. Monitoring and Reporting</td>
-          <td class="border px-4 py-2 text-center">7.00%</td>
-          <td class="border px-4 py-2 text-center">7.00%</td>
-          <td class="border px-4 py-2 text-center">7.00%</td>
-          <td class="border px-4 py-2 text-center">Increased</td>
-          <td class="border px-4 py-2 text-center">0.04</td>
-        </tr>
-        <tr class="bg-blue-100">
-          <td class="border px-4 py-2">4. Case Management</td>
-          <td class="border px-4 py-2 text-center">7.00%</td>
-          <td class="border px-4 py-2 text-center">7.00%</td>
-          <td class="border px-4 py-2 text-center">7.00%</td>
-          <td class="border px-4 py-2 text-center">Increased</td>
-          <td class="border px-4 py-2 text-center">0.04</td>
-        </tr>
-        <tr class="bg-blue-100">
-          <td class="border px-4 py-2">5. Presidential Care and Community-Based Center</td>
-          <td class="border px-4 py-2 text-center">7.00%</td>
-          <td class="border px-4 py-2 text-center">7.00%</td>
-          <td class="border px-4 py-2 text-center">7.00%</td>
-          <td class="border px-4 py-2 text-center">Increased</td>
-          <td class="border px-4 py-2 text-center">0.04</td>
-        </tr>
 
-        <!-- Section C -->
         <tr class="bg-gray-100 font-semibold">
-          <td colspan="6" class="border px-4 py-2">C. Institutional Mechanisms</td>
+          <td colspan="6" class="border px-4 py-2" id="yui">B. {{ $ksuys->name }}</td>
         </tr>
+        @foreach ($pitsv as $mklj)
         <tr>
-          <td class="border px-4 py-2">1. Functionality of Local Council for the Protection of Children</td>
-          <td class="border px-4 py-2 text-center">16.00%</td>
-          <td class="border px-4 py-2 text-center">16.00%</td>
-          <td class="border px-4 py-2 text-center">16.00%</td>
-          <td class="border px-4 py-2 text-center">Sustained</td>
-          <td class="border px-4 py-2 text-center">0.00</td>
+          <td class="border px-4 py-2" id="zxc">{{ $mklj->weight }}. {{ $mklj->name }}</td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center"></td>
         </tr>
+        @endforeach
+
+        <tr class="bg-gray-100 font-semibold">
+          <td colspan="6" class="border px-4 py-2" id="yui">C. {{ $dyeie->name }}</td>
+        </tr>
+        @foreach ($psisjs as $mklj)
         <tr>
-          <td class="border px-4 py-2">2. Functionality of Local Committee on Anti-trafficking and Violence Against Women and their Children (LCAT-VAWC)</td>
-          <td class="border px-4 py-2 text-center">16.00%</td>
-          <td class="border px-4 py-2 text-center">16.00%</td>
-          <td class="border px-4 py-2 text-center">16.00%</td>
-          <td class="border px-4 py-2 text-center">Sustained</td>
-          <td class="border px-4 py-2 text-center">0.00</td>
+          <td class="border px-4 py-2" id="zxc">{{ $mklj->weight }}. {{ $mklj->name }}</td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center"></td>
         </tr>
-        <tr>
-          <td class="border px-4 py-2">3. Inter-office Collaboration</td>
-          <td class="border px-4 py-2 text-center">16.00%</td>
-          <td class="border px-4 py-2 text-center">16.00%</td>
-          <td class="border px-4 py-2 text-center">16.00%</td>
-          <td class="border px-4 py-2 text-center">Sustained</td>
-          <td class="border px-4 py-2 text-center">0.00</td>
-        </tr>
-        <tr>
-          <td class="border px-4 py-2">4. Support to Civil Society Organizations</td>
-          <td class="border px-4 py-2 text-center">16.00%</td>
-          <td class="border px-4 py-2 text-center">16.00%</td>
-          <td class="border px-4 py-2 text-center">16.00%</td>
-          <td class="border px-4 py-2 text-center">Sustained</td>
-          <td class="border px-4 py-2 text-center">0.00</td>
-        </tr>
+        @endforeach
+
         <tr class="font-semibold text-center text-lg bg-gray-100">
           <td class="border px-4 py-2">TOTAL</td>
-          <td class="border px-4 py-2">100%</td>
-          <td class="border px-4 py-2">2.52</td>
-          <td class="border px-4 py-2">2.38</td>
-          <td class="border px-4 py-2">Decreased</td>
-          <td class="border px-4 py-2">-0.14</td>
+          <td class="border px-4 py-2"></td>
+          <td class="border px-4 py-2"></td>
+          <td class="border px-4 py-2"></td>
+          <td class="border px-4 py-2"></td>
+          <td class="border px-4 py-2"></td>
         </tr>
         <tr class="font-semibold text-center text-lg bg-white">
           <td class="border px-4 py-2">NEW RATING</td>
           <td class="border px-4 py-2" colspan="2">LEVEL 2</td>
-          <td class="border px-4 py-2" colspan="3">BETTER SERVICE DELIVERY</td>
-        </tr>
+          <td class="border px-4 py-2" colspan="3"></td>
+        </tr> 
       </tbody>
     </table>
   </div>

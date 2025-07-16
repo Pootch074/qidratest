@@ -56,7 +56,7 @@ Route::middleware(['auth', CheckUserType::class . ':1'])->group(function () {
 
     Route::get('reports', [ReportsController::class, 'index'])->name('reports');
     Route::get('parameter-report', [ReportsController::class, 'paramReport'])->name('parameter-report');
-    Route::get('compliance-monitoring', [ReportsController::class, 'complMonitor'])->name('compliance-monitoring');
+    Route::get('compliance-monitoring', [ReportsController::class, 'complianceMonitoring'])->name('compliance-monitoring');
 });
 
 // Routes RMT and TL

@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Questionnaire extends Model
 {
-    //
     const STATUS_UNPUBLISHED = 'unpublished';
     const STATUS_PUBLISHED = 'published';
     const STATUS_ENDED = 'ended';
