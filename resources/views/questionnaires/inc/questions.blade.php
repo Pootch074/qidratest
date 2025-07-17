@@ -33,6 +33,7 @@
                         x-model="checked"
                         class="custom-checkbox"
                         :value="{{ $mean->id }}"
+                        data-questionnaire="{{ $questionnaireId }}"
                     />
                     <span>{!! $mean->means !!}</span>
                 </div>
@@ -56,9 +57,11 @@
                         level_id: {{ $level->id }},
                         initialChecked: {{ $selectedLevelId == $level->id ? 'true' : 'false' }}
                     })"
-                    @click="toggle()"
-                    :class="checked ? 'option selected' : 'option'"
+                    x-ref="levelOption"
+                    @click="toggle(); console.log('checked:', checked)"
+                    :class="{ 'option selected': checked, 'option': !checked }"
                     class="option"
+                    data-questionnaire="{{ $questionnaireId }}"
                 >
                     <input
                         type="radio"
