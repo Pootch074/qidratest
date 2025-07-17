@@ -9,9 +9,6 @@ use App\Models\QuestionnaireLevel;
 
 class QuestionnaireLevelsSeeder extends Seeder
 {
-    
-    
-
     public function run()
 
     {
@@ -21,17 +18,14 @@ class QuestionnaireLevelsSeeder extends Seeder
 
         $firstline = true;
         while (($data = fgetcsv($csvFile, 2000, ",")) !== FALSE) {
-            if (!$firstline) {
-                QuestionnaireLevel::create([
+            QuestionnaireLevel::create([
                     "id" => $data['0'],
                     "questionnaire_id" => $data['1'],
                     "level" => $data['2'],
                     "remarks" => $data['3'],
                     "created_at" => $data['4'],
                     "updated_at" => $data['5']
-                ]);    
-            }
-            $firstline = false;
+                ]);
         }
         fclose($csvFile);
     }

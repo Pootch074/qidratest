@@ -5,128 +5,30 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\MeansOfVerification;
 
 class MeansOfVerificationSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
-    public function run(): void
+    public function run()
     {
-        //
-        $means = [
-            ['questionnaire_id' => 18, 'means' => 'Copy of Vision, Mission and Goals', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 18, 'means' => 'IEC materials on the programs and services', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 19, 'means' => 'Written policies and other related documents', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 19, 'means' => 'Manual of Operations', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 20, 'means' => 'Organizational Chart', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 20, 'means' => 'Job description', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 20, 'means' => 'Citizen\'s Charter', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 20, 'means' => 'Individual Performance Contract', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 20, 'means' => 'Office Order', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 21, 'means' => 'PRC license', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 21, 'means' => 'Appointment paper', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 21, 'means' => 'Contract', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 21, 'means' => 'Proof of PRC application renewal', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 22, 'means' => 'Contract', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 22, 'means' => 'Appointment paper', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 23, 'means' => 'Contract', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 23, 'means' => 'Appointment paper', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 24, 'means' => 'Contract', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 24, 'means' => 'Appointment paper', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 25, 'means' => 'Accreditation certificate', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 25, 'means' => 'Training Certificate/s', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 26, 'means' => 'Accreditation certificate', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 26, 'means' => 'Training certificate from the previous years', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 27, 'means' => 'Training certificates', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 27, 'means' => 'Inventory of Personnel with attended training/ seminar', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 28, 'means' => 'Reports/ documentation on performance appraisal', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 29, 'means' => 'Reports/ documentation on compensation system', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 29, 'means' => 'Employee slip', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 29, 'means' => 'Appointment papers', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 30, 'means' => 'Vouchers', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 30, 'means' => 'Resolutions issued by the Sanggunian', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 30, 'means' => 'Employee pay slip', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 31, 'means' => 'Annual Procurement Plan', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 31, 'means' => 'Approved Annual Investment Plan', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 32, 'means' => 'Approved Annual Investment Plan (reflecting the budget for council/ committees such as LCPC, LCAT-VAWC, etc)', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 32, 'means' => 'DILG Certification for GAD Allocation', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 32, 'means' => 'SB Resolution with the approved budget', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 33, 'means' => 'Financial reports', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 33, 'means' => 'Accomplishment report', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 34, 'means' => 'Acknowledgment receipts', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 34, 'means' => 'Statement of account for monetary donation', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 34, 'means' => 'Vouchers', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 34, 'means' => 'Policy on donation management', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 34, 'means' => 'Memorandum of understanding', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 35, 'means' => 'Report on resource augmentation to component LGUs and/or NGOs', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 36, 'means' => 'Computers', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 36, 'means' => 'Other IT equipment', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 36, 'means' => 'Internet routers/ DSL (check computers/laptops if it has access to internet)', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 37, 'means' => 'CRIMS', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 37, 'means' => 'SPINS', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 37, 'means' => 'FRVA-IS', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 37, 'means' => 'SFP', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 37, 'means' => 'CBMS', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 37, 'means' => 'SWD Online Monitoring of Laws', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 37, 'means' => 'ECCD-IS', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 37, 'means' => 'Others', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 38, 'means' => 'Ocular observation of records filing', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 38, 'means' => 'Copy of policy on records management', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 39, 'means' => 'Ocular observation of the LSWDO\'s location and physical structure', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 40, 'means' => 'Hand set', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 40, 'means' => 'Radio', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 40, 'means' => 'Mobile phone', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 40, 'means' => 'Connectivity/access to internet', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 41, 'means' => 'First Aid Kit', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 41, 'means' => 'Special Order for Emergency Response Team', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 42, 'means' => 'Documentation of Capacity Building Activities', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 42, 'means' => 'Risk and Vulnerability Assessment Reports using FRVA', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 42, 'means' => 'Other sources/ activities to assess risks and vulnerabilities', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 43, 'means' => 'SPDR', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 43, 'means' => 'Annual Investment Plan', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 43, 'means' => 'Provincial Physical Framework Plan', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 44, 'means' => 'Comprehensive Development Plan', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 44, 'means' => 'Local Development Investment Program', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 44, 'means' => 'Plan monitoring reports', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 45, 'means' => 'Risk and vulnerability maps with overlay of vulnerable families', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 45, 'means' => 'DAFAC and database', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 45, 'means' => 'List of vulnerable families per location and barangay', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 46, 'means' => 'Feedback report', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 46, 'means' => 'Attendance', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 46, 'means' => 'Documentation', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 46, 'means' => 'Activity Proposal', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 47, 'means' => 'MOA', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 47, 'means' => 'Inventory of stockpile', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 48, 'means' => 'List of volunteers', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 48, 'means' => 'List of evacuation centers', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 49, 'means' => 'Policy on volunteer management;', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 49, 'means' => 'Database of volunteers', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 49, 'means' => 'MOU with volunteer groups', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 49, 'means' => 'Written policy', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 50, 'means' => 'DROMIC report', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 50, 'means' => 'DAFAC', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 50, 'means' => 'Disaster Information Board', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 50, 'means' => 'Distribution list', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 51, 'means' => 'Accomplishment Reports', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 51, 'means' => 'Financial Reports', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 52, 'means' => 'Livelihood', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 52, 'means' => 'Food Assistance', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 52, 'means' => 'Medical Assistance', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 52, 'means' => 'Other benefits & assistance as stated on the Revised Guidelines for the Implementation of the Comprehensive Local Integration Programs are as follows: <ol><li>a. Safety and Security Guarantees</li><li>b. Support to Relocation</li><li>c. Reintegration Assistance</li><li>d. Firearms Remuneration</li><li>e. PhilHealth Enrollment</li><li>f. Registration to Government Entities</li><li>g. Health and Reconciliation Initiatives</li></ol>', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 53, 'means' => 'Parent Effectiveness Service (PES) and/ or Responsible Parenthood Service', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 53, 'means' => 'Empowerment and Reaffirmation of Paternal Abilities (ERPAT)', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 53, 'means' => 'Pre-Marriage Counseling', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 53, 'means' => 'Marriage Counseling', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 53, 'means' => 'Family Casework/ Counseling', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 53, 'means' => 'Social Services for Solo Parents', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 53, 'means' => 'National Family Violence Prevention Program (NFVPP)', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 53, 'means' => 'Social Prepartion for People\'s Participating', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 53, 'means' => 'Community Volunteer Resource Development', 'created_at' => now(), 'updated_at' => now()],
-            ['questionnaire_id' => 53, 'means' => 'Livelihood Program', 'created_at' => now(), 'updated_at' => now()],
-        ];
+        MeansOfVerification::query()->delete();
 
-        DB::table('means_of_verifications')->insert($means);
+        $csvFile = fopen(base_path("database/data/questionnaire_means.csv"), "r");
+
+        while (($data = fgetcsv($csvFile, 2000, ",")) !== FALSE) {
+        MeansOfVerification::create([
+            "id" => $data[0] ?? null,
+            "questionnaire_id" => $data[1] ?? null,
+            "means" => $data[2] ?? null,
+            "created_at" => !empty($data[3] ?? '') ? \Carbon\Carbon::parse($data[3]) : now(),
+            "updated_at" => !empty($data[4] ?? '') ? \Carbon\Carbon::parse($data[4]) : now(),
+            "deleted_at" => null
+        ]);
+    }
+        fclose($csvFile);
 
     }
 }
