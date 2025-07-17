@@ -3,13 +3,13 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'DSWD - SDCA') }}</title>
-    @vite(['resources/css/app.css', 'resources/css/custom.scss', 'resources/js/app.js'])
+    @vite(['resources/js/app.js'])
     @yield('header')
   </head>
   <body>
     <div class="container-fluid">
         <div class="m-5">
-            <img src="{{ Vite::asset('resources/images/dswd-sdca.png') }}" alt="DSWD - SDCA">
+            <img src="{{ asset('build/assets//images/dswd-sdca.png') }}" alt="DSWD - SDCA">
         </div>
         @yield('content')
     </div>
