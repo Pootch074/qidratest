@@ -20,7 +20,7 @@ class PeriodsController extends Controller
         return response()->json(Period::all()->map(function ($p) {
             return [
                 'id' => $p->id,
-                'questionnaire_id' => $p->questionnaire_id,
+                'questionnaire_tree_id' => $p->questionnaire_tree_id,
                 'name' => $p->name,
                 'lgu_id' => $p->lgu_id,
                 'rmt_id' => $p->rmt_id,
@@ -68,7 +68,7 @@ class PeriodsController extends Controller
         }
 
         // Add the questionnaire ID to the request data
-        $validate['questionnaire_id'] = $questionnaire->id;
+        $validate['questionnaire_tree_id'] = $questionnaire->id;
         $validate['status'] = 'ongoing';
         $validate['user_id'] = auth()->user()->id ?? $userId;
 
@@ -77,7 +77,7 @@ class PeriodsController extends Controller
         return response()->json([
             'message' => 'Assessment period added successfully!',
             'period' => [
-                'questionnaire_id' => $questionnaire->id,
+                'questionnaire_tree_id' => $questionnaire->id,
                 'name'             => $period->name,
                 'start_date'       => $period->start_date,
                 'end_date'         => $period->end_date,
@@ -108,7 +108,7 @@ class PeriodsController extends Controller
         $period->update($validate);
 
         return response()->json(['message' => 'Assessment period added successfully!', 'period' => [
-            'questionnaire_id' => $period['questionnaire_id'],
+            'questionnaire_tree_id' => $period['questionnaire_tree_id'],
             'name' => $period['name'],
             'start_date' => $period['start_date'],
             'end_date' => $period['end_date'],
