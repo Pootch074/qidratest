@@ -7,6 +7,9 @@ import levelToggle from './levelToggle';
 import remarks from './remarks';
 import recommendations from './recommendations';
 
+import '../css/app.css';
+import '../css/custom.scss';
+
 window.Alpine = Alpine;
 window.Quill = Quill;
 

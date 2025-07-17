@@ -10,7 +10,7 @@
                 <div class="col d-flex align-items-center table-search">
                     <div class="input-group">
                         <span class="input-group-text">
-                            <img src="{{ Vite::asset('assets/icons/icon-search.png') }}" alt="Search">
+                            <img src="{{ asset('build/assets/icons/icon-search.png') }}" alt="Search">
                         </span>
                         <input class="form-control w-50" placeholder="Search" />
                     </div>
