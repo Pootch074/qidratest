@@ -23,7 +23,7 @@
                 @csrf
 
                 <div class="relative mt-2">
-                    <img src="{{ Vite::asset('resources/assets/icons/icon-email.png') }}" alt="Email"
+                    <img src="{{ Vite::asset('assets/icons/icon-email.png') }}" alt="Email"
                         class="absolute left-4 top-1/2 transform -translate-y-1/2 w-9 h-9">
 
                     <input type="email" name="email" id="email" autocomplete="email" required
@@ -34,7 +34,7 @@
                 </div>
 
                 <div class="relative mt-2">
-                    <img src="{{ Vite::asset('resources/assets/icons/icon-password.png') }}" alt="Password"
+                    <img src="{{ Vite::asset('assets/icons/icon-password.png') }}" alt="Password"
                         class="absolute left-4 top-1/2 transform -translate-y-1/2 w-9 h-9">
 
                     <input type="password" name="password" id="password" autocomplete="password" required

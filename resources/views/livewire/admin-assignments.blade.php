@@ -81,7 +81,7 @@
                     <a href="#"
                        @click.prevent="openModal({ id: '{{ $a->id }}', lgu_name: '{{ $a->lgu_name }}' })"
                        class="border border-[#667085] hover:bg-red-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
-                        <img src="{{ Vite::asset('resources/assets/icons/icon-edit.svg') }}" class="h-4 w-4" alt="Assign">
+                        <img src="{{ Vite::asset('assets/icons/icon-edit.svg') }}" class="h-4 w-4" alt="Assign">
                         <span class="text-[#667085] text-xs">Assign</span>
                     </a>
                 </td>

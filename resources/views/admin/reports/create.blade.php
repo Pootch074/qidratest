@@ -3,7 +3,7 @@
     <a href="#" @click.prevent="openModal(false)"
         class="bg-[#DB0C16] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-xl">
         <span>Print Scoring</span>
-        <img src="{{ Vite::asset('resources/assets/icons/icon-print.png') }}" class="h-5 w-5" alt="Print Scoring">
+        <img src="{{ Vite::asset('assets/icons/icon-print.png') }}" class="h-5 w-5" alt="Print Scoring">
     </a>
 
     <!-- Modal -->

@@ -15,7 +15,7 @@
                     <button @click="open = !open"
                         class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-3xl focus:outline-none">
                         {{ request('lgu_name', 'Select Period') }}
-                        <img src="{{ Vite::asset('resources/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
+                        <img src="{{ Vite::asset('assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
                     </button>
 
                     <!-- <div x-show="open" @click.away="open = false"
@@ -40,7 +40,7 @@
                     <button @click="open = !open"
                         class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-3xl focus:outline-none">
                         {{ request('lgu_name', 'Select LGU') }}
-                        <img src="{{ Vite::asset('resources/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
+                        <img src="{{ Vite::asset('assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
                     </button>
 
                     <div x-show="open" @click.away="open = false"
@@ -69,7 +69,7 @@
             <button onclick="printScoring()"
                 class="bg-[#DB0C16] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-xl cursor-pointer">
                 <span>Print Scoring</span>
-                <img src="{{ Vite::asset('resources/assets/icons/icon-print.png') }}" class="h-5 w-5" alt="Print Scoring">
+                <img src="{{ Vite::asset('assets/icons/icon-print.png') }}" class="h-5 w-5" alt="Print Scoring">
             </button>
         </div>
 

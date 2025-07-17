@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import path from 'path';
 import tailwindcss from '@tailwindcss/vite'
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
     plugins: [
@@ -10,6 +11,14 @@ export default defineConfig({
             refresh: true,
         }),
         tailwindcss(),
+        viteStaticCopy({
+            targets: [
+                {
+                    src: 'resources/assets/**',
+                    dest: 'assets'
+                }
+            ]
+        }),
     ],
     resolve: {
         alias: {

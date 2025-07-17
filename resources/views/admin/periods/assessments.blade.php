@@ -101,12 +101,12 @@
                     <td class="border border-gray-200 px-4 py-2 text-sm">
                         <a href="{{ url('/periods/manage/' . $a->id) }}"
                            class="border border-[#667085] hover:bg-red-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
-                            <img src="{{ Vite::asset('resources/assets/icons/icon-edit.svg') }}" class="h-4 w-4" alt="View">
+                            <img src="{{ Vite::asset('assets/icons/icon-edit.svg') }}" class="h-4 w-4" alt="View">
                             <span class="text-[#667085] text-xs">View</span>
                         </a>
                         <a href="{{ url('/periods/manage/' . $a->id) }}"
                            class="border border-[#667085] hover:bg-red-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
-                            <img src="{{ Vite::asset('resources/assets/icons/icon-edit.svg') }}" class="h-4 w-4" alt="View">
+                            <img src="{{ Vite::asset('assets/icons/icon-edit.svg') }}" class="h-4 w-4" alt="View">
                             <span class="text-[#667085] text-xs">Approve</span>
                         </a>
                     </td>
