@@ -10,9 +10,8 @@
             @php $parent = $ref['parent_id'] @endphp
         @endif
 
-        <a href="{{ route('assessment-management')}}?ref={{ $ref['id'] }}" class="nav-item {{ $ref['id'] == $child->id ? 'active' : '' }}">
+        <a href="{{ route('assessment-management')}}?ref={{ $ref['id'] }}" class="nav-item {{ $ref['id'] == $child->id ? 'active' : '' }}" data-questionnaire="{{ $ref['id'] }}">
             <div class="ref">{{ $ref['reference_number'] }}</div>
-
             <div class="status {!! $ref['status'] !!}"></div>
         </a>
     @endforeach

@@ -41,7 +41,11 @@ export default function recommendationsEditor({ route, initialContent, period_id
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    // alert('Recommendations saved successfully.');
+                    const statusEl = document.querySelector(`[data-questionnaire="${questionnaire_id}"] .status.pending`);
+                    if (statusEl) {
+                        statusEl.classList.remove('pending');
+                        statusEl.classList.add('inprogress');
+                    }
                 } else {
                     // alert('Failed to save.');
                 }
