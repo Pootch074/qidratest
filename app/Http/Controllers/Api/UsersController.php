@@ -7,6 +7,7 @@ use App\Models\LguUser;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 class UsersController extends Controller
@@ -48,6 +49,7 @@ class UsersController extends Controller
                 'first_name'    => 'required|string',
                 'last_name'     => 'nullable|string',
                 'email'         => 'required|email|unique:users,email',
+                'password'      => 'required|string|min:6',
                 'position'      => 'nullable|string',
                 'user_type'     => 'nullable|integer|in:1,2,3,4',
                 'lgu'           => 'nullable|integer',
@@ -57,7 +59,7 @@ class UsersController extends Controller
         }
 
         $validate['created_at'] = $validate['updated_at'] = Carbon::now();
-        $validate['password'] = '-';
+        $validate['password'] = Hash::make($request->password);
         $validate['status'] = 1;
         $user = User::create($validate);
 
@@ -77,6 +79,7 @@ class UsersController extends Controller
         return response()->json(['message' => 'User added successfully!', 'user' => [
             'id' => $user->id,
             'email' => $user->email,
+            'password' => Hash::make($user->password),
             'name' => $user->first_name . ' ' . $user->last_name,
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
@@ -104,6 +107,7 @@ class UsersController extends Controller
                 'first_name'  => 'required|string',
                 'last_name'   => 'nullable|string',
                 'email'       => "required|email|unique:users,email,{$id}",
+                'password'    => 'nullable|string|min:6',
                 'user_type'   => 'nullable|integer|in:1,2,3,4',
                 'position'    => 'nullable|string',
                 'lgu'         => 'nullable|string',
@@ -114,6 +118,12 @@ class UsersController extends Controller
 
         // Update user details
         $validatedData['updated_at'] = Carbon::now();
+        // Preserve the existing password if a new one is not provided
+        if (!$request->filled('password')) {
+            $validatedData['password'] = $user->password;
+        } else {
+            $validatedData['password'] = Hash::make($request->password);
+        }
         $user->update($validatedData);
 
         // assign user to lgu

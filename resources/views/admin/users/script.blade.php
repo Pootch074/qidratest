@@ -12,6 +12,7 @@
                 first_name: "",
                 last_name: "",
                 email: "",
+                password: "",
                 user_type: "",
                 position: "",
                 lgu: "",
@@ -118,8 +119,9 @@
             editUser(user) {
                 this.openModal(true);
                 this.newUser = {
-                    ...user
-                }; // Load selected user into form
+                    ...user,
+                    password: ""
+                }; // Load selected user into form, reset password
 
                 this.editMode = true;
                 this.showModal = true;

@@ -49,6 +49,13 @@
                                     class="mt-1 block w-full px-3 py-2 border border-[#CDCFD2] text-[#101828] rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                             </div>
 
+                            <!-- Password -->
+                            <div class="sm:col-span-2">
+                                <label class="block text-sm text-[#75777C]">Password</label>
+                                <input type="password" x-model="newUser.password" name="password" required
+                                    class="mt-1 block w-full px-3 py-2 border border-[#CDCFD2] text-[#101828] rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+
                             <!-- User Type -->
                             <div>
                                 <label class="block text-sm text-[#75777C]">User Type</label>
