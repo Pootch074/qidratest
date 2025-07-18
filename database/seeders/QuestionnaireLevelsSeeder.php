@@ -24,8 +24,8 @@ class QuestionnaireLevelsSeeder extends Seeder
                     "questionnaire_id" => $data['1'],
                     "level" => $data['2'],
                     "remarks" => $data['3'],
-                    "created_at" => Carbon::parse($data['4'])->toDateTimeString(),
-                    "updated_at" => Carbon::parse($data['5'])->toDateTimeString()
+                    "created_at" => Carbon::now(),
+                    "updated_at" => Carbon::now()
                 ]);
         }
         fclose($csvFile);

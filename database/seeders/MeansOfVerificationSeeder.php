@@ -6,6 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use App\Models\MeansOfVerification;
+use Carbon\Carbon;
 
 class MeansOfVerificationSeeder extends Seeder
 {
@@ -23,8 +24,8 @@ class MeansOfVerificationSeeder extends Seeder
             "id" => $data[0] ?? null,
             "questionnaire_id" => $data[1] ?? null,
             "means" => $data[2] ?? null,
-            "created_at" => !empty($data[3] ?? '') ? \Carbon\Carbon::parse($data[3]) : now(),
-            "updated_at" => !empty($data[4] ?? '') ? \Carbon\Carbon::parse($data[4]) : now(),
+            "created_at" => Carbon::now(),
+            "updated_at" => Carbon::now(),
             "deleted_at" => null
         ]);
     }
