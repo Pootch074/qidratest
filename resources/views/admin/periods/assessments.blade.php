@@ -65,11 +65,11 @@
                         </svg>
                     </div>
                 </th>
-                <th class="border border-gray-200 px-4 py-2 text-left">
+                {{-- <th class="border border-gray-200 px-4 py-2 text-left">
                     <div class="flex items-center space-x-1 text-xs text-[#667085] font-normal">
                         <span>Actions</span>
                     </div>
-                </th>
+                </th> --}}
             </tr>
             </thead>
             <tbody>
@@ -98,7 +98,7 @@
                 {{ ucfirst($a->status) }}
             </span>
                     </td>
-                    <td class="border border-gray-200 px-4 py-2 text-sm">
+                    {{-- <td class="border border-gray-200 px-4 py-2 text-sm">
                         <a href="{{ url('/periods/manage/' . $a->id) }}"
                            class="border border-[#667085] hover:bg-red-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
                             <img src="{{ asset('build/assets/icons/icon-edit.svg') }}" class="h-4 w-4" alt="View">
@@ -109,7 +109,7 @@
                             <img src="{{ asset('build/assets/icons/icon-edit.svg') }}" class="h-4 w-4" alt="View">
                             <span class="text-[#667085] text-xs">Approve</span>
                         </a>
-                    </td>
+                    </td> --}}
                 </tr>
             @empty
                 <tr class="hover:bg-gray-50">

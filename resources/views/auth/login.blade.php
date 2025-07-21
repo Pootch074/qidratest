@@ -46,7 +46,7 @@
 
                 <div class="relative mt-2 flex items-center space-x-2">
                     <input type="checkbox" name="terms" id="terms" required class="w-5 h-5 rounded-md">
-                    <label for="terms" class="text-sm">You accept <a href="#" class="text-[#FFCC00]">terms and conditions</a> chuchu</label>
+                    <label for="terms" class="text-sm">I agree to the <a href="#" class="text-[#FFCC00]">Terms and Conditions</a>.</label>
                 </div>
 
                 <div>
@@ -57,7 +57,7 @@
                 </div>
             </form>
 
-            <div class="flex items-center my-5">
+            {{-- <div class="flex items-center my-5">
                 <hr class="flex-grow border-t border-white" />
                 <span class="px-3 text-white text-sm">or</span>
                 <hr class="flex-grow border-t border-white" />
@@ -67,7 +67,7 @@
                 class="flex w-full justify-center items-center gap-2 rounded-md bg-white px-3 h-[60px] text-base font-semibold text-black shadow-xs border border-gray-300 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-400">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="h-5 w-5">
                 Google
-            </a>
+            </a> --}}
 
             <div class="mt-20">
                 Need Help? Email us at <a class="text-[#FFCC00]"

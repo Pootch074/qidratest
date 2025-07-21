@@ -2,76 +2,76 @@
 
 @font-face {
     font-family: 'Inter';
-    src: url('@/assets/fonts/inter/Inter_24pt-Regular.ttf') format('truetype');
+    src: url('../assets/fonts/inter/Inter_24pt-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Inter';
-    src: url('@/assets/fonts/inter/Inter_24pt-SemiBold.ttf') format('truetype');
+    src: url('../assets/fonts/inter/Inter_24pt-SemiBold.ttf') format('truetype');
     font-weight: 500;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Inter';
-    src: url('@/assets/fonts/inter/Inter_24pt-Bold.ttf') format('truetype');
+    src: url('../assets/fonts/inter/Inter_24pt-Bold.ttf') format('truetype');
     font-weight: 700;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Inter';
-    src: url('@/assets/fonts/inter/Inter_24pt-Italic.ttf') format('truetype');
+    src: url('../assets/fonts/inter/Inter_24pt-Italic.ttf') format('truetype');
     font-weight: 400;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Inter';
-    src: url('@/assets/fonts/inter/Inter_24pt-BoldItalic.ttf') format('truetype');
+    src: url('../assets/fonts/inter/Inter_24pt-BoldItalic.ttf') format('truetype');
     font-weight: 700;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Poppins';
-    src: url('@/assets/fonts/poppins/Poppins-Regular.ttf') format('truetype');
+    src: url('../assets/fonts/poppins/Poppins-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Poppins';
-    src: url('@/assets/fonts/poppins/Poppins-Bold.ttf') format('truetype');
+    src: url('../assets/fonts/poppins/Poppins-Bold.ttf') format('truetype');
     font-weight: 700;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Poppins';
-    src: url('@/assets/fonts/poppins/Poppins-Italic.ttf') format('truetype');
+    src: url('../assets/fonts/poppins/Poppins-Italic.ttf') format('truetype');
     font-weight: 400;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Poppins';
-    src: url('@/assets/fonts/poppins/Poppins-BoldItalic.ttf') format('truetype');
+    src: url('../assets/fonts/poppins/Poppins-BoldItalic.ttf') format('truetype');
     font-weight: 700;
     font-style: italic;
 }
 
 body {
-    background-image: url('@/images/background.png');
+    background-image: url('../images/background.png');
     background-size: cover;
     background-position: center;
     font-family: 'Inter', sans-serif;
 }
 
 #sidebar-doc {
-    background-image: url('@/images/doc_background.png');
+    background-image: url('../images/doc_background.png');
     background-size: cover;
     background-position: center;
     font-family: 'Poppins', sans-serif;
