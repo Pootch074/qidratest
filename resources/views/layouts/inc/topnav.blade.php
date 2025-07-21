@@ -47,7 +47,7 @@
         <!-- Dropdown Menu -->
         <div x-show="open" x-transition @click.outside="open = false"
             class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg">
-            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a>
+            {{-- <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a> --}}
             <a href="{{ route('logout') }}" class="block px-4 py-2 text-red-600 hover:bg-gray-100">Logout</a>
         </div>
     </div>

@@ -67,7 +67,7 @@ class User extends Authenticatable
     {
         return [
             self::TYPE_ADMIN => 'Admin',
-            self::TYPE_LGU => 'LGU Focal',
+            // self::TYPE_LGU => 'LGU Focal',
             self::TYPE_TL => 'Team Leader',
             self::TYPE_RMT => 'RMT',
         ];
