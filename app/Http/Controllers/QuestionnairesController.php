@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\PeriodHelper;
+use App\Models\AssessmentQuestionnaire;
 use App\Models\MeansOfVerification;
+use App\Models\PeriodAssessment;
 use App\Models\Questionnaire;
 use App\Models\QuestionnaireLevel;
 use App\Models\QuestionnaireTree;
@@ -18,25 +21,54 @@ class QuestionnairesController extends Controller
         return view('admin.questionnaires.index', compact('questionnaires'));
     }
 
-    public function manageQuestionnaires($questionnaireId)
+    public function manageQuestionnaires($questionnaireTreeId)
     {
+        $periodHelper = new PeriodHelper();
 
-        $questionnaire = QuestionnaireTree::find($questionnaireId);
-        $references = $this->getNavigation($questionnaireId);
-        $child = $this->getFirstQuestionnaire($questionnaireId);
+        $questionnaire = QuestionnaireTree::find($questionnaireTreeId);
+        $child = $this->getFirstQuestionnaire($questionnaireTreeId);
         $parent = $child->parent;
-        $root = $this->getRootQuestionnaire($child);
 
-        $means = MeansOfVerification::where('questionnaire_id', $child->id)->get();
-        $levels = QuestionnaireLevel::where('questionnaire_id', $child->id)->get();
+        $roots = $periodHelper->getRootQuestionnaires($questionnaireTreeId);
+        $currentRoot = $roots[0];
 
-        return view('questionnaires.view', compact('root', 'questionnaire', 'child', 'parent', 'references', 'means', 'levels'));
+        $questionnaireId = $child->id;
+        $periodId = PeriodHelper::currentPeriodId();
+        $lguId = PeriodAssessment::where('period_id', $periodId)->first()->lgu_id;
+        $assessment = AssessmentQuestionnaire::where('period_id', $periodId)
+            ->where('lgu_id', $lguId)
+            ->where('questionnaire_id', $questionnaireId)
+            ->first();
+
+        $selectedLevelId = $assessment->questionnaire_level_id ?? 0;
+        $references = $periodHelper->getNavigation($questionnaireTreeId, $questionnaireId, $lguId, $periodId);
+
+        $means = MeansOfVerification::where('questionnaire_id', $questionnaireId)->get();
+        $levels = QuestionnaireLevel::where('questionnaire_id', $questionnaireId)->get();
+
+        // Assemble: set session for all variables
+        session([
+            'rootId' => $currentRoot->id,
+            'questionnaireTreeId' => $questionnaireTreeId,
+            'lguId' => $lguId,
+            'parentId' => $parent->id,
+            'childId' => $child->id,
+        ]);
+
+        return redirect(route('assessment-management'));
+
+        // return view('questionnaires.view', compact('questionnaire', 
+        //     'currentRoot', 'roots',
+        //     'questionnaireId', 'periodId', 'lguId', 'selectedLevelId',
+        //     'child', 'parent', 'references', 'means', 'levels'));
     }
 
-    public function getReference($questionnaireId, $referenceId)
+    public function getReference($questionnaireTreeId, $referenceId)
     {
-        $questionnaire = QuestionnaireTree::find($questionnaireId);
-        $references = $this->getNavigation($questionnaireId);
+        $rootId = $lguId = $periodId = 0;
+        $periodHelper = new PeriodHelper();
+        $questionnaire = QuestionnaireTree::find($questionnaireTreeId);
+        $references = $periodHelper->getNavigation($questionnaireTreeId, $rootId, $lguId, $periodId);
         $child = $this->getSingleQuestionnaire($referenceId);
         $parent = $child->parent;
         $root = $this->getRootQuestionnaire($child);
@@ -45,17 +77,6 @@ class QuestionnairesController extends Controller
         $levels = QuestionnaireLevel::where('questionnaire_id', $child->id)->get();
 
         return view('questionnaires.view', compact('root', 'questionnaire', 'child', 'parent', 'references', 'means', 'levels'));
-    }
-
-    private function getNavigation($id)
-    {
-        return Questionnaire::where('questionnaire_tree_id', $id)
-            ->select('id', 'parent_id', 'reference_number')
-            ->where('reference_number', '!=', '')
-            ->orderBy('parent_id')
-            ->orderBy('weight')
-            ->get()
-            ->toArray();
     }
 
     private function getFirstQuestionnaire($id)
