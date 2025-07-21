@@ -11,7 +11,7 @@
 
     <div class="text-[18px]">
         Current Period: <b>{{ $currentPeriod->name ?? "No existing period yet." }} </b>
-        <a href="{{ route('period-management') }}" class="text-white text-xs rounded-full border-[#a5a8ae] bg-[#7d818a] px-3 py-1 ml-2 align-middle font-light text-[14px]">Change Period</a>
+        @if(auth()->user()->user_type == 1)<a href="{{ route('period-management') }}" class="text-white text-xs rounded-full border-[#a5a8ae] bg-[#7d818a] px-3 py-1 ml-2 align-middle font-light text-[14px]">Change Period</a>@endif
         <input type="hidden" id="current_period" value="{{ $currentPeriod->id ?? 0 }}">
     </div>
 
