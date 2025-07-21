@@ -9,11 +9,13 @@
             <div class="flex items-center gap-3">
                 <button class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-3xl">
                     2025 Monitoring Period
-                    <img src="{{ Vite::asset('resources/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
+                    <img src="{{ asset('assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
+
                 </button>
                 <button class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-3xl">
                     Davao City
-                    <img src="{{ Vite::asset('resources/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
+                    <img src="{{ asset('assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
+
                 </button>
             </div>
             <button onclick="printScoring()"
