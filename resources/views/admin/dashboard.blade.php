@@ -1,35 +1,57 @@
 @extends('layouts.main')
 @section('title', 'Dashboard')
 
+@section('header')
+    <!-- fullcalendar -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.18/index.global.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+
+        var events = @json($events);
+
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth',
+          fixedWeekCount: false,
+          events: events
+        });
+        calendar.render();
+      });
+    </script>
+    <!-- fullcalendar end -->
+@endsection
+
+
 @section('content')
 
-{{-- <div class="container mx-auto p-4">
+<div class="container mx-auto p-4">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white shadow-md rounded-2xl px-4 py-10">
-            <span class="block text-[#94969B]">Total Assessment</span>
+        <div class="bg-white shadow-md rounded-lg p-4">
+            <span class="block text-gray-700">Total Assessment</span>
             <div class="flex justify-between items-center mt-2">
-                <p class="text-4xl font-bold">004</p>
+                <p class="text-4xl font-bold">{{ $total }}</p>
                 <div class="p-2 rounded-[15px] bg-[#DB0C16]"><img src="{{ asset('build/assets/icons/icon-assessment.svg') }}" alt="Search" class="h-7 w-7"></div>
             </div>
         </div>
-        <div class="bg-white shadow-md rounded-2xl px-4 py-10">
-            <span class="block  text-[#94969B]">Pending Assessments</span>
+        <div class="bg-white shadow-md rounded-lg p-4">
+            <span class="block text-gray-700">Pending Assessments</span>
             <div class="flex justify-between items-center mt-2">
-                <p class="text-4xl font-bold">004</p>
+                <p class="text-4xl font-bold">{{ $pending }}</p>
                 <div class="p-2 rounded-[15px] bg-[#DB0C16]"><img src="{{ asset('build/assets/icons/icon-assessment.svg') }}" alt="Search" class="h-7 w-7"></div>
             </div>
         </div>
-        <div class="bg-white shadow-md rounded-2xl px-4 py-10">
-            <span class="block  text-[#94969B]">Completed Assessments</span>
+        <div class="bg-white shadow-md rounded-lg p-4">
+            <span class="block text-gray-700">Completed Assessments</span>
             <div class="flex justify-between items-center mt-2">
-                <p class="text-4xl font-bold">004</p>
+                <p class="text-4xl font-bold">{{ $completed }}</p>
                 <div class="p-2 rounded-[15px] bg-[#DB0C16]"><img src="{{ asset('build/assets/icons/icon-assessment.svg') }}" alt="Search" class="h-7 w-7"></div>
             </div>
         </div>
-        <div class="bg-white shadow-md rounded-2xl px-4 py-10">
-            <span class="block  text-[#94969B]">Extension Request</span>
+        <div class="bg-white shadow-md rounded-lg p-4">
+            <span class="block text-gray-700">Extension Request</span>
             <div class="flex justify-between items-center mt-2">
-                <p class="text-4xl font-bold">014</p>
+                <p class="text-4xl font-bold">{{ $extension }}</p>
                 <div class="p-2 rounded-[15px] bg-[#DB0C16]"><img src="{{ asset('build/assets/icons/icon-assessment.svg') }}" alt="Search" class="h-7 w-7"></div>
             </div>
         </div>
@@ -37,126 +59,180 @@
 
     <div class="flex gap-4 mt-8">
         <div class="w-1/2">
-            <h3 class="text-xl font-semibold text-gray-800">Assigned Assessments</h3>
-
             <div class="bg-white shadow-md rounded-lg p-4 mt-4">
-                <div class="flex flex-col md:flex-row justify-between items-center mb-4">
-                    <div class="relative w-full md:w-1/2">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                            <img src="{{ asset('build/assets/icons/icon-search.png') }}" alt="Search" class="h-5 w-5">
-                        </span>
-                        <input type="text" placeholder="Search" class="pl-10 pr-4 py-2 w-full border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div class="flex items-center space-x-2 mt-2 md:mt-0">
-                        <img src="{{ asset('build/assets/icons/icon-filter.svg') }}" alt="Filter" class="h-5 w-5">
-                        <span class="text-gray-700">Filters</span>
-                    </div>
-                </div>
 
-                <table class="w-full border-collapse border border-gray-200">
-                    <thead>
-                        <tr class="bg-gray-100">
-                            <th class="border border-gray-200 px-4 py-2 text-left">
-                                <div class="flex items-center space-x-1 text-xs text-[#667085] font-normal">
-                                    <span>LGU Name</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="size-3">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
-                                    </svg>
-                                </div>
-                            </th>
-                            <th class="border border-gray-200 px-4 py-2 text-left">
-                                <div class="flex items-center space-x-1 text-xs text-[#667085] font-normal">
-                                    <span>Status</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="size-3">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
-                                    </svg>
-                                </div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for ($i = 0; $i < 10; $i++)
-                        <tr class="hover:bg-gray-50">
-                            <td class="border border-gray-200 px-4 py-2 text-sm">Davao City</td>
-                            <td class="border border-gray-200 px-4 py-2 text-sm">Pending</td>
-                        </tr>
-                        @endfor
-                    </tbody>
-                </table>
+                <div 
+                    x-data="barChart()" 
+                    x-init="initChart()" 
+                    class="max-w-xl mx-auto bg-white p-4 rounded shadow">
+                    
+                    <h2 class="text-lg font-bold mb-4">LGU Parameter Results</h2>
+                    <canvas id="myBarChart" height="200"></canvas>
+                </div>
             </div>
         </div>
 
-
         <div class="w-1/2">
 
-            <h3 class="text-xl font-semibold text-gray-800">Calendar</h3>
+            <div class="bg-white shadow-md rounded-lg p-4 mt-4">
 
-            <div class="mx-auto bg-white p-6 shadow-lg rounded-lg p-4 mt-4">
-
-                <div class="flex justify-between items-center mb-4">
-                    <button class="px-3 py-1 bg-gray-200 rounded">&#9665;</button>
-                    <h2 class="text-lg font-semibold">March 2025</h2>
-                    <button class="px-3 py-1 bg-gray-200 rounded">&#9655;</button>
+                <div x-data="groupedBarChart()" x-init="initChart()" class="max-w-6xl mx-auto bg-white p-6 rounded shadow">
+                    <h2 class="text-xl font-bold mb-4">Grouped Levels by Location</h2>
+                    <canvas id="groupedBarChartCanvas" height="175"></canvas>
                 </div>
-                <hr class="my-3" />
-                <div class="grid grid-cols-7 text-center text-gray-700 font-semibold">
-                    <div class="py-2">Sun</div>
-                    <div class="py-2">Mon</div>
-                    <div class="py-2">Tue</div>
-                    <div class="py-2">Wed</div>
-                    <div class="py-2">Thu</div>
-                    <div class="py-2">Fri</div>
-                    <div class="py-2">Sat</div>
-                </div>
-                <div class="grid grid-cols-7 text-center">
-                    <div class="py-2 text-gray-300">26</div>
-                    <div class="py-2 text-gray-300">27</div>
-                    <div class="py-2 text-gray-300">28</div>
-                    <div class="py-2 text-gray-300">29</div>
-                    <div class="py-2 text-gray-300">30</div>
-                    <div class="py-2">1</div>
-                    <div class="py-2">2</div>
-                    <div class="py-2">3</div>
-                    <div class="py-2">4</div>
-                    <div class="py-2">5</div>
-                    <div class="py-2">6</div>
-                    <div class="py-2">7</div>
-                    <div class="py-2">8</div>
-                    <div class="py-2">9</div>
-                    <div class="py-2">10</div>
-                    <div class="py-2">11</div>
-                    <div class="py-2">12</div>
-                    <div class="py-2">13</div>
-                    <div class="py-2">14</div>
-                    <div class="py-2">15</div>
-                    <div class="py-2">16</div>
-                    <div class="py-2">17</div>
-                    <div class="py-2">18</div>
-                    <div class="py-2">19</div>
-                    <div class="py-2">20</div>
-                    <div class="py-2">21</div>
-                    <div class="py-2">22</div>
-                    <div class="py-2">23</div>
-                    <div class="py-2">24</div>
-                    <div class="py-2">25</div>
-                    <div class="py-2">26</div>
-                    <div class="py-2">27</div>
-                    <div class="py-2">28</div>
-                    <div class="py-2">29</div>
-                    <div class="py-2">30</div>
-                    <div class="py-2">31</div>
-                    <div class="py-2 text-gray-300">1</div>
-                    <div class="py-2 text-gray-300">2</div>
-                    <div class="py-2 text-gray-300">3</div>
-                    <div class="py-2 text-gray-300">4</div>
-                    <div class="py-2 text-gray-300">5</div>
-                    <div class="py-2 text-gray-300">6</div>
-                </div>
-
             </div>
 
         </div>
     </div>
-</div> --}}
+</div>
 
 @endsection
+
+@push('scripts')
+    <script>
+        function barChart() {
+            return {
+                chart: null,
+                dataJson: {
+                    A1: 'Level 1', A2: 'Level 2', A3: 'Level 3', A4: 'Level 3',
+                    B1: 'Low', B2: 'Level 3', B3: 'Level 3', B4: 'Level 2',
+                    C1: 'Level 2', C2: 'Level 1', C3: 'Level 3', C4: 'Low'
+                },
+                initChart() {
+                    // Add "null" as the bottom level (index 0)
+                    const levelOrder = [' ', 'Low', 'Level 1', 'Level 2', 'Level 3'];
+                    const labels = Object.keys(this.dataJson);
+                    const rawLevels = Object.values(this.dataJson);
+                    const numericLevels = rawLevels.map(level => levelOrder.indexOf(level));
+
+                    const ctx = document.getElementById('myBarChart').getContext('2d');
+
+                    this.chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Level',
+                                data: numericLevels,
+                                backgroundColor: '#2E3192',
+                                borderRadius: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    min: 0,
+                                    max: 4, // Highest: Level 3 (index 4)
+                                    ticks: {
+                                        stepSize: 1,
+                                        callback: function(value) {
+                                            const levelNames = [' ', 'Low', 'Level 1', 'Level 2', 'Level 3'];
+                                            return levelNames[value] ?? value;
+                                        }
+                                    }
+                                }
+                            },
+                            plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            const val = context.raw;
+                                            const levelNames = [' ', 'Low', 'Level 1', 'Level 2', 'Level 3'];
+                                            return `Level: ${levelNames[val]}`;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
+        function groupedBarChart() {
+            return {
+                chart: null,
+
+                // ✅ Sample data: raw counts
+                data: {
+                    City:     { 'Level 1': 2,  'Level 2': 4,  'Level 3': 3 },
+                    Province: { 'Level 1': 1,  'Level 2': 2,  'Level 3': 2 },
+                    Municipality: { 'Level 1': 36, 'Level 2': 5, 'Level 3': 2 }
+                },
+
+                initChart() {
+                    const ctx = document.getElementById('groupedBarChartCanvas').getContext('2d');
+                    const levels = ['Level 1', 'Level 2', 'Level 3'];
+                    const locations = Object.keys(this.data); // ['City', 'Province', 'Municipality']
+                    const colorMap = {
+                        'Level 1': '#2E3192',
+                        'Level 2': '#6A75C9',
+                        'Level 3': '#C5CAE9'
+                    };
+
+                    // Compute total for each location
+                    const totals = locations.map(loc =>
+                        Object.values(this.data[loc]).reduce((sum, val) => sum + val, 0)
+                    );
+
+                    // Build dataset per level (grouped, not stacked)
+                    const datasets = levels.map(level => ({
+                        label: level,
+                        backgroundColor: colorMap[level],
+                        data: locations.map((loc, i) => {
+                            const value = this.data[loc][level] || 0;
+                            const total = totals[i] || 1;
+                            return +((value / total) * 100).toFixed(2); // percentage
+                        })
+                    }));
+
+                    this.chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: locations,
+                            datasets: datasets
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                x: {
+                                    stacked: false,
+                                    title: {
+                                        display: true,
+                                        text: 'Location'
+                                    }
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100,
+                                    ticks: {
+                                        callback: value => value + '%'
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: 'Percentage'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            const value = context.raw;
+                                            return `${context.dataset.label}: ${value}%`;
+                                        }
+                                    }
+                                },
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    </script>
+@endpush

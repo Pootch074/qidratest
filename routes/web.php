@@ -60,7 +60,7 @@ Route::middleware(['auth', CheckUserType::class . ':1'])->group(function () {
 });
 
 // Routes RMT and TL
-Route::middleware(['auth', CheckUserType::class . ':3,4'])->group(function () {
+Route::middleware(['auth', CheckUserType::class . ':1,3,4'])->group(function () {
     Route::get('deadlines', [DeadlinesController::class, 'index'])->name('deadlines');
     Route::get('assessment-management', [AssessmentsController::class, 'management'])->name('assessment-management');
 });

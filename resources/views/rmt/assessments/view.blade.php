@@ -4,6 +4,7 @@
 @section('content')
 
     <div class="flex items-center gap-4 mb-4 bg-[#EEEFF1] p-5 rounded-full m-3 border border-[#E5E5EA]">
+        @if(auth()->user()->user_type > 1)
         <!-- Dropdown -->
         <div wire:ignore x-data="lguDropdownComponent(@js($lgus))" x-init="init()" class="relative inline-block text-left w-[250px]">
             <button @click="open = !open" type="button"
@@ -37,6 +38,7 @@
                 </template>
             </ul>
         </div>
+        @endif
 
         <div 
             x-data="rootsComponent(@js($roots), {{ $currentRoot->id }})" 

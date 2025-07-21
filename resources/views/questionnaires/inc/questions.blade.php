@@ -14,6 +14,11 @@
 
         <div class="options-container mt-5">
             @foreach ($means as $mean)
+            @if (auth()->user()->user_type == 1)
+                <div
+                    class="option"
+                >
+            @else
                 <div
                     x-data="movToggle({
                         route: '{{ route('api-assessment-mov') }}',
@@ -28,6 +33,7 @@
                     :class="checked ? 'option selected' : 'option'"
                     class="option"
                 >
+            @endif
                     <input
                         type="checkbox"
                         x-model="checked"
@@ -47,22 +53,30 @@
 
         <div class="options-container mt-5">
             @foreach ($levels as $level)
-                <div
-                    x-data="levelToggle({
-                        route: '{{ route('api-assessment-level') }}',
-                        user_id: '{{ auth()->user()->id }}',
-                        period_id: '{{ $periodId }}',
-                        questionnaire_id: '{{ $questionnaireId }}',
-                        lgu_id: '{{ $lguId }}',
-                        level_id: {{ $level->id }},
-                        initialChecked: {{ $selectedLevelId == $level->id ? 'true' : 'false' }}
-                    })"
-                    x-ref="levelOption"
-                    @click="toggle(); console.log('checked:', checked)"
-                    :class="{ 'option selected': checked, 'option': !checked }"
-                    class="option"
-                    data-questionnaire="{{ $questionnaireId }}"
-                >
+
+                @if (auth()->user()->user_type == 1)
+                    <div
+                        class="option"
+                    >
+                @else
+                    <div
+                        x-data="levelToggle({
+                            route: '{{ route('api-assessment-level') }}',
+                            user_id: '{{ auth()->user()->id }}',
+                            period_id: '{{ $periodId }}',
+                            questionnaire_id: '{{ $questionnaireId }}',
+                            lgu_id: '{{ $lguId }}',
+                            level_id: {{ $level->id }},
+                            initialChecked: {{ $selectedLevelId == $level->id ? 'true' : 'false' }}
+                        })"
+                        x-ref="levelOption"
+                        @click="toggle(); console.log('checked:', checked)"
+                        :class="{ 'option selected': checked, 'option': !checked }"
+                        class="option"
+                        data-questionnaire="{{ $questionnaireId }}"
+                    >
+                @endif
+                
                     <input
                         type="radio"
                         x-model="checked"
@@ -80,20 +94,26 @@
             @endforeach
 
             {{-- Optional: Not Applicable --}}
-            <div
-                x-data="levelToggle({
-                    route: '{{ route('api-assessment-level') }}',
-                    user_id: '{{ auth()->user()->id }}',
-                    period_id: '{{ $periodId }}',
-                    questionnaire_id: '{{ $questionnaireId }}',
-                    lgu_id: '{{ $lguId }}',
-                    level_id: 9,
-                    initialChecked: {{ $selectedLevelId == 9 ? 'true' : 'false' }}
-                })"
-                @click="toggle()"
-                :class="checked ? 'option selected' : 'option'"
-                class="option"
-            >
+            @if (auth()->user()->user_type == 1)
+                <div
+                    class="option"
+                >
+            @else
+                <div
+                    x-data="levelToggle({
+                        route: '{{ route('api-assessment-level') }}',
+                        user_id: '{{ auth()->user()->id }}',
+                        period_id: '{{ $periodId }}',
+                        questionnaire_id: '{{ $questionnaireId }}',
+                        lgu_id: '{{ $lguId }}',
+                        level_id: 9,
+                        initialChecked: {{ $selectedLevelId == 9 ? 'true' : 'false' }}
+                    })"
+                    @click="toggle()"
+                    :class="checked ? 'option selected' : 'option'"
+                    class="option"
+                >
+            @endif
                 <input
                     type="radio"
                     x-model="checked"
@@ -126,11 +146,13 @@
 
         <div id="remarks" class="wysiwyg bg-white mt-5 h-60"></div>
 
-        <a href="#"
-        @click.prevent="save"
-        class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-2 mt-3 text-white rounded-xl">
-            Save
-        </a>
+        @if (auth()->user()->user_type > 1)
+            <a href="#"
+            @click.prevent="save"
+            class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-2 mt-3 text-white rounded-xl">
+                Save
+            </a>
+        @endif
     </div>
 
     <div 
@@ -149,10 +171,12 @@
 
         <div id="recommendations" class="wysiwyg bg-white mt-5 h-60"></div>
 
-        <a href="#"
-        @click.prevent="save"
-        class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-2 mt-3 text-white rounded-xl">
-            Save
-        </a>
+        @if (auth()->user()->user_type > 1)
+            <a href="#"
+            @click.prevent="save"
+            class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-2 mt-3 text-white rounded-xl">
+                Save
+            </a>
+        @endif
     </div>
 </div>
