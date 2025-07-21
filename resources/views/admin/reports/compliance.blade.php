@@ -50,14 +50,12 @@
                         </ul>
                     </div>
                 </div>
-
-
-
-
-
-
-
             </div>
+            <button onclick="printScoring()"
+                class="bg-[#DB0C16] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-xl cursor-pointer">
+                <span>Print Scoring</span>
+                <img src="{{ asset('build/assets/icons/icon-print.png') }}" class="h-5 w-5" alt="Print Scoring">
+            </button>
         </div>
 
 
