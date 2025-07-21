@@ -20,11 +20,11 @@
     </a>
 </li>
 
-<li class="mx-1 my-2">
+{{-- <li class="mx-1 my-2">
     <a href="#" class="transition-colors duration-200 flex items-center p-3 rounded-lg text-white hover:bg-[#DB0C16]">
         <img src="{{ asset('build/assets/icons/icon-parameters.svg') }}" alt="Parameter Result" class="h-5 w-5 mr-2">
         <span class="text-sm">Parameter Result</span>
     </a>
-</li>
+</li> --}}
 
 @endif

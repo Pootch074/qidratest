@@ -106,12 +106,12 @@
                                  alt="Delete Period">
                             <span class="text-[#667085] text-xs">Delete</span>
                         </a> --}}
-                        <a :href="'/periods/manage/' + p.id"
+                        {{-- <a :href="'/periods/manage/' + p.id"
                            class="border border-[#667085] hover:bg-red-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
                             <img src="{{ asset('build/assets/icons/icon-edit.svg') }}" class="h-4 w-4"
                                  alt="View">
                             <span class="text-[#667085] text-xs">View</span>
-                        </a>
+                        </a> --}}
                     </td>
                 </tr>
             </template>

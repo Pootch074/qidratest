@@ -1,10 +1,10 @@
 <div x-data="{ open: false }">
     <!-- Button to open the modal -->
-    <a href="#" @click.prevent="openModal(false)"
+    {{-- <a href="#" @click.prevent="openModal(false)"
         class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-xl">
         <img src="{{ asset('build/assets/icons/icon-plus.svg') }}" class="h-5 w-5" alt="New Questionnaire">
         <span>New Questionnaire</span>
-    </a>
+    </a> --}}
 
     <!-- Modal -->
     <div x-show="showModal">
