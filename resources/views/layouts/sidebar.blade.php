@@ -1,6 +1,6 @@
 <div id="sidebar" class="flex flex-col bg-[#2E3192] border-r border-[#2E3192]-300 flex-shrink-0 p-3 w-72 h-screen">
     <!-- Logo -->
-    <a href="/" class="flex items-center mb-3 mx-auto pt-1">
+    <a href="{{ url('/') }}" class="flex items-center mb-3 mx-auto pt-1">
         <img src="{{ asset('build/assets//images/dswd-sdca-white.png') }}" alt="DSWD - SDCA" class="h-12">
     </a>
 

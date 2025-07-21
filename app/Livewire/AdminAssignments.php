@@ -24,7 +24,7 @@ class AdminAssignments extends Component
     public function mount()
     {
         $this->teamLeaders = User::teamLeaders()->active()->get();
-        $this->rmts = User::rmts()->active()->get();
+        $this->rmts = User::rmts()->active()->get()->merge($this->teamLeaders);
     }
 
     public function updatingSearch()
