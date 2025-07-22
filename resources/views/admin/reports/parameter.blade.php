@@ -5,17 +5,30 @@
 
     <div x-data="pTable" x-init="fetchP()" class="container mx-auto p-4 bg-white rounded-xl max-h-[80vh] overflow-y-auto">
         {{-- @include('admin.reports.search') --}}
-        
         <div class="flex justify-between mb-4">
-            <button class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-xl">
-                2025 Monitoring Period
-                <img src="{{ asset('build/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
-            </button>
-             <button onclick="printScoring()"
-                class="bg-[#DB0C16] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-xl cursor-pointer">
-                <span>Print Scoring</span>
-                <img src="{{ asset('build/assets/icons/icon-print.png') }}" class="h-5 w-5" alt="Print Scoring">
-            </button>
+          <div class="flex items-center gap-3">
+                <div x-data="{ open: false }" class="relative">
+                    <button @click="open = !open"
+                        class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-3xl focus:outline-none">
+                        {{ request('lgu_name', 'Select LGU') }}
+                        <img src="{{ asset('build/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
+                    </button>
+
+                    <div x-show="open" @click.away="open = false"
+                        class="absolute z-50 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                        <ul class="py-1 max-h-60 overflow-auto">
+                            @foreach($lgus as $lgu)
+                                <li>
+                                    <a href="{{ route('compliance-monitoring', ['lgu_name' => $lgu->name]) }}"
+                                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        {{ $lgu->name }}
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
 
   <div id="print-section" class="max-h-[75vh] rounded-xl shadow">
@@ -39,45 +52,61 @@
         </tr>
       </thead>
       <tbody>
-        <tr class="bg-gray-100 font-semibold">
-          <td colspan="5" class="border px-4 py-2 pl-40 text-left">A. {{ $sdfty->name }}</td>
-        </tr>
-        @foreach ($mcyla as $mklj)
-        <tr>
-          <td class="border px-4 py-2 font-semibold">{{ $mklj->weight }}. {{ $mklj->name }}</td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center"></td>
-        </tr>
-        @endforeach
 
-        <tr class="bg-gray-100 font-semibold">
-          <td colspan="5" class="border px-4 py-2 pl-40 text-left">B. {{ $dsdsaa->name }}</td>
-        </tr>
-        @foreach ($errtt as $mklj)
+        @foreach ($sections as $vtyla)
+    <tr class="bg-gray-100 font-semibold">
+        <td colspan="5" class="border px-4 py-2 pl-30 text-left">
+            {{ chr(64 + $loop->iteration) }}. {{ $vtyla['parent']->name }}
+        </td>
+    </tr>
+
+    @foreach ($vtyla['children'] as $laoans)
+        @php
+            $assessment = $assessments->firstWhere('questionnaire_id', $laoans->id);
+        @endphp
         <tr>
-          <td class="border px-4 py-2 font-semibold">{{ $mklj->weight }}. {{ $mklj->name }}</td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center"></td>
+            <td class="border px-4 py-2 font-semibold w-[400px]">
+                {{ $loop->iteration }}. {{ $laoans->name }}
+            </td>
+            <td class="border px-4 py-2 text-center">{{ $assessment->questionnaire_level_id ?? '' }}</td>
+            <td class="border px-4 py-2 text-center">{{ $assessment->remarks ?? '' }}</td>
+            <td class="border px-4 py-2 text-center">{{ $assessment->recommendations ?? '' }}</td>
+            <td class="border px-4 py-2 text-center">{{ $assessment->number_of_beneficiaries ?? '' }}</td>
         </tr>
-        @endforeach
+
+        @php
+            $grandchildren = $vtyla['grandchild']->where('parent_id', $laoans->id);
+        @endphp
+
+        @foreach ($grandchildren as $popspsps)
+            @php
+                $assessment = $assessments->firstWhere('questionnaire_id', $popspsps->id);
+            @endphp
+            <tr>
+                <td class="border px-4 py-2 pl-10">
+                    - {{ $popspsps->name }}
+                </td>
+                <td class="border px-4 py-2 text-center">
+                    {{ $assessment->questionnaireLevel->level !== null ? number_format($assessment->questionnaireLevel->level, 2) : '' }}
+                </td>
 
 
-        <tr class="bg-gray-100 font-semibold">
-          <td colspan="5" class="border px-4 py-2 pl-40 text-left">C. {{ $skdud->name }}</td>
-        </tr>
-        @foreach ($nchusus as $mklj)
-        <tr>
-          <td class="border px-4 py-2 font-semibold">{{ $mklj->weight }}. {{ $mklj->name }}</td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center"></td>
-        </tr>
+                <td class="border px-4 py-2">{{ $assessment->remarks ?? '' }}</td>
+                <td class="border px-4 py-2">{{ $assessment->recommendations ?? '' }}</td>
+                <td class="border px-4 py-2 text-center">{{ $assessment->number_of_beneficiaries ?? '' }}</td>
+            </tr>
         @endforeach
+    @endforeach
+@endforeach
+
+
+
+
+
+
+
+
+
 
         <tr>
             <td class="border px-4 py-2 text-center font-bold align-middle" rowspan="2" colspan="2">
