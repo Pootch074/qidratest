@@ -7,6 +7,7 @@
             lgus: @json($lgus),
             showModal: false,
             editMode: false,
+            validationErrors: [],
             newUser: {
                 id: null,
                 first_name: "",
@@ -71,8 +72,10 @@
             },
 
             openModal(isEdit) {
+                this.validationErrors = []; // Force clear early
                 this.editMode = isEdit;
                 this.showModal = true;
+                console.log(this.validationErrors);
 
                 if (!isEdit) {
                     this.newUser = {
@@ -98,6 +101,20 @@
                         body: JSON.stringify(this.newUser),
                     });
 
+                    if (response.status === 422) {
+                        const errorData = await response.json();
+                        let messages = [];
+
+                        if (errorData.errors) {
+                            for (const field in errorData.errors) {
+                                messages.push(...errorData.errors[field]);
+                            }
+                        }
+
+                        this.validationErrors = messages;
+                        return;
+                    }
+
                     if (!response.ok) throw new Error("Failed to add user");
 
                     const addedUser = await response.json();
@@ -108,7 +125,7 @@
                         lgu: this.updateLgu(addedUser.user.lgu_id)
                     };
 
-                    this.users.push(userUpdated);
+                    this.users.unshift(userUpdated);
 
                     this.showModal = false; // Close modal
                 } catch (error) {
@@ -117,14 +134,13 @@
             },
 
             editUser(user) {
-                this.openModal(true);
+                this.validationErrors = []; // Force clear before modal and form is set
                 this.newUser = {
                     ...user,
                     password: ""
                 }; // Load selected user into form, reset password
 
-                this.editMode = true;
-                this.showModal = true;
+                this.openModal(true);
             },
 
             async updateUser() {
@@ -138,6 +154,20 @@
                             },
                             body: JSON.stringify(this.newUser),
                         });
+
+                    if (response.status === 422) {
+                        const errorData = await response.json();
+                        let messages = [];
+
+                        if (errorData.errors) {
+                            for (const field in errorData.errors) {
+                                messages.push(...errorData.errors[field]);
+                            }
+                        }
+
+                        this.validationErrors = messages;
+                        return;
+                    }
 
                     if (!response.ok) throw new Error("Failed to update profile");
 

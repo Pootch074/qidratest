@@ -48,7 +48,16 @@ class UsersController extends Controller
             $validate = $request->validate([
                 'first_name'    => 'required|string',
                 'last_name'     => 'nullable|string',
-                'email'         => 'required|email|unique:users,email',
+                'email' => [
+                    'required',
+                    'email',
+                    function ($attribute, $value, $fail) {
+                        $existing = \App\Models\User::withTrashed()->where('email', $value)->first();
+                        if ($existing && !$existing->trashed()) {
+                            $fail('The email has already been taken.');
+                        }
+                    },
+                ],
                 'password'      => 'required|string|min:6',
                 'position'      => 'nullable|string',
                 'user_type'     => 'nullable|integer|in:1,2,3,4',
@@ -61,7 +70,15 @@ class UsersController extends Controller
         $validate['created_at'] = $validate['updated_at'] = Carbon::now();
         $validate['password'] = Hash::make($request->password);
         $validate['status'] = 1;
-        $user = User::create($validate);
+
+        $existingDeletedUser = User::withTrashed()->where('email', $request->email)->first();
+        if ($existingDeletedUser && $existingDeletedUser->trashed()) {
+            $existingDeletedUser->restore();
+            $existingDeletedUser->update($validate);
+            $user = $existingDeletedUser;
+        } else {
+            $user = User::create($validate);
+        }
 
         // assign user to lgu
         $lguName = 'N/A';
