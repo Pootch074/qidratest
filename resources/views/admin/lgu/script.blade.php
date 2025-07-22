@@ -7,6 +7,7 @@
             lgu_types: @json($lguTypes),
             showModal: false,
             editMode: false,
+            validationErrors: [],
             newLgu: {
                 id: null,
                 name: "",
@@ -92,6 +93,7 @@
             },
 
             async addLgu() {
+                this.validationErrors = [];
                 try {
 
                     const response = await fetch("{{ route('api-lgu-post') }}", {
@@ -102,7 +104,15 @@
                         body: JSON.stringify(this.newLgu),
                     });
 
-                    if (!response.ok) throw new Error("Failed to add profile");
+                    if (!response.ok) {
+                        if (response.status === 422) {
+                            const errorData = await response.json();
+                            this.validationErrors = Object.values(errorData.errors).flat();
+                        } else {
+                            throw new Error("Failed to add profile");
+                        }
+                        return;
+                    }
 
                     const addedLgu = await response.json();
 
@@ -116,7 +126,12 @@
 
                     this.showModal = false; // Close modal
                 } catch (error) {
-                    console.error("Error adding profile:", error);
+                    if (error.response && error.response.status === 422) {
+                        const errorData = await error.response.json();
+                        this.validationErrors = Object.values(errorData.errors).flat();
+                    } else {
+                        console.error("Error adding profile:", error);
+                    }
                 }
             },
 
@@ -130,6 +145,7 @@
             },
 
             async updateLgu() {
+                this.validationErrors = [];
                 try {
 
                     const response = await fetch(
@@ -141,7 +157,15 @@
                             body: JSON.stringify(this.newLgu),
                         });
 
-                    if (!response.ok) throw new Error("Failed to update profile");
+                    if (!response.ok) {
+                        if (response.status === 422) {
+                            const errorData = await response.json();
+                            this.validationErrors = Object.values(errorData.errors).flat();
+                        } else {
+                            throw new Error("Failed to update profile");
+                        }
+                        return;
+                    }
 
                     // Find and update the profile in the list
                     const index = this.lgus.findIndex(lgu => lgu.id === this.newLgu.id);
@@ -151,7 +175,12 @@
 
                     this.showModal = false; // Close modal
                 } catch (error) {
-                    console.error("Error updating profile:", error);
+                    if (error.response && error.response.status === 422) {
+                        const errorData = await error.response.json();
+                        this.validationErrors = Object.values(errorData.errors).flat();
+                    } else {
+                        console.error("Error updating profile:", error);
+                    }
                 }
             },
 
