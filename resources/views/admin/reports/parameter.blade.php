@@ -10,7 +10,8 @@
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open"
                         class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-3xl focus:outline-none">
-                        {{ request('lgu_name', 'Select LGU') }}
+                        {{ $lgus->firstWhere('id', request('lgu_id'))?->name ?? 'Select LGU' }}
+
                         <img src="{{ asset('build/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
                     </button>
 
@@ -19,7 +20,7 @@
                         <ul class="py-1 max-h-60 overflow-auto">
                             @foreach($lgus as $lgu)
                                 <li>
-                                    <a href="{{ route('compliance-monitoring', ['lgu_name' => $lgu->name]) }}"
+                                    <a href="{{ route('parameter-report', ['lgu_id' => $lgu->id]) }}"
                                       class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                         {{ $lgu->name }}
                                     </a>
@@ -27,6 +28,9 @@
                             @endforeach
                         </ul>
                     </div>
+
+
+                    
                 </div>
             </div>
         </div>
@@ -52,52 +56,64 @@
         </tr>
       </thead>
       <tbody>
+        
 
-        @foreach ($sections as $vtyla)
-    <tr class="bg-gray-100 font-semibold">
-        <td colspan="5" class="border px-4 py-2 pl-30 text-left">
-            {{ chr(64 + $loop->iteration) }}. {{ $vtyla['parent']->name }}
-        </td>
-    </tr>
-
-    @foreach ($vtyla['children'] as $laoans)
-        @php
-            $assessment = $assessments->firstWhere('questionnaire_id', $laoans->id);
-        @endphp
-        <tr>
-            <td class="border px-4 py-2 font-semibold w-[400px]">
-                {{ $loop->iteration }}. {{ $laoans->name }}
+    @foreach ($sections as $vtyla)
+        <tr class="bg-gray-100 font-semibold">
+            <td colspan="5" class="border px-4 py-2 pl-30 text-left">
+                {{ chr(64 + $loop->iteration) }}. {{ $vtyla['parent']->name }}
             </td>
-            <td class="border px-4 py-2 text-center">{{ $assessment->questionnaire_level_id ?? '' }}</td>
-            <td class="border px-4 py-2 text-center">{{ $assessment->remarks ?? '' }}</td>
-            <td class="border px-4 py-2 text-center">{{ $assessment->recommendations ?? '' }}</td>
-            <td class="border px-4 py-2 text-center">{{ $assessment->number_of_beneficiaries ?? '' }}</td>
         </tr>
 
-        @php
-            $grandchildren = $vtyla['grandchild']->where('parent_id', $laoans->id);
-        @endphp
-
-        @foreach ($grandchildren as $popspsps)
+        @foreach ($vtyla['children'] as $laoans)
             @php
-                $assessment = $assessments->firstWhere('questionnaire_id', $popspsps->id);
+                $grandchildren = $vtyla['grandchild']->where('parent_id', $laoans->id);
+                $childLevels = $grandchildren->map(function ($child) use ($assessments) {
+                    $assessment = $assessments->firstWhere('questionnaire_id', $child->id);
+                    return $assessment && $assessment->questionnaireLevel ? $assessment->questionnaireLevel->level : null;
+                })->filter(fn ($v) => $v !== null);
+
+                $avgLevel = $childLevels->isNotEmpty() ? $childLevels->avg() : null;
             @endphp
+
             <tr>
-                <td class="border px-4 py-2 pl-10">
-                    - {{ $popspsps->name }}
+                <td class="border px-4 py-2 font-semibold w-[400px]">{{ $loop->iteration }}. {{ $laoans->name }}</td>
+                <td class="border px-4 py-2 text-center font-semibold">
+                    {{ $avgLevel !== null ? number_format($avgLevel, 2) : '' }}
                 </td>
+                <td class="border px-4 py-2 text-center"></td>
+                <td class="border px-4 py-2 text-center"></td>
+
+
                 <td class="border px-4 py-2 text-center">
-                    {{ $assessment->questionnaireLevel->level !== null ? number_format($assessment->questionnaireLevel->level, 2) : '' }}
+                    @if ($loop->parent->first && $loop->first)
+                        {{ number_format($weightedLevelGroup1, 2) }}
+                    @elseif ($loop->parent->iteration == 2 && $loop->first)
+                        {{ number_format($weightedLevelGroup2, 2) }}
+                    @endif
                 </td>
 
-
-                <td class="border px-4 py-2">{{ $assessment->remarks ?? '' }}</td>
-                <td class="border px-4 py-2">{{ $assessment->recommendations ?? '' }}</td>
-                <td class="border px-4 py-2 text-center">{{ $assessment->number_of_beneficiaries ?? '' }}</td>
             </tr>
+
+            @foreach ($grandchildren as $popspsps)
+                @php
+                    $assessment = $assessments->first(fn ($a) => $a->questionnaire_id == $popspsps->id);
+
+
+                @endphp
+                <tr>
+                    <td class="border px-4 py-2 pl-10">- {{ $popspsps->name }}</td>
+                    <td class="border px-4 py-2 text-center">
+                        {{ optional($assessment->questionnaireLevel)->level !== null ? number_format(optional($assessment->questionnaireLevel)->level, 2) : '' }}
+
+                    </td>
+                    <td class="border px-4 py-2 text-center">{{ $assessment->remarks ?? '' }}</td>
+                    <td class="border px-4 py-2 text-center">{{ $assessment->recommendations ?? '' }}</td>
+                    <td class="border px-4 py-2 text-center" id="asds"></td>
+                </tr>
+            @endforeach
         @endforeach
     @endforeach
-@endforeach
 
 
 

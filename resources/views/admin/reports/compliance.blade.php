@@ -20,7 +20,7 @@
                         <ul class="py-1 max-h-60 overflow-auto">
                             @foreach($lgus as $lgu)
                                 <li>
-                                    <a href="{{ route('compliance-monitoring', ['lgu_name' => $lgu->name]) }}"
+                                    <a href="{{ route('parameter-report', ['lgu_id' => $lgu->id]) }}"
                                       class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                         {{ $lgu->name }}
                                     </a>
@@ -28,6 +28,11 @@
                             @endforeach
                         </ul>
                     </div>
+
+
+
+
+
                 </div>
 
             </div>
@@ -53,56 +58,181 @@
         </tr>
       </thead>
       <tbody>
-        <tr class="bg-gray-100 font-semibold">
-          <td colspan="6" class="border px-4 py-2" id="yui">A. {{ $trgfy->name }}</td>
+
+                <tr class="bg-gray-100 font-semibold">
+          <td colspan="6" class="border px-4 py-2" id="yui">A. Administration and Organization</td>
         </tr>
-        @foreach ($bcdg as $mklj)
+
+
+        
         <tr>
-          <td class="border px-4 py-2" id="zxc">{{ $mklj->weight }}. {{ $mklj->name }}</td>
+          <td class="border px-4 py-2" id="zxc">1. Vision, Mission, Goals, and Organizational Structure</td>
+          <td class="border px-4 py-2 text-center">7.00%</td>
           <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center">
+            {{ number_format($weightedLevelGroup1, 2) ?? 'N/A' }}
+          </td>
+          <td class="border px-4 py-2 text-center">Sustained</td>
+          <td class="border px-4 py-2 text-center">0.00</td>
         </tr>
-        @endforeach
+
+
+
+
+
+
+        <tr>
+          <td class="border px-4 py-2" id="zxc">2. Human Resource Management and Development</td>
+          <td class="border px-4 py-2 text-center">11.00%</td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center">
+            {{ number_format($weightedLevelGroup2, 2) ?? 'N/A' }}
+          </td>
+          <td class="border px-4 py-2 text-center">Sustained</td>
+          <td class="border px-4 py-2 text-center">0.00</td>
+        </tr>
+        <tr>
+          <td class="border px-4 py-2" id="zxc">3. Public Financial Management</td>
+          <td class="border px-4 py-2 text-center">9.00%</td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center">
+            {{ number_format($weightedLevelGroup3, 2) ?? 'N/A' }}
+          </td>
+          <td class="border px-4 py-2 text-center">Sustained</td>
+          <td class="border px-4 py-2 text-center">0.00</td>
+        </tr>
+        <tr>
+          <td class="border px-4 py-2" id="zxc">4. Support Services</td>
+          <td class="border px-4 py-2 text-center">8.00%</td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center">
+            {{ number_format($weightedLevelGroup4, 2) ?? 'N/A' }}
+          </td>
+          <td class="border px-4 py-2 text-center">Sustained</td>
+          <td class="border px-4 py-2 text-center">0.00</td>
+        </tr>
 
 
         <tr class="bg-gray-100 font-semibold">
-          <td colspan="6" class="border px-4 py-2" id="yui">B. {{ $ksuys->name }}</td>
+          <td colspan="6" class="border px-4 py-2" id="yui">B. Program Management</td>
         </tr>
-        @foreach ($pitsv as $mklj)
         <tr>
-          <td class="border px-4 py-2" id="zxc">{{ $mklj->weight }}. {{ $mklj->name }}</td>
+          <td class="border px-4 py-2" id="zxc">1. Planning</td>
+          <td class="border px-4 py-2 text-center">16.00%</td>  
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center">
+            {{ number_format($weightedLevelGroup5, 2) ?? 'N/A' }}
+          </td>
+          <td class="border px-4 py-2 text-center">Sustained</td>
+          <td class="border px-4 py-2 text-center">0.00</td>
+        </tr>
+        <tr>
+          <td class="border px-4 py-2" id="zxc">2. Implementation: Emergency/ disaster assistance programs/ services</td>
+          <td class="border px-4 py-2 text-center">4.5%</td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center">
+            {{ number_format($weightedLevelGroup6, 2) ?? 'N/A' }}
+          </td>
+          <td class="border px-4 py-2 text-center">Sustained</td>
+          <td class="border px-4 py-2 text-center">0.00</td>
+        </tr>
+        <tr>
+          <td class="border px-4 py-2" id="zxc">3. Implementation: Devolved Programs</td>
+          <td class="border px-4 py-2 text-center">4.5%</td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center">
+            {{ number_format($weightedLevelGroup7, 2) ?? 'N/A' }}
+          </td>
+          <td class="border px-4 py-2 text-center">Sustained</td>
+          <td class="border px-4 py-2 text-center">0.00</td>
+        </tr>
+        <tr>
+          <td class="border px-4 py-2" id="zxc">4. Monitoring and Reporting</td>
+          <td class="border px-4 py-2 text-center">7.00%</td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center">
+            {{ number_format($weightedLevelGroup8, 2) ?? 'N/A' }}
+          </td>
+          <td class="border px-4 py-2 text-center">Sustained</td>
+          <td class="border px-4 py-2 text-center">0.00</td>
+        </tr>
+        <tr>
+          <td class="border px-4 py-2" id="zxc">5. Case Management</td>
+          <td class="border px-4 py-2 text-center">13.00</td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center">
+            {{ number_format($weightedLevelGroup9, 2) ?? 'N/A' }}
+          </td>
+          <td class="border px-4 py-2 text-center">Sustained</td>
+          <td class="border px-4 py-2 text-center">0.00</td>
+        </tr>
+        <tr>
+          <td class="border px-4 py-2" id="zxc">6. Residential Care and Community-Based Center</td>
           <td class="border px-4 py-2 text-center"></td>
           <td class="border px-4 py-2 text-center"></td>
           <td class="border px-4 py-2 text-center"></td>
           <td class="border px-4 py-2 text-center"></td>
           <td class="border px-4 py-2 text-center"></td>
         </tr>
-        @endforeach
+
+
 
         <tr class="bg-gray-100 font-semibold">
-          <td colspan="6" class="border px-4 py-2" id="yui">C. {{ $dyeie->name }}</td>
+          <td colspan="6" class="border px-4 py-2" id="yui">C. Institutional Mechanism</td>
         </tr>
-        @foreach ($psisjs as $mklj)
         <tr>
-          <td class="border px-4 py-2" id="zxc">{{ $mklj->weight }}. {{ $mklj->name }}</td>
+          <td class="border px-4 py-2" id="zxc">1. Functionality of Local Committee on Anti-Traffcking and Violence Against Women and their Children (LCAT-VAWC)</td>
+          <td class="border px-4 py-2 text-center">6.00%</td>
           <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center">
+            {{ number_format($weightedLevelGroup11, 2) ?? 'N/A' }}
+          </td>
+          <td class="border px-4 py-2 text-center">Sustained</td>
+          <td class="border px-4 py-2 text-center">0.00</td>
         </tr>
-        @endforeach
+        <tr>
+          <td class="border px-4 py-2" id="zxc">2. Functionality of Local Council for the Protection of Children</td>
+          <td class="border px-4 py-2 text-center">5.00%</td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center">
+            {{ number_format($weightedLevelGroup12, 2) ?? 'N/A' }}
+          </td>
+          <td class="border px-4 py-2 text-center">Sustained</td>
+          <td class="border px-4 py-2 text-center">0.00</td>
+        </tr>
+        <tr>
+          <td class="border px-4 py-2" id="zxc">3. Inter-office Collaboration</td>
+          <td class="border px-4 py-2 text-center">4.00%</td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center">
+            {{ number_format($weightedLevelGroup13, 2) ?? 'N/A' }}
+          </td>
+          <td class="border px-4 py-2 text-center">Sustained</td>
+          <td class="border px-4 py-2 text-center">0.00</td>
+        </tr>
+        <tr>
+          <td class="border px-4 py-2" id="zxc">4. Support to Civil Society Organizations</td>
+          <td class="border px-4 py-2 text-center">5.00%</td>
+          <td class="border px-4 py-2 text-center"></td>
+          <td class="border px-4 py-2 text-center">
+            {{ number_format($weightedLevelGroup14, 2) ?? 'N/A' }}
+          </td>
+          <td class="border px-4 py-2 text-center">Sustained</td>
+          <td class="border px-4 py-2 text-center">0.00</td>
+        </tr>
+
+        
 
         <tr class="font-semibold text-center text-lg bg-gray-100">
           <td class="border px-4 py-2">TOTAL</td>
+          <td class="border px-4 py-2">100%</td>
           <td class="border px-4 py-2"></td>
-          <td class="border px-4 py-2"></td>
-          <td class="border px-4 py-2"></td>
-          <td class="border px-4 py-2"></td>
-          <td class="border px-4 py-2"></td>
+          <td class="border px-4 py-2 text-center">
+    {{ number_format($totalWeightedScore, 2) ?? 'N/A' }}
+</td>
+
+          <td class="border px-4 py-2">Sustained</td>
+          <td class="border px-4 py-2">0.00</td>
         </tr>
         <tr class="font-semibold text-center text-lg bg-white">
           <td class="border px-4 py-2">NEW RATING</td>
