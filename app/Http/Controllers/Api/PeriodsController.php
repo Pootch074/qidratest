@@ -46,7 +46,7 @@ class PeriodsController extends Controller
 
         try {
             $validate = $request->validate([
-                'name'       => 'required|string',
+                'name'       => 'required|string|unique:periods,name',
                 'start_date' => 'required|date',
                 'end_date'   => 'required|date'
             ]);
@@ -96,7 +96,7 @@ class PeriodsController extends Controller
 
         try {
             $validate = $request->validate([
-                'name'              => 'required|string',
+                'name'              => 'required|string|unique:periods,name,' . $id,
                 'start_date'        => 'required|date',
                 'end_date'          => 'required|date'
             ]);

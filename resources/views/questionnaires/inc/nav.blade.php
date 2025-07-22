@@ -17,24 +17,38 @@
     @endforeach
 </div>
 
-<a href="#" @click.prevent="save" class="endorse-button">
-                Endorse
-            </a>
-<style>
-.endorse-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center; /* To center the text horizontally */
-    gap: 0.5rem; /* Equivalent to gap-2, adjust if needed */
-    border: 1px solid #2E3192; /* Equivalent to border border-[#2E3192] */
-    padding: 0.5rem 1rem; /* Equivalent to px-4 py-2, adjust as needed */
-    margin-top: 0.75rem; /* Equivalent to mt-3, adjust as needed */
-    color: #2E3192; /* Equivalent to text-[#2E3192] */
-    font-weight: 700; /* Equivalent to text-bold, assuming bold corresponds to 700 */
-    border-radius: 0.75rem; /* Equivalent to rounded-xl, adjust for a more rounded look */
-    text-decoration: none; /* Remove underline from link */
-    min-width: 100px; /* Adjust as needed to match button width */
-    height: 40px; /* Adjust as needed to match button height */
-    font-size: 1rem; /* Adjust font size if needed */
-}
-</style>
+@if (auth()->user()->user_type > 1 && $assessmentStatus == 'completed')
+<div x-data="{ showEndorseModal: false }">
+    <!-- Endorse Button -->
+    <a href="#" @click.prevent="showEndorseModal = true"
+       class="bg-white inline-flex items-center gap-2 border-2 border-[#2E3192] text-[#2E3192] px-4 py-2 mt-3 text-xl rounded-[10px] hover:bg-[#2E3192] hover:text-white transition duration-300 ease-in-out">
+        <span>Endorse Assessment</span>
+    </a>
+
+    <!-- Modal -->
+    <div x-show="showEndorseModal"
+         x-cloak
+         x-transition
+         class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div @click.away="showEndorseModal = false"
+             class="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full">
+            <h2 class="text-xl font-semibold mb-4">Confirm Endorsement</h2>
+            <p class="mb-4 text-gray-700">Are you sure you want to endorse this assessment?</p>
+            <div class="flex justify-end gap-3">
+                <button @click="showEndorseModal = false"
+                        class="px-4 py-2 text-gray-600 bg-gray-200 rounded hover:bg-gray-300">
+                    Cancel
+                </button>
+                <form method="POST" action="#">
+                    @csrf
+                    <input type="hidden" name="assessment_id" value="{{ $assessment->id }}">
+                    <button type="submit"
+                            class="px-4 py-2 bg-[#2E3192] text-white rounded hover:bg-[#1f236e] transition">
+                        Confirm
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endif

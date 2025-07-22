@@ -1,4 +1,4 @@
-<div x-data="{ open: false }">
+<div x-data="{ open: false, validationErrors: [] }">
     <!-- Button to open the modal -->
     <a href="#" @click.prevent="openModal(false)"
         class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-xl">
@@ -25,6 +25,16 @@
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <h3 class="text-2xl font-semibold text-gray-900 mb-4" id="modal-title"
                             x-text="editMode ? 'Edit Period' : 'Add New Period'"></h3>
+
+                        <!-- Error Alert -->
+                        <div x-show="validationErrors.length > 0" x-transition
+                             class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-left">
+                            <ul class="list-disc list-inside">
+                                <template x-for="(error, index) in validationErrors" :key="index">
+                                    <li x-text="error"></li>
+                                </template>
+                            </ul>
+                        </div>
 
                         <!-- Form -->
                         <div class="grid grid-cols-1 sm:grid-cols-1 gap-4 mb-2">

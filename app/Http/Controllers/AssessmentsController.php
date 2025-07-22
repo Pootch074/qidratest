@@ -130,9 +130,19 @@ class AssessmentsController extends Controller
         ->pluck('means_id')
         ->toArray();
 
+        // assessment status
+        $assessmentStatus = 'incomplete';
+        $allReferences = $this->getNavigation($questionnaireTreeId, null, $lguId, $periodId);
+        $totalCount = count($allReferences);
+        $completedCount = collect($allReferences)->where('status', 'completed')->count();
+
+        if ($totalCount > 0 && $totalCount === $completedCount) {
+            $assessmentStatus = 'completed';
+        }
+
         return view('rmt.assessments.view', compact(
             'roots', 'currentRoot', 'questionnaire', 
-            'child', 'parent', 
+            'child', 'parent', 'assessmentStatus',
             'periodId', 'questionnaireId', 'lguId', 
             'existingRemarks', 'existingRecommendations', 'selectedLevelId', 'checkedMeans',
             'references', 'means', 'levels', 'lgus'
@@ -140,58 +150,66 @@ class AssessmentsController extends Controller
     
     }
 
-    private function getNavigation($treeId, $rootId, $lguId, $periodId)
+    private function getNavigation($treeId, $rootId = null, $lguId, $periodId)
     {
-        $ids = [];
+        if ($rootId) {
+            $ids = [];
 
-        $collectDescendants = function ($parentId) use (&$collectDescendants, &$ids, $treeId) {
-            $children = Questionnaire::where('questionnaire_tree_id', $treeId)
-                ->where('parent_id', $parentId)
-                ->pluck('id');
+            $collectDescendants = function ($parentId) use (&$collectDescendants, &$ids, $treeId) {
+                $children = Questionnaire::where('questionnaire_tree_id', $treeId)
+                    ->where('parent_id', $parentId)
+                    ->pluck('id');
 
-            foreach ($children as $childId) {
-                $ids[] = $childId;
-                $collectDescendants($childId);
-            }
-        };
+                foreach ($children as $childId) {
+                    $ids[] = $childId;
+                    $collectDescendants($childId);
+                }
+            };
 
-        $ids[] = $rootId;
-        $collectDescendants($rootId);
+            $ids[] = $rootId;
+            $collectDescendants($rootId);
 
-        $questionnaires = Questionnaire::where('questionnaire_tree_id', $treeId)
-            ->whereIn('id', $ids)
-            ->select('id', 'parent_id', 'reference_number')
-            ->where('reference_number', '!=', '')
-            ->orderBy('parent_id')
-            ->orderBy('weight')
-            ->get();
+            $questionnaires = Questionnaire::where('questionnaire_tree_id', $treeId)
+                ->whereIn('id', $ids)
+                ->where('reference_number', '!=', '')
+                ->select('id', 'parent_id', 'reference_number')
+                ->orderBy('parent_id')
+                ->orderBy('weight')
+                ->get();
+        } else {
+            $questionnaires = Questionnaire::where('questionnaire_tree_id', $treeId)
+                ->where('reference_number', '!=', '')
+                ->select('id', 'parent_id', 'reference_number')
+                ->orderBy('parent_id')
+                ->orderBy('weight')
+                ->get();
+        }
 
         $questionnaireArray = [];
 
         foreach ($questionnaires as $q) {
             $existCount = 0;
-            // check if questionnaire_id exists in assessment_means
+
             if (AssessmentMean::where('questionnaire_id', $q->id)
                 ->where('period_id', $periodId)
                 ->where('lgu_id', $lguId)->exists()) {
                 $existCount++;
             }
-            // check if questionnaire_id has questionnaire_level in assessment_questionnaires
+
             if (AssessmentQuestionnaire::where('questionnaire_id', $q->id)
                 ->where('questionnaire_level_id', '!=', '')
                 ->where('period_id', $periodId)
                 ->where('lgu_id', $lguId)->exists()) {
                 $existCount++;
             }
-            
-            // check if questionnaire_id has remarks in assessment_questionnaires
+
             if (AssessmentQuestionnaire::where('questionnaire_id', $q->id)
                 ->where('period_id', $periodId)
                 ->where('lgu_id', $lguId)
                 ->where('remarks', '!=', '')->exists()) {
                 $existCount++;
             }
-            // check if questionnaire_id has recommendations in assessment_questionnaires
+
             if (AssessmentQuestionnaire::where('questionnaire_id', $q->id)
                 ->where('period_id', $periodId)
                 ->where('lgu_id', $lguId)
@@ -206,7 +224,7 @@ class AssessmentsController extends Controller
             if ($existCount > 3) {
                 $status = 'completed';
             }
-            
+
             $questionnaireArray[$q->id] = [
                 'id' => $q->id,
                 'parent_id' => $q->parent_id,

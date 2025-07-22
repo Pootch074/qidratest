@@ -5,6 +5,7 @@
             periods: [],
             showModal: false,
             editMode: false,
+            validationErrors: [],
             newP: {
                 id: null,
                 name: "",
@@ -38,6 +39,7 @@
             },
 
             async addP() {
+                this.validationErrors = [];
                 try {
                     const response = await fetch("{{ route('api-periods-post') }}", {
                         method: "POST",
@@ -47,7 +49,15 @@
                         body: JSON.stringify(this.newP),
                     });
 
-                    if (!response.ok) throw new Error("Failed to add assessment period");
+                    if (!response.ok) {
+                        if (response.status === 422) {
+                            const data = await response.json();
+                            this.validationErrors = Object.values(data.errors).flat();
+                        } else {
+                            throw new Error("Failed to add assessment period");
+                        }
+                        return;
+                    }
 
                     const addedP = await response.json();
 
@@ -61,7 +71,7 @@
                     this.periods.push(addedP.period);
                     this.showModal = false; // Close modal
                 } catch (error) {
-                    console.error("Error adding period:", error);
+                    // ---
                 }
             },
 
@@ -76,6 +86,7 @@
             },
 
             async updateP() {
+                this.validationErrors = [];
                 try {
 
                     const response = await fetch(
@@ -87,7 +98,15 @@
                             body: JSON.stringify(this.newP),
                         });
 
-                    if (!response.ok) throw new Error("Failed to update period");
+                    if (!response.ok) {
+                        if (response.status === 422) {
+                            const data = await response.json();
+                            this.validationErrors = Object.values(data.errors).flat();
+                        } else {
+                            throw new Error("Failed to update assessment period");
+                        }
+                        return;
+                    }
 
                     const index = this.periods.findIndex(p => p.id === this.newP.id);
                     if (index !== -1) this.periods[index] = {
@@ -96,7 +115,7 @@
 
                     this.showModal = false; // Close modal
                 } catch (error) {
-                    console.error("Error updating period:", error);
+                    // ---
                 }
             },
 

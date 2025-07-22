@@ -37,7 +37,7 @@ class LguController extends Controller
         try {
             // Validate request data
             $validate = $request->validate([
-                'name' => 'required|string',
+                'name' => 'required|string|unique:lgus,name',
                 'province_id' => 'required',
                 'region_id' => 'required',
                 'lgu_type' => 'required|string',
