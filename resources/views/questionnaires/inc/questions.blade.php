@@ -44,6 +44,36 @@
                     <span>{!! $mean->means !!}</span>
                 </div>
             @endforeach
+            {{-- Optional: Others --}}
+            @if (auth()->user()->user_type == 1)
+                <div
+                    class="option"
+                >
+            @else
+                <div
+                    x-data="movToggle({
+                        route: '{{ route('api-assessment-mov') }}',
+                        user_id: '{{ auth()->user()->id }}',
+                        period_id: '{{ $periodId }}',
+                        questionnaire_id: '{{ $questionnaireId }}',
+                        lgu_id: '{{ $lguId }}',
+                        mov_id: 0,
+                        initialChecked: {{ in_array(0, $checkedMeans ?? []) ? 'true' : 'false' }}
+                    })"
+                    @click="toggle()"
+                    :class="checked ? 'option selected' : 'option'"
+                    class="option"
+                >
+            @endif
+                    <input
+                        type="checkbox"
+                        x-model="checked"
+                        class="custom-checkbox"
+                        :value="0"
+                        data-questionnaire="{{ $questionnaireId }}"
+                    />
+                    <span>Others</span>
+                </div>
         </div>
     </div>
 
