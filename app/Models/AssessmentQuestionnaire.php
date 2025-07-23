@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\QuestionnaireLevel;
 
 class AssessmentQuestionnaire extends Model
 {
-    //
     protected $fillable = [
         'period_id',
         'lgu_id',
@@ -17,4 +17,10 @@ class AssessmentQuestionnaire extends Model
         'number_of_beneficiaries',
         'user_id'
     ];
+
+    public function questionnaireLevel()
+    {
+        return $this->belongsTo(QuestionnaireLevel::class, 'questionnaire_level_id');
+    }
+
 }
