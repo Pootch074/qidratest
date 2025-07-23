@@ -41,7 +41,7 @@
                 </button>
                 <form method="POST" action="#">
                     @csrf
-                    <input type="hidden" name="assessment_id" value="{{ $assessment->id }}">
+                    <input type="hidden" name="assessment_id" value="#">
                     <button type="submit"
                             class="px-4 py-2 bg-[#2E3192] text-white rounded hover:bg-[#1f236e] transition">
                         Confirm
