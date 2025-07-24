@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Models\QuestionnaireLevel;
 
 class Questionnaire extends Model
 {
@@ -27,5 +28,17 @@ class Questionnaire extends Model
     {
         return $this->hasMany(Questionnaire::class, 'parent_id', 'id');
     }
+
+    public function level(): BelongsTo
+    {
+        return $this->belongsTo(QuestionnaireLevel::class, 'questionnaire_level_id');
+    }
+
+    // In App\Models\Questionnaire.php
+    public function assessment()
+    {
+        return $this->hasOne(AssessmentQuestionnaire::class, 'questionnaire_id');
+    }
+
 
 }

@@ -23,4 +23,11 @@ class AssessmentQuestionnaire extends Model
         return $this->belongsTo(QuestionnaireLevel::class, 'questionnaire_level_id');
     }
 
+    // In App\Models\AssessmentQuestionnaire.php
+    public function level()
+    {
+        return $this->belongsTo(QuestionnaireLevel::class, 'questionnaire_level_id');
+    }
+
+
 }

@@ -28,11 +28,35 @@
                             @endforeach
                         </ul>
                     </div>
+                </div>
 
-
-                    
+                <div x-data="{ open: false }" class="relative">
+                    <button @click="open = !open"
+                        class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-3xl focus:outline-none">
+                        {{ $cksu->firstWhere('id', request('period_id'))?->name ?? 'Select Period' }}
+                        <img src="{{ asset('build/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
+                    </button>
+                    <div x-show="open" @click.away="open = false"
+                        class="absolute z-50 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                        <ul class="py-1 max-h-60 overflow-auto">
+                            @foreach($cksu as $bchjcb)
+                                <li>
+                                    <a href="{{ route('parameter-report', ['period_id' => $bchjcb->id]) }}"
+                                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        {{ $bchjcb->name }}
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
                 </div>
             </div>
+
+            <button onclick="printScoring()"
+                class="bg-[#DB0C16] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-xl cursor-pointer">
+                <span>Print</span>
+                <img src="{{ asset('build/assets/icons/icon-print.png') }}" class="h-5 w-5" alt="Print Scoring">
+            </button>
         </div>
 
   <div id="print-section" class="max-h-[75vh] rounded-xl shadow">
@@ -41,11 +65,11 @@
       <thead>
         <tr class=" text-center">
           <th class="border px-4 py-2 font-semibold">LGU</th>
-          <th class="border px-4 py-2" colspan="4">TALAINGOD, DAVAO DEL NORTE</th>
+          <th class="border px-4 py-2" colspan="4">{{ $lgus->firstWhere('id', request('lgu_id'))?->name ?? 'No LGU Selected' }}</th>
         </tr>
         <tr class=" text-center">
           <th class="border px-4 py-2 font-semibold">Assesment Date</th>
-          <th class="border px-4 py-2" colspan="4">26 NOVEMBER 2025</th>
+          <th class="border px-4 py-2" colspan="4">{{ $cksu->firstWhere('id', request('period_id'))?->name ?? 'No Period Selected' }}</th>
         </tr>
         <tr class=" text-center">
           <th class="border px-4 py-2 font-semibold"></th>
@@ -59,61 +83,50 @@
         
 
     @foreach ($sections as $vtyla)
+        <!-- A. Administration and Organization -->
         <tr class="bg-gray-100 font-semibold">
             <td colspan="5" class="border px-4 py-2 pl-30 text-left">
                 {{ chr(64 + $loop->iteration) }}. {{ $vtyla['parent']->name }}
             </td>
         </tr>
-
-        @foreach ($vtyla['children'] as $laoans)
+    
+        @foreach ($vtyla['children'] as $child)
+            <!-- 1. Vision, Mision, Goals, and Organizational Structure -->
             @php
-                $grandchildren = $vtyla['grandchild']->where('parent_id', $laoans->id);
-                $childLevels = $grandchildren->map(function ($child) use ($assessments) {
-                    $assessment = $assessments->firstWhere('questionnaire_id', $child->id);
-                    return $assessment && $assessment->questionnaireLevel ? $assessment->questionnaireLevel->level : null;
-                })->filter(fn ($v) => $v !== null);
-
-                $avgLevel = $childLevels->isNotEmpty() ? $childLevels->avg() : null;
+                $grandchildren = $vtyla['grandchild']->where('parent_id', $child->id);
             @endphp
-
             <tr>
-                <td class="border px-4 py-2 font-semibold w-[400px]">{{ $loop->iteration }}. {{ $laoans->name }}</td>
-                <td class="border px-4 py-2 text-center font-semibold">
-                    {{ $avgLevel !== null ? number_format($avgLevel, 2) : '' }}
-                </td>
-                <td class="border px-4 py-2 text-center"></td>
-                <td class="border px-4 py-2 text-center"></td>
+                <td class="border px-4 py-2 font-semibold w-[400px]">{{ $loop->iteration }}. {{ $child->name }}</td>
+
+                
+                <td class="border px-4 py-2 text-center font-semibold"></td>
 
 
+
+                <td class="border px-4 py-2 text-center"></td>
+                <td class="border px-4 py-2 text-center"></td>
                 <td class="border px-4 py-2 text-center">
-                    @if ($loop->parent->first && $loop->first)
-                        {{ number_format($weightedLevelGroup1, 2) }}
-                    @elseif ($loop->parent->iteration == 2 && $loop->first)
-                        {{ number_format($weightedLevelGroup2, 2) }}
-                    @endif
                 </td>
-
             </tr>
 
-            @foreach ($grandchildren as $popspsps)
-                @php
-                    $assessment = $assessments->first(fn ($a) => $a->questionnaire_id == $popspsps->id);
-
-
-                @endphp
+            @foreach ($grandchildren as $grandchild)
+            <!-- LSWDO's Vision, Mission and Goals -->
                 <tr>
-                    <td class="border px-4 py-2 pl-10">- {{ $popspsps->name }}</td>
+                    <td class="border px-4 py-2 pl-10">{{ $grandchild->name }}</td>
                     <td class="border px-4 py-2 text-center">
-                        {{ optional($assessment->questionnaireLevel)->level !== null ? number_format(optional($assessment->questionnaireLevel)->level, 2) : '' }}
-
+                        @if ($grandchild->assessment && $grandchild->assessment->level)
+                            {{ $grandchild->assessment->level->level }}
+                        @endif
                     </td>
-                    <td class="border px-4 py-2 text-center">{{ $assessment->remarks ?? '' }}</td>
-                    <td class="border px-4 py-2 text-center">{{ $assessment->recommendations ?? '' }}</td>
-                    <td class="border px-4 py-2 text-center" id="asds"></td>
+
+                    <td class="border px-4 py-2 text-center">{{ $grandchild->remarks ?? '' }}</td>
+                    <td class="border px-4 py-2 text-center">{{ $grandchild->recommendations ?? '' }}</td>
+                    
                 </tr>
             @endforeach
         @endforeach
     @endforeach
+
 
 
 
@@ -131,8 +144,8 @@
             <td class="border px-4 py-2 text-left" colspan="2">
                 Information about the policies/guidelines on the implementation of LSWDO's programs and services, through manuals, citizen’s charter and the likes are available and accessible for use of staff and their clients but are not yet in the form of manual
             </td>
-            <td class="border px-4 py-2 text-center font-bold bg-green-200 align-middle" rowspan="2" style="width: 80px;">
-                2.38
+            <td class="border px-4 py-2 text-center font-bold align-middle" rowspan="2" style="width: 80px;">
+                
             </td>
         </tr>
         <tr>
