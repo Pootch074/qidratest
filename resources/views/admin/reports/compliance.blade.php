@@ -49,12 +49,12 @@
       <h2 class="text-center text-xl font-semibold mb-4">COMPLIANCE MONITORING</h2>
       <thead>
         <tr class=" text-center">
-          <th class="border px-4 py-2 font-semibold">PARAMETER / FUNCTIONAL AREA</th>
-          <th class="border px-4 py-2">WEIGHT PER INDICATOR</th>
-          <th class="border px-4 py-2">PREVIOUS INDEX SCORE</th>
-          <th class="border px-4 py-2">NEW INDEX SCORE</th>
-          <th class="border px-4 py-2">STATUS</th>
-          <th class="border px-4 py-2">Movement of Index Score</th>
+          <th class="border px-4 py-2 w-4/14 font-semibold">PARAMETER / FUNCTIONAL AREA</th>
+          <th class="border px-4 py-2 w-2/14">WEIGHT PER INDICATOR</th>
+          <th class="border px-4 py-2 w-2/14">PREVIOUS INDEX SCORE</th>
+          <th class="border px-4 py-2 w-2/14">NEW INDEX SCORE</th>
+          <th class="border px-4 py-2 w-2/14">STATUS</th>
+          <th class="border px-4 py-2 w-2/14">Movement of Index Score</th>
         </tr>
       </thead>
       <tbody>

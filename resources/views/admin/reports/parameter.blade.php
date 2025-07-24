@@ -65,18 +65,19 @@
       <thead>
         <tr class=" text-center">
           <th class="border px-4 py-2 font-semibold">LGU</th>
-          <th class="border px-4 py-2" colspan="4">{{ $lgus->firstWhere('id', request('lgu_id'))?->name ?? 'No LGU Selected' }}</th>
+          <th class="border px-4 py-2" colspan="5">{{ $lgus->firstWhere('id', request('lgu_id'))?->name ?? 'No LGU Selected' }}</th>
         </tr>
         <tr class=" text-center">
           <th class="border px-4 py-2 font-semibold">Assesment Date</th>
-          <th class="border px-4 py-2" colspan="4">{{ $cksu->firstWhere('id', request('period_id'))?->name ?? 'No Period Selected' }}</th>
+          <th class="border px-4 py-2" colspan="5">{{ $cksu->firstWhere('id', request('period_id'))?->name ?? 'No Period Selected' }}</th>
         </tr>
         <tr class=" text-center">
-          <th class="border px-4 py-2 font-semibold"></th>
-          <th class="border px-4 py-2 font-semibold">LEVEL</th>
-          <th class="border px-4 py-2">REMARKS</th>
-          <th class="border px-4 py-2">RECOMMENDATIONS</th>
-          <th class="border px-4 py-2">NEW INDEX SCORE</th>
+          <th class="border px-4 py-2 w-4/14 font-semibold"></th>
+          <th class="border px-4 py-2 w-2/14 font-semibold">LEVEL</th>
+          <th class="border px-4 py-2 w-2/14 font-semibold">WEIGHT</th>
+          <th class="border px-4 py-2 w-2/14">REMARKS</th>
+          <th class="border px-4 py-2 w-2/14">RECOMMENDATIONS</th>
+          <th class="border px-4 py-2 w-2/14">NEW INDEX SCORE</th>
         </tr>
       </thead>
       <tbody>
@@ -85,7 +86,7 @@
     @foreach ($sections as $vtyla)
         <!-- A. Administration and Organization -->
         <tr class="bg-gray-100 font-semibold">
-            <td colspan="5" class="border px-4 py-2 pl-30 text-left">
+            <td colspan="6" class="border px-4 py-2 pl-30 text-left">
                 {{ chr(64 + $loop->iteration) }}. {{ $vtyla['parent']->name }}
             </td>
         </tr>
@@ -93,20 +94,21 @@
         @foreach ($vtyla['children'] as $child)
             <!-- 1. Vision, Mision, Goals, and Organizational Structure -->
             @php
-                $grandchildren = $vtyla['grandchild']->where('parent_id', $child->id);
+            $grandchildren = $vtyla['grandchild']->where('parent_id', $child->id);
+
+            $levels = $grandchildren->map(function ($g) {
+                return optional($g->assessment->level)->level;
+            })->filter(); // remove nulls
+
+            $averageLevel = $levels->count() ? number_format($levels->avg(), 2) : '0.00';
             @endphp
             <tr>
-                <td class="border px-4 py-2 font-semibold w-[400px]">{{ $loop->iteration }}. {{ $child->name }}</td>
-
-                
-                <td class="border px-4 py-2 text-center font-semibold"></td>
-
-
-
+                <td class="border px-4 py-2 font-semibold">{{ $loop->iteration }}. {{ $child->name }}</td>
+                <td class="border px-4 py-2 font-semibold text-center">{{ $averageLevel }}</td>
                 <td class="border px-4 py-2 text-center"></td>
                 <td class="border px-4 py-2 text-center"></td>
-                <td class="border px-4 py-2 text-center">
-                </td>
+                <td class="border px-4 py-2 text-center"></td>
+                <td class="border px-4 py-2 text-center"></td>
             </tr>
 
             @foreach ($grandchildren as $grandchild)
@@ -115,9 +117,12 @@
                     <td class="border px-4 py-2 pl-10">{{ $grandchild->name }}</td>
                     <td class="border px-4 py-2 text-center">
                         @if ($grandchild->assessment && $grandchild->assessment->level)
-                            {{ $grandchild->assessment->level->level }}
+                            {{ number_format($grandchild->assessment->level->level, 2) }}
+                        @else
+                            N/A
                         @endif
                     </td>
+                    <td class="border px-4 py-2 text-center"></td>
 
                     <td class="border px-4 py-2 text-center">{{ $grandchild->remarks ?? '' }}</td>
                     <td class="border px-4 py-2 text-center">{{ $grandchild->recommendations ?? '' }}</td>
@@ -141,7 +146,7 @@
             <td class="border px-4 py-2 text-center font-bold align-middle" rowspan="2" colspan="2">
                 FINAL RATING
             </td>
-            <td class="border px-4 py-2 text-left" colspan="2">
+            <td class="border px-4 py-2 text-left" colspan="3">
                 Information about the policies/guidelines on the implementation of LSWDO's programs and services, through manuals, citizen’s charter and the likes are available and accessible for use of staff and their clients but are not yet in the form of manual
             </td>
             <td class="border px-4 py-2 text-center font-bold align-middle" rowspan="2" style="width: 80px;">
@@ -149,7 +154,7 @@
             </td>
         </tr>
         <tr>
-            <td class="border px-4 py-2 text-center font-semibold" colspan="2">
+            <td class="border px-4 py-2 text-center font-semibold" colspan="3">
                 Level 2
             </td>
         </tr>

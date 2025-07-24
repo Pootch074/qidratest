@@ -39,12 +39,12 @@ class ReportsController extends Controller
             [
                 'parent' => Questionnaire::find(2),
                 'children' => Questionnaire::where('parent_id', 2)->get(),
-                'grandchild' => Questionnaire::whereIn('parent_id', [8, 9, 10, 11, 12, 13])->get()
+                'grandchild' => Questionnaire::with(['assessment.level'])->whereIn('parent_id', [8, 9, 10, 11, 12, 13])->get()
             ],
             [
                 'parent' => Questionnaire::find(3),
                 'children' => Questionnaire::where('parent_id', 3)->get(),
-                'grandchild' => Questionnaire::whereIn('parent_id', [14, 15, 16, 17])->get()
+                'grandchild' => Questionnaire::with(['assessment.level'])->whereIn('parent_id', [14, 15, 16, 17])->get()
             ]
         ];
 
