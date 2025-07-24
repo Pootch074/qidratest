@@ -132,16 +132,6 @@
         @endforeach
     @endforeach
 
-
-
-
-
-
-
-
-
-
-
         <tr>
             <td class="border px-4 py-2 text-center font-bold align-middle" rowspan="2" colspan="2">
                 FINAL RATING
