@@ -1,4 +1,4 @@
-@extends('layouts.main')
+@extends('layouts.reportmain')
 @section('title', 'Compliance Monitoring')
 
 @section('content')

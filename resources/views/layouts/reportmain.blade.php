@@ -19,10 +19,10 @@
         <!-- Sidebar -->
         @include('layouts.sidebar')
 
-        <!-- Main Content -->
+
         <div class="flex flex-col flex-1">
 
-            @include('layouts.inc.topnav')
+            @include('layouts.inc.reporttopnav')
 
             <!-- Content Area -->
             <main class="flex-1 p-6 bg-[#F5F6FA]">

@@ -1,4 +1,4 @@
-@extends('layouts.main')
+@extends('layouts.reportmain')
 @section('title', 'Parameter Result')
 
 @section('content')
@@ -7,49 +7,57 @@
         {{-- @include('admin.reports.search') --}}
         <div class="flex justify-between mb-4">
           <div class="flex items-center gap-3">
-                <div x-data="{ open: false }" class="relative">
-                    <button @click="open = !open"
-                        class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-3xl focus:outline-none">
-                        {{ $lgus->firstWhere('id', request('lgu_id'))?->name ?? 'Select LGU' }}
-
-                        <img src="{{ asset('build/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
-                    </button>
-
-                    <div x-show="open" @click.away="open = false"
-                        class="absolute z-50 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                        <ul class="py-1 max-h-60 overflow-auto">
-                            @foreach($lgus as $lgu)
-                                <li>
-                                    <a href="{{ route('parameter-report', ['lgu_id' => $lgu->id]) }}"
-                                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                        {{ $lgu->name }}
-                                    </a>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </div>
+            <div x-data="{ open: false }" class="relative">
+                <button @click="open = !open"
+                    class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-3xl focus:outline-none">
+                    {{ $cksu->firstWhere('id', request('period_id'))?->name ?? 'Select Period' }}
+                    <img src="{{ asset('build/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
+                </button>
+                <div x-show="open" @click.away="open = false"
+                    class="absolute z-50 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                    <ul class="py-1 max-h-60 overflow-auto">
+                        @foreach($cksu as $bchjcb)
+                            <li>
+                                <a href="{{ route('parameter-report', ['period_id' => $bchjcb->id]) }}"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    {{ $bchjcb->name }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
                 </div>
+            </div>
 
-                <div x-data="{ open: false }" class="relative">
-                    <button @click="open = !open"
-                        class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-3xl focus:outline-none">
-                        {{ $cksu->firstWhere('id', request('period_id'))?->name ?? 'Select Period' }}
-                        <img src="{{ asset('build/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
-                    </button>
-                    <div x-show="open" @click.away="open = false"
-                        class="absolute z-50 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                        <ul class="py-1 max-h-60 overflow-auto">
-                            @foreach($cksu as $bchjcb)
-                                <li>
-                                    <a href="{{ route('parameter-report', ['period_id' => $bchjcb->id]) }}"
-                                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                        {{ $bchjcb->name }}
-                                    </a>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </div>
+            @php
+                $hasPeriod = request('period_id') !== null;
+            @endphp
+                
+            <div x-data="{ open: false }" class="relative">
+                <button 
+                    @click="open = {{ $hasPeriod ? '!open' : 'false' }}"
+                    :class="{ 'opacity-50 cursor-not-allowed': {{ $hasPeriod ? 'false' : 'true' }} }"
+                    class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-3xl focus:outline-none"
+                    {{ $hasPeriod ? '' : 'disabled' }}>
+                    {{ $lgus->firstWhere('id', request('lgu_id'))?->name ?? 'Select LGU' }}
+                    <img src="{{ asset('build/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
+                </button>
+
+                <div x-show="open" @click.away="open = false"
+                    class="absolute z-50 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                    <ul class="py-1 max-h-60 overflow-auto">
+                        @foreach($lgus as $lgu)
+                            <li>
+                                <a href="{{ route('parameter-report', ['period_id' => request('period_id'), 'lgu_id' => $lgu->id]) }}"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    {{ $lgu->name }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
                 </div>
+            </div>
+
+                
             </div>
 
             <button onclick="printScoring()"
@@ -97,8 +105,14 @@
             $grandchildren = $vtyla['grandchild']->where('parent_id', $child->id);
 
             $levels = $grandchildren->map(function ($g) {
-                return optional($g->assessment->level)->level;
-            })->filter(); // remove nulls
+                if ($g->assessment && $g->assessment->questionnaireLevel) {
+                    return $g->assessment->questionnaireLevel->level;
+                }
+                return null;
+            })->filter();
+
+
+
 
             $averageLevel = $levels->count() ? number_format($levels->avg(), 2) : '0.00';
             @endphp
@@ -112,23 +126,27 @@
             </tr>
 
             @foreach ($grandchildren as $grandchild)
-            <!-- LSWDO's Vision, Mission and Goals -->
-                <tr>
-                    <td class="border px-4 py-2 pl-10">{{ $grandchild->name }}</td>
-                    <td class="border px-4 py-2 text-center">
-                        @if ($grandchild->assessment && $grandchild->assessment->level)
-                            {{ number_format($grandchild->assessment->level->level, 2) }}
-                        @else
-                            N/A
-                        @endif
-                    </td>
-                    <td class="border px-4 py-2 text-center"></td>
+                @php
+                    $levelValue = $grandchild->assessment?->questionnaireLevel?->level;
 
-                    <td class="border px-4 py-2 text-center">{{ $grandchild->remarks ?? '' }}</td>
-                    <td class="border px-4 py-2 text-center">{{ $grandchild->recommendations ?? '' }}</td>
-                    
-                </tr>
+                @endphp
+
+                @if ($levelValue !== null)
+                    <tr>
+                        <td class="border px-4 py-2 pl-10">{{ $grandchild->name }}</td>
+                        <td class="border px-4 py-2 text-center">
+                            {{ $grandchild->assessment && $grandchild->assessment->questionnaireLevel 
+                                ? number_format($grandchild->assessment->questionnaireLevel->level, 2) 
+                                : 'N/A' }}
+                        </td>
+                        <td class="border px-4 py-2 text-center"></td>
+                        <td class="border px-4 py-2 text-center">{{ $grandchild->remarks ?? '' }}</td>
+                        <td class="border px-4 py-2 text-center">{{ $grandchild->recommendations ?? '' }}</td>
+                    </tr>
+                @endif
             @endforeach
+
+
         @endforeach
     @endforeach
 
