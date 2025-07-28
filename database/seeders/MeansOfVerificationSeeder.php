@@ -1,8 +1,7 @@
-<?php
+<?php 
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use App\Models\MeansOfVerification;
@@ -15,21 +14,27 @@ class MeansOfVerificationSeeder extends Seeder
      */
     public function run()
     {
-        MeansOfVerification::query()->delete();
+        // Disable foreign key checks if needed
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        // Force delete even soft-deleted records
+        MeansOfVerification::withTrashed()->forceDelete();
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $csvFile = fopen(base_path("database/data/questionnaire_means.csv"), "r");
 
         while (($data = fgetcsv($csvFile, 2000, ",")) !== FALSE) {
-        MeansOfVerification::create([
-            "id" => $data[0] ?? null,
-            "questionnaire_id" => $data[1] ?? null,
-            "means" => $data[2] ?? null,
-            "created_at" => Carbon::now(),
-            "updated_at" => Carbon::now(),
-            "deleted_at" => null
-        ]);
-    }
-        fclose($csvFile);
+            MeansOfVerification::create([
+                "id" => $data[0] ?? null,
+                "questionnaire_id" => $data[1] ?? null,
+                "means" => $data[2] ?? null,
+                "created_at" => Carbon::now(),
+                "updated_at" => Carbon::now(),
+                "deleted_at" => null
+            ]);
+        }
 
+        fclose($csvFile);
     }
 }

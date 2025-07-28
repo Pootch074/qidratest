@@ -1,4 +1,4 @@
-@extends('layouts.reportmain')
+@extends('layouts.main')
 @section('title', 'Parameter Result')
 
 @section('content')
