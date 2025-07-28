@@ -7,34 +7,57 @@
         {{-- @include('admin.reports.search') --}}
         <div class="flex justify-between mb-4">
             <div class="flex items-center gap-3">
-            
-                <div x-data="{ open: false }" class="relative">
-                    <button @click="open = !open"
-                        class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-3xl focus:outline-none">
-                        {{ request('lgu_name', 'Select LGU') }}
-                        <img src="{{ asset('build/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
-                    </button>
-
-                    <div x-show="open" @click.away="open = false"
-                        class="absolute z-50 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                        <ul class="py-1 max-h-60 overflow-auto">
-                            @foreach($lgus as $lgu)
-                                <li>
-                                    <a href="{{ route('parameter-report', ['lgu_id' => $lgu->id]) }}"
-                                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                        {{ $lgu->name }}
-                                    </a>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </div>
-
-
-
-
-
+            <div x-data="{ open: false }" class="relative">
+                <button @click="open = !open"
+                    class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-3xl focus:outline-none">
+                    {{ $cksu->firstWhere('id', request('period_id'))?->name ?? 'Select Period' }}
+                    <img src="{{ asset('build/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
+                </button>
+                <div x-show="open" @click.away="open = false"
+                    class="absolute z-50 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                    <ul class="py-1 max-h-60 overflow-auto">
+                        @foreach($cksu as $bchjcb)
+                            <li>
+                                <a href="{{ route('compliance-monitoring', ['period_id' => $bchjcb->id]) }}"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    {{ $bchjcb->name }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
                 </div>
+            </div>
 
+            @php
+                $hasPeriod = request('period_id') !== null;
+            @endphp
+                
+            <div x-data="{ open: false }" class="relative">
+                <button 
+                    @click="open = {{ $hasPeriod ? '!open' : 'false' }}"
+                    :class="{ 'opacity-50 cursor-not-allowed': {{ $hasPeriod ? 'false' : 'true' }} }"
+                    class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-3xl focus:outline-none"
+                    {{ $hasPeriod ? '' : 'disabled' }}>
+                    {{ $lgus->firstWhere('id', request('lgu_id'))?->name ?? 'Select LGU' }}
+                    <img src="{{ asset('build/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
+                </button>
+
+                <div x-show="open" @click.away="open = false"
+                    class="absolute z-50 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                    <ul class="py-1 max-h-60 overflow-auto">
+                        @foreach($lgus as $lgu)
+                            <li>
+                                <a href="{{ route('compliance-monitoring', ['period_id' => request('period_id'), 'lgu_id' => $lgu->id]) }}"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    {{ $lgu->name }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+
+                
             </div>
             <button onclick="printScoring()"
                 class="bg-[#DB0C16] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-xl cursor-pointer">
@@ -59,180 +82,40 @@
       </thead>
       <tbody>
 
-                <tr class="bg-gray-100 font-semibold">
-          <td colspan="6" class="border px-4 py-2" id="yui">A. Administration and Organization</td>
-        </tr>
 
+        @foreach ($sections as $vtyla)
+            <tr class="bg-gray-100 font-semibold">
+                <td colspan="6" class="border px-4 py-2 pl-30 text-left">
+                    {{ chr(64 + $loop->iteration) }}. {{ $vtyla['parent']->name }}
+                </td>
+            </tr>
 
-        
-        <tr>
-          <td class="border px-4 py-2" id="zxc">1. Vision, Mission, Goals, and Organizational Structure</td>
-          <td class="border px-4 py-2 text-center">7.00%</td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center">
-            {{ number_format($weightedLevelGroup1, 2) ?? 'N/A' }}
-          </td>
-          <td class="border px-4 py-2 text-center">Sustained</td>
-          <td class="border px-4 py-2 text-center">0.00</td>
-        </tr>
+            @foreach ($vtyla['children'] as $child)
+                <tr>
+                    <td class="border px-4 py-2">{{ $loop->iteration }}. {{ $child->name }}</td>
+                    <td class="border px-4 py-2 text-center font-semibold">
+                        {{ number_format($weights[$child->id] ?? 0, 2) }}%
+                    </td>
+                    <td class="border px-4 py-2 text-center"></td>
+                    <td class="border px-4 py-2 text-center"></td>
+                    <td class="border px-4 py-2 text-center"></td>
+                    <td class="border px-4 py-2 text-center"></td>
+                </tr>
+            @endforeach
+        @endforeach
 
-
-
-
-
-
-        <tr>
-          <td class="border px-4 py-2" id="zxc">2. Human Resource Management and Development</td>
-          <td class="border px-4 py-2 text-center">11.00%</td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center">
-            {{ number_format($weightedLevelGroup2, 2) ?? 'N/A' }}
-          </td>
-          <td class="border px-4 py-2 text-center">Sustained</td>
-          <td class="border px-4 py-2 text-center">0.00</td>
-        </tr>
-        <tr>
-          <td class="border px-4 py-2" id="zxc">3. Public Financial Management</td>
-          <td class="border px-4 py-2 text-center">9.00%</td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center">
-            {{ number_format($weightedLevelGroup3, 2) ?? 'N/A' }}
-          </td>
-          <td class="border px-4 py-2 text-center">Sustained</td>
-          <td class="border px-4 py-2 text-center">0.00</td>
-        </tr>
-        <tr>
-          <td class="border px-4 py-2" id="zxc">4. Support Services</td>
-          <td class="border px-4 py-2 text-center">8.00%</td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center">
-            {{ number_format($weightedLevelGroup4, 2) ?? 'N/A' }}
-          </td>
-          <td class="border px-4 py-2 text-center">Sustained</td>
-          <td class="border px-4 py-2 text-center">0.00</td>
-        </tr>
-
-
-        <tr class="bg-gray-100 font-semibold">
-          <td colspan="6" class="border px-4 py-2" id="yui">B. Program Management</td>
-        </tr>
-        <tr>
-          <td class="border px-4 py-2" id="zxc">1. Planning</td>
-          <td class="border px-4 py-2 text-center">16.00%</td>  
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center">
-            {{ number_format($weightedLevelGroup5, 2) ?? 'N/A' }}
-          </td>
-          <td class="border px-4 py-2 text-center">Sustained</td>
-          <td class="border px-4 py-2 text-center">0.00</td>
-        </tr>
-        <tr>
-          <td class="border px-4 py-2" id="zxc">2. Implementation: Emergency/ disaster assistance programs/ services</td>
-          <td class="border px-4 py-2 text-center">4.5%</td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center">
-            {{ number_format($weightedLevelGroup6, 2) ?? 'N/A' }}
-          </td>
-          <td class="border px-4 py-2 text-center">Sustained</td>
-          <td class="border px-4 py-2 text-center">0.00</td>
-        </tr>
-        <tr>
-          <td class="border px-4 py-2" id="zxc">3. Implementation: Devolved Programs</td>
-          <td class="border px-4 py-2 text-center">4.5%</td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center">
-            {{ number_format($weightedLevelGroup7, 2) ?? 'N/A' }}
-          </td>
-          <td class="border px-4 py-2 text-center">Sustained</td>
-          <td class="border px-4 py-2 text-center">0.00</td>
-        </tr>
-        <tr>
-          <td class="border px-4 py-2" id="zxc">4. Monitoring and Reporting</td>
-          <td class="border px-4 py-2 text-center">7.00%</td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center">
-            {{ number_format($weightedLevelGroup8, 2) ?? 'N/A' }}
-          </td>
-          <td class="border px-4 py-2 text-center">Sustained</td>
-          <td class="border px-4 py-2 text-center">0.00</td>
-        </tr>
-        <tr>
-          <td class="border px-4 py-2" id="zxc">5. Case Management</td>
-          <td class="border px-4 py-2 text-center">13.00</td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center">
-            {{ number_format($weightedLevelGroup9, 2) ?? 'N/A' }}
-          </td>
-          <td class="border px-4 py-2 text-center">Sustained</td>
-          <td class="border px-4 py-2 text-center">0.00</td>
-        </tr>
-        <tr>
-          <td class="border px-4 py-2" id="zxc">6. Residential Care and Community-Based Center</td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center"></td>
-        </tr>
-
-
-
-        <tr class="bg-gray-100 font-semibold">
-          <td colspan="6" class="border px-4 py-2" id="yui">C. Institutional Mechanism</td>
-        </tr>
-        <tr>
-          <td class="border px-4 py-2" id="zxc">1. Functionality of Local Committee on Anti-Traffcking and Violence Against Women and their Children (LCAT-VAWC)</td>
-          <td class="border px-4 py-2 text-center">6.00%</td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center">
-            {{ number_format($weightedLevelGroup11, 2) ?? 'N/A' }}
-          </td>
-          <td class="border px-4 py-2 text-center">Sustained</td>
-          <td class="border px-4 py-2 text-center">0.00</td>
-        </tr>
-        <tr>
-          <td class="border px-4 py-2" id="zxc">2. Functionality of Local Council for the Protection of Children</td>
-          <td class="border px-4 py-2 text-center">5.00%</td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center">
-            {{ number_format($weightedLevelGroup12, 2) ?? 'N/A' }}
-          </td>
-          <td class="border px-4 py-2 text-center">Sustained</td>
-          <td class="border px-4 py-2 text-center">0.00</td>
-        </tr>
-        <tr>
-          <td class="border px-4 py-2" id="zxc">3. Inter-office Collaboration</td>
-          <td class="border px-4 py-2 text-center">4.00%</td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center">
-            {{ number_format($weightedLevelGroup13, 2) ?? 'N/A' }}
-          </td>
-          <td class="border px-4 py-2 text-center">Sustained</td>
-          <td class="border px-4 py-2 text-center">0.00</td>
-        </tr>
-        <tr>
-          <td class="border px-4 py-2" id="zxc">4. Support to Civil Society Organizations</td>
-          <td class="border px-4 py-2 text-center">5.00%</td>
-          <td class="border px-4 py-2 text-center"></td>
-          <td class="border px-4 py-2 text-center">
-            {{ number_format($weightedLevelGroup14, 2) ?? 'N/A' }}
-          </td>
-          <td class="border px-4 py-2 text-center">Sustained</td>
-          <td class="border px-4 py-2 text-center">0.00</td>
-        </tr>
 
         
 
         <tr class="font-semibold text-center text-lg bg-gray-100">
           <td class="border px-4 py-2">TOTAL</td>
-          <td class="border px-4 py-2">100%</td>
+          <td class="border px-4 py-2"></td>
           <td class="border px-4 py-2"></td>
           <td class="border px-4 py-2 text-center">
-    {{ number_format($totalWeightedScore, 2) ?? 'N/A' }}
 </td>
 
-          <td class="border px-4 py-2">Sustained</td>
-          <td class="border px-4 py-2">0.00</td>
+          <td class="border px-4 py-2"></td>
+          <td class="border px-4 py-2"></td>
         </tr>
         <tr class="font-semibold text-center text-lg bg-white">
           <td class="border px-4 py-2">NEW RATING</td>

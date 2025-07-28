@@ -40,5 +40,11 @@ class Questionnaire extends Model
         return $this->hasOne(AssessmentQuestionnaire::class, 'questionnaire_id');
     }
 
+    public function weight()
+    {
+        return $this->hasOne(QuestionnaireWeight::class, 'questionnaire_id');
+    }
+
+
 
 }
