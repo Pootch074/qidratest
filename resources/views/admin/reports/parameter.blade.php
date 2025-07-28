@@ -130,8 +130,6 @@
                     $levelValue = $grandchild->assessment?->questionnaireLevel?->level;
 
                 @endphp
-
-                @if ($levelValue !== null)
                     <tr>
                         <td class="border px-4 py-2 pl-10">{{ $grandchild->name }}</td>
                         <td class="border px-4 py-2 text-center">
@@ -140,10 +138,19 @@
                                 : 'N/A' }}
                         </td>
                         <td class="border px-4 py-2 text-center"></td>
-                        <td class="border px-4 py-2 text-center">{{ $grandchild->remarks ?? '' }}</td>
-                        <td class="border px-4 py-2 text-center">{{ $grandchild->recommendations ?? '' }}</td>
+                        @php
+                            $remarks = strip_tags($grandchild->assessment->remarks ?? '');
+                            $recommendations = strip_tags($grandchild->assessment->recommendations ?? '');
+                        @endphp
+
+                        <td class="border px-4 py-2 text-center">
+                            {{ trim($remarks) !== '' ? $remarks : '' }}
+                        </td>
+                        <td class="border px-4 py-2 text-center">
+                            {{ trim($recommendations) !== '' ? $recommendations : '' }}
+                        </td>
+
                     </tr>
-                @endif
             @endforeach
 
 
@@ -166,16 +173,6 @@
                 Level 2
             </td>
         </tr>
-
-
-
-
-
-
-
-
-
-
 
       </tbody>
     </table>
