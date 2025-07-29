@@ -53,6 +53,7 @@ Route::middleware(['auth', CheckUserType::class . ':1'])->group(function () {
     Route::get('questionnaires/manage/{id}/ref/{id2}', [QuestionnairesController::class, 'getReference'])->name('get-reference');
 
     Route::get('period-assessments', [PeriodsController::class, 'assessments'])->name('period-assessments');
+    Route::get('period/switch/{id}', [PeriodsController::class, 'switchPeriod'])->name('switch-period');
 
     Route::get('reports', [ReportsController::class, 'index'])->name('reports');
     Route::get('parameter-report', [ReportsController::class, 'paramReport'])->name('parameter-report');

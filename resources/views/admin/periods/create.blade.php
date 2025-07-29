@@ -45,6 +45,20 @@
                                        class="mt-1 block w-full px-3 py-2 border border-[#CDCFD2] text-[#101828] rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                             </div>
                         </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-1 gap-4 mb-2">
+                            <!-- Questionnaire -->
+                            <div>
+                                <label class="block text-sm text-[#75777C]">Questionnaire</label>
+                                <select x-model="newP.questionnaire_tree_id" name="questionnaire_tree_id"
+                                        class="mt-1 block w-full px-3 py-2 border border-[#CDCFD2] text-[#101828] rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Please select</option>
+                                    @foreach ($questionnaireTrees as $tree)
+                                        <option value="{{ $tree->id }}">{{ $tree->questionnaire_name }}</option>
+                                    @endforeach
+                                    <input type="hidden" x-model="newP.questionnaire_tree_id" name="questionnaire_tree_id">
+                                </select>
+                            </div>
+                        </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
                             <!-- Last Name -->

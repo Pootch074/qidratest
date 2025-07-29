@@ -59,7 +59,7 @@
             <tr class="hover:bg-gray-50">
                 <td class="border border-gray-200 px-4 py-2 text-sm">{{ $a->lgu_name }}</td>
                 <td class="border border-gray-200 px-4 py-2 text-sm">{{ $a->rmt_first_name }} {{ $a->rmt_last_name }}</td>
-                <td class="border border-gray-200 px-4 py-2 text-sm">{!! $this->getAssesstors($a->id) !!}</td>
+                <td class="border border-gray-200 px-4 py-2 text-sm">{!! $this->getAssessors($a->id) !!}</td>
                 <td class="border border-gray-200 px-4 py-2 text-sm text-[#667085]"
                     x-data="{
                         status: '{{ $a->status }}',
@@ -79,7 +79,7 @@
                 </td>
                 <td class="border border-gray-200 px-4 py-2 text-sm space-x-2">
                     <a href="#"
-                       @click.prevent="openModal({ id: '{{ $a->id }}', lgu_name: '{{ $a->lgu_name }}' })"
+                       @click.prevent="() => openModal({ id: {{ $a->id }}, lgu_name: '{{ $a->lgu_name }}', team_leader_id: {{ $a->team_leader_id ?? 'null' }}, rmts: '{{ $this->getAssessors($a->id, true) }}' })"
                        class="border border-[#667085] hover:bg-red-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
                         <img src="{{ asset('build/assets/icons/icon-edit.svg') }}" class="h-4 w-4" alt="Assign">
                         <span class="text-[#667085] text-xs">Assign</span>
@@ -126,7 +126,7 @@
                             <label class="flex items-center mb-2 cursor-pointer">
                                 <input
                                     type="checkbox"
-                                    :value="{{ $rmt->id }}"
+                                    :value="{{ (int) $rmt->id }}"
                                     x-model="selectedRmts"
                                     class="mr-2 rounded"
                                 >
@@ -156,6 +156,19 @@
 
             openModal(data) {
                 this.currentData = data;
+                console.log('Raw rmts string:', data.rmts);
+                this.selectedRmts = [];
+
+                if (typeof data.rmts === 'string') {
+                    this.selectedRmts = data.rmts
+                        .split(',')
+                        .map(id => parseInt(id.trim()))
+                        .filter(id => !isNaN(id));
+                }
+
+                this.selectedTeamLeader = data.team_leader_id ?? '';
+                console.log('Selected team leader ID:', this.selectedTeamLeader);
+                console.log('Parsed selectedRmts array:', this.selectedRmts);
                 this.showModal = true;
             },
 
@@ -175,7 +188,6 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log("Success:", data);
-                    // this.closeModal();
                     location.reload();
                 })
                 .catch(error => {
@@ -185,6 +197,9 @@
 
             closeModal() {
                 this.showModal = false;
+                this.selectedTeamLeader = '';
+                this.selectedRmts = [];
+                this.currentData = { id: null, lgu_name: '' };
             }
         }
     }

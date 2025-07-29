@@ -19,7 +19,8 @@ class PeriodsController extends Controller
     public function index()
     {
         $periods = Period::all();
-        return view('admin.periods.index', compact('periods'));
+        $questionnaireTrees = QuestionnaireTree::where('status', 'published')->get();
+        return view('admin.periods.index', compact('periods', 'questionnaireTrees'));
     }
 
     public function assessments(Request $request)
@@ -32,6 +33,23 @@ class PeriodsController extends Controller
     public function assignments(Request $request)
     {
         return view('admin.periods.assignments');
+    }
+
+    public function switchPeriod($id)
+    {
+        $periods = Period::all();
+        foreach ($periods as $period) {
+            if ($period->id == $id) {
+                $period->status = 'ongoing';
+            }
+            else {
+                $period->status = 'completed';
+            }
+            $period->save();
+        }
+
+        return redirect()->back();
+
     }
 
     private function getPeriodAssessments(?Period $period = null)

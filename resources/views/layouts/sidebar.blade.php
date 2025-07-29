@@ -13,8 +13,7 @@
     </ul>
 
     <a href="#" id="sidebar-doc" class="rounded-2xl p-4 text-white flex flex-col mt-5 group block w-64 transition-colors
-        duration-200 ease-in-out bg-[#060B28] hover:bg-[#DB0C16]
-        absolute bottom-25">
+        duration-200 ease-in-out bg-[#060B28] hover:bg-[#DB0C16] bottom-25">
         <img src="{{ asset('build/assets/icons/icon-question.png') }}" alt="Settings" class="h-8 w-8 mb-4">
         <h3 class="font-medium text-sm mb-1">Need help?</h3>
         <p class="text-xs mb-5">Please check our docs</p>

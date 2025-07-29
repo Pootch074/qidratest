@@ -9,6 +9,7 @@
             newP: {
                 id: null,
                 name: "",
+                questionnaire_tree_id: "",
                 start_date: "",
                 end_date: "",
                 status: "ongoing" // ongoing, completed
@@ -31,6 +32,7 @@
                     this.newP = {
                         id: null,
                         name: "",
+                        questionnaire_tree_id: "",
                         start_date: "",
                         end_date: "",
                         status: "Ongoing" // Ongoing, Completed

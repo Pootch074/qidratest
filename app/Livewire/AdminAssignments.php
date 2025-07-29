@@ -52,6 +52,7 @@ class AdminAssignments extends Component
                 'lgus.name as lgu_name',
                 'users.first_name as rmt_first_name',
                 'users.last_name as rmt_last_name',
+                'users.id as team_leader_id',
                 'period_assessments.status'
             )
             ->when($this->search, function ($query) {
@@ -150,7 +151,7 @@ class AdminAssignments extends Component
         PeriodAssessment::insert($assessments);
     }
 
-    public function getAssesstors($periodAssessmentId)
+    public function getAssessors($periodAssessmentId, $idsOnly = false)
     {
         $assessors = PeriodAssessor::with('user')
             ->where('period_assessment_id', $periodAssessmentId)
@@ -165,6 +166,10 @@ class AdminAssignments extends Component
         ->implode('<br>');
 
         $userIds = $assessors->pluck('user_id')->implode(',');
+
+        if ($idsOnly) {
+            return $userIds;
+        }
 
         return '
             <div>' . $names . '</div>
