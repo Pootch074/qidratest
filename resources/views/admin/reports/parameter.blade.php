@@ -102,22 +102,22 @@
         @foreach ($vtyla['children'] as $child)
             <!-- 1. Vision, Mision, Goals, and Organizational Structure -->
             @php
-            $grandchildren = $vtyla['grandchild']->where('parent_id', $child->id);
-
-            $levels = $grandchildren->map(function ($g) {
-                return $g->assessment?->questionnaireLevel?->level ?? 0;
-            });
-
-            
-            $averageLevel = $levels->count() ? number_format($levels->avg(), 2) : '0.00';
+                $grandchildren = $vtyla['grandchild']->where('parent_id', $child->id);
+                $levels = $grandchildren->map(function ($g) {
+                    return $g->assessment?->questionnaireLevel?->level ?? 0;
+                });
+                $averageLevel = $levels->count() ? number_format($levels->avg(), 2) : '0.00';
             @endphp
+            
             <tr>
                 <td class="border px-4 py-2 font-semibold">{{ $loop->iteration }}. {{ $child->name }}</td>
                 <td class="border px-4 py-2 font-semibold text-center">{{ $averageLevel }}</td>
                 <td class="border px-4 py-2 text-center"></td>
                 <td class="border px-4 py-2 text-center"></td>
                 <td class="border px-4 py-2 text-center"></td>
-                <td class="border-b border-b-white border-t border-t-black border-r border-r-black px-4 py-2 text-center font-semibold text-[30px]">0.04</td>
+                <td class="border-b border-b-white border-t border-t-black border-r border-r-black px-4 py-2 text-center font-semibold text-[30px]">
+                    {{ number_format($child->new_index_score, 2) }}
+                </td>
             </tr>
 
             @foreach ($grandchildren as $grandchild)

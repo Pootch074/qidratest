@@ -67,74 +67,71 @@
         </div>
 
 
-  <div id="print-section" class="max-h-[75vh] rounded-xl shadow">
-    <table class="min-w-full border border-gray-300 text-sm text-left">
-      <h2 class="text-center text-xl font-semibold mb-4">COMPLIANCE MONITORING</h2>
-      <thead>
-        <tr class=" text-center">
-          <th class="border px-4 py-2 w-4/14 font-semibold">PARAMETER / FUNCTIONAL AREA</th>
-          <th class="border px-4 py-2 w-2/14">WEIGHT PER INDICATOR</th>
-          <th class="border px-4 py-2 w-2/14">PREVIOUS INDEX SCORE</th>
-          <th class="border px-4 py-2 w-2/14">NEW INDEX SCORE</th>
-          <th class="border px-4 py-2 w-2/14">STATUS</th>
-          <th class="border px-4 py-2 w-2/14">Movement of Index Score</th>
-        </tr>
-      </thead>
-      <tbody>
-
-
-        @foreach ($sections as $vtyla)
-            <tr class="bg-gray-100 font-semibold">
-                <td colspan="6" class="border px-4 py-2 pl-30 text-left">
-                    {{ chr(64 + $loop->iteration) }}. {{ $vtyla['parent']->name }}
-                </td>
-            </tr>
-
-            @foreach ($vtyla['children'] as $child)
-@php
-    $weight = $weights[$child->id] ?? 0;
-    $avg = $averageLevels[$child->id] ?? 0;
-    $newIndexScore = $weight * $avg;
-@endphp
-
-
-                <tr>
-                    <td class="border px-4 py-2">{{ $loop->iteration }}. {{ $child->name }}</td>
-                    <td class="border px-4 py-2 text-center font-semibold">
-                        {{ number_format($weights[$child->id] ?? 0, 2) }}%
-                    </td>
-                    <td class="border px-4 py-2 text-center"></td>
-                    <td class="border px-4 py-2 text-center font-semibold">
-                        {{ number_format($newIndexScore, 2) }}
-                    </td>
-                    <td class="border px-4 py-2 text-center"></td>
-                    <td class="border px-4 py-2 text-center"></td>
+        <div id="print-section" class="max-h-[75vh] rounded-xl shadow">
+            <table class="min-w-full border border-gray-300 text-sm text-left">
+            <h2 class="text-center text-xl font-semibold mb-4">COMPLIANCE MONITORING</h2>
+            <thead>
+                <tr class=" text-center">
+                <th class="border px-4 py-2 w-4/14 font-semibold">PARAMETER / FUNCTIONAL AREA</th>
+                <th class="border px-4 py-2 w-2/14">WEIGHT PER INDICATOR</th>
+                <th class="border px-4 py-2 w-2/14">PREVIOUS INDEX SCORE</th>
+                <th class="border px-4 py-2 w-2/14">NEW INDEX SCORE</th>
+                <th class="border px-4 py-2 w-2/14">STATUS</th>
+                <th class="border px-4 py-2 w-2/14">Movement of Index Score</th>
                 </tr>
-            @endforeach
-        @endforeach
+            </thead>
+            <tbody>
+                @php
+                    $totalWeight = 0;
+                    $totalNewIndexScore = 0;
+                @endphp
 
+                @foreach ($sections as $vtyla)
+                    <tr class="bg-gray-100 font-semibold">
+                        <td colspan="6" class="border px-4 py-2 pl-30 text-left">
+                            {{ chr(64 + $loop->iteration) }}. {{ $vtyla['parent']->name }}
+                        </td>
+                    </tr>
+                    @foreach ($vtyla['children'] as $child)
+                        @php
+                            $weight = $weights[$child->id] ?? 0;
+                            $totalWeight += $weight;
+                            $totalNewIndexScore += $child->new_index_score ?? 0;
+                        @endphp
+                        <tr>
+                            <td class="border px-4 py-2">{{ $loop->iteration }}. {{ $child->name }}</td>
+                            <td class="border px-4 py-2 text-center font-semibold">
+                                {{ number_format($weight * 100, 1) }}%
+                            </td>
+                            <td class="border px-4 py-2 text-center"></td>
+                            <td class="border px-4 py-2 text-center font-semibold">
+                                {{ number_format($child->new_index_score, 2) }}
+                            </td>
+                            <td class="border px-4 py-2 text-center"></td>
+                            <td class="border px-4 py-2 text-center"></td>
+                        </tr>
+                    @endforeach
 
-        
+                @endforeach
 
-        <tr class="font-semibold text-center text-lg bg-gray-100">
-          <td class="border px-4 py-2">TOTAL</td>
-          <td class="border px-4 py-2"></td>
-          <td class="border px-4 py-2"></td>
-          <td class="border px-4 py-2 text-center">
-</td>
+                <tr class="font-semibold text-center text-lg bg-gray-100">
+                    <td class="border px-4 py-2">TOTAL</td>
+                    <td class="border px-4 py-2">{{ number_format($totalWeight * 100, 1) }}%</td>
+                    <td class="border px-4 py-2"></td>
+                    <td class="border px-4 py-2 text-center font-semibold">{{ number_format($totalNewIndexScore, 2) }}</td>
+                    <td class="border px-4 py-2"></td>
+                    <td class="border px-4 py-2"></td>
+                </tr>
 
-          <td class="border px-4 py-2"></td>
-          <td class="border px-4 py-2"></td>
-        </tr>
-        <tr class="font-semibold text-center text-lg bg-white">
-          <td class="border px-4 py-2">NEW RATING</td>
-          <td class="border px-4 py-2" colspan="2">LEVEL 2</td>
-          <td class="border px-4 py-2" colspan="3"></td>
-        </tr> 
-      </tbody>
-    </table>
-  </div>
-</div>
+                <tr class="font-semibold text-center text-lg bg-white">
+                    <td class="border px-4 py-2">NEW RATING</td>
+                    <td class="border px-4 py-2" colspan="2">LEVEL 2</td>
+                    <td class="border px-4 py-2" colspan="3"></td>
+                </tr> 
+            </tbody>
+            </table>
+        </div>
+    </div>
 
 @endsection
 
