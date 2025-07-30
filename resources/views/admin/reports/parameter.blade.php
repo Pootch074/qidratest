@@ -105,15 +105,9 @@
             $grandchildren = $vtyla['grandchild']->where('parent_id', $child->id);
 
             $levels = $grandchildren->map(function ($g) {
-                if ($g->assessment && $g->assessment->questionnaireLevel) {
-                    return $g->assessment->questionnaireLevel->level;
-                }
-                return null;
-            })->filter();
-
-
-
-
+                return optional($g->assessment->questionnaireLevel)->level ?? 0;
+            });
+            
             $averageLevel = $levels->count() ? number_format($levels->avg(), 2) : '0.00';
             @endphp
             <tr>
@@ -122,7 +116,7 @@
                 <td class="border px-4 py-2 text-center"></td>
                 <td class="border px-4 py-2 text-center"></td>
                 <td class="border px-4 py-2 text-center"></td>
-                <td class="border px-4 py-2 text-center"></td>
+                <td class="border-b border-b-white border-t border-t-black border-r border-r-black px-4 py-2 text-center font-semibold text-[30px]">0.04</td>
             </tr>
 
             @foreach ($grandchildren as $grandchild)
@@ -149,6 +143,7 @@
                         <td class="border px-4 py-2 text-center">
                             {{ trim($recommendations) !== '' ? $recommendations : '' }}
                         </td>
+                        <td class="border-r border-r-black"></td>
 
                     </tr>
             @endforeach
