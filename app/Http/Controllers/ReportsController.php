@@ -127,27 +127,33 @@ class ReportsController extends Controller
             ]
         ];
 
+        $averageLevels = [];
 
-        $calculateAvgWeight = function ($ids) {
-            return Questionnaire::whereIn('id', $ids)->pluck('weight')->avg();
-        };
+foreach ($sections as &$section) {
+    $grandchildren = $section['grandchild'];
 
-        $avgLevelGroup1 = $calculateAvgWeight([18, 19, 20]);
-        $weightedLevelGroup1 = $avgLevelGroup1 * 0.07;
+    foreach ($section['children'] as $child) {
+        $childGrandchildren = $grandchildren->where('parent_id', $child->id);
 
-        $avgLevelGroup2 = $calculateAvgWeight(range(21, 30));
-        $weightedLevelGroup2 = $avgLevelGroup2 * 0.11;
+        $averageLevels[$child->id] = $childGrandchildren
+            ->pluck('assessment.questionnaireLevel.level')
+            ->filter()
+            ->avg();
+    }
+} // ✅ This closes the outer foreach
 
         $weights = DB::table('questionnaire_weights')
         ->pluck('weight', 'questionnaire_id')
         ->toArray();
+
+        // dd($weights);
+
         
         return view('admin.reports.compliance', compact(
             'sections',
+            'averageLevels',
             'lgus',
             'cksu',
-            'weightedLevelGroup1',
-            'weightedLevelGroup2',
             'weights'
         ));
     }

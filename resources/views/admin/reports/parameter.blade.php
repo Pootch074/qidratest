@@ -80,12 +80,12 @@
           <th class="border px-4 py-2" colspan="5">{{ $cksu->firstWhere('id', request('period_id'))?->name ?? 'No Period Selected' }}</th>
         </tr>
         <tr class=" text-center">
-          <th class="border px-4 py-2 w-4/14 font-semibold"></th>
-          <th class="border px-4 py-2 w-2/14 font-semibold">LEVEL</th>
-          <th class="border px-4 py-2 w-2/14 font-semibold">WEIGHT</th>
-          <th class="border px-4 py-2 w-2/14">REMARKS</th>
-          <th class="border px-4 py-2 w-2/14">RECOMMENDATIONS</th>
-          <th class="border px-4 py-2 w-2/14">NEW INDEX SCORE</th>
+          <th class="border px-4 py-2 w-3/10 font-semibold"></th>
+          <th class="border px-4 py-2 w-1/10 font-semibold">LEVEL</th>
+          <th class="border px-4 py-2 w-1/10 font-semibold">WEIGHT</th>
+          <th class="border px-4 py-2 w-2/10">REMARKS</th>
+          <th class="border px-4 py-2 w-2/10">RECOMMENDATIONS</th>
+          <th class="border px-4 py-2 w-1/10">NEW INDEX SCORE</th>
         </tr>
       </thead>
       <tbody>
@@ -105,8 +105,9 @@
             $grandchildren = $vtyla['grandchild']->where('parent_id', $child->id);
 
             $levels = $grandchildren->map(function ($g) {
-                return optional($g->assessment->questionnaireLevel)->level ?? 0;
+                return $g->assessment?->questionnaireLevel?->level ?? 0;
             });
+
             
             $averageLevel = $levels->count() ? number_format($levels->avg(), 2) : '0.00';
             @endphp
@@ -126,16 +127,18 @@
                 @endphp
                     <tr>
                         <td class="border px-4 py-2 pl-10">{{ $grandchild->name }}</td>
-                        <td class="border px-4 py-2 text-center">
-                            {{ $grandchild->assessment && $grandchild->assessment->questionnaireLevel 
-                                ? number_format($grandchild->assessment->questionnaireLevel->level, 2) 
-                                : 'N/A' }}
-                        </td>
-                        <td class="border px-4 py-2 text-center"></td>
                         @php
-                            $remarks = strip_tags($grandchild->assessment->remarks ?? '');
-                            $recommendations = strip_tags($grandchild->assessment->recommendations ?? '');
-                        @endphp
+                            $level = optional($grandchild->assessment?->questionnaireLevel)->level;
+                            @endphp
+                            <td class="border px-4 py-2 text-center">
+                                {{ $level !== null ? number_format($level, 2) : 'N/A' }}
+                            </td>
+
+                                                    <td class="border px-4 py-2 text-center"></td>
+                            @php
+                                $remarks = strip_tags($grandchild->assessment?->remarks ?? '');
+                                $recommendations = strip_tags($grandchild->assessment?->recommendations ?? '');
+                            @endphp
 
                         <td class="border px-4 py-2 text-center">
                             {{ trim($remarks) !== '' ? $remarks : '' }}

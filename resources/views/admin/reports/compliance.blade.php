@@ -91,13 +91,22 @@
             </tr>
 
             @foreach ($vtyla['children'] as $child)
+@php
+    $weight = $weights[$child->id] ?? 0;
+    $avg = $averageLevels[$child->id] ?? 0;
+    $newIndexScore = $weight * $avg;
+@endphp
+
+
                 <tr>
                     <td class="border px-4 py-2">{{ $loop->iteration }}. {{ $child->name }}</td>
                     <td class="border px-4 py-2 text-center font-semibold">
                         {{ number_format($weights[$child->id] ?? 0, 2) }}%
                     </td>
                     <td class="border px-4 py-2 text-center"></td>
-                    <td class="border px-4 py-2 text-center"></td>
+                    <td class="border px-4 py-2 text-center font-semibold">
+                        {{ number_format($newIndexScore, 2) }}
+                    </td>
                     <td class="border px-4 py-2 text-center"></td>
                     <td class="border px-4 py-2 text-center"></td>
                 </tr>
