@@ -93,41 +93,54 @@
 
             async addUser() {
                 try {
+                    // Prefer the numeric id bound by the select
+                    const user_type_id = (this.newUser.user_type_id ?? this.newUser.user_type ?? null);
+                    // Your LGU select currently binds to `newUser.lgu` (string) and sometimes has `lgu_id`
+                    const lgu_id =
+                        this.newUser.lgu_id != null && this.newUser.lgu_id !== ''
+                            ? Number(this.newUser.lgu_id)
+                            : (Number(this.newUser.lgu) || null);
+
+                    const payload = {
+                        first_name: this.newUser.first_name,
+                        last_name: this.newUser.last_name,
+                        email: this.newUser.email,
+                        password: this.newUser.password,
+                        position: this.newUser.position,
+                        status: this.newUser.status,
+                        // IMPORTANT: API expects `user_type` (the id), not the label
+                        user_type: user_type_id != null ? Number(user_type_id) : null,
+                        lgu_id: lgu_id,
+                    };
+
                     const response = await fetch("{{ route('api-users-post') }}", {
                         method: "POST",
                         headers: {
-                            "Content-Type": "application/json"
+                            "Content-Type": "application/json",
+                            "Accept": "application/json",
                         },
-                        body: JSON.stringify(this.newUser),
+                        body: JSON.stringify(payload),
                     });
 
                     if (response.status === 422) {
-                        const errorData = await response.json();
-                        let messages = [];
-
-                        if (errorData.errors) {
-                            for (const field in errorData.errors) {
-                                messages.push(...errorData.errors[field]);
-                            }
-                        }
-
-                        this.validationErrors = messages;
+                        const { errors } = await response.json();
+                        this.validationErrors = Object.values(errors || {}).flat();
                         return;
                     }
-
                     if (!response.ok) throw new Error("Failed to add user");
 
-                    const addedUser = await response.json();
+                    const added = await response.json();
+                    const u = added.user;
 
-                    let userUpdated = {
-                        ...addedUser.user,
-                        user_type: this.updateUserType(addedUser.user.user_type_id),
-                        lgu: this.updateLgu(addedUser.user.lgu_id)
+                    // Keep ids, but convert to labels for display in the table
+                    const row = {
+                        ...u,
+                        user_type: this.updateUserType(u.user_type_id), // label for table cell
+                        lgu: this.updateLgu(u.lgu_id),                  // label for table cell
                     };
 
-                    this.users.unshift(userUpdated);
-
-                    this.showModal = false; // Close modal
+                    this.users.unshift(row);
+                    this.showModal = false;
                 } catch (error) {
                     console.error("Error adding user:", error);
                 }
@@ -145,54 +158,57 @@
 
             async updateUser() {
                 try {
+                    const user_type_id = (this.newUser.user_type_id ?? this.newUser.user_type ?? null);
+                    const lgu_id =
+                        this.newUser.lgu_id != null && this.newUser.lgu_id !== ''
+                            ? Number(this.newUser.lgu_id)
+                            : (Number(this.newUser.lgu) || null);
 
-                    const response = await fetch(
-                            "{{ route('api-users-put', ':id') }}".replace(':id', this.newUser.id), {
-                            method: "PUT",
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify(this.newUser),
-                        });
-
-                    if (response.status === 422) {
-                        const errorData = await response.json();
-                        let messages = [];
-
-                        if (errorData.errors) {
-                            for (const field in errorData.errors) {
-                                messages.push(...errorData.errors[field]);
-                            }
-                        }
-
-                        this.validationErrors = messages;
-                        return;
-                    }
-
-                    if (!response.ok) throw new Error("Failed to update profile");
-
-                    // user types
-                    let userTypesArray = Object.entries(this.user_types).map(([id, name]) => ({
-                        id: Number(id),
-                        name
-                    }));
-
-                    let selectedUserType = userTypesArray.find(u => u.id === Number(this.newUser.user_type)); // Convert to number
-                    this.newUser.user_type = selectedUserType ? selectedUserType.name : "";
-                    // end user types
-
-                    // lgu
-                    let selectedLgu = this.lgus.find(l => l.id === Number(this.newUser.lgu)); // Convert to number
-                    this.newUser.lgu = selectedLgu ? selectedLgu.name : "";
-                    // end lgu
-
-                    // Find and update the profile in the list
-                    const index = this.users.findIndex(user => user.id === this.newUser.id);
-                    if (index !== -1) this.users[index] = {
-                        ...this.newUser
+                    const payload = {
+                        id: this.newUser.id,
+                        first_name: this.newUser.first_name,
+                        last_name: this.newUser.last_name,
+                        email: this.newUser.email,
+                        password: this.newUser.password, // leave as-is; omit if your API requires
+                        position: this.newUser.position,
+                        status: this.newUser.status,
+                        user_type: user_type_id != null ? Number(user_type_id) : null, // <-- send id
+                        lgu_id: lgu_id,                                                 // <-- send id
                     };
 
-                    this.showModal = false; // Close modal
+                    const response = await fetch(
+                        "{{ route('api-users-put', ':id') }}".replace(':id', this.newUser.id),
+                        {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Accept": "application/json",
+                            },
+                            body: JSON.stringify(payload),
+                        }
+                    );
+
+                    if (response.status === 422) {
+                        const { errors } = await response.json();
+                        this.validationErrors = Object.values(errors || {}).flat();
+                        return;
+                    }
+                    if (!response.ok) throw new Error("Failed to update profile");
+
+                    const updated = await response.json();
+                    const u = updated.user;
+
+                    // Update the row in the table: keep ids, show labels
+                    const idx = this.users.findIndex(x => x.id === this.newUser.id);
+                    if (idx !== -1) {
+                        this.users[idx] = {
+                            ...u,
+                            user_type: this.updateUserType(u.user_type_id),
+                            lgu: this.updateLgu(u.lgu_id),
+                        };
+                    }
+
+                    this.showModal = false;
                 } catch (error) {
                     console.error("Error updating user:", error);
                 }

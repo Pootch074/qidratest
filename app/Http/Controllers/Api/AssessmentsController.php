@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\AssessmentMean;
 use App\Models\AssessmentQuestionnaire;
+use App\Models\AssessmentRecommendation;
+use App\Models\AssessmentRemark;
 use App\Models\PeriodAssessment;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -85,7 +87,7 @@ class AssessmentsController extends Controller
 
     public function remarks(Request $request)
     {
-        $record = AssessmentQuestionnaire::updateOrCreate(
+        $record = AssessmentRemark::updateOrCreate(
             [
                 'period_id' => $request->period_id,
                 'lgu_id' => $request->lgu_id,
@@ -105,7 +107,7 @@ class AssessmentsController extends Controller
 
     public function recommendation(Request $request)
     {
-        $record = AssessmentQuestionnaire::updateOrCreate(
+        $record = AssessmentRecommendation::updateOrCreate(
             [
                 'period_id' => $request->period_id,
                 'lgu_id' => $request->lgu_id,

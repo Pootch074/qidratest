@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Helpers\PeriodHelper;
 use App\Models\AssessmentMean;
 use App\Models\AssessmentQuestionnaire;
+use App\Models\AssessmentRecommendation;
+use App\Models\AssessmentRemark;
 use App\Models\Lgu;
 use App\Models\MeansOfVerification;
 use App\Models\Questionnaire;
@@ -17,10 +19,10 @@ class AssessmentsController extends Controller
     //
 
     /**
-     * Manages the assessment process by handling questionnaire navigation, 
-     * LGU selection, and session updates. Retrieves the current period, 
-     * questionnaire tree, and relevant assessments. Prepares data for the 
-     * assessment view including roots, current questionnaire, parent, child, 
+     * Manages the assessment process by handling questionnaire navigation,
+     * LGU selection, and session updates. Retrieves the current period,
+     * questionnaire tree, and relevant assessments. Prepares data for the
+     * assessment view including roots, current questionnaire, parent, child,
      * and related levels and means of verification.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -119,9 +121,19 @@ class AssessmentsController extends Controller
             ->where('questionnaire_id', $childId)
             ->first();
 
+        $remark = AssessmentRemark::where('period_id', $periodId)
+            ->where('lgu_id', $lguId)
+            ->where('questionnaire_id', $childId)
+            ->first();
+
+        $recommendation = AssessmentRecommendation::where('period_id', $periodId)
+            ->where('lgu_id', $lguId)
+            ->where('questionnaire_id', $childId)
+            ->first();
+
         $selectedLevelId = $assessment->questionnaire_level_id ?? 0;
-        $existingRemarks = $assessment->remarks ?? '';
-        $existingRecommendations = $assessment->recommendations ?? '';
+        $existingRemarks = $remark->remarks ?? '';
+        $existingRecommendations = $recommendation->recommendations ?? '';
 
         $questionnaireId = $childId;
         $checkedMeans = AssessmentMean::where('period_id', $periodId)
@@ -141,13 +153,13 @@ class AssessmentsController extends Controller
         }
 
         return view('rmt.assessments.view', compact(
-            'roots', 'currentRoot', 'questionnaire', 
+            'roots', 'currentRoot', 'questionnaire',
             'child', 'parent', 'assessmentStatus',
-            'periodId', 'questionnaireId', 'lguId', 
+            'periodId', 'questionnaireId', 'lguId',
             'existingRemarks', 'existingRecommendations', 'selectedLevelId', 'checkedMeans',
             'references', 'means', 'levels', 'lgus'
         ));
-    
+
     }
 
     private function getNavigation($treeId, $rootId = null, $lguId, $periodId)
@@ -248,7 +260,7 @@ class AssessmentsController extends Controller
             ->orderBy('parent_id')
             ->orderBy('weight')
             ->first();
-        
+
         return $q;
     }
 
@@ -259,7 +271,7 @@ class AssessmentsController extends Controller
 
     /**
      * Recursively traverse the questionnaire tree to get the root of the current assessment.
-     * 
+     *
      * @param Questionnaire $child
      * @return Questionnaire
      */
