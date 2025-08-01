@@ -206,6 +206,7 @@ class AssessmentsController extends Controller
                 ->where('period_id', $periodId)
                 ->where('lgu_id', $lguId)->exists()) {
                 $existCount++;
+//                dd('exists 1');
             }
 
             if (AssessmentQuestionnaire::where('questionnaire_id', $q->id)
@@ -215,27 +216,22 @@ class AssessmentsController extends Controller
                 $existCount++;
             }
 
-            if (AssessmentQuestionnaire::where('questionnaire_id', $q->id)
+            if (AssessmentRemark::where('questionnaire_id', $q->id)
                 ->where('period_id', $periodId)
                 ->where('lgu_id', $lguId)
                 ->where('remarks', '!=', '')->exists()) {
                 $existCount++;
             }
 
-            if (AssessmentQuestionnaire::where('questionnaire_id', $q->id)
-                ->where('period_id', $periodId)
-                ->where('lgu_id', $lguId)
-                ->where('recommendations', '!=', '')->exists()) {
-                $existCount++;
-            }
-
             $status = 'pending';
-            if ($existCount > 0 && $existCount < 4) {
+            if ($existCount > 0 && $existCount < 3) {
                 $status = 'inprogress';
             }
-            if ($existCount > 3) {
+            if ($existCount > 2) {
                 $status = 'completed';
             }
+
+//            dd($existCount);
 
             $questionnaireArray[$q->id] = [
                 'id' => $q->id,
@@ -264,6 +260,12 @@ class AssessmentsController extends Controller
         return $q;
     }
 
+    /**
+     * Retrieve a single questionnaire based on its ID.
+     *
+     * @param int $id
+     * @return Questionnaire
+     */
     private function getSingleQuestionnaire($id)
     {
         return Questionnaire::find($id);
