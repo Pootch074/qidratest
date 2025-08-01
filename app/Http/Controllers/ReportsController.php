@@ -57,6 +57,37 @@ class ReportsController extends Controller
             ]
         ];
 
+        $weights = DB::table('questionnaire_weights')
+        ->pluck('weight', 'questionnaire_id')
+        ->toArray();
+
+        $totalWeight = 0;
+        $totalNewIndexScore = 0;
+
+        foreach ($sections as &$section) {
+            foreach ($section['children'] as &$child) {
+                $weight = $weights[$child->id] ?? 0;
+                $totalWeight += $weight;
+
+                $grandchildren = $section['grandchild']->where('parent_id', $child->id);
+                $levels = $grandchildren->map(fn($g) => $g->assessment?->questionnaireLevel?->level ?? 0);
+
+                $averageLevel = $levels->avg() ?? 0;
+                $newIndexScore = $averageLevel * $weight;
+
+                $child->new_index_score = $newIndexScore;
+                $totalNewIndexScore += $newIndexScore;
+            }
+        }
+        unset($child, $section);
+
+
+
+
+
+
+
+
 
         $calculateAvgWeight = function ($ids) {
             return Questionnaire::whereIn('id', $ids)->pluck('weight')->avg();
@@ -75,6 +106,9 @@ class ReportsController extends Controller
             'sections',
             'lgus',
             'cksu',
+            'weights',
+            'totalWeight',
+            'totalNewIndexScore',
             'weightedLevelGroup1',
             'weightedLevelGroup2',
         ));
@@ -85,8 +119,6 @@ class ReportsController extends Controller
 
     public function complianceMonitoring(Request $request)
     {
-        
-
         $periodId = $request->input('period_id');
 
         // Fetch only LGUs that have a record in period_assessments for the selected period
@@ -127,28 +159,55 @@ class ReportsController extends Controller
             ]
         ];
 
+        $averageLevels = [];
 
-        $calculateAvgWeight = function ($ids) {
-            return Questionnaire::whereIn('id', $ids)->pluck('weight')->avg();
-        };
+        foreach ($sections as &$section) {
+            $grandchildren = $section['grandchild'];
 
-        $avgLevelGroup1 = $calculateAvgWeight([18, 19, 20]);
-        $weightedLevelGroup1 = $avgLevelGroup1 * 0.07;
+            foreach ($section['children'] as $child) {
+                $childGrandchildren = $grandchildren->where('parent_id', $child->id);
 
-        $avgLevelGroup2 = $calculateAvgWeight(range(21, 30));
-        $weightedLevelGroup2 = $avgLevelGroup2 * 0.11;
+                $averageLevels[$child->id] = $childGrandchildren
+                    ->pluck('assessment.questionnaireLevel.level')
+                    ->filter()
+                    ->avg();
+            }
+        }
 
         $weights = DB::table('questionnaire_weights')
         ->pluck('weight', 'questionnaire_id')
         ->toArray();
-        
+
+        // dd($weights);
+        $totalWeight = 0;
+        $totalNewIndexScore = 0;
+
+        foreach ($sections as &$section) {
+            foreach ($section['children'] as &$child) {
+                $weight = $weights[$child->id] ?? 0;
+                $totalWeight += $weight;
+
+                $grandchildren = $section['grandchild']->where('parent_id', $child->id);
+                $levels = $grandchildren->map(fn($g) => $g->assessment?->questionnaireLevel?->level ?? 0);
+
+                $averageLevel = $levels->avg() ?? 0;
+                $newIndexScore = $averageLevel * $weight;
+
+                $child->new_index_score = $newIndexScore;
+                $totalNewIndexScore += $newIndexScore;
+            }
+        }
+
+        unset($child, $section); // to avoid accidental reference bugs
+
         return view('admin.reports.compliance', compact(
             'sections',
+            'averageLevels',
             'lgus',
             'cksu',
-            'weightedLevelGroup1',
-            'weightedLevelGroup2',
-            'weights'
+            'weights',
+            'totalWeight',
+            'totalNewIndexScore',
         ));
     }
 }
