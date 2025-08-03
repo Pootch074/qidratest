@@ -45,6 +45,10 @@ class Questionnaire extends Model
         return $this->hasOne(QuestionnaireWeight::class, 'questionnaire_id');
     }
 
-
-
+    public function assessmentRemark()
+    {
+        return $this->hasOne(AssessmentRemark::class, 'questionnaire_id')
+            ->where('period_id', request('period_id'))
+            ->where('lgu_id', request('lgu_id'));
+    }
 }

@@ -142,22 +142,28 @@
                             $level = optional($grandchild->assessment?->questionnaireLevel)->level;
                             @endphp
                             <td class="border px-4 py-2 text-center">
-                                {{ $level !== null ? number_format($level, 2) : 'N/A' }}
+                                {{ $level !== null ? number_format($level, 2) : '' }}
                             </td>
 
                                                     <!-- <td class="border px-4 py-2 text-center border-red-500"></td> -->
                             @php
-                                $remarks = strip_tags($grandchild->assessment?->remarks ?? '');
-                                $recommendations = strip_tags($grandchild->assessment?->recommendations ?? '');
+                                $remarks = \App\Models\AssessmentRemark::where('questionnaire_id', $grandchild->id)
+                                    ->where('period_id', request('period_id'))
+                                    ->where('lgu_id', request('lgu_id'))
+                                    ->value('remarks');
+
+                                $recommendations = \App\Models\AssessmentRecommendation::where('questionnaire_id', $grandchild->id)
+                                    ->where('period_id', request('period_id'))
+                                    ->where('lgu_id', request('lgu_id'))
+                                    ->value('recommendations');
                             @endphp
 
-                        <td class="border px-4 py-2 text-center">
-                            {{ trim($remarks) !== '' ? $remarks : '' }}
-                        </td>
-                        <td class="border px-4 py-2 text-center">
-                            {{ trim($recommendations) !== '' ? $recommendations : '' }}
-                        </td>
-                        <td class="border-r border-r-black"></td>
+                            <td class="border px-4 py-2 text-center">
+                                {{ trim(strip_tags($remarks)) }}
+                            </td>
+                            <td class="border px-4 py-2 text-center">
+                                {{ trim(strip_tags($recommendations)) }}
+                            </td>
 
                     </tr>
             @endforeach
@@ -169,18 +175,9 @@
                 FINAL RATING
             </td>
             <td class="border px-4 py-2 text-left text-[15px]" colspan="2">
-                @if ($totalNewIndexScore === 0)
-                    Did not meet the minimum requirement
-                @elseif ($totalNewIndexScore < 1.99)
-                    With compiled documents reflecting the program processes and information
-                @elseif ($totalNewIndexScore < 2.87)
-                    Information about the policies/guidelines on the implementation of LSWDO’s programs and services, through manuals, citizen’s charter and the likes are available and accessible for use of staff and their clients but are not yet in the form of manual
-                @elseif ($totalNewIndexScore <= 3)
-                    A Manual of Operations is developed and updated (at least within 3 years) with the consolidated policies/guidelines for implementation of various services/programs of the LSWDO
-                @else
-                    Not Applicable
-                @endif
+                {{ $interpretation }}
             </td>
+
 
             <td class="border px-4 py-2 text-center font-bold align-middle text-[40px]" id="totalnewindexscore" rowspan="2" style="width: 80px;">
                 {{ number_format($totalNewIndexScore, 2) }}
@@ -188,17 +185,7 @@
         </tr>
         <tr>
             <td class="border px-4 py-2 text-center font-semibold text-[20px]" id="level" colspan="2">
-                @if ($totalNewIndexScore <= 0.99)
-                    Low
-                @elseif ($totalNewIndexScore <= 1.99)
-                    Level 1
-                @elseif ($totalNewIndexScore <= 2.87)
-                    Level 2
-                @elseif ($totalNewIndexScore >= 2.88)
-                    Level 3
-                @else
-                    Not Rated
-                @endif
+                {{ $paramLevel }}
             </td>
         </tr>
 

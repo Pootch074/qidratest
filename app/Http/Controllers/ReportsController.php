@@ -92,6 +92,24 @@ class ReportsController extends Controller
         $avgLevelGroup2 = $calculateAvgWeight(range(21, 30));
         $weightedLevelGroup2 = $avgLevelGroup2 * 0.11;
 
+        $interpretation = match (true) {
+            $totalNewIndexScore === 0 => 'Did not meet the minimum requirement',
+            $totalNewIndexScore < 1.99 => 'With compiled documents reflecting the program processes and information',
+            $totalNewIndexScore < 2.87 => 'Information about the policies/guidelines on the implementation of LSWDO’s programs and services, through manuals, citizen’s charter and the likes are available and accessible for use of staff and their clients but are not yet in the form of manual',
+            $totalNewIndexScore <= 3 => 'A Manual of Operations is developed and updated (at least within 3 years) with the consolidated policies/guidelines for implementation of various services/programs of the LSWDO',
+            default => 'Not Applicable',
+        };
+
+        $paramLevel = match (true) {
+            $totalNewIndexScore <= 0.99 => 'Low',
+            $totalNewIndexScore <= 1.99 => 'Level 1',
+            $totalNewIndexScore <= 2.87 => 'Level 2',
+            $totalNewIndexScore >= 2.88 => 'Level 3',
+            default => 'Not Rated',
+        };
+
+
+
         return view('admin.reports.parameter', compact(
             'sections',
             'lgus',
@@ -101,7 +119,9 @@ class ReportsController extends Controller
             'totalNewIndexScore',
             'weightedLevelGroup1',
             'weightedLevelGroup2',
-            'assessment' // pass this to Blade
+            'assessment',
+            'interpretation',
+            'paramLevel'
         ));
     }
 
@@ -111,7 +131,6 @@ class ReportsController extends Controller
     {
         $periodId = $request->input('period_id');
 
-        // Fetch only LGUs that have a record in period_assessments for the selected period
         $lgus = collect();
 
         if ($periodId) {
@@ -165,13 +184,40 @@ class ReportsController extends Controller
         }
 
         $weights = DB::table('questionnaire_weights')
-        ->pluck('weight', 'questionnaire_id')
-        ->toArray();
+            ->pluck('weight', 'questionnaire_id')
+            ->toArray();
 
-        // dd($weights);
         $totalWeight = 0;
         $totalNewIndexScore = 0;
+        $totalPreviousIndexScore = 0;
+        $totalMovement = 0;
 
+
+        // 🔄 Previous Index Score (PIS) retrieval
+        $previousIndexScores = [];
+
+        $previousPeriod = null;
+
+        if ($periodId && $lguId) {
+            $previousPeriod = Period::where('id', '<', $periodId)->orderBy('id', 'desc')->first();
+
+            if ($previousPeriod) {
+                $allPreviousGrandchildren = Questionnaire::with(['assessment' => function ($q) use ($lguId, $previousPeriod) {
+                    $q->where('lgu_id', $lguId)->where('period_id', $previousPeriod->id);
+                }, 'assessment.level'])->get();
+
+                foreach ($allPreviousGrandchildren as $child) {
+                    if ($child->assessment && $child->assessment->isNotEmpty()) {
+                        $level = $child->assessment->first()?->questionnaireLevel?->level ?? 0;
+                        $weight = $weights[$child->parent_id] ?? 0;
+                        $previousIndexScores[$child->parent_id] ??= 0;
+                        $previousIndexScores[$child->parent_id] += $level * $weight;
+                    }
+                }
+            }
+        }
+
+        // 🧮 Calculate New Scores and Status
         foreach ($sections as &$section) {
             foreach ($section['children'] as &$child) {
                 $weight = $weights[$child->id] ?? 0;
@@ -185,11 +231,38 @@ class ReportsController extends Controller
 
                 $child->new_index_score = $newIndexScore;
                 $totalNewIndexScore += $newIndexScore;
+
+                $previous = $previousIndexScores[$child->id] ?? 0;
+
+                $movement = $newIndexScore - $previous;
+                $child->movement = $movement;
+
+                $totalPreviousIndexScore += $previous;
+                $totalMovement += $movement;
+
+
+                if ($child->movement > 0) {
+                    $child->status = 'Increased';
+                } elseif ($child->movement < 0) {
+                    $child->status = 'Decreased';
+                } else {
+                    $child->status = 'Sustained';
+                }
             }
         }
 
-        unset($child, $section); // to avoid accidental reference bugs
+        unset($child, $section);
 
+        if ($totalMovement > 0) {
+            $overallStatus = 'Increased';
+        } elseif ($totalMovement < 0) {
+            $overallStatus = 'Decreased';
+        } else {
+            $overallStatus = 'Sustained';
+        }
+
+
+        // 🎯 Level determination
         $level = '';
 
         if ($totalNewIndexScore >= 4.21) {
@@ -206,6 +279,13 @@ class ReportsController extends Controller
             $level = 'NOT RATED';
         }
 
+        $interpretation = match (true) {
+            $totalNewIndexScore === 0 => 'Did not meet the minimum requirement',
+            $totalNewIndexScore < 1.99 => 'With compiled documents reflecting the program processes and information',
+            $totalNewIndexScore < 2.87 => 'Information about the policies/guidelines on the implementation of LSWDO’s programs and services, through manuals, citizen’s charter and the likes are available and accessible for use of staff and their clients but are not yet in the form of manual',
+            $totalNewIndexScore <= 3 => 'A Manual of Operations is developed and updated (at least within 3 years) with the consolidated policies/guidelines for implementation of various services/programs of the LSWDO',
+            default => 'Not Applicable',
+        };
 
         return view('admin.reports.compliance', compact(
             'sections',
@@ -215,7 +295,10 @@ class ReportsController extends Controller
             'weights',
             'totalWeight',
             'totalNewIndexScore',
-            'level'
+            'level',
+            'interpretation',
+            'previousIndexScores',
+            'overallStatus'
         ));
     }
 }
