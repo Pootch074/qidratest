@@ -14,14 +14,12 @@ use Illuminate\Support\Facades\DB;
 
 class ReportsController extends Controller
 {
-    // Define a public method named 'paramReport' which accepts an HTTP request
     public function paramReport(Request $request)
     {
         $periodId = $request->input('period_id');
+        $lguId = $request->input('lgu_id');
 
-        // Fetch only LGUs that have a record in period_assessments for the selected period
         $lgus = collect();
-
         if ($periodId) {
             $lgus = Lgu::whereIn('id', function ($query) use ($periodId) {
                 $query->select('lgu_id')
@@ -31,7 +29,12 @@ class ReportsController extends Controller
         }
 
         $cksu = Period::select('id', 'name')->get();
-        $lguId = $request->input('lgu_id');
+
+        // Fetch assessment date from period_assessments
+        $assessment = DB::table('period_assessments')
+            ->where('period_id', $periodId)
+            ->where('lgu_id', $lguId)
+            ->first();
 
         $sections = [
             [
@@ -58,8 +61,8 @@ class ReportsController extends Controller
         ];
 
         $weights = DB::table('questionnaire_weights')
-        ->pluck('weight', 'questionnaire_id')
-        ->toArray();
+            ->pluck('weight', 'questionnaire_id')
+            ->toArray();
 
         $totalWeight = 0;
         $totalNewIndexScore = 0;
@@ -81,27 +84,14 @@ class ReportsController extends Controller
         }
         unset($child, $section);
 
-
-
-
-
-
-
-
-
         $calculateAvgWeight = function ($ids) {
             return Questionnaire::whereIn('id', $ids)->pluck('weight')->avg();
         };
-
         $avgLevelGroup1 = $calculateAvgWeight([18, 19, 20]);
         $weightedLevelGroup1 = $avgLevelGroup1 * 0.07;
-
         $avgLevelGroup2 = $calculateAvgWeight(range(21, 30));
         $weightedLevelGroup2 = $avgLevelGroup2 * 0.11;
 
-
-        
-        
         return view('admin.reports.parameter', compact(
             'sections',
             'lgus',
@@ -111,10 +101,10 @@ class ReportsController extends Controller
             'totalNewIndexScore',
             'weightedLevelGroup1',
             'weightedLevelGroup2',
+            'assessment' // pass this to Blade
         ));
-
-        
     }
+
 
 
     public function complianceMonitoring(Request $request)
@@ -200,6 +190,23 @@ class ReportsController extends Controller
 
         unset($child, $section); // to avoid accidental reference bugs
 
+        $level = '';
+
+        if ($totalNewIndexScore >= 4.21) {
+            $level = 'LEVEL 5';
+        } elseif ($totalNewIndexScore >= 3.41) {
+            $level = 'LEVEL 4';
+        } elseif ($totalNewIndexScore >= 2.61) {
+            $level = 'LEVEL 3';
+        } elseif ($totalNewIndexScore >= 1.81) {
+            $level = 'LEVEL 2';
+        } elseif ($totalNewIndexScore >= 1.00) {
+            $level = 'LEVEL 1';
+        } else {
+            $level = 'NOT RATED';
+        }
+
+
         return view('admin.reports.compliance', compact(
             'sections',
             'averageLevels',
@@ -208,6 +215,7 @@ class ReportsController extends Controller
             'weights',
             'totalWeight',
             'totalNewIndexScore',
+            'level'
         ));
     }
 }

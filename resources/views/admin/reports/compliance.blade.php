@@ -68,6 +68,11 @@
 
 
         <div id="print-section" class="max-h-[75vh] rounded-xl shadow">
+                <style>
+    table, th, td {
+        border: 1px solid #BFBFBF !important;
+    }
+</style>
             <table class="min-w-full border border-gray-300 text-sm text-left">
             <h2 class="text-center text-xl font-semibold mb-4">COMPLIANCE MONITORING</h2>
             <thead>
@@ -85,10 +90,9 @@
                     $totalWeight = 0;
                     $totalNewIndexScore = 0;
                 @endphp
-
                 @foreach ($sections as $vtyla)
                     <tr class="bg-gray-100 font-semibold">
-                        <td colspan="6" class="border px-4 py-2 pl-30 text-left">
+                        <td colspan="6" class="border px-4 py-2 pl-30 text-left" style="background-color: #EAEAEA;">
                             {{ chr(64 + $loop->iteration) }}. {{ $vtyla['parent']->name }}
                         </td>
                     </tr>
@@ -105,28 +109,45 @@
                             </td>
                             <td class="border px-4 py-2 text-center"></td>
                             <td class="border px-4 py-2 text-center font-semibold">
+                                <!-- NEW INDEX SCORE -->
                                 {{ number_format($child->new_index_score, 2) }}
                             </td>
                             <td class="border px-4 py-2 text-center"></td>
                             <td class="border px-4 py-2 text-center"></td>
                         </tr>
                     @endforeach
-
                 @endforeach
 
                 <tr class="font-semibold text-center text-lg bg-gray-100">
                     <td class="border px-4 py-2">TOTAL</td>
                     <td class="border px-4 py-2">{{ number_format($totalWeight * 100, 1) }}%</td>
                     <td class="border px-4 py-2"></td>
-                    <td class="border px-4 py-2 text-center font-semibold">{{ number_format($totalNewIndexScore, 2) }}</td>
+                    <td class="border px-4 py-2 text-center font-semibold">
+                        <!-- TOTAL NEW INDEX SCORE -->
+                        {{ number_format($totalNewIndexScore, 2) }}</td>
                     <td class="border px-4 py-2"></td>
                     <td class="border px-4 py-2"></td>
                 </tr>
 
-                <tr class="font-semibold text-center text-lg bg-white">
-                    <td class="border px-4 py-2">NEW RATING</td>
-                    <td class="border px-4 py-2" colspan="2">LEVEL 2</td>
-                    <td class="border px-4 py-2" colspan="3"></td>
+                <tr class="text-center text-lg bg-white">
+                    <td class="border px-4 py-2 font-semibold">NEW RATING</td>
+                    <td class="border px-4 py-2 text-center font-semibold" colspan="2">
+                        {{ $level }}
+                    </td>
+                    <td class="border px-4 py-2" colspan="3">
+                        @if ($totalNewIndexScore === 0)
+                            Did not meet the minimum requirement
+                        @elseif ($totalNewIndexScore < 1.99)
+                            With compiled documents reflecting the program processes and information
+                        @elseif ($totalNewIndexScore < 2.87)
+                            Information about the policies/guidelines on the implementation of LSWDO’s programs and services, through manuals, citizen’s charter and the likes are available and accessible for use of staff and their clients but are not yet in the form of manual
+                        @elseif ($totalNewIndexScore <= 3)
+                            A Manual of Operations is developed and updated (at least within 3 years) with the consolidated policies/guidelines for implementation of various services/programs of the LSWDO
+                        @else
+                            Not Applicable
+                        @endif
+                    </td>
+
                 </tr> 
             </tbody>
             </table>
