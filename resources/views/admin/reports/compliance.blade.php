@@ -93,7 +93,7 @@
                     $totalMovement = 0;
                 @endphp
                 @foreach ($sections as $vtyla)
-                    <tr class="bg-gray-100 font-semibold">
+                    <tr class="bg-gray-100 font-semibold" id="parent-header">
                         <td colspan="6" class="border px-4 py-2 pl-30 text-left" style="background-color: #EAEAEA;">
                             {{ chr(64 + $loop->iteration) }}. {{ $vtyla['parent']->name }}
                         </td>
@@ -113,7 +113,7 @@
                                 default => '',
                             };
                         @endphp
-                        <tr class="{{ $rowColor }}">
+                        <tr class="{{ $rowColor }}" id="children-header">
                             <td class="border px-4 py-2">{{ $loop->iteration }}. {{ $child->name }}</td>
                             <td class="border px-4 py-2 text-center">
                                 {{ number_format($weight * 100, 1) }}%
@@ -135,7 +135,7 @@
 
                 @endforeach
 
-                <tr class="font-semibold text-center text-lg bg-gray-100">
+                <tr class="font-semibold text-center text-lg bg-gray-100" id="results">
                     <td class="border px-4 py-2">TOTAL</td>
                     <td class="border px-4 py-2">{{ number_format($totalWeight * 100, 1) }}%</td>
                     <td class="border px-4 py-2">{{ number_format($totalPreviousIndexScore, 2) }}</td>
@@ -145,16 +145,14 @@
                     <td class="border px-4 py-2">{{ number_format($totalMovement, 2) }}</td>
                 </tr>
 
-                <tr class="text-center text-lg bg-white">
+                <tr class="text-center text-lg bg-white" id="description">
                     <td class="border px-4 py-2 font-semibold">NEW RATING</td>
                     <td class="border px-4 py-2 text-center font-semibold" colspan="2">
-                        {{ $level }}
+                         {{ $paramLevel }}
                     </td>
                     <td class="border px-4 py-2" colspan="3">
                         {{ $interpretation }}
                     </td>
-
-
                 </tr> 
             </tbody>
             </table>
@@ -174,12 +172,43 @@
                 <html>
                     <head>
                         <style>
-                            body { font-family: Arial, sans-serif; padding: 20px; margin:0;}
-                            table { width: 100%; border-collapse: collapse; }
-                            th { border: 1px solid #ccc; padding: 8px; text-align: center; }
-                            td { border: 1px solid #ccc; padding: 8px; }
-                            th { background-color: #e6f4ea; }
-                            h2 { text-align: center; }
+                            @media print {
+                                body {
+                                    font-family: Arial, sans-serif;
+                                    font-size: 12px;
+                                    padding: 0;
+                                    margin: 0;
+                                }
+                                table {
+                                    width: 100%;
+                                    border-collapse: collapse;
+                                }
+                                h2 {
+                                    text-align: center;
+                                }
+                                #parent-header td{
+                                    padding-left: 30px;
+                                    text-align: left;
+                                    background-color:#EAEAEA;
+                                }
+                                #children-header td:nth-child(n+2):nth-child(-n+6) {
+                                    text-align: center;
+                                }
+                                #results {
+                                    text-align: center;
+                                }
+                                #results td:nth-child(n+2):nth-child(-n+6) {
+                                    font-weight: bold;
+                                    font-size: 20px;
+                                }
+                                #description td:nth-child(n+1):nth-child(-n+2){
+                                    text-align: center;
+                                }
+                                #description td:nth-child(2){
+                                    font-weight: bold;
+                                    font-size: 20px;
+                                }
+                            }
                         </style>
                     </head>
                     ${printContent}

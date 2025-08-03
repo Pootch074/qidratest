@@ -177,8 +177,6 @@
             <td class="border px-4 py-2 text-left text-[15px]" colspan="2">
                 {{ $interpretation }}
             </td>
-
-
             <td class="border px-4 py-2 text-center font-bold align-middle text-[40px]" id="totalnewindexscore" rowspan="2" style="width: 80px;">
                 {{ number_format($totalNewIndexScore, 2) }}
             </td>

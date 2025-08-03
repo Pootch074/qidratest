@@ -92,20 +92,20 @@ class ReportsController extends Controller
         $avgLevelGroup2 = $calculateAvgWeight(range(21, 30));
         $weightedLevelGroup2 = $avgLevelGroup2 * 0.11;
 
-        $interpretation = match (true) {
-            $totalNewIndexScore === 0 => 'Did not meet the minimum requirement',
-            $totalNewIndexScore < 1.99 => 'With compiled documents reflecting the program processes and information',
-            $totalNewIndexScore < 2.87 => 'Information about the policies/guidelines on the implementation of LSWDO’s programs and services, through manuals, citizen’s charter and the likes are available and accessible for use of staff and their clients but are not yet in the form of manual',
-            $totalNewIndexScore <= 3 => 'A Manual of Operations is developed and updated (at least within 3 years) with the consolidated policies/guidelines for implementation of various services/programs of the LSWDO',
-            default => 'Not Applicable',
-        };
-
         $paramLevel = match (true) {
             $totalNewIndexScore <= 0.99 => 'Low',
             $totalNewIndexScore <= 1.99 => 'Level 1',
             $totalNewIndexScore <= 2.87 => 'Level 2',
             $totalNewIndexScore >= 2.88 => 'Level 3',
             default => 'Not Rated',
+        };
+
+        $interpretation = match ($paramLevel) {
+            'Level 3' => 'A Manual of Operations is developed and updated (at least within 3 years) with the consolidated policies/guidelines for implementation of various services/programs of the LSWDO',
+            'Level 2' => 'Information about the policies/guidelines on the implementation of LSWDO’s programs and services, through manuals, citizen’s charter and the likes are available and accessible for use of staff and their clients but are not yet in the form of manual',
+            'Level 1' => 'With compiled documents reflecting the program processes and information',
+            'Low'     => 'Did not meet the minimum requirement',
+            default   => 'Not Applicable',
         };
 
 
@@ -262,30 +262,22 @@ class ReportsController extends Controller
         }
 
 
-        // 🎯 Level determination
-        $level = '';
-
-        if ($totalNewIndexScore >= 4.21) {
-            $level = 'LEVEL 5';
-        } elseif ($totalNewIndexScore >= 3.41) {
-            $level = 'LEVEL 4';
-        } elseif ($totalNewIndexScore >= 2.61) {
-            $level = 'LEVEL 3';
-        } elseif ($totalNewIndexScore >= 1.81) {
-            $level = 'LEVEL 2';
-        } elseif ($totalNewIndexScore >= 1.00) {
-            $level = 'LEVEL 1';
-        } else {
-            $level = 'NOT RATED';
-        }
-
-        $interpretation = match (true) {
-            $totalNewIndexScore === 0 => 'Did not meet the minimum requirement',
-            $totalNewIndexScore < 1.99 => 'With compiled documents reflecting the program processes and information',
-            $totalNewIndexScore < 2.87 => 'Information about the policies/guidelines on the implementation of LSWDO’s programs and services, through manuals, citizen’s charter and the likes are available and accessible for use of staff and their clients but are not yet in the form of manual',
-            $totalNewIndexScore <= 3 => 'A Manual of Operations is developed and updated (at least within 3 years) with the consolidated policies/guidelines for implementation of various services/programs of the LSWDO',
-            default => 'Not Applicable',
+        $paramLevel = match (true) {
+            $totalNewIndexScore <= 0.99 => 'Low',
+            $totalNewIndexScore <= 1.99 => 'Level 1',
+            $totalNewIndexScore <= 2.87 => 'Level 2',
+            $totalNewIndexScore >= 2.88 => 'Level 3',
+            default => 'Not Rated',
         };
+
+        $interpretation = match ($paramLevel) {
+            'Level 3' => 'A Manual of Operations is developed and updated (at least within 3 years) with the consolidated policies/guidelines for implementation of various services/programs of the LSWDO',
+            'Level 2' => 'Information about the policies/guidelines on the implementation of LSWDO’s programs and services, through manuals, citizen’s charter and the likes are available and accessible for use of staff and their clients but are not yet in the form of manual',
+            'Level 1' => 'With compiled documents reflecting the program processes and information',
+            'Low'     => 'Did not meet the minimum requirement',
+            default   => 'Not Applicable',
+        };
+
 
         return view('admin.reports.compliance', compact(
             'sections',
@@ -295,7 +287,7 @@ class ReportsController extends Controller
             'weights',
             'totalWeight',
             'totalNewIndexScore',
-            'level',
+            'paramLevel',
             'interpretation',
             'previousIndexScores',
             'overallStatus'
