@@ -12,6 +12,11 @@ class PeriodAssessment extends Model
     protected $fillable = ['period_id', 'lgu_id', 'user_id', 'assessment_start_date', 'assessment_end_date', 'status'];
     protected $dates = ['assessment_start_date', 'assessment_end_date'];
 
+    const STATUS_PENDING = 'pending';
+    const STATUS_ONGOING = 'on-going';
+    const STATUS_COMPLETED = 'completed';
+    const STATUS_INCOMPLETE = 'incomplete';
+
     public function period(): BelongsTo
     {
         return $this->belongsTo(Period::class);

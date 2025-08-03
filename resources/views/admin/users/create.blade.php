@@ -36,7 +36,7 @@
                                 </template>
                             </ul>
                         </div>
-                        
+
                         <!-- Form -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <!-- First Name -->
@@ -70,15 +70,15 @@
                             <!-- User Type -->
                             <div>
                                 <label class="block text-sm text-[#75777C]">User Type</label>
-                                <select x-model="newUser.user_type" name="user_type"
-                                    class="mt-1 block w-full px-3 py-2 border border-[#CDCFD2] text-[#101828] rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <select x-model.number="newUser.user_type_id" name="user_type_id"
+                                        class="mt-1 block w-full px-3 py-2 border border-[#CDCFD2] text-[#101828] rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                                     <option value="">Please select</option>
                                     @foreach ($userTypes as $id => $type)
                                         <option value="{{ $id }}">{{ $type }}</option>
                                     @endforeach
-                                    <input type="hidden" x-model="newUser.user_type_id" name="user_type_id">
                                 </select>
                             </div>
+
 
                             <!-- Position -->
                             <div>
@@ -91,7 +91,7 @@
                             <div class="sm:col-span-2" x-show="newUser.user_type == 2" x-transition>
                                 <label class="block text-sm text-[#75777C]">Assigned LGU</label>
                                 <select type="text" x-model="newUser.lgu" name="lgu"
-                                    class="mt-1 block w-full px-3 py-2 border border-[#CDCFD2] text-[#101828] rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                        class="mt-1 block w-full px-3 py-2 border border-[#CDCFD2] text-[#101828] rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                                     <option value="">Please select</option>
                                     @foreach($lgus as $lgu)
                                         <option value="{{ (string) $lgu->id }}">{{ $lgu->name }}</option>

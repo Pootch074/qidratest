@@ -1,6 +1,6 @@
 
 <h2 class="text-[#94969B] font-bold text-xl mb-5">{{ $parent->name }}</h2>
-<div class="bg-[#EEEFF1] p-[30px]">
+<div id="assessment-questionnaires" class="bg-[#EEEFF1] p-[30px]">
 
     <h2>
         <span class="bg-[#2E3192] text-l inline-flex items-center gap-2 border px-4 py-2 font-medium text-white rounded-full">{{ $child->reference_number }}</span>
@@ -106,7 +106,7 @@
                         data-questionnaire="{{ $questionnaireId }}"
                     >
                 @endif
-                
+
                     <input
                         type="radio"
                         x-model="checked"
@@ -158,8 +158,8 @@
             </div>
         </div>
     </div>
-    
-    <div 
+
+    <div
         class="bg-white p-3 rounded-lg my-5"
         x-data="remarksEditor({
             route: '{{ route('api-assessment-remarks') }}',
@@ -168,24 +168,38 @@
             lgu_id: {{ $lguId }},
             questionnaire_id: {{ $questionnaireId }},
             user_id: {{ auth()->user()->id }}
-        })"
+            })"
         x-init="init"
     >
         <h3 class="font-medium text-xl inline-block align-middle ml-2 text-[#1B1D21]">Remarks</h3>
         <small class="block ml-2 mb-5 text-[#677489]">Observations and Suggestions</small>
 
-        <div id="remarks" class="wysiwyg bg-white mt-5 h-60"></div>
+        <!-- Make it contenteditable and reference it from Alpine -->
+        <div
+            id="remarks"
+            x-ref="remarks"
+            class="wysiwyg bg-white mt-5 h-60 overflow-auto border rounded-lg p-3 focus:outline-none"
+            contenteditable="true"
+            role="textbox"
+            aria-label="Remarks editor"
+        ></div>
 
-        @if (auth()->user()->user_type > 1)
-            <a href="#"
-            @click.prevent="save"
-            class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-2 mt-3 text-white rounded-xl">
+        <!-- Optional tiny status indicator -->
+        <div class="mt-2 text-xs text-[#677489]">
+            <template x-if="saving"><span>Saving…</span></template>
+            <template x-if="!saving && lastSavedAt"><span>Saved <span x-text="lastSavedHuman"></span></span></template>
+            <template x-if="error"><span class="text-red-600" x-text="error"></span></template>
+        </div>
+
+        {{-- You can remove the manual Save button if you no longer want it --}}
+        {{-- @if (auth()->user()->user_type > 1)
+            <a href="#" @click.prevent="saveNow" class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-2 mt-3 text-white rounded-xl">
                 Save
             </a>
-        @endif
+        @endif --}}
     </div>
 
-    <div 
+    <div
         class="bg-white p-3 rounded-lg my-5"
         x-data="recommendationsEditor({
             route: '{{ route('api-assessment-recommendation') }}',
@@ -195,18 +209,33 @@
             questionnaire_id: {{ $questionnaireId }},
             user_id: {{ auth()->user()->id }}
         })"
+        x-init="init"
     >
         <h3 class="font-medium text-xl inline-block align-middle ml-2 text-[#1B1D21]">Recommendations</h3>
         <small class="block ml-2 mb-5 text-[#677489]">Observations and Suggestions</small>
 
-        <div id="recommendations" class="wysiwyg bg-white mt-5 h-60"></div>
+        <!-- Make it contenteditable and reference it from Alpine -->
+        <div
+            id="recommendations"
+            x-ref="recommendations"
+            class="wysiwyg bg-white mt-5 h-60 overflow-auto border rounded-lg p-3 focus:outline-none"
+            contenteditable="true"
+            role="textbox"
+            aria-label="Recommendations editor"
+        ></div>
 
-        @if (auth()->user()->user_type > 1)
-            <a href="#"
-            @click.prevent="save"
-            class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-2 mt-3 text-white rounded-xl">
+        <!-- Tiny status indicator -->
+        <div class="mt-2 text-xs text-[#677489]">
+            <template x-if="saving"><span>Saving…</span></template>
+            <template x-if="!saving && lastSavedAt"><span>Saved <span x-text="lastSavedHuman"></span></span></template>
+            <template x-if="error"><span class="text-red-600" x-text="error"></span></template>
+        </div>
+
+        {{-- Manual save no longer needed; keep for fallback if you want --}}
+        {{-- @if (auth()->user()->user_type > 1)
+            <a href="#" @click.prevent="saveNow" class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-2 mt-3 text-white rounded-xl">
                 Save
             </a>
-        @endif
+        @endif --}}
     </div>
 </div>

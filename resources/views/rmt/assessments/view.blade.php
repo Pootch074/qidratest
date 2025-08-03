@@ -40,24 +40,24 @@
         </div>
         @endif
 
-        <div 
-            x-data="rootsComponent(@js($roots), {{ $currentRoot->id }})" 
-            x-init="init()" 
+        <div
+            x-data="rootsComponent(@js($roots), {{ $currentRoot->id }})"
+            x-init="init()"
             class="flex flex-wrap items-center gap-2"
         >
             <template x-for="root in roots" :key="root.id">
                 <button
                     @click="select(root)"
                     class="transition-colors duration-200 rounded-full px-4 py-2 flex items-center gap-2 focus:outline-none cursor-pointer"
-                    :class="currentRootId === root.id 
-                        ? 'bg-[#2E3192] text-white' 
+                    :class="currentRootId === root.id
+                        ? 'bg-[#2E3192] text-white'
                         : 'text-[#B0B2B7]'"
                     x-text="root.name"
                 ></button>
             </template>
         </div>
     </div>
-    
+
     <div class="flex mb-4">
         <div class="w-4/6 bg-white p-[30px] rounded-lg m-3 shadow-md">
             @include('questionnaires.inc.questions')
