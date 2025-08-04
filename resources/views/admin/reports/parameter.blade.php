@@ -73,9 +73,10 @@
         border: 1px solid #BFBFBF !important;
     }
 </style>
-
+    @php
+        $lguId = request('lgu_id');
+    @endphp
     <table class="min-w-full text-sm text-left">
-
         <h2 class="text-center text-xl font-semibold mb-4">SERVICE DELIVERY CAPACITY ASSESMENT RESULT</h2>
       <thead>
         <tr class="text-center" id="lgu-header">
@@ -122,19 +123,18 @@
             
             <tr id="children-header">
                 <td class="border px-4 py-2 font-semibold">{{ $loop->iteration }}. {{ $child->name }}</td>
-                <td class="border px-4 py-2 font-semibold text-center">{{ $averageLevel }}</td>
-                <!-- <td class="border px-4 py-2 text-center border-red-500"></td> -->
+                <td class="border px-4 py-2 font-semibold text-center">{{ $lguId ? $averageLevel : '' }}
+                
                 <td class="border px-4 py-2 text-center"></td>
                 <td class="border px-4 py-2 text-center"></td>
                 <td class="border-b border-b-white border-t border-t-black border-r border-r-black px-4 py-2 text-center font-semibold text-[30px]">
-                    {{ number_format($child->new_index_score, 2) }}
+                    {{ $lguId ? number_format($child->new_index_score, 2) : '' }}
                 </td>
             </tr>
 
             @foreach ($grandchildren as $grandchild)
                 @php
                     $levelValue = $grandchild->assessment?->questionnaireLevel?->level;
-
                 @endphp
                     <tr id="grandchildren-header">
                         <td class="border px-4 py-2 pl-10">{{ $grandchild->name }}</td>
@@ -145,7 +145,6 @@
                                 {{ $level !== null ? number_format($level, 2) : '' }}
                             </td>
 
-                                                    <!-- <td class="border px-4 py-2 text-center border-red-500"></td> -->
                             @php
                                 $remarks = \App\Models\AssessmentRemark::where('questionnaire_id', $grandchild->id)
                                     ->where('period_id', request('period_id'))
@@ -175,15 +174,15 @@
                 FINAL RATING
             </td>
             <td class="border px-4 py-2 text-left text-[15px]" colspan="2">
-                {{ $interpretation }}
+                {{ $lguId ? $interpretation : ''}}
             </td>
             <td class="border px-4 py-2 text-center font-bold align-middle text-[40px]" id="totalnewindexscore" rowspan="2" style="width: 80px;">
-                {{ number_format($totalNewIndexScore, 2) }}
+                {{ $lguId ? number_format($totalNewIndexScore, 2) : '' }}
             </td>
         </tr>
         <tr>
             <td class="border px-4 py-2 text-center font-semibold text-[20px]" id="level" colspan="2">
-                {{ $paramLevel }}
+                {{ $lguId ? $paramLevel : ''}}
             </td>
         </tr>
 

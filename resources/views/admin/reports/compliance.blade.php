@@ -61,7 +61,7 @@
             </div>
             <button onclick="printScoring()"
                 class="bg-[#DB0C16] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-xl cursor-pointer">
-                <span>Print Scoring</span>
+                <span>Print</span>
                 <img src="{{ asset('build/assets/icons/icon-print.png') }}" class="h-5 w-5" alt="Print Scoring">
             </button>
         </div>
@@ -73,6 +73,9 @@
         border: 1px solid #BFBFBF !important;
     }
 </style>
+            @php
+                $lguId = request('lgu_id');
+            @endphp
             <table class="min-w-full border border-gray-300 text-sm text-left">
             <h2 class="text-center text-xl font-semibold mb-4">COMPLIANCE MONITORING</h2>
             <thead>
@@ -82,7 +85,7 @@
                 <th class="border px-4 py-2 w-2/14">PREVIOUS INDEX SCORE</th>
                 <th class="border px-4 py-2 w-2/14">NEW INDEX SCORE</th>
                 <th class="border px-4 py-2 w-2/14">STATUS</th>
-                <th class="border px-4 py-2 w-2/14">Movement of Index Score</th>
+                <th class="border px-4 py-2 w-2/14">MOVEMENT OF INDEX SCORE</th>
                 </tr>
             </thead>
             <tbody>
@@ -119,16 +122,16 @@
                                 {{ number_format($weight * 100, 1) }}%
                             </td>
                             <td class="border px-4 py-2 text-center">
-                                {{ number_format($previousScore, 2) }}
+                                {{ $lguId ? number_format($previousScore, 2) : '' }}
                             </td>
                             <td class="border px-4 py-2 text-center">
-                                {{ number_format($child->new_index_score, 2) }}
+                                {{ $lguId ? number_format($child->new_index_score, 2) : '' }}
                             </td>
                             <td class="border px-4 py-2 text-center">
-                                {{ $child->status }}
+                                {{ $lguId ? $child->status : '' }}
                             </td>
                             <td class="border px-4 py-2 text-center">
-                                {{ number_format($child->movement, 2) }}
+                                {{ $lguId ? number_format($child->movement, 2) : '' }}
                             </td>
                         </tr>
                     @endforeach
@@ -138,20 +141,28 @@
                 <tr class="font-semibold text-center text-lg bg-gray-100" id="results">
                     <td class="border px-4 py-2">TOTAL</td>
                     <td class="border px-4 py-2">{{ number_format($totalWeight * 100, 1) }}%</td>
-                    <td class="border px-4 py-2">{{ number_format($totalPreviousIndexScore, 2) }}</td>
-                    <td class="border px-4 py-2 text-center font-semibold">
-                        {{ number_format($totalNewIndexScore, 2) }}</td>
-                    <td class="border px-4 py-2">{{ $overallStatus }}</td>
-                    <td class="border px-4 py-2">{{ number_format($totalMovement, 2) }}</td>
+                    <td class="border px-4 py-2">
+                    {{ $lguId ? number_format($totalPreviousIndexScore, 2) : '' }}
+                </td>
+                <td class="border px-4 py-2 text-center font-semibold">
+                    {{ $lguId ? number_format($totalNewIndexScore, 2) : '' }}
+                </td>
+                <td class="border px-4 py-2">
+                    {{ $lguId ? $overallStatus : '' }}
+                </td>
+                <td class="border px-4 py-2">
+                    {{ $lguId ? number_format($totalMovement, 2) : '' }}
+                </td>
+
                 </tr>
 
                 <tr class="text-center text-lg bg-white" id="description">
                     <td class="border px-4 py-2 font-semibold">NEW RATING</td>
                     <td class="border px-4 py-2 text-center font-semibold" colspan="2">
-                         {{ $paramLevel }}
+                         {{ $lguId ? $paramLevel : '' }}
                     </td>
                     <td class="border px-4 py-2" colspan="3">
-                        {{ $interpretation }}
+                        {{ $lguId ? $interpretation : '' }}
                     </td>
                 </tr> 
             </tbody>
