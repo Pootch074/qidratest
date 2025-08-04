@@ -107,106 +107,99 @@
 107,53,Social Prepartion for People's Participating
 108,53,Community Volunteer Resource Development
 109,53,Livelihood Program
-110,54,<b>PSWDO:</b>
-111,54,Services provided by Women's Center (mandatory under RA 8505)
-112,54,KALIPI Convention/ Women's Month
-113,54,Advocacy activities on Women's Welfare
-114,54,Programs and Services on Gender and Development
-115,54,<b>C/MSWDO:</b>
-116,54,Advocacy Campaign
-117,54,Self-Enhanced/ Skills Development
-118,54,Productivity Skills/ Livelihood Development
-119,54,Community Participation Skills Development
-120,54,Substitute Homecare for Women in Especially Difficult Circumstances
-121,55,<b>PSWDO:</b>
-122,55,Support to Youth Convention Activities
-123,55,<b>P/CSWDO:</b>
-124,55,Special Drug Education Center (as per RA 9165)
-125,55,Bahay Pag-asa/ Youth Home (as per 9344. as amended by RA 10630)
-126,55,<b>C/MSWDO:</b>
-127,55,Advocacy Campaign
-128,55,Supplementary Feeding Program
-129,55,Child Development/ Day Care Services
-130,55,Supervised Neighborhood Play (SNP)
-131,55,"Program for Street Families and Children (Rescure operation, educational assistance program, livelihood/ skills program for parents)"
-132,55,Foster Care Program
-133,55,"Intervention, DIversion and Rehabilitation Program for CICL"
-134,55,Special Drug Education Center (as per RA 9165) (for Highly-Urbanized Cities only)
-135,56,Advocacy Campaign
-136,56,Services provided by Senior Citizens Center
-137,56,Homecare Support Services NSSOP (as per RA 9994)
-138,56,Elderly Filipino Week Celebration/ Senior Citizens Conventions
-139,56,Organization Capacitating the Senior Citizens
-140,56,Livelihood program for SCs
-141,56,Social Pension
-142,56,Centenarian
-143,56,Issuance of ID and Booklet
-144,57,<b>PSWDO:</b>
-145,57,Sheltered workshop for PWDs
-146,57,Information dissemination on disability prevention
-147,57,<b>P/CSWDO:</b>
-148,57,Advocacy Campaign
-149,57,<b>C/MSWDO:</b>
-150,57,PDAO Operation and Services
-151,57,Provision of Auxiliary Social Services (include assistive devices)
-152,57,Social / Vocational Preparation for Employment Services
-153,57,Tuloy Aral Walang Sagabal (TAWAG)
-154,57,Organizing and Capacitating PWDs
-155,57,Provision of PWD ID and booklet
-156,58,Transportation assistance
-157,58,Educational assistance
-158,58,Medical assistance
-159,58,Burial assistance and other emergency needs
-160,59,Minutes of the Meeting
-161,59,Attendance Sheet
-162,60,Annual
-163,60,Semestral
-164,60,Quarterly
-165,61,Minutes of the meeting conducted with C/MSWDOs
-166,62,<b>P/C/MSWDO:</b> <p>Accomplished intake sheet</p>
-167,62,<b>PSWDO:</b> <p>Report on home visits</p>
-168,62,<b>CSWDO:</b> <p>Initial Case Study report/ assessment</p>
-169,62,<b>MSWDO:</b>
-170,62,Report on Home Visists
-171,62,Copy of Social Case Study Report (SCSR)
-172,63,Process Recording
-173,63,Progress notes
-174,63,Proceedings of group work
-175,64,Process Recording
-176,64,Progress notes
-177,64,Closing Summary
-178,65,<b>P/CSWDO:</b>
-179,65,Individual Case Folder containing feedback report and reply/acknowledgment slip;
-180,65,To include Communication/Referral letter received by partner agency
-181,65,<b>MSWDO:</b> <P>Updated case folder containing feedback report and reply/ acknowledgment slip inventory/ directory of service providers referral letter</P>
-182,66,Masterlist of clients
-183,66,Inventory of clients
-184,67,Masterlist of clients
-185,67,Inventory of clients
-186,68,Certificate of Accreditation 
-187,69,Accreditation Documents
-188,70,AO signed and issued
-189,71,Accomplishment Report
-190,72,Minutes of the Meeting
-191,73,WFP of the Committee
-192,74,Approved City/Municipal ordinance/resolution/executive order
-193,75,Masterlist of barangays with established VAWC desks and VAWC Officers
-194,75,Masterlist of VAWC Officers who were trained on VAWC
-195,75,Training Certificates
-196,76,<b>CSWDO:</b> <p>Monthly VAWC reports</p>
-197,76,<b>MSWDO:</b> <p>Quarterly VAWC reports</p>
-198,77, LCPC Functionality Assessment Result
-199,78,Minutes of the Meeting
-200,79,WFP of the Council 
-201,80,Accomplishment Report of the Council
-202,81,Copy of the LCC
-203,81,IEC Materials
-204,82,Approved LJIP
-205,82,Acknowledged endorsement letter for SB's approval with draft LJIP
-206,83,Application Letter
-207,83,Certificate of Accreditation
-208,83,Confirmation Reports from Accreditors
-209,84,Attendance Sheet
-210,84,Minutes of the meeting
-211,84,Special Order
-212,85,"Accomplishment Reports, Minutes of Meetings, Client Satisfaction Survey"
+110,54,<b>PSWDO:</b><p>Services provided by Women's Center (mandatory under RA 8505)</p>
+111,54,KALIPI Convention/ Women's Month
+112,54,Advocacy activities on Women's Welfare
+113,54,Programs and Services on Gender and Development
+114,54,<b>C/MSWDO:</b><p>Advocacy Campaign</p>
+115,54,Self-Enhanced/ Skills Development
+116,54,Productivity Skills/ Livelihood Development
+117,54,Community Participation Skills Development
+118,54,Substitute Homecare for Women in Especially Difficult Circumstances
+119,55,<b>Common to programs to P/C/M:</b><p>Children's Celebration/ Convention</p>
+120,55,Unlad Kabataan Program
+121,55,After Care Program for Recovering Drug Dependents
+122,55,<b>PSWDO:</b><p>Support to Youth Convention Activities</p>
+123,55,<b>P/CSWDO:</b><p>Special Drug Education Center (as per RA 9165)</p>
+124,55,Bahay Pag-asa/ Youth Home (as per 9344. as amended by RA 10630)
+125,55,<b>C/MSWDO:</b><p>Advocacy Campaign</p>
+126,55,Supplementary Feeding Program
+127,55,Child Development/ Day Care Services
+128,55,Supervised Neighborhood Play (SNP)
+129,55,"Program for Street Families and Children (Rescure operation, educational assistance program, livelihood/ skills program for parents)"
+130,55,Foster Care Program
+131,55,"Intervention, DIversion and Rehabilitation Program for CICL"
+132,55,Special Drug Education Center (as per RA 9165) (for Highly-Urbanized Cities only)
+133,56,Advocacy Campaign
+134,56,Services provided by Senior Citizens Center
+135,56,Homecare Support Services NSSOP (as per RA 9994)
+136,56,Elderly Filipino Week Celebration/ Senior Citizens Conventions
+137,56,Organization Capacitating the Senior Citizens
+138,56,Livelihood program for SCs
+139,56,Social Pension
+140,56,Centenarian
+141,56,Issuance of ID and Booklet
+142,57,<b>PSWDO:</b><p>Sheltered workshop for PWDs</p>
+143,57,Information dissemination on disability prevention
+144,57,<b>C/MSWDO:</b><p>Advocacy Campaign</p>
+145,57,<b>P/C/MSWDO:</b><p>PDAO Operation and Services</p>
+146,57,Provision of Auxiliary Social Services (include assistive devices)
+147,57,Social / Vocational Preparation for Employment Services
+148,57,Tuloy Aral Walang Sagabal (TAWAG)
+149,57,Organizing and Capacitating PWDs
+150,57,Provision of PWD ID and booklet
+151,58,Transportation assistance
+152,58,Educational assistance
+153,58,Medical assistance
+154,58,Burial assistance and other emergency needs
+155,59,Minutes of the Meeting
+156,59,Attendance Sheet
+157,60,Annual
+158,60,Semestral
+159,60,Quarterly
+160,61,Minutes of the meeting conducted with C/MSWDOs
+161,62,<b>P/C/MSWDO:</b> <p>Accomplished intake sheet</p>
+162,62,<b>PSWDO:</b> <p>Report on home visits</p>
+163,62,<b>CSWDO:</b> <p>Initial Case Study report/ assessment</p>
+164,62,<b>MSWDO:</b> <p>Report on Home Visists</p>
+165,62,Copy of Social Case Study Report (SCSR)
+166,63,Process Recording
+167,63,Progress notes
+168,63,Proceedings of group work
+169,64,Process Recording
+170,64,Progress notes
+171,64,Closing Summary
+172,65,<b>P/CSWDO:</b><p>Individual Case Folder containing feedback report and reply/acknowledgment slip;</p>
+173,65,To include Communication/Referral letter received by partner agency
+174,65,<b>MSWDO:</b> <P>Updated case folder containing feedback report and reply/ acknowledgment slip inventory/ directory of service providers referral letter</P>
+175,66,Masterlist of clients
+176,66,Inventory of clients
+177,67,Masterlist of clients
+178,67,Inventory of clients
+179,68,Certificate of Accreditation 
+180,69,Accreditation Documents
+181,70,AO signed and issued
+182,71,Accomplishment Report
+183,72,Minutes of the Meeting
+184,73,WFP of the Committee
+185,74,Approved City/Municipal ordinance/resolution/executive order
+186,75,Masterlist of barangays with established VAWC desks and VAWC Officers
+187,75,Masterlist of VAWC Officers who were trained on VAWC
+188,75,Training Certificates
+189,76,<b>CSWDO:</b> <p>Monthly VAWC reports</p>
+190,76,<b>MSWDO:</b> <p>Quarterly VAWC reports</p>
+191,77, LCPC Functionality Assessment Result
+192,78,Minutes of the Meeting
+193,79,WFP of the Council 
+194,80,Accomplishment Report of the Council
+195,81,Copy of the LCC
+196,81,IEC Materials
+197,82,Approved LJIP
+198,82,Acknowledged endorsement letter for SB's approval with draft LJIP
+199,83,Application Letter
+200,83,Certificate of Accreditation
+201,83,Confirmation Reports from Accreditors
+202,84,Attendance Sheet
+203,84,Minutes of the meeting
+204,84,Special Order
+205,85,"Accomplishment Reports, Minutes of Meetings, Client Satisfaction Survey"

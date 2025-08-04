@@ -108,7 +108,7 @@
                             <td class="border border-gray-200 px-4 py-2 text-sm">{{ $assessment->lgu->name }}</td>
                             <td class="border border-gray-200 px-4 py-2 text-sm">{{ ucfirst($assessment->status) }}</td>
                             <td class="border border-gray-200 px-4 py-2 text-sm">
-                                @if ($assessment->status != 'pending')
+                                @if ($assessment->status == 'on-going')
                                     <a href="#" class="py-2 px-3 rounded-[15px] bg-[#FFCC00] text-xs w-fit">Request for Extension</a>
                                 @endif
                             </td>

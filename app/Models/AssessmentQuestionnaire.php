@@ -12,8 +12,6 @@ class AssessmentQuestionnaire extends Model
         'lgu_id',
         'questionnaire_id',
         'questionnaire_level_id',
-        'remarks',
-        'recommendations',
         'number_of_beneficiaries',
         'user_id'
     ];

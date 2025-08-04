@@ -19,6 +19,6 @@ class DatabaseSeeder extends Seeder
         $this->call(ProvincesSeeder::class);
 
         $this->call(AssessmentSeeders::class);
-
+        $this->call(QuestionnaireWeightsSeeder::class);
     }
 }
