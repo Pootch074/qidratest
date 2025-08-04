@@ -4,6 +4,8 @@ namespace App\Helpers;
 
 use App\Models\AssessmentMean;
 use App\Models\AssessmentQuestionnaire;
+use App\Models\AssessmentRecommendation;
+use App\Models\AssessmentRemark;
 use App\Models\Lgu;
 use App\Models\Period;
 use App\Models\PeriodAssessment;
@@ -95,16 +97,16 @@ class PeriodHelper
                 ->where('lgu_id', $lguId)->exists()) {
                 $existCount++;
             }
-            
+
             // check if questionnaire_id has remarks in assessment_questionnaires
-            if (AssessmentQuestionnaire::where('questionnaire_id', $q->id)
+            if (AssessmentRemark::where('questionnaire_id', $q->id)
                 ->where('period_id', $periodId)
                 ->where('lgu_id', $lguId)
                 ->where('remarks', '!=', '')->exists()) {
                 $existCount++;
             }
             // check if questionnaire_id has recommendations in assessment_questionnaires
-            if (AssessmentQuestionnaire::where('questionnaire_id', $q->id)
+            if (AssessmentRecommendation::where('questionnaire_id', $q->id)
                 ->where('period_id', $periodId)
                 ->where('lgu_id', $lguId)
                 ->where('recommendations', '!=', '')->exists()) {
@@ -118,7 +120,7 @@ class PeriodHelper
             if ($existCount > 3) {
                 $status = 'completed';
             }
-            
+
             $questionnaireArray[$q->id] = [
                 'id' => $q->id,
                 'parent_id' => $q->parent_id,
@@ -132,7 +134,7 @@ class PeriodHelper
 
     /**
      * Recursively traverse the questionnaire tree to get the root of the current assessment.
-     * 
+     *
      * @param Questionnaire $child
      * @return Questionnaire
      */
