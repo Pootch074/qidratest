@@ -64,7 +64,7 @@ class AdminAssignments extends Component
             })
             ->where('period_id', PeriodHelper::currentPeriodId())
             ->orderBy($this->sortField, $this->sortDirection)
-            ->paginate(10);
+            ->paginate(100);
 
         if ($assignments->isEmpty()) {
             // if there are no data, let's repopulate
@@ -101,7 +101,7 @@ class AdminAssignments extends Component
                 })
                 ->where('period_id', $periodId)
                 ->orderBy($this->sortField, $this->sortDirection)
-                ->paginate(10);
+                ->paginate(100);
         }
 
 
@@ -132,7 +132,7 @@ class AdminAssignments extends Component
             })
             ->where('period_id', PeriodHelper::currentPeriodId())
             ->orderBy($this->sortField, $this->sortDirection)
-            ->paginate(10);
+            ->paginate(100);
     }
     private function populatePeriodAssessments()
     {
