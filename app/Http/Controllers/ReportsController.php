@@ -101,9 +101,9 @@ class ReportsController extends Controller
         };
 
         $interpretation = match ($paramLevel) {
-            'Level 3' => 'A Manual of Operations is developed and updated (at least within 3 years) with the consolidated policies/guidelines for implementation of various services/programs of the LSWDO',
-            'Level 2' => 'Information about the policies/guidelines on the implementation of LSWDO’s programs and services, through manuals, citizen’s charter and the likes are available and accessible for use of staff and their clients but are not yet in the form of manual',
-            'Level 1' => 'With compiled documents reflecting the program processes and information',
+            'Level 3' => 'Improved Service Delivery',
+            'Level 2' => 'Better Service Delivery',
+            'Level 1' => 'Enhanced Service Delivery',
             'Low'     => 'Did not meet the minimum requirement',
             default   => 'Not Applicable',
         };
@@ -271,9 +271,9 @@ class ReportsController extends Controller
         };
 
         $interpretation = match ($paramLevel) {
-            'Level 3' => 'A Manual of Operations is developed and updated (at least within 3 years) with the consolidated policies/guidelines for implementation of various services/programs of the LSWDO',
-            'Level 2' => 'Information about the policies/guidelines on the implementation of LSWDO’s programs and services, through manuals, citizen’s charter and the likes are available and accessible for use of staff and their clients but are not yet in the form of manual',
-            'Level 1' => 'With compiled documents reflecting the program processes and information',
+            'Level 3' => 'Improved Service Delivery',
+            'Level 2' => 'Better Service Delivery',
+            'Level 1' => 'Enhanced Service Delivery',
             'Low'     => 'Did not meet the minimum requirement',
             default   => 'Not Applicable',
         };

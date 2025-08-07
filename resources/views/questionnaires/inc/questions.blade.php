@@ -161,15 +161,14 @@
 
     <div
         class="bg-white p-3 rounded-lg my-5"
-        x-data="remarksEditor({
-            route: '{{ route('api-assessment-remarks') }}',
-            initialContent: `{!! addslashes($existingRemarks ?? '') !!}`,
-            period_id: {{ $periodId }},
-            lgu_id: {{ $lguId }},
-            questionnaire_id: {{ $questionnaireId }},
-            user_id: {{ auth()->user()->id }}
-            })"
-        x-init="init"
+        x-data='remarksEditor({
+        route: "{{ route('api-assessment-remarks') }}",
+        initialContent: @json($existingRemarks ?? ''),
+        period_id: {{ $periodId }},
+        lgu_id: {{ $lguId }},
+        questionnaire_id: {{ $questionnaireId }},
+        user_id: {{ auth()->user()->id }}
+    })'
     >
         <h3 class="font-medium text-xl inline-block align-middle ml-2 text-[#1B1D21]">Remarks</h3>
         <small class="block ml-2 mb-5 text-[#677489]">Observations and Suggestions</small>
@@ -201,14 +200,15 @@
 
     <div
         class="bg-white p-3 rounded-lg my-5"
-        x-data="recommendationsEditor({
-            route: '{{ route('api-assessment-recommendation') }}',
-            initialContent: `{!! addslashes($existingRecommendations ?? '') !!}`,
-            period_id: {{ $periodId }},
-            lgu_id: {{ $lguId }},
-            questionnaire_id: {{ $questionnaireId }},
-            user_id: {{ auth()->user()->id }}
-        })"
+        x-data='recommendationsEditor({
+    route: "{{ route('api-assessment-recommendation') }}",
+    initialContent: @json($existingRecommendations ?? ''),
+    period_id: {{ $periodId }},
+    lgu_id: {{ $lguId }},
+    questionnaire_id: {{ $questionnaireId }},
+    user_id: {{ auth()->user()->id }}
+})'
+
         x-init="init"
     >
         <h3 class="font-medium text-xl inline-block align-middle ml-2 text-[#1B1D21]">Recommendations</h3>
