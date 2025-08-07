@@ -71,30 +71,34 @@
             <template x-for="(deadline, index) in deadlines" :key="deadline.id">
                     <tr>
                         <td class="border border-gray-200 px-4 py-2 text-left" x-text="deadline.lgu_name"></td>
-                        <td class="border border-gray-200 px-4 py-2 text-left" x-text="deadline.assessment_start_date"></td>
-                        <td class="border border-gray-200 px-4 py-2 text-left" x-text="deadline.assessment_end_date"></td>
+                        <td class="border border-gray-200 px-4 py-2 text-left" x-text="deadline.assessment_start_date ? new Date(deadline.assessment_start_date).toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }) : ''"></td>
+                        <td class="border border-gray-200 px-4 py-2 text-left" x-text="deadline.assessment_end_date ? new Date(deadline.assessment_end_date).toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }) : ''"></td>
                         <td class="border border-gray-200 px-4 py-2 text-left">
-                            <span class="inline-flex items-center gap-2 rounded-full bg-yellow-50 px-3 py-1 text-xs font-medium text-yellow-700">
-                                <span class="h-2 w-2 rounded-full bg-yellow-500"></span>
+                            <span
+                                class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium"
+                                :class="'status-' + deadline.status"
+                            >
+                                <span
+                                    class="h-2 w-2 rounded-full"
+                                    :class="'status.' + deadline.status + '-dot'"
+                                ></span>
                                 <span class="font-normal capitalize" x-text="deadline.status"></span>
                             </span>
                         </td>
                         <td class="border border-gray-200 px-4 py-2 text-left">
-                            {{-- <a href="#" class="inline-flex items-center gap-1 rounded-full border border-gray-400 px-3 py-1 text-xs text-gray-600 hover:bg-gray-50">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                                View
-                            </a> --}}
-
-                            <a href="#" class="inline-flex items-center gap-1 rounded-full border border-gray-400 px-3 py-1 text-xs text-gray-600 hover:bg-gray-50">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                                Request for Extension
-                            </a>
+                            <template x-if="deadline.status === 'closed'">
+                                <a href="#"
+                                   class="inline-flex items-center gap-1 rounded-full border border-gray-400 px-3 py-1 text-xs text-gray-600 hover:bg-gray-50">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                         viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
+                                    Request for Extension
+                                </a>
+                            </template>
                         </td>
                     </tr>
                 </template>

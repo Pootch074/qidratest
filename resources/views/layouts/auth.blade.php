@@ -9,7 +9,7 @@
   <body>
     <div class="container-fluid">
         <div class="m-5">
-            <img src="{{ asset('build/assets//images/dswd-sdca.png') }}" alt="DSWD - SDCA">
+            <img src="{{ asset('images/dswd-sdca.png') }}" alt="DSWD - SDCA">
         </div>
         @yield('content')
     </div>

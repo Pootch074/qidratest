@@ -11,7 +11,7 @@
                 <button @click="open = !open"
                     class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-3xl focus:outline-none">
                     {{ $cksu->firstWhere('id', request('period_id'))?->name ?? 'Select Period' }}
-                    <img src="{{ asset('build/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
+                    <img src="{{ asset('assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
                 </button>
                 <div x-show="open" @click.away="open = false"
                     class="absolute z-50 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
@@ -31,15 +31,15 @@
             @php
                 $hasPeriod = request('period_id') !== null;
             @endphp
-                
+
             <div x-data="{ open: false }" class="relative">
-                <button 
+                <button
                     @click="open = {{ $hasPeriod ? '!open' : 'false' }}"
                     :class="{ 'opacity-50 cursor-not-allowed': {{ $hasPeriod ? 'false' : 'true' }} }"
                     class="bg-[#2E3192] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-3xl focus:outline-none"
                     {{ $hasPeriod ? '' : 'disabled' }}>
                     {{ $lgus->firstWhere('id', request('lgu_id'))?->name ?? 'Select LGU' }}
-                    <img src="{{ asset('build/assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
+                    <img src="{{ asset('assets/icons/icon-sidebar-down.svg') }}" alt="Toggle">
                 </button>
 
                 <div x-show="open" @click.away="open = false"
@@ -57,13 +57,13 @@
                 </div>
             </div>
 
-                
+
             </div>
 
             <button onclick="printScoring()"
                 class="bg-[#DB0C16] inline-flex items-center gap-2 border px-4 py-3 text-white rounded-xl cursor-pointer">
                 <span>Print</span>
-                <img src="{{ asset('build/assets/icons/icon-print.png') }}" class="h-5 w-5" alt="Print Scoring">
+                <img src="{{ asset('assets/icons/icon-print.png') }}" class="h-5 w-5" alt="Print Scoring">
             </button>
         </div>
 
@@ -101,7 +101,7 @@
         </tr>
       </thead>
       <tbody>
-        
+
 
     @foreach ($sections as $vtyla)
         <!-- A. Administration and Organization -->
@@ -110,7 +110,7 @@
                 {{ chr(64 + $loop->iteration) }}. {{ $vtyla['parent']->name }}
             </td>
         </tr>
-    
+
         @foreach ($vtyla['children'] as $child)
             <!-- 1. Vision, Mision, Goals, and Organizational Structure -->
             @php
@@ -120,11 +120,11 @@
                 });
                 $averageLevel = $levels->count() ? number_format($levels->avg(), 2) : '0.00';
             @endphp
-            
+
             <tr id="children-header">
                 <td class="border px-4 py-2 font-semibold">{{ $loop->iteration }}. {{ $child->name }}</td>
                 <td class="border px-4 py-2 font-semibold text-center">{{ $lguId ? $averageLevel : '' }}
-                
+
                 <td class="border px-4 py-2 text-center"></td>
                 <td class="border px-4 py-2 text-center"></td>
                 <td class="border-b border-b-white border-t border-t-black border-r border-r-black px-4 py-2 text-center font-semibold text-[30px]">
@@ -264,7 +264,7 @@
                                     font-weight: semibold;
                                 }
                                 #totalnewindexscore {
-                                    text-align: center; 
+                                    text-align: center;
                                     font-size: 20px;
                                     font-weight: bold;
                                 }

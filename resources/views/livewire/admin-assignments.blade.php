@@ -81,7 +81,7 @@
                     <a href="#"
                        @click.prevent="() => openModal({ id: {{ $a->id }}, lgu_name: '{{ $a->lgu_name }}', team_leader_id: {{ $a->team_leader_id ?? 'null' }}, rmts: '{{ $this->getAssessors($a->id, true) }}' })"
                        class="border border-[#667085] hover:bg-red-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
-                        <img src="{{ asset('build/assets/icons/icon-edit.svg') }}" class="h-4 w-4" alt="Assign">
+                        <img src="{{ asset('assets/icons/icon-edit.svg') }}" class="h-4 w-4" alt="Assign">
                         <span class="text-[#667085] text-xs">Assign</span>
                     </a>
                 </td>

@@ -107,19 +107,19 @@
                     <td class="border border-gray-200 px-4 py-2 text-sm">
                         <a href="#" @click.prevent="editQ(q)"
                            class="border border-[#667085] hover:bg-blue-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
-                            <img src="{{ asset('build/assets/icons/icon-edit.svg') }}" class="h-4 w-4"
+                            <img src="{{ asset('assets/icons/icon-edit.svg') }}" class="h-4 w-4"
                                  alt="Edit Questionnaire">
                             <span class="text-[#667085] text-xs">Edit</span>
                         </a>
                         {{-- <a href="#" @click.prevent="deleteQ(q.id)"
                            class="border border-[#667085] hover:bg-red-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
-                            <img src="{{ asset('build/assets/icons/icon-edit.svg') }}" class="h-4 w-4"
+                            <img src="{{ asset('assets/icons/icon-edit.svg') }}" class="h-4 w-4"
                                  alt="Delete Questionnaire">
                             <span class="text-[#667085] text-xs">Delete</span>
                         </a> --}}
                         <a :href="'{{ url('/') }}/questionnaires/manage/' + q.id"
                            class="border border-[#667085] hover:bg-red-200 inline-flex items-center gap-1 px-3 py-1 rounded-full">
-                            <img src="{{ asset('build/assets/icons/icon-edit.svg') }}" class="h-4 w-4"
+                            <img src="{{ asset('assets/icons/icon-edit.svg') }}" class="h-4 w-4"
                                  alt="View">
                             <span class="text-[#667085] text-xs">View</span>
                         </a>

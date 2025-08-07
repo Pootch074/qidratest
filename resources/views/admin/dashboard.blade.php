@@ -31,28 +31,28 @@
             <span class="block text-gray-700">Total Assessment</span>
             <div class="flex justify-between items-center mt-2">
                 <p class="text-4xl font-bold">{{ $total }}</p>
-                <div class="p-2 rounded-[15px] bg-[#DB0C16]"><img src="{{ asset('build/assets/icons/icon-assessment.svg') }}" alt="Search" class="h-7 w-7"></div>
+                <div class="p-2 rounded-[15px] bg-[#DB0C16]"><img src="{{ asset('assets/icons/icon-assessment.svg') }}" alt="Search" class="h-7 w-7"></div>
             </div>
         </div>
         <div class="bg-white shadow-md rounded-lg p-4">
             <span class="block text-gray-700">Pending Assessments</span>
             <div class="flex justify-between items-center mt-2">
                 <p class="text-4xl font-bold">{{ $pending }}</p>
-                <div class="p-2 rounded-[15px] bg-[#DB0C16]"><img src="{{ asset('build/assets/icons/icon-assessment.svg') }}" alt="Search" class="h-7 w-7"></div>
+                <div class="p-2 rounded-[15px] bg-[#DB0C16]"><img src="{{ asset('assets/icons/icon-assessment.svg') }}" alt="Search" class="h-7 w-7"></div>
             </div>
         </div>
         <div class="bg-white shadow-md rounded-lg p-4">
             <span class="block text-gray-700">Completed Assessments</span>
             <div class="flex justify-between items-center mt-2">
                 <p class="text-4xl font-bold">{{ $completed }}</p>
-                <div class="p-2 rounded-[15px] bg-[#DB0C16]"><img src="{{ asset('build/assets/icons/icon-assessment.svg') }}" alt="Search" class="h-7 w-7"></div>
+                <div class="p-2 rounded-[15px] bg-[#DB0C16]"><img src="{{ asset('assets/icons/icon-assessment.svg') }}" alt="Search" class="h-7 w-7"></div>
             </div>
         </div>
         <div class="bg-white shadow-md rounded-lg p-4">
             <span class="block text-gray-700">Extension Request</span>
             <div class="flex justify-between items-center mt-2">
                 <p class="text-4xl font-bold">{{ $extension }}</p>
-                <div class="p-2 rounded-[15px] bg-[#DB0C16]"><img src="{{ asset('build/assets/icons/icon-assessment.svg') }}" alt="Search" class="h-7 w-7"></div>
+                <div class="p-2 rounded-[15px] bg-[#DB0C16]"><img src="{{ asset('assets/icons/icon-assessment.svg') }}" alt="Search" class="h-7 w-7"></div>
             </div>
         </div>
     </div>
@@ -61,11 +61,11 @@
         <div class="w-1/2">
             <div class="bg-white shadow-md rounded-lg p-4 mt-4">
 
-                <div 
-                    x-data="barChart()" 
-                    x-init="initChart()" 
+                <div
+                    x-data="barChart()"
+                    x-init="initChart()"
                     class="max-w-xl mx-auto bg-white p-4 rounded shadow">
-                    
+
                     <h2 class="text-lg font-bold mb-4">LGU Parameter Results</h2>
                     <canvas id="myBarChart" height="200"></canvas>
                 </div>

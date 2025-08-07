@@ -185,7 +185,7 @@
         ></div>
 
         <!-- Optional tiny status indicator -->
-        <div class="mt-2 text-xs text-[#677489]">
+        <div class="mt-2 text-xs text-[#677489]"    >
             <template x-if="saving"><span>Saving…</span></template>
             <template x-if="!saving && lastSavedAt"><span>Saved <span x-text="lastSavedHuman"></span></span></template>
             <template x-if="error"><span class="text-red-600" x-text="error"></span></template>
