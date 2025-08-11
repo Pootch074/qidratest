@@ -115,57 +115,64 @@
             <!-- 1. Vision, Mision, Goals, and Organizational Structure -->
             @php
                 $grandchildren = $vtyla['grandchild']->where('parent_id', $child->id);
-                $levels = $grandchildren->map(function ($g) {
-                    return $g->assessment?->questionnaireLevel?->level ?? 0;
-                });
-                $averageLevel = $levels->count() ? number_format($levels->avg(), 2) : '0.00';
+
+                $levels = $grandchildren
+                    ->map(fn($g) => $g->assessment?->questionnaireLevel?->level ?? null)
+                    ->filter(fn($lvl) => $lvl !== null && (float)$lvl !== 9.0);
+
+                $averageLevel = $levels->count() ? number_format($levels->avg(), 2) : null;
+
+                $newIndexScore = ($child->new_index_score && (float)$child->new_index_score !== 0.0)
+                    ? number_format($child->new_index_score, 2)
+                    : null;
             @endphp
 
             <tr id="children-header">
                 <td class="border px-4 py-2 font-semibold">{{ $loop->iteration }}. {{ $child->name }}</td>
-                <td class="border px-4 py-2 font-semibold text-center">{{ $lguId ? $averageLevel : '' }}
+                <td class="border px-4 py-2 font-semibold text-center">
+                    {{ $lguId && $averageLevel !== null ? $averageLevel : '' }}
+                </td>
 
                 <td class="border px-4 py-2 text-center"></td>
                 <td class="border px-4 py-2 text-center"></td>
-                <td class="border-b border-b-white border-t border-t-black border-r border-r-black px-4 py-2 text-center font-semibold text-[30px]">
-                    {{ $lguId ? number_format($child->new_index_score, 2) : '' }}
+                <td class="border-b ... text-center font-semibold text-[30px]">
+                    {{ $lguId && $newIndexScore !== null ? $newIndexScore : '' }}
                 </td>
             </tr>
 
+
             @foreach ($grandchildren as $grandchild)
                 @php
-                    $levelValue = $grandchild->assessment?->questionnaireLevel?->level;
+                    $level = optional($grandchild->assessment?->questionnaireLevel)->level;
                 @endphp
-                    <tr id="grandchildren-header">
-                        <td class="border px-4 py-2 pl-10">{{ $grandchild->name }}</td>
-                        @php
-                            $level = optional($grandchild->assessment?->questionnaireLevel)->level;
-                            @endphp
-                            <td class="border px-4 py-2 text-center">
-                                {{ $level !== null ? number_format($level, 2) : '' }}
-                            </td>
+                <tr id="grandchildren-header">
+                    <td class="border px-4 py-2 pl-10">{{ $grandchild->name }}</td>
+                    
+                    <td class="border px-4 py-2 text-center">
+                        {{ $level !== null ? (number_format($level, 2) == '9.00' ? 'N/A' : number_format($level, 2)) : '' }}
+                    </td>
 
-                            @php
-                                $remarks = \App\Models\AssessmentRemark::where('questionnaire_id', $grandchild->id)
-                                    ->where('period_id', request('period_id'))
-                                    ->where('lgu_id', request('lgu_id'))
-                                    ->value('remarks');
+                    @php
+                        $remarks = \App\Models\AssessmentRemark::where('questionnaire_id', $grandchild->id)
+                            ->where('period_id', request('period_id'))
+                            ->where('lgu_id', request('lgu_id'))
+                            ->value('remarks');
 
-                                $recommendations = \App\Models\AssessmentRecommendation::where('questionnaire_id', $grandchild->id)
-                                    ->where('period_id', request('period_id'))
-                                    ->where('lgu_id', request('lgu_id'))
-                                    ->value('recommendations');
-                            @endphp
+                        $recommendations = \App\Models\AssessmentRecommendation::where('questionnaire_id', $grandchild->id)
+                            ->where('period_id', request('period_id'))
+                            ->where('lgu_id', request('lgu_id'))
+                            ->value('recommendations');
+                    @endphp
 
-                            <td class="border px-4 py-2 text-center">
-                                {{ trim(strip_tags($remarks)) }}
-                            </td>
-                            <td class="border px-4 py-2 text-center">
-                                {{ trim(strip_tags($recommendations)) }}
-                            </td>
-
-                    </tr>
+                    <td class="border px-4 py-2 text-center">
+                        {{ trim(strip_tags($remarks)) }}
+                    </td>
+                    <td class="border px-4 py-2 text-center">
+                        {{ trim(strip_tags($recommendations)) }}
+                    </td>
+                </tr>
             @endforeach
+
         @endforeach
     @endforeach
 
