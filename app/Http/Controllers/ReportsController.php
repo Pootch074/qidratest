@@ -73,15 +73,20 @@ class ReportsController extends Controller
                 $totalWeight += $weight;
 
                 $grandchildren = $section['grandchild']->where('parent_id', $child->id);
-                $levels = $grandchildren->map(fn($g) => $g->assessment?->questionnaireLevel?->level ?? 0);
 
-                $averageLevel = $levels->avg() ?? 0;
+                // Map to numeric levels (null if missing), then filter out nulls and any level === 3
+                $levels = $grandchildren
+                    ->map(fn($g) => $g->assessment?->questionnaireLevel?->level ?? null)
+                    ->filter(fn($lvl) => $lvl !== null && (float)$lvl !== 9.0);
+
+                $averageLevel = $levels->count() ? $levels->avg() : 0;
                 $newIndexScore = $averageLevel * $weight;
 
                 $child->new_index_score = $newIndexScore;
                 $totalNewIndexScore += $newIndexScore;
             }
         }
+
         unset($child, $section);
 
         $calculateAvgWeight = function ($ids) {
