@@ -1,4 +1,4 @@
-import Alpine from 'alpinejs';
+// import Alpine from 'alpinejs';
 import focus from '@alpinejs/focus'
 import Quill from "quill";
 import 'quill/dist/quill.snow.css';
@@ -19,7 +19,7 @@ Alpine.data('remarksEditor', remarks);
 Alpine.data('recommendationsEditor', recommendations);
 
 Alpine.plugin(focus);
-Alpine.start();
+// Alpine.start();
 
 window._quillEditors = {}; // store editors keyed by ID
 

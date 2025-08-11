@@ -184,11 +184,11 @@
         ></div>
 
         <!-- Optional tiny status indicator -->
-        <div class="mt-2 text-xs text-[#677489]"    >
+        {{--<div class="mt-2 text-xs text-[#677489]"    >
             <template x-if="saving"><span>Saving…</span></template>
             <template x-if="!saving && lastSavedAt"><span>Saved <span x-text="lastSavedHuman"></span></span></template>
             <template x-if="error"><span class="text-red-600" x-text="error"></span></template>
-        </div>
+        </div>--}}
 
         {{-- You can remove the manual Save button if you no longer want it --}}
         {{-- @if (auth()->user()->user_type > 1)
@@ -225,11 +225,11 @@
         ></div>
 
         <!-- Tiny status indicator -->
-        <div class="mt-2 text-xs text-[#677489]">
+        {{--<div class="mt-2 text-xs text-[#677489]">
             <template x-if="saving"><span>Saving…</span></template>
             <template x-if="!saving && lastSavedAt"><span>Saved <span x-text="lastSavedHuman"></span></span></template>
             <template x-if="error"><span class="text-red-600" x-text="error"></span></template>
-        </div>
+        </div>--}}
 
         {{-- Manual save no longer needed; keep for fallback if you want --}}
         {{-- @if (auth()->user()->user_type > 1)

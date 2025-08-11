@@ -29,8 +29,9 @@ export default function movToggle({ route, user_id, period_id, questionnaire_id,
                 return response.json();
             })
             .then(data => {
-                
+
                 const statusEl = document.querySelector(`[data-questionnaire="${questionnaire_id}"] .status`);
+
                 const anyMovSelected = document.querySelectorAll(
                     `input[type="checkbox"][data-questionnaire="${questionnaire_id}"]:checked`
                 ).length > 0;
@@ -38,16 +39,31 @@ export default function movToggle({ route, user_id, period_id, questionnaire_id,
                 const el = document.querySelector(`div[data-questionnaire="${questionnaire_id}"]`);
                 const alpineData = Alpine.$data(el);
                 const levelSelected = !!alpineData?.checked;
-                console.log('levelSelected:', levelSelected);
+
+                const remarksEl = document.getElementById('remarks');
+                const hasRemarks = remarksEl && remarksEl.value !== "";
+
+                let counter = 0;
+                if (levelSelected) counter++;
+                if (anyMovSelected) counter++;
+                if (hasRemarks) counter++;
 
                 if (statusEl) {
-                    if (levelSelected && anyMovSelected) {
+                    console.log('Counter:', counter);
+                    console.log('Level:', levelSelected);
+                    console.log('Mov:', anyMovSelected);
+                    console.log('Remarks:', hasRemarks);
+
+                    if (counter === 3) {
+                        console.log('Status: completed');
                         statusEl.classList.remove('pending', 'inprogress');
                         statusEl.classList.add('completed');
-                    } else if (levelSelected || anyMovSelected) {
+                    } else if (counter === 2 || counter === 1) {
+                        console.log('Status: inprogress');
                         statusEl.classList.remove('pending', 'completed');
                         statusEl.classList.add('inprogress');
                     } else {
+                        console.log('Status: pending');
                         statusEl.classList.remove('inprogress', 'completed');
                         statusEl.classList.add('pending');
                     }

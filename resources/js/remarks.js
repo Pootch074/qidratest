@@ -121,10 +121,39 @@ export default function remarksEditor({ route, initialContent, period_id, lgu_id
 
                 this.lastSavedContent = content;
 
-                const statusEl = document.querySelector(`[data-questionnaire="${questionnaire_id}"] .status.pending`);
+                const remarksEl = document.getElementById('remarks');
+                const hasRemarks = remarksEl && remarksEl.value !== "";
+
+                const anyMovSelected = document.querySelectorAll(
+                    `input[type="checkbox"][data-questionnaire="${questionnaire_id}"]:checked`
+                ).length > 0;
+
+                const el = document.querySelector(`div[data-questionnaire="${questionnaire_id}"]`);
+                const alpineData = Alpine.$data(el);
+                const levelSelected = !!alpineData?.checked;
+
+                let counter = 0;
+                if (hasRemarks) counter++;
+                if (anyMovSelected) counter++;
+                if (levelSelected) counter++;
+
+                const statusEl = document.querySelector(`[data-questionnaire="${questionnaire_id}"] .status`);
+                console.log({ hasRemarks, anyMovSelected, levelSelected, counter });
+
                 if (statusEl) {
-                    statusEl.classList.remove('pending');
-                    statusEl.classList.add('inprogress');
+                    if (counter === 3) {
+                        console.log('Status: completed');
+                        statusEl.classList.remove('pending', 'inprogress');
+                        statusEl.classList.add('completed');
+                    } else if (counter === 2 || counter === 1) {
+                        console.log('Status: inprogress');
+                        statusEl.classList.remove('pending', 'completed');
+                        statusEl.classList.add('inprogress');
+                    } else {
+                        console.log('Status: pending');
+                        statusEl.classList.remove('inprogress', 'completed');
+                        statusEl.classList.add('pending');
+                    }
                 }
             } catch (err) {
                 if (err.name !== 'AbortError') {

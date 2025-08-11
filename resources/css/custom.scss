@@ -2,76 +2,76 @@
 
 @font-face {
     font-family: 'Inter';
-    src: url('../../public/assets/fonts/inter/Inter_24pt-Regular.ttf') format('truetype');
+    src: url('../assets/fonts/inter/Inter_24pt-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Inter';
-    src: url('../../public/assets/fonts/inter/Inter_24pt-SemiBold.ttf') format('truetype');
+    src: url('../assets/fonts/inter/Inter_24pt-SemiBold.ttf') format('truetype');
     font-weight: 500;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Inter';
-    src: url('../../public/assets/fonts/inter/Inter_24pt-Bold.ttf') format('truetype');
+    src: url('../assets/fonts/inter/Inter_24pt-Bold.ttf') format('truetype');
     font-weight: 700;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Inter';
-    src: url('../../public/assets/fonts/inter/Inter_24pt-Italic.ttf') format('truetype');
+    src: url('../assets/fonts/inter/Inter_24pt-Italic.ttf') format('truetype');
     font-weight: 400;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Inter';
-    src: url('../../public/assets/fonts/inter/Inter_24pt-BoldItalic.ttf') format('truetype');
+    src: url('../assets/fonts/inter/Inter_24pt-BoldItalic.ttf') format('truetype');
     font-weight: 700;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Poppins';
-    src: url('../../public/assets/fonts/poppins/Poppins-Regular.ttf') format('truetype');
+    src: url('../assets/fonts/poppins/Poppins-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Poppins';
-    src: url('../../public/assets/fonts/poppins/Poppins-Bold.ttf') format('truetype');
+    src: url('../assets/fonts/poppins/Poppins-Bold.ttf') format('truetype');
     font-weight: 700;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Poppins';
-    src: url('../../public/assets/fonts/poppins/Poppins-Italic.ttf') format('truetype');
+    src: url('../assets/fonts/poppins/Poppins-Italic.ttf') format('truetype');
     font-weight: 400;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Poppins';
-    src: url('../../public/assets/fonts/poppins/Poppins-BoldItalic.ttf') format('truetype');
+    src: url('../assets/fonts/poppins/Poppins-BoldItalic.ttf') format('truetype');
     font-weight: 700;
     font-style: italic;
 }
 
 body {
-    background-image: url('../../public/images/background.png');
+    background-image: url('../assets/images/background.png');
     background-size: cover;
     background-position: center;
     font-family: 'Inter', sans-serif;
 }
 
 #sidebar-doc {
-    background-image: url('../../public/images/doc_background.png');
+    background-image: url('../assets/images/doc_background.png');
     background-size: cover;
     background-position: center;
     font-family: 'Poppins', sans-serif;
@@ -105,49 +105,29 @@ body {
     justify-content: center;
 }
 
-// STATUS START
-// Optional shared styling for status badge container
 .status {
     width: 60px;
     height: 35px;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
-}
 
-// Define two maps: one for normal background, one for dot color
-$statuses: (
-    "incomplete": #FF3B30,
-    "complete": #CDCFD2,
-    "pending": #CDCFD2,
-    "selected": #CDCFD2,
-    "inprogress": #FF9500,
-    "on-going": #FF9500,
-    "completed": #34C759
-);
+    &.incomplete {
+        background-color: #FF3B30;
+    }
+    &.complete {
+        background-color: #CDCFD2;
+    }
 
-$status-dots: (
-    "incomplete": #B91C1C,  // darker red
-    "complete": #9CA3AF,    // darker gray
-    "pending": #9CA3AF,
-    "selected": #9CA3AF,
-    "inprogress": #C2410C,  // darker orange
-    "on-going": #C2410C,
-    "completed": #15803D    // darker green
-);
-
-// Generate .status-[name] and .status-[name]-dot
-@each $name, $color in $statuses {
-    .status-#{$name} {
-        background-color: #{$color};
+    &.pending, &.selected {
+        background-color: #CDCFD2;
+    }
+    &.inprogress {
+        background-color: #FF3B30;
+    }
+    &.completed {
+        background-color: #34C759;
     }
 }
-
-@each $name, $dot-color in $status-dots {
-    .status-#{$name}-dot {
-        background-color: #{$dot-color};
-    }
-}
-// STATUS END
 
 .nav-item {
     border-radius: 5px; // matches the .ref/.status rounding visually

@@ -31,24 +31,6 @@ export default function levelToggle({
                 this.checked = level_id;
             }
 
-            const anyMovSelected = document.querySelectorAll(
-                `input[type="checkbox"][data-questionnaire="${questionnaire_id}"]:checked`
-            ).length > 0;
-
-            const statusEl = document.querySelector(`[data-questionnaire="${questionnaire_id}"] .status`);
-            if (statusEl) {
-                if (this.checked && anyMovSelected) {
-                    statusEl.classList.remove('pending', 'inprogress');
-                    statusEl.classList.add('completed');
-                } else if (this.checked || anyMovSelected) {
-                    statusEl.classList.remove('pending', 'completed');
-                    statusEl.classList.add('inprogress');
-                } else {
-                    statusEl.classList.remove('inprogress', 'completed');
-                    statusEl.classList.add('pending');
-                }
-            }
-
             fetch(route, {
                 method: 'POST',
                 headers: {
@@ -66,19 +48,39 @@ export default function levelToggle({
             })
             .then(res => res.json())
             .then(data => {
-
-                const statusEl = document.querySelector(`[data-questionnaire="${questionnaire_id}"] .status`);
                 const anyMovSelected = document.querySelectorAll(
                     `input[type="checkbox"][data-questionnaire="${questionnaire_id}"]:checked`
                 ).length > 0;
 
+                const remarksEl = document.getElementById('remarks');
+                const hasRemarks = remarksEl && remarksEl.value !== "";
+
+                const isChecked = this.checked;
+
+                let counter = 0;
+                if (isChecked) counter++;
+                if (anyMovSelected) counter++;
+                if (hasRemarks) counter++;
+
+                const statusEl = document.querySelector(`[data-questionnaire="${questionnaire_id}"] .status`);
                 if (statusEl) {
-                    if (anyMovSelected) {
+                    console.log('Counter:', counter);
+                    console.log('Checked:', isChecked);
+                    console.log('Any mov selected:', anyMovSelected);
+                    console.log('Has remarks:', hasRemarks, remarksEl.value);
+
+                    if (counter === 3) {
+                        console.log('Status: completed');
                         statusEl.classList.remove('pending', 'inprogress');
                         statusEl.classList.add('completed');
-                    } else {
+                    } else if (counter === 2 || counter === 1) {
+                        console.log('Status: inprogress');
                         statusEl.classList.remove('pending', 'completed');
                         statusEl.classList.add('inprogress');
+                    } else {
+                        console.log('Status: pending');
+                        statusEl.classList.remove('inprogress', 'completed');
+                        statusEl.classList.add('pending');
                     }
                 }
             })
