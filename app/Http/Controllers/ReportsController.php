@@ -49,14 +49,14 @@ class ReportsController extends Controller
                 'children' => Questionnaire::where('parent_id', 2)->get(),
                 'grandchild' => Questionnaire::with(['assessment' => function ($q) use ($lguId) {
                     $q->where('lgu_id', $lguId);
-                }, 'assessment.level'])->whereIn('parent_id', [8, 9, 10, 11, 12, 13])->get()
+                }, 'assessment.level'])->whereIn('parent_id', [8, 9, 10, 11, 12])->get()
             ],
             [
                 'parent' => Questionnaire::find(3),
                 'children' => Questionnaire::where('parent_id', 3)->get(),
                 'grandchild' => Questionnaire::with(['assessment' => function ($q) use ($lguId) {
                     $q->where('lgu_id', $lguId);
-                }, 'assessment.level'])->whereIn('parent_id', [14, 15, 16, 17])->get()
+                }, 'assessment.level'])->whereIn('parent_id', [13, 14, 15, 16])->get()
             ]
         ];
 
@@ -162,14 +162,14 @@ class ReportsController extends Controller
                 'children' => Questionnaire::where('parent_id', 2)->get(),
                 'grandchild' => Questionnaire::with(['assessment' => function ($q) use ($lguId) {
                     $q->where('lgu_id', $lguId);
-                }, 'assessment.level'])->whereIn('parent_id', [8, 9, 10, 11, 12, 13])->get()
+                }, 'assessment.level'])->whereIn('parent_id', [8, 9, 10, 11, 12])->get()
             ],
             [
                 'parent' => Questionnaire::find(3),
                 'children' => Questionnaire::where('parent_id', 3)->get(),
                 'grandchild' => Questionnaire::with(['assessment' => function ($q) use ($lguId) {
                     $q->where('lgu_id', $lguId);
-                }, 'assessment.level'])->whereIn('parent_id', [14, 15, 16, 17])->get()
+                }, 'assessment.level'])->whereIn('parent_id', [13, 14, 15, 16])->get()
             ]
         ];
 
@@ -229,9 +229,13 @@ class ReportsController extends Controller
                 $totalWeight += $weight;
 
                 $grandchildren = $section['grandchild']->where('parent_id', $child->id);
-                $levels = $grandchildren->map(fn($g) => $g->assessment?->questionnaireLevel?->level ?? 0);
 
-                $averageLevel = $levels->avg() ?? 0;
+                // Map to numeric levels (null if missing), then filter out nulls and any level === 3
+                $levels = $grandchildren
+                    ->map(fn($g) => $g->assessment?->questionnaireLevel?->level ?? null)
+                    ->filter(fn($lvl) => $lvl !== null && (float)$lvl !== 9.0);
+
+                $averageLevel = $levels->count() ? $levels->avg() : 0;
                 $newIndexScore = $averageLevel * $weight;
 
                 $child->new_index_score = $newIndexScore;

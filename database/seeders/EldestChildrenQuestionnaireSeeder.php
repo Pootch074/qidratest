@@ -14,6 +14,8 @@ class EldestChildrenQuestionnaireSeeder extends Seeder
     public function run(): void
     {
         // eldest children
+        // DB::table('assessment_means')->delete();
+        // DB::table('questionnaires')->delete();
         $eldest = [
             [
                 'id' => 4,
@@ -79,7 +81,7 @@ class EldestChildrenQuestionnaireSeeder extends Seeder
                 'id' => 9,
                 'reference_number' => '',
                 'questionnaire_tree_id' => 1,
-                'name' => 'Implementation: Emergency/ disaster assistance programs/ services',
+                'name' => 'Implementation',
                 'description' => '(Note: coordinate with LDRRMO to accomplish this indicator)',
                 'weight' => 2,
                 'user_id' => 1,
@@ -87,20 +89,9 @@ class EldestChildrenQuestionnaireSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now()
             ],
+
             [
                 'id' => 10,
-                'reference_number' => '',
-                'questionnaire_tree_id' => 1,
-                'name' => 'Implementation: Devolved Programs',
-                'description' => '',
-                'weight' => 3,
-                'user_id' => 1,
-                'parent_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'id' => 11,
                 'reference_number' => '',
                 'questionnaire_tree_id' => 1,
                 'name' => 'Monitoring and Reporting',
@@ -112,7 +103,7 @@ class EldestChildrenQuestionnaireSeeder extends Seeder
                 'updated_at' => now()
             ],
             [
-                'id' => 12,
+                'id' => 11,
                 'reference_number' => '',
                 'questionnaire_tree_id' => 1,
                 'name' => 'Case Management',
@@ -124,7 +115,7 @@ class EldestChildrenQuestionnaireSeeder extends Seeder
                 'updated_at' => now()
             ],
             [
-                'id' => 13,
+                'id' => 12,
                 'reference_number' => '',
                 'questionnaire_tree_id' => 1,
                 'name' => 'Residential Care and Community-Based Center',
@@ -136,7 +127,7 @@ class EldestChildrenQuestionnaireSeeder extends Seeder
                 'updated_at' => now()
             ],
             [
-                'id' => 14,
+                'id' => 13,
                 'reference_number' => '',
                 'questionnaire_tree_id' => 1,
                 'name' => 'Functionality of Local Committee on Anti-Traffcking and Violence Against Women and their Children (LCAT-VAWC)',
@@ -148,7 +139,7 @@ class EldestChildrenQuestionnaireSeeder extends Seeder
                 'updated_at' => now()
             ],
             [
-                'id' => 15,
+                'id' => 14,
                 'reference_number' => '',
                 'questionnaire_tree_id' => 1,
                 'name' => 'Functionality of Local Council for the Protection of Children',
@@ -160,7 +151,7 @@ class EldestChildrenQuestionnaireSeeder extends Seeder
                 'updated_at' => now()
             ],
             [
-                'id' => 16,
+                'id' => 15,
                 'reference_number' => '',
                 'questionnaire_tree_id' => 1,
                 'name' => 'Inter-office Collaboration',
@@ -172,7 +163,7 @@ class EldestChildrenQuestionnaireSeeder extends Seeder
                 'updated_at' => now()
             ],
             [
-                'id' => 17,
+                'id' => 16,
                 'reference_number' => '',
                 'questionnaire_tree_id' => 1,
                 'name' => 'Support to Civil Society Organizations',

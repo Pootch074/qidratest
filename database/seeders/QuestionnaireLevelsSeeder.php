@@ -20,13 +20,13 @@ class QuestionnaireLevelsSeeder extends Seeder
         $firstline = true;
         while (($data = fgetcsv($csvFile, 2000, ",")) !== FALSE) {
             QuestionnaireLevel::create([
-                    "id" => $data['0'],
-                    "questionnaire_id" => $data['1'],
-                    "level" => $data['2'],
-                    "remarks" => $data['3'],
-                    "created_at" => Carbon::now(),
-                    "updated_at" => Carbon::now()
-                ]);
+                "id" => $data['0'],
+                "questionnaire_id" => $data['1'],
+                "level" => $data['2'],
+                "remarks" => $data['3'],
+                "created_at" => Carbon::now(),
+                "updated_at" => Carbon::now()
+            ]);
         }
         fclose($csvFile);
     }
