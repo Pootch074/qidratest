@@ -80,6 +80,10 @@
 
         <div class="options-container mt-5">
             @foreach ($levels as $level)
+                @if ($level->level == 9)
+                    @continue
+                @endif
+                
                 @if (auth()->user()->user_type == 1)
                     <div class="option">
                 @else
