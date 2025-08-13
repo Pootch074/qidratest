@@ -14,12 +14,8 @@ class MeansOfVerificationSeeder extends Seeder
      */
     public function run()
     {
-        // Disable foreign key checks if needed
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-
-        // Force delete even soft-deleted records
-        MeansOfVerification::withTrashed()->forceDelete();
-
+        MeansOfVerification::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $csvFile = fopen(base_path("database/data/questionnaire_means.csv"), "r");
