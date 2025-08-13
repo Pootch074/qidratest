@@ -13,7 +13,9 @@ class QuestionnaireLevelsSeeder extends Seeder
     public function run()
 
     {
-        QuestionnaireLevel::query()->delete();
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        QuestionnaireLevel::truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $csvFile = fopen(base_path("database/data/questionnaire_level.csv"), "r");
 
