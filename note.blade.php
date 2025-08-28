@@ -30,7 +30,6 @@ class ReportsController extends Controller
 
         $cksu = Period::select('id', 'name')->get();
 
-        // Fetch assessment date from period_assessments
         $assessment = DB::table('period_assessments')
             ->where('period_id', $periodId)
             ->where('lgu_id', $lguId)
