@@ -17,7 +17,7 @@ class LoginController extends Controller
     public function authenticate(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'employee_id' => ['required', 'regex:/^\d{2}-\d{4}$/'], // must match 11-1234 format
             'password' => ['required'],
         ]);
 
@@ -27,8 +27,8 @@ class LoginController extends Controller
         }
 
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
+            'employee_id' => 'The provided credentials do not match our records.',
+        ])->onlyInput('employee_id');
     }
 
     public function logout(Request $request): RedirectResponse

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -10,16 +9,15 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, SoftDeletes;
 
     const TYPE_ADMIN = 1;
-    const TYPE_LGU = 2;
-    const TYPE_TL = 3;
-    const TYPE_RMT = 4;
+    const TYPE_LGU   = 2;
+    const TYPE_TL    = 3;
+    const TYPE_RMT   = 4;
 
     const STATUS_INACTIVE = 0;
-    const STATUS_ACTIVE = 1;
+    const STATUS_ACTIVE   = 1;
 
     /**
      * The attributes that are mass assignable.
@@ -29,7 +27,7 @@ class User extends Authenticatable
     protected $fillable = [
         'first_name',
         'last_name',
-        'email',
+        'employee_id',   // ✅ added
         'password',
         'user_type',
         'status',
@@ -48,7 +46,7 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected $dates = ['deleted_at']; // Ensure Laravel treats it as a date
+    protected $dates = ['deleted_at'];
 
     /**
      * Get the attributes that should be cast.
@@ -63,23 +61,30 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Use employee_id as the username for authentication.
+     */
+    public function getAuthIdentifierName()
+    {
+        return 'employee_id';
+    }
+
     public static function getUserTypes()
     {
         return [
             self::TYPE_ADMIN => 'Admin',
-            // self::TYPE_LGU => 'LGU Focal',
-            self::TYPE_TL => 'Team Leader',
-            self::TYPE_RMT => 'RMT',
+            self::TYPE_TL    => 'Team Leader',
+            self::TYPE_RMT   => 'RMT',
         ];
     }
 
     public function getUserType($i)
     {
-        switch($i) {
-            case self::TYPE_ADMIN: return 'Admin'; break;
-            case self::TYPE_LGU: return 'LGU Focal'; break;
-            case self::TYPE_TL: return 'Team Leader'; break;
-            case self::TYPE_RMT: return 'RMT'; break;
+        switch ($i) {
+            case self::TYPE_ADMIN: return 'Admin'; 
+            case self::TYPE_LGU:   return 'LGU Focal'; 
+            case self::TYPE_TL:    return 'Team Leader'; 
+            case self::TYPE_RMT:   return 'RMT'; 
         }
     }
 
@@ -92,15 +97,15 @@ class User extends Authenticatable
     {
         return [
             self::STATUS_INACTIVE => 'Inactive',
-            self::STATUS_ACTIVE => 'Active',
+            self::STATUS_ACTIVE   => 'Active',
         ];
     }
 
     public function getStatus($i)
     {
-        switch($i) {
-            case self::STATUS_INACTIVE: return 'Inactive'; break;
-            case self::STATUS_ACTIVE: return 'Active'; break;
+        switch ($i) {
+            case self::STATUS_INACTIVE: return 'Inactive'; 
+            case self::STATUS_ACTIVE:   return 'Active'; 
         }
     }
 
@@ -118,5 +123,4 @@ class User extends Authenticatable
     {
         return $query->where('user_type', self::TYPE_RMT);
     }
-
 }
