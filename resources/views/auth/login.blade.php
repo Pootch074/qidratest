@@ -1,8 +1,7 @@
 @extends('layouts.auth')
 
 @section('content')
-    <div id="auth-login"
-        class="mt-10 flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 w-1/3 mx-auto bg-[#2E3192] rounded-[25px] text-white">
+    <div id="auth-login" class="mt-10 flex min-h-full flex-col justify-center px-6 py-2 lg:px-8 w-1/3 mx-auto bg-[#2E3192] rounded-[25px] text-white">
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
             <h2 class="text-left text-[48px] font-bold tracking-tight">Login</h2>
         </div>
@@ -58,7 +57,7 @@
             </form>
 
             @if(true)
-            <div class="flex items-center my-5">
+            <!-- <div class="flex items-center my-5">
                 <hr class="flex-grow border-t border-white" />
                 <span class="px-3 text-white text-sm">or</span>
                 <hr class="flex-grow border-t border-white" />
@@ -68,7 +67,7 @@
                 class="flex w-full justify-center items-center gap-2 rounded-md bg-white px-3 h-[60px] text-base font-semibold text-black shadow-xs border border-gray-300 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-400">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="h-5 w-5">
                 Google
-            </a>
+            </a> -->
             @endif
 
             <div class="mt-20">
