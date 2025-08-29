@@ -7,10 +7,8 @@
     @yield('header')
   </head>
 <body class="">
-    <img src="{{ asset('assets/images/background.png')}}" 
-         alt=""
-         class="absolute top-0 left-0 w-full h-full object-cover -z-10">
-    <div class="container-fluid relative z-10">
+    <img src="{{ asset('assets/images/background.png')}}" alt="" class="absolute top-0 left-0 w-full h-full object-cover -z-10">
+    <div class="container-fluid">
         @yield('content')
     </div>
     @yield('scripts')
