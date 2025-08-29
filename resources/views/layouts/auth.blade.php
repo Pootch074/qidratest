@@ -6,13 +6,14 @@
     @vite(['resources/js/app.js'])
     @yield('header')
   </head>
-  <body class="login-bgd">
-    <div class="container-fluid">
-        <!-- <div class="m-5">
-            <img src="{{ asset('assets/images/dswd-sdca.png') }}" alt="DSWD - SDCA">
-        </div> -->
+<body class="login-bgd">
+    <img src="{{ asset('assets/images/background.png')}}" 
+         alt=""
+         class="absolute top-0 left-0 w-full h-full object-cover -z-10">
+    <div class="container-fluid relative z-10">
         @yield('content')
     </div>
     @yield('scripts')
-  </body>
+</body>
+
 </html>
