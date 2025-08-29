@@ -9,6 +9,7 @@ import recommendations from './recommendations';
 
 import '../css/app.css';
 import '../css/custom.scss';
+import '../images/background.png';
 
 import.meta.glob([
   '../images/**',
