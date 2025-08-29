@@ -1,67 +1,31 @@
 <?php
 
-use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\DeadlinesController;
 use App\Http\Controllers\UsersController;
-use App\Http\Controllers\QuestionnairesController;
-use App\Http\Controllers\PeriodsController;
-use App\Http\Controllers\ReportsController;
-use App\Http\Controllers\AssessmentsController;
-
 use App\Http\Middleware\CheckUserType;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\QueueController;
 
-Route::get('/', function () {
-    return Auth::check() ? redirect('/dashboard') : redirect(route('login'));
-});
 
-Route::get('/auth/login', [LoginController::class, 'login'])->name('login');
-Route::post('/auth/login', [LoginController::class, 'authenticate'])->name('authenticate');
-Route::get('/auth/redirect', [GoogleController::class, 'redirect']);
-Route::get('/auth/callback', [GoogleController::class, 'callback']);
+Route::post('/queue/store', [QueueController::class, 'store'])->name('queue.store');
+
+
 
 // Protected Routes (Require Authentication)
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
-
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
-
-    Route::get('/profile', function () {
-        return view('rmt.assessments.profile');
-    })->name('profile');
-
-    Route::get('/assessments', function () {
-        return view('rmts.assessments.assessments');
-    })->name('assessments');
-
-    Route::get('deadlines', function () {
-        return view('rmt/deadlines');
-    })->name('deadlines');
+    Route::get('/profile', function () {return view('rmt.assessments.profile');})->name('profile');
+    Route::get('/assessments', function () {return view('rmts.assessments.assessments');})->name('assessments');
+    Route::get('deadlines', function () {return view('rmt/deadlines');})->name('deadlines');
 });
 
-// Routes Admin
-Route::middleware(['auth', CheckUserType::class . ':1'])->group(function () {
-    Route::get('users', [UsersController::class, 'index'])->name('users');
-    Route::get('lgu', [UsersController::class, 'lgu'])->name('lgu');
-    Route::get('questionnaires', [QuestionnairesController::class, 'index'])->name('questionnaires');
-    Route::get('period-management', [PeriodsController::class, 'index'])->name('period-management');
-    Route::get('rmt-assignments', [PeriodsController::class, 'assignments'])->name('rmt-assignments');
+// Rouete Login
+Route::get('/', function () {return Auth::check() ? redirect('/dashboard') : redirect(route('login'));});
+Route::get('/auth/login', [LoginController::class, 'login'])->name('login');
+Route::post('/auth/login', [LoginController::class, 'authenticate'])->name('authenticate');
 
-    Route::get('questionnaires/manage/{id}', [QuestionnairesController::class, 'manageQuestionnaires'])->name('manage-questionnaires');
-    Route::get('questionnaires/manage/{id}/ref/{id2}', [QuestionnairesController::class, 'getReference'])->name('get-reference');
-
-    Route::get('period-assessments', [PeriodsController::class, 'assessments'])->name('period-assessments');
-    Route::get('period/switch/{id}', [PeriodsController::class, 'switchPeriod'])->name('switch-period');
-
-    Route::get('reports', [ReportsController::class, 'index'])->name('reports');
-    Route::get('parameter-report', [ReportsController::class, 'paramReport'])->name('parameter-report');
-    Route::get('compliance-monitoring', [ReportsController::class, 'complianceMonitoring'])->name('compliance-monitoring');
-});
-
-// Routes RMT and TL
-Route::middleware(['auth', CheckUserType::class . ':1,3,4'])->group(function () {
-    Route::get('deadlines', [DeadlinesController::class, 'index'])->name('deadlines');
-    Route::get('assessment-management', [AssessmentsController::class, 'management'])->name('assessment-management');
+// Routes Preassess
+Route::middleware(['auth', CheckUserType::class . ':1,5'])->group(function () {
+    Route::get('preassess', [UsersController::class, 'preassess'])->name('preassess');
+    Route::get('admin', [UsersController::class, 'admin'])->name('admin');
 });

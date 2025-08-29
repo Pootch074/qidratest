@@ -17,6 +17,7 @@ class User extends Authenticatable
     const TYPE_LGU = 2;
     const TYPE_TL = 3;
     const TYPE_RMT = 4;
+    const TYPE_PREASSESS = 5;
 
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
@@ -70,6 +71,7 @@ class User extends Authenticatable
             // self::TYPE_LGU => 'LGU Focal',
             self::TYPE_TL => 'Team Leader',
             self::TYPE_RMT => 'RMT',
+            self::TYPE_PREASSESS => 'PREASSESS',
         ];
     }
 
@@ -80,6 +82,7 @@ class User extends Authenticatable
             case self::TYPE_LGU: return 'LGU Focal'; break;
             case self::TYPE_TL: return 'Team Leader'; break;
             case self::TYPE_RMT: return 'RMT'; break;
+            case self::TYPE_PREASSESS: return 'PREASSESS'; break;
         }
     }
 
@@ -118,5 +121,8 @@ class User extends Authenticatable
     {
         return $query->where('user_type', self::TYPE_RMT);
     }
-
+    public function scopePreassess($query)
+    {
+        return $query->where('user_type', self::TYPE_PREASSESS);
+    }
 }

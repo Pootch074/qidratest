@@ -1,17 +1,9 @@
-<!-- Header -->
-<header class="bg-white text-[#202224] py-4 px-10 flex justify-between items-center">
-    <div class="text-[32px] font-medium flex flex-col sm:flex-row sm:items-center">
-        <h1 class="leading-none">@yield('title')</h1>
-        <div class="mt-1 sm:mt-0 sm:ml-2">
-            <span class="inline-block text-black text-xs rounded-full border-[#CDCFD2] bg-[#CDCFD2] px-3 py-1 font-light">
-                {{ auth()->user()->getUserTypeName() }}
-            </span>
-        </div>
+<div>
+        <!-- Your left header items here -->
     </div>
 
-
-    <!-- Profile Dropdown -->
-    <div x-data="{ open: false }" class="relative">
+    <!-- Right side (Profile Dropdown) -->
+    <div x-data="{ open: false }" class="relative ml-auto">
         <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
             @if(auth()->user()->avatar)
                 <img src="{{ auth()->user()->avatar }}" alt="Profile" class="w-8 h-8 rounded-full mr-5">
@@ -46,4 +38,3 @@
             <a href="{{ route('logout') }}" class="block px-4 py-2 text-red-600 hover:bg-gray-100">Logout</a>
         </div>
     </div>
-</header>

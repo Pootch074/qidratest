@@ -9,29 +9,12 @@ use App\Models\User;
 
 class UsersController extends Controller
 {
-    //
-    public function index()
+    public function preassess()
     {
-        $userTypes = User::getUserTypes();
-        $lgus = Lgu::all();
-        return view('admin.users.index', compact('userTypes', 'lgus'));
+        return view('preassess.index');
     }
-
-    public function profile()
+    public function admin()
     {
-
-    }
-
-    public function rmt()
-    {
-        return view('admin.rmt.index');
-    }
-
-    public function lgu()
-    {
-        $regions = Region::all();
-        $provinces = Province::all();
-        $lguTypes = Lgu::getLguTypes();
-        return view('admin.lgu.index', compact('regions', 'provinces', 'lguTypes'));
+        return view('admin.index');
     }
 }

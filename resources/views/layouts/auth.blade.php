@@ -6,7 +6,7 @@
     @vite(['resources/js/app.js'])
     @yield('header')
   </head>
-  <body>
+  <body class="login-bgd">
     <div class="container-fluid">
         <!-- <div class="m-5">
             <img src="{{ asset('assets/images/dswd-sdca.png') }}" alt="DSWD - SDCA">

@@ -22,7 +22,6 @@ class CheckUserType
         if (auth()->check() && in_array(auth()->user()->user_type, $types)) {
             return $next($request);
         }
-
         abort(403, 'Unauthorized');
     }
 }
