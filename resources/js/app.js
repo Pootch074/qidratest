@@ -10,6 +10,11 @@ import recommendations from './recommendations';
 import '../css/app.css';
 import '../css/custom.scss';
 
+import.meta.glob([
+  '../images/**',
+  '../fonts/**',
+]);
+
 window.Alpine = Alpine;
 window.Quill = Quill;
 
