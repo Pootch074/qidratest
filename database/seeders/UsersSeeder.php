@@ -26,6 +26,8 @@ class UsersSeeder extends Seeder
                 'email' => env('ADMIN_EMAIL', 'admin@admin.com'),
                 'position' => 'Admin',
                 'user_type' => 1,
+                'assigned_category' => null,
+                'window_id' => null,
                 'status' => 1,
                 'email_verified_at' => Carbon::now(),
                 'password' => Hash::make(env('ADMIN_PASSWORD', 'A7X9B2KQ')),
@@ -38,6 +40,8 @@ class UsersSeeder extends Seeder
                 'email' => 'uo@gmail.com', // change as needed
                 'position' => 'SWOII', // optional
                 'user_type' => 5,
+                'assigned_category' => 'regular',
+                'window_id' => 1,
                 'status' => 1,
                 'email_verified_at' => Carbon::now(),
                 'password' => Hash::make('password'),

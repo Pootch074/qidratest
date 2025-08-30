@@ -12,10 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('transactions', function (Blueprint $table) {
-            $table->id(); // BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY
+            $table->id();
             $table->integer('queue_number');
             $table->enum('client_type', ['priority', 'regular']);
-            $table->unsignedInteger('window_id');
+            $table->unsignedBigInteger('window_id')->nullable();
+            $table->foreign('window_id')->references('id')->on('windows')->onDelete('set null'); // optional: if a window is deleted, set null
+
+
             $table->enum('queue_status', ['waiting', 'pending', 'serving'])->default('waiting');
             $table->timestamps(); // created_at & updated_at
         });

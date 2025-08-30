@@ -4,7 +4,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {{-- <link rel="icon" type="image/png" href="/dswd.png"> --}}
-    <title>{{ config('app.name', 'DSWD - SDCA') }} - {{ strtoupper(auth()->user()->getUserTypeName()) }} Portal</title>
+    <title>{{ config('app.name', 'DSWD - SDCA') }} - {{ strtoupper(auth()->user()->getUserTypeName()) }} </title>
     @vite(['resources/js/app.js'])
     @yield('header')
     @livewireStyles
