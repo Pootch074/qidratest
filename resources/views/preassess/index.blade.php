@@ -5,7 +5,7 @@
 
 @section('content')
 
-<div class="container mx-auto p-4 bg-[#cbdce8]">
+<div class="w-full p-4 bg-[#cbdce8]">
     <div class="flex justify-center mt-8">
         <form id="queueForm" action="{{ route('queue.store') }}" method="POST">
             @csrf

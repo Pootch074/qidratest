@@ -19,14 +19,12 @@
     <div class="flex items-center justify-between px-4 py-2 bg-white shadow">
         @include('layouts.inc.header')
     </div>
-
+    
 
     <div class="flex flex-1">
-        @yield('content')
-
-
-        
+            @yield('content')
     </div>
+
 
     <div class="w-full h-[8vh] bg-white">
         @include('layouts.inc.footer')

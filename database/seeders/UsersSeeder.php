@@ -35,12 +35,54 @@ class UsersSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                'first_name' => 'User',
-                'last_name' => 'One',
-                'email' => 'uo@gmail.com', // change as needed
+                'first_name' => 'Preassess',
+                'last_name' => 'User',
+                'email' => 'pu@gmail.com', // change as needed
                 'position' => 'SWOII', // optional
                 'user_type' => 5,
                 'assigned_category' => 'regular',
+                'window_id' => 1,
+                'status' => 1,
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('password'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'first_name' => 'Encode',
+                'last_name' => 'User',
+                'email' => 'eu@gmail.com', // change as needed
+                'position' => 'SWOII', // optional
+                'user_type' => 5,
+                'assigned_category' => 'regular',
+                'window_id' => 1,
+                'status' => 1,
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('password'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'first_name' => 'Assessment',
+                'last_name' => 'User',
+                'email' => 'au@gmail.com', // change as needed
+                'position' => 'SWOII', // optional
+                'user_type' => 5,
+                'assigned_category' => null,
+                'window_id' => 1,
+                'status' => 1,
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('password'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'first_name' => 'Release',
+                'last_name' => 'User',
+                'email' => 'ru@gmail.com', // change as needed
+                'position' => 'SWOII', // optional
+                'user_type' => 5,
+                'assigned_category' => null,
                 'window_id' => 1,
                 'status' => 1,
                 'email_verified_at' => Carbon::now(),
