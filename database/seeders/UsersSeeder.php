@@ -39,7 +39,7 @@ class UsersSeeder extends Seeder
                 'last_name' => 'User',
                 'email' => 'pu@gmail.com', // change as needed
                 'position' => 'SWOII', // optional
-                'user_type' => 5,
+                'user_type' => 2,
                 'assigned_category' => 'regular',
                 'window_id' => 1,
                 'status' => 1,
@@ -53,9 +53,9 @@ class UsersSeeder extends Seeder
                 'last_name' => 'User',
                 'email' => 'eu@gmail.com', // change as needed
                 'position' => 'SWOII', // optional
-                'user_type' => 5,
+                'user_type' => 3,
                 'assigned_category' => 'regular',
-                'window_id' => 1,
+                'window_id' => 2,
                 'status' => 1,
                 'email_verified_at' => Carbon::now(),
                 'password' => Hash::make('password'),
@@ -67,9 +67,9 @@ class UsersSeeder extends Seeder
                 'last_name' => 'User',
                 'email' => 'au@gmail.com', // change as needed
                 'position' => 'SWOII', // optional
-                'user_type' => 5,
+                'user_type' => 4,
                 'assigned_category' => null,
-                'window_id' => 1,
+                'window_id' => 3,
                 'status' => 1,
                 'email_verified_at' => Carbon::now(),
                 'password' => Hash::make('password'),
@@ -83,7 +83,7 @@ class UsersSeeder extends Seeder
                 'position' => 'SWOII', // optional
                 'user_type' => 5,
                 'assigned_category' => null,
-                'window_id' => 1,
+                'window_id' => 7,
                 'status' => 1,
                 'email_verified_at' => Carbon::now(),
                 'password' => Hash::make('password'),

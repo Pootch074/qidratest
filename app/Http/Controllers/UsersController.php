@@ -6,13 +6,18 @@ use App\Models\Lgu;
 use App\Models\Province;
 use App\Models\Region;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class UsersController extends Controller
 {
 
     public function admin()
     {
-        return view('admin.index');
+        // Fetch transactions for your table
+        $transactions = \App\Models\Transaction::orderBy('queue_number', 'desc')->get();
+
+        // Return the admin/index.blade.php view
+        return view('admin.index', compact('transactions'));
     }
     public function preassess()
     {
@@ -29,5 +34,34 @@ class UsersController extends Controller
     public function release()
     {
         return view('release.index');
+    }
+
+    public function users()
+    {
+        $users = User::orderBy('id', 'desc')->get();
+        return view('admin.users.table', compact('users'));
+    }
+    // Store a new user
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6',
+            'position' => 'nullable|string|max:255',
+            'user_type' => 'required|integer',
+            'assigned_category' => 'nullable|in:regular,priority',
+            'window_id' => 'nullable|integer',
+        ]);
+
+        $validated['password'] = bcrypt($validated['password']);
+
+        $user = User::create($validated);
+
+        return response()->json([
+            'success' => true,
+            'user' => $user
+        ]);
     }
 }

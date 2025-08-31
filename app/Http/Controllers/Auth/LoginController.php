@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -28,16 +29,19 @@ class LoginController extends Controller
 
             $user = Auth::user();
 
-            // Redirect based on user_type
             switch ($user->user_type) {
-                case 1: // Admin
+                case 1:
                     return redirect()->route('admin');
-
-                case 5: // Preassess
+                case 2:
                     return redirect()->route('preassess');
-
-                default: // All other roles
-                    return redirect()->intended('dashboard');
+                case 3:
+                    return redirect()->route('encode');
+                case 4:
+                    return redirect()->route('assessment');
+                case 5:
+                    return redirect()->route('release');
+                default:
+                    return redirect()->route('profile'); // fallback if type doesn't match
             }
         }
 

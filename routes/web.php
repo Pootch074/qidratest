@@ -4,12 +4,12 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\UsersController;
 use App\Http\Middleware\CheckUserType;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\QueueController;
+use App\Http\Controllers\TransactionsController;
 use Illuminate\Support\Facades\Auth;
 
 
 
-Route::post('/queue/store', [QueueController::class, 'store'])->name('queue.store');
+Route::post('/queue/store', [TransactionsController::class, 'store'])->name('queue.store');
 
 
 
@@ -29,23 +29,25 @@ Route::middleware(['auth'])->group(function () {
 
 // Rouete Login
 Route::get('/', function () {
-    return Auth::check() ? redirect('/dashboard') : redirect(route('login'));
+    return Auth::check()
+        ? redirect()->intended() // redirect to the place authenticated() sends them
+        : redirect(route('login'));
 });
+
 Route::get('/auth/login', [LoginController::class, 'login'])->name('login');
 Route::post('/auth/login', [LoginController::class, 'authenticate'])->name('authenticate');
 
 // Routes Preassess
 Route::middleware(['auth', CheckUserType::class . ':1,2,3,4,5'])->group(function () {
     Route::get('admin', [UsersController::class, 'admin'])->name('admin');
-
     Route::get('preassess', [UsersController::class, 'preassess'])->name('preassess');
     Route::get('encode', [UsersController::class, 'encode'])->name('encode');
     Route::get('assessment', [UsersController::class, 'assessment'])->name('assessment');
     Route::get('release', [UsersController::class, 'release'])->name('release');
 });
 
-//Route Encode
 
-//Route Assessment
-
-//Route Release
+Route::middleware(['auth'])->group(function () {
+    Route::get('admin/users', [UsersController::class, 'users'])->name('admin.users');
+    Route::post('admin/users', [UsersController::class, 'store'])->name('admin.store');
+});

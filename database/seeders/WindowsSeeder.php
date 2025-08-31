@@ -19,10 +19,60 @@ class WindowsSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $windows = [
-            'window_number' => 1,
-            'step_id' => 1,
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now()
+            [
+                'window_number' => 1,
+                'step_id' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ],
+            [
+                'window_number' => 1,
+                'step_id' => 2,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ],
+            [
+                'window_number' => 1,
+                'step_id' => 3,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ],
+            [
+                'window_number' => 2,
+                'step_id' => 3,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ],
+            [
+                'window_number' => 3,
+                'step_id' => 3,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ],
+            [
+                'window_number' => 4,
+                'step_id' => 3,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ],
+            [
+                'window_number' => 1,
+                'step_id' => 4,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ],
+            [
+                'window_number' => 2,
+                'step_id' => 4,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ],
+            [
+                'window_number' => 3,
+                'step_id' => 4,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ]
         ];
         DB::table('windows')->insert($windows);
     }
