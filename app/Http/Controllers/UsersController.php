@@ -35,6 +35,24 @@ class UsersController extends Controller
         $transactions = \App\Models\Transaction::orderBy('queue_number', 'desc')->get();
         return view('admin.index', compact('transactions', 'users', 'userColumns'));
     }
+    public function users()
+    {
+        $userColumns = [
+            'first_name'       => 'First Name',
+            'last_name'        => 'Last Name',
+            'email'            => 'Email',
+            'position'         => 'Position',
+            'user_type'        => 'User Type',
+            'assigned_category'=> 'Category',
+            'window_id'        => 'Window ID',
+        ];
+
+        $users = User::orderBy('id', 'desc')->get();
+        return view('admin.users.table', compact('users', 'userColumns'));
+    }
+
+
+
     public function pacd()
     {
         $sections = Section::orderBy('section_name')->get(['id','section_name']);
@@ -61,11 +79,9 @@ class UsersController extends Controller
         return view('user.index');
     }
 
-    public function users()
-    {
-        $users = User::orderBy('id', 'desc')->get();
-        return view('admin.users.table', compact('users'));
-    }
+    
+
+
     // Store a new user
     public function store(Request $request)
     {
