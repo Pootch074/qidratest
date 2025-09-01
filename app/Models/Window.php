@@ -10,5 +10,4 @@ class Window extends Model
     {
         return $this->belongsTo(Step::class, 'step_id');
     }
-
 }

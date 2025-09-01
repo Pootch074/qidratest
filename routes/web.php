@@ -39,8 +39,6 @@ Route::middleware(['auth', CheckUserType::class . ':1,2,3,4,5,6,7'])->group(func
     Route::get('assessment', [UsersController::class, 'assessment'])->name('assessment');
     Route::get('release', [UsersController::class, 'release'])->name('release');
     Route::get('user', [UsersController::class, 'user'])->name('user');
-    
-    
 });
 
 
@@ -49,5 +47,5 @@ Route::middleware(['auth'])->group(function () {
     Route::post('admin/users', [UsersController::class, 'store'])->name('admin.store');
     Route::get('pacd', [PacdController::class, 'index'])->name('pacd');
     Route::post('/pacd/generate/{section}', [PacdController::class, 'generateQueue'])->name('pacd.generate');
-
+    Route::post('/admin/users/store', [UsersController::class, 'store'])->name('admin.store');
 });

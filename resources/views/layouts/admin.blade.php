@@ -36,7 +36,7 @@
 
 
 
-    @yield('script')
+    @yield('scripts')
     @stack('scripts')
     @livewireScripts
 </body>

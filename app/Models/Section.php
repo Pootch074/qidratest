@@ -10,5 +10,4 @@ class Section extends Model
     {
         return $this->belongsTo(\App\Models\Division::class, 'division_id');
     }
-
 }

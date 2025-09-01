@@ -140,7 +140,7 @@ class UsersSeeder extends Seeder
                 'section_id' => 2,
                 'user_type' => 6,
                 'assigned_category' => null,
-                'step_id' => null,
+                'step_id' => 5,
                 'window_id' => 10,
                 'status' => 1,
                 'email_verified_at' => Carbon::now(),

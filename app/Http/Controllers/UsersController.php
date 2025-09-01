@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Lgu;
-use App\Models\Province;
-use App\Models\Region;
 use App\Models\User;
 use App\Models\Section;
+use App\Models\Step;
+use App\Models\Window;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 
 class UsersController extends Controller
@@ -15,14 +15,14 @@ class UsersController extends Controller
 
     public function admin()
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $userColumns = [
             'first_name'       => 'First Name',
             'last_name'        => 'Last Name',
             'email'            => 'Email',
             'position'         => 'Position',
             'user_type'        => 'User Type',
-            'assigned_category'=> 'Category',
+            'assigned_category' => 'Category',
             'window_id'        => 'Window ID',
         ];
 
@@ -37,25 +37,48 @@ class UsersController extends Controller
     }
     public function users()
     {
+        $user = Auth::user();
+
         $userColumns = [
-            'first_name'       => 'First Name',
-            'last_name'        => 'Last Name',
-            'email'            => 'Email',
-            'position'         => 'Position',
-            'user_type'        => 'User Type',
-            'assigned_category'=> 'Category',
-            'window_id'        => 'Window ID',
+            'first_name'        => 'First Name',
+            'last_name'         => 'Last Name',
+            'email'             => 'Email',
+            'position'          => 'Position',
+            'user_type'         => 'User Type',
+            'assigned_category' => 'Category',
         ];
 
-        $users = User::orderBy('id', 'desc')->get();
-        return view('admin.users.table', compact('users', 'userColumns'));
+        $users = User::with(['step', 'window'])
+            ->where('section_id', $user->section_id)
+            ->latest()
+            ->get();
+
+
+        // Fetch steps that belong to the user's section
+        $steps = Step::whereHas('section', function ($query) use ($user) {
+            $query->where('id', $user->section_id);
+        })->get();
+
+        // Fetch windows that belong to steps in the user's section
+        $windows = Window::whereHas('step', function ($q) use ($user) {
+            $q->where('section_id', $user->section_id);
+        })->get();
+
+
+        return view('admin.users.table', compact('users', 'userColumns', 'steps', 'windows'));
     }
+
+
+
+
+
+
 
 
 
     public function pacd()
     {
-        $sections = Section::orderBy('section_name')->get(['id','section_name']);
+        $sections = Section::orderBy('section_name')->get(['id', 'section_name']);
         return view('pacd.index', compact('sections'));
     }
     public function preassess()
@@ -79,23 +102,29 @@ class UsersController extends Controller
         return view('user.index');
     }
 
-    
 
 
-    // Store a new user
+
     public function store(Request $request)
     {
+        $authUser = Auth::user();
+
         $validated = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6',
-            'position' => 'nullable|string|max:255',
-            'user_type' => 'required|integer',
-            'assigned_category' => 'nullable|in:regular,priority',
-            'window_id' => 'nullable|integer',
+            'first_name'        => 'required|string|max:255',
+            'last_name'         => 'required|string|max:255',
+            'email'             => 'required|email|unique:users,email',
+            'position'          => 'required|string|max:255',
+            'user_type'         => 'required|in:1,6',
+            'assigned_category' => 'required|in:regular,priority',
+            'step_id'           => 'required|exists:steps,id',
+            'window_id'         => 'required|exists:windows,id',
+            'password'          => 'required|string|min:6',
         ]);
 
+        // Automatically attach to the logged-in user's section
+        $validated['section_id'] = $authUser->section_id;
+
+        // Hash the password
         $validated['password'] = bcrypt($validated['password']);
 
         $user = User::create($validated);

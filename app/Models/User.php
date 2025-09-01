@@ -19,7 +19,7 @@ class User extends Authenticatable
     const TYPE_ENCODE = 3;
     const TYPE_ASSESSMENT = 4;
     const TYPE_RELEASE = 5;
-    
+
 
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
@@ -34,11 +34,11 @@ class User extends Authenticatable
         'last_name',
         'email',
         'position',
+        'section_id',
         'user_type',
         'assigned_category',
+        'step_id',
         'window_id',
-        'status',
-        'email_verified_at',
         'password',
     ];
 
@@ -150,5 +150,9 @@ class User extends Authenticatable
     public function window()
     {
         return $this->belongsTo(Window::class, 'window_id');
+    }
+    public function step()
+    {
+        return $this->belongsTo(Step::class, 'step_id');
     }
 }

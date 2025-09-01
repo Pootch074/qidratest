@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Section;
 use App\Models\Transaction;
+use Illuminate\Support\Facades\Auth;
+
 
 class PacdController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $sectionId = $user->section_id;
         $columns = [
             'queue_number' => 'Queue Number',
@@ -31,33 +33,32 @@ class PacdController extends Controller
         return view('pacd.index', compact('sections', 'transactions', 'columns'));
     }
 
-public function generateQueue(Request $request, Section $section)
-{
-    $clientType = $request->input('client_type', 'regular'); // default to regular
+    public function generateQueue(Request $request, Section $section)
+    {
+        $clientType = $request->input('client_type', 'regular'); // default to regular
 
-    // Get the highest queue_number for this specific section + client_type
-    $lastQueue = Transaction::where('section_id', $section->id)
-        ->where('client_type', $clientType)
-        ->max('queue_number');
+        // Get the highest queue_number for this specific section + client_type
+        $lastQueue = Transaction::where('section_id', $section->id)
+            ->where('client_type', $clientType)
+            ->max('queue_number');
 
-    // Increment or start at 1
-    $newQueueNumber = $lastQueue ? $lastQueue + 1 : 1;
+        // Increment or start at 1
+        $newQueueNumber = $lastQueue ? $lastQueue + 1 : 1;
 
-    // Create new transaction
-    $transaction = Transaction::create([
-        'queue_number' => $newQueueNumber,
-        'client_type'  => $clientType,
-        'window_id'    => null,
-        'section_id'   => $section->id,
-        'queue_status' => 'waiting',
-    ]);
+        // Create new transaction
+        $transaction = Transaction::create([
+            'queue_number' => $newQueueNumber,
+            'client_type'  => $clientType,
+            'window_id'    => null,
+            'section_id'   => $section->id,
+            'queue_status' => 'waiting',
+        ]);
 
-    // Build formatted queue label (R001, P001, etc.)
-    $prefix = strtoupper(substr($clientType, 0, 1));
-    $formattedQueue = $prefix . str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT);
+        // Build formatted queue label (R001, P001, etc.)
+        $prefix = strtoupper(substr($clientType, 0, 1));
+        $formattedQueue = $prefix . str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT);
 
-    return redirect()->back()
-        ->with('success', "Queue #{$formattedQueue} created for {$section->section_name}");
-}
-
+        return redirect()->back()
+            ->with('success', "Queue #{$formattedQueue} created for {$section->section_name}");
+    }
 }

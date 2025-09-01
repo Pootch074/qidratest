@@ -26,11 +26,7 @@
             <h2 class="text-xl font-semibold text-gray-700 mb-4">Transactions</h2>
             @include('admin.transactions.table') {{-- Table partial --}}
         </div>
-        <br>
-        <div class="bg-gray-50 rounded-lg p-4 overflow-x-auto shadow-md">
-            <h2 class="text-xl font-semibold mb-4">Users</h2>
-            @include('admin.users.table', ['users' => $users, 'userColumns' => $userColumns])
-        </div>
+        
     </div>
 </div>
 @endsection
