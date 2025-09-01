@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Section;
 use App\Models\Step;
 use App\Models\Window;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -30,9 +31,7 @@ class UsersController extends Controller
             ->latest()
             ->get();
 
-
-
-        $transactions = \App\Models\Transaction::orderBy('queue_number', 'desc')->get();
+        $transactions = Transaction::orderBy('queue_number', 'desc')->get();
         return view('admin.index', compact('transactions', 'users', 'userColumns'));
     }
     public function users()
@@ -99,7 +98,50 @@ class UsersController extends Controller
     }
     public function user()
     {
-        return view('user.index');
+        $sectionId = Auth::user()->section_id;
+        // Upcoming queues: status = 'waiting'
+        $upcomingQueues = Transaction::where('section_id', $sectionId)
+            ->where('queue_status', 'waiting')
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        // Format each pending queue
+        $upcomingQueues->transform(function ($queue) {
+            $prefix = strtolower($queue->client_type) === 'priority' ? 'P' : 'R';
+            $queue->sdsddses = $prefix . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT);
+            return $queue;
+        });
+
+
+        // Pending queues: status = 'pending'
+        $pendingQueues = Transaction::where('section_id', $sectionId)
+            ->where('queue_status', 'pending')
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        // Format each pending queue
+        $pendingQueues->transform(function ($queue) {
+            $prefix = strtolower($queue->client_type) === 'priority' ? 'P' : 'R';
+            $queue->nchdfm = $prefix . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT);
+            return $queue;
+        });
+
+        // Get the currently serving queue
+        $servingQueue = Transaction::where('section_id', $sectionId)
+            ->where('queue_status', 'serving')
+            ->orderBy('updated_at', 'desc') // latest serving
+            ->get(); // get a single record
+
+        $servingQueue->transform(function ($queue) {
+            $prefix = strtolower($queue->client_type) === 'priority' ? 'P' : 'R';
+            $queue->lfgofkf = $prefix . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT);
+            return $queue;
+        });
+
+
+
+
+        return view('user.index', compact('upcomingQueues', 'pendingQueues', 'servingQueue'));
     }
 
 
