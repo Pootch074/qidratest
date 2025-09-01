@@ -25,7 +25,7 @@ class UsersSeeder extends Seeder
                 'last_name' => 'Admin',
                 'email' => env('ADMIN_EMAIL', 'cis@admin.com'),
                 'position' => 'Admin',
-                'section_id' => 1,
+                'section_id' => 15,
                 'user_type' => 1,
                 'assigned_category' => null,
                 'step_id' => null,
@@ -41,7 +41,7 @@ class UsersSeeder extends Seeder
                 'last_name' => 'Admin',
                 'email' => env('ADMIN_EMAIL', 'cbss@admin.com'),
                 'position' => 'Admin',
-                'section_id' => 2,
+                'section_id' => 14,
                 'user_type' => 1,
                 'assigned_category' => null,
                 'step_id' => null,
@@ -73,7 +73,7 @@ class UsersSeeder extends Seeder
                 'last_name' => 'User',
                 'email' => 'pu@gmail.com', // change as needed
                 'position' => 'SWOII', // optional
-                'section_id' => 1,
+                'section_id' => 15,
                 'user_type' => 2,
                 'assigned_category' => 'regular',
                 'step_id' => null,
@@ -89,7 +89,7 @@ class UsersSeeder extends Seeder
                 'last_name' => 'User',
                 'email' => 'eu@gmail.com', // change as needed
                 'position' => 'SWOII', // optional
-                'section_id' => 1,
+                'section_id' => 15,
                 'user_type' => 3,
                 'assigned_category' => 'regular',
                 'step_id' => null,
@@ -105,7 +105,7 @@ class UsersSeeder extends Seeder
                 'last_name' => 'User',
                 'email' => 'au@gmail.com', // change as needed
                 'position' => 'SWOII', // optional
-                'section_id' => 1,
+                'section_id' => 15,
                 'user_type' => 4,
                 'assigned_category' => null,
                 'step_id' => null,
@@ -121,7 +121,7 @@ class UsersSeeder extends Seeder
                 'last_name' => 'User',
                 'email' => 'ru@gmail.com', // change as needed
                 'position' => 'SWOII', // optional
-                'section_id' => 1,
+                'section_id' => 15,
                 'user_type' => 5,
                 'assigned_category' => null,
                 'step_id' => null,
@@ -137,7 +137,7 @@ class UsersSeeder extends Seeder
                 'last_name' => 'User',
                 'email' => 'cbss@user.com', // change as needed
                 'position' => 'SWOII', // optional
-                'section_id' => 2,
+                'section_id' => 14,
                 'user_type' => 6,
                 'assigned_category' => null,
                 'step_id' => 5,
