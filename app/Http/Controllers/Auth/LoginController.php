@@ -6,14 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
-// Define the LoginController class extending the base Controller
 class LoginController extends Controller
 {
-    // Show the login form
     public function login()
     {
-        // Return the "auth.login" view
         return view('auth.login');
     }
 
@@ -27,8 +25,26 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            $user = Auth::user();
+            // Get authenticated user with window + step
+            $user = User::with(['window.step'])->find(Auth::id());
+            // ✅ Load user with office/division/section chain
+            $user = User::with('window.step.section.division.office')->find(Auth::id());
 
+            
+            $section  = optional(optional(optional($user->window)->step)->section);
+            $division = optional($section->division);
+            $office   = optional($division->office);
+
+            // Save window_number and step_number into session
+            $request->session()->put('window_number', $user->window->window_number ?? null);
+            $request->session()->put('step_number', $user->window->step->step_number ?? null);
+
+            // ✅ Store in session for later use in views
+            $request->session()->put('section_name',   $section->section_name ?? null);
+            $request->session()->put('division_name',  $division->division_name ?? null);
+            $request->session()->put('field_office',   $office->field_office ?? null);
+            
+            // Redirect based on user_type
             switch ($user->user_type) {
                 case 1:
                     return redirect()->route('admin');
@@ -41,7 +57,7 @@ class LoginController extends Controller
                 case 5:
                     return redirect()->route('release');
                 default:
-                    return redirect()->route('profile'); // fallback if type doesn't match
+                    return redirect()->route('profile');
             }
         }
 
@@ -50,20 +66,12 @@ class LoginController extends Controller
         ])->onlyInput('email');
     }
 
-
-    // Handle logout
     public function logout(Request $request): RedirectResponse
     {
-        // Log the user out
         Auth::logout();
-
-        // Invalidate the current session
         $request->session()->invalidate();
-
-        // Regenerate CSRF token for security
         $request->session()->regenerateToken();
 
-        // Redirect user to homepage
         return redirect('/');
     }
 }

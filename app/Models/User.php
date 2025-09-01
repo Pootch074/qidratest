@@ -132,4 +132,8 @@ class User extends Authenticatable
     {
         return $query->where('user_type', self::TYPE_RELEASE);
     }
+    public function window()
+    {
+        return $this->belongsTo(Window::class, 'window_id');
+    }
 }

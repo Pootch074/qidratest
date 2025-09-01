@@ -15,13 +15,9 @@
 
 
 
-                {{-- @forelse(($upcoming ?? collect()) as $txn)
-                    <div class="bg-white shadow rounded p-2 text-center font-semibold mb-2">
-                        {{ $txn->queue_number }}
-                    </div>
-                @empty
-                    <p class="text-center text-gray-500 italic mt-4">No upcoming</p>
-                @endforelse --}}
+
+
+
 
 
                 
@@ -40,14 +36,21 @@
         {{-- SERVING --}}
         <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
             <div class="bg-[#1a1172] text-white text-center font-bold py-2">
-                SERVING STEP 2 WINDOW 2
+
+                @if(session()->has('window_number') || session()->has('step_number'))
+                    STEP {{ session('step_number') }}
+                    WINDOW {{ session('window_number') }}
+                @endif
+                
             </div>
 
             <div class="flex-1 flex flex-col items-center justify-center bg-[#f5f8fd]">
                 <div class="text-center font-bold space-y-1">
-                    <p>DSWD FOXI</p>
-                    <p>PROTECTIVE SERVICE DIVISION</p>
-                    <p>CRISIS INTERVENTION SECTION</p>
+                <p>{{ strtoupper(session('field_office')) }}</p>
+                <p>{{ strtoupper(session('division_name')) }}</p>
+                <p>{{ strtoupper(session('section_name')) }}</p>
+
+
                 </div>
             </div>
 

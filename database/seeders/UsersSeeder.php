@@ -30,7 +30,7 @@ class UsersSeeder extends Seeder
                 'window_id' => null,
                 'status' => 1,
                 'email_verified_at' => Carbon::now(),
-                'password' => Hash::make(env('ADMIN_PASSWORD', 'A7X9B2KQ')),
+                'password' => Hash::make('password'),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
