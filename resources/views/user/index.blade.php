@@ -73,21 +73,18 @@
         Serving Queue
     </div>
 
-{{-- Actual Queue Number --}}
-<div class="w-full p-6 bg-yellow-100 border-2 border-yellow-400 rounded-md text-center text-4xl font-bold mt-0">
-    @forelse($servingQueue as $queue)
-        <div class="bg-white p-2 my-1 rounded shadow text-center font-bold">
-            {{ $queue->lfgofkf }}
-        </div>
-    @empty
-        <div class="text-gray-400 text-center py-4">
-            No pending queues
-        </div>
-    @endforelse
-</div>
-
-
-
+    {{-- Actual Queue Number --}}
+    <div class="w-full p-6 bg-yellow-100 border-2 border-yellow-400 rounded-md text-center text-4xl font-bold mt-0">
+        @forelse($servingQueue as $queue)
+            <div class="bg-white p-2 my-1 rounded shadow text-center font-bold">
+                {{ $queue->lfgofkf }}
+            </div>
+        @empty
+            <div class="text-gray-400 text-center py-4">
+                No serving queues
+            </div>
+        @endforelse
+    </div>
 </div>
 
 
