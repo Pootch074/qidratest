@@ -17,10 +17,16 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('email')->unique();
             $table->string('position')->nullable();
-            $table->tinyInteger('user_type')->default(0);
+
+            $table->unsignedBigInteger('section_id')->nullable();
+            $table->foreign('section_id')->references('id')->on('sections')->onDelete('set null');
+
+            $table->tinyInteger('user_type')->nullable();
             $table->enum('assigned_category', ['regular', 'priority'])->nullable();
+            
             $table->unsignedBigInteger('window_id')->nullable();
-            $table->foreign('window_id')->references('id')->on('windows')->onDelete('set null'); // optional: if a window is deleted, set null
+            $table->foreign('window_id')->references('id')->on('windows')->onDelete('set null');
+            
             $table->tinyInteger('status')->default(1);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

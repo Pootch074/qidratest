@@ -12,10 +12,14 @@ class User extends Authenticatable
     use HasFactory, Notifiable, SoftDeletes;
 
     const TYPE_ADMIN = 1;
+    const TYPE_USER = 6;
+    const TYPE_PACD = 7;
+
     const TYPE_PREASSESS = 2;
     const TYPE_ENCODE = 3;
     const TYPE_ASSESSMENT = 4;
     const TYPE_RELEASE = 5;
+    
 
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
@@ -73,6 +77,9 @@ class User extends Authenticatable
     {
         return [
             self::TYPE_ADMIN      => 'Admin',
+            self::TYPE_USER    => 'User',
+            self::TYPE_PACD    => 'PACD',
+
             self::TYPE_PREASSESS  => 'Preassess',
             self::TYPE_ENCODE     => 'Encode',
             self::TYPE_ASSESSMENT => 'Assessment',
@@ -131,6 +138,14 @@ class User extends Authenticatable
     public function scopeReleases($query)
     {
         return $query->where('user_type', self::TYPE_RELEASE);
+    }
+    public function user($query)
+    {
+        return $query->where('user_type', self::TYPE_USER);
+    }
+    public function pacd($query)
+    {
+        return $query->where('user_type', self::TYPE_PACD);
     }
     public function window()
     {

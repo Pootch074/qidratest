@@ -56,8 +56,13 @@ class LoginController extends Controller
                     return redirect()->route('assessment');
                 case 5:
                     return redirect()->route('release');
+                case 6:
+                    return redirect()->route('user');
+                case 7:
+                    return redirect()->route('pacd');
+                    
                 default:
-                    return redirect()->route('profile');
+                    return redirect()->route('login');
             }
         }
 

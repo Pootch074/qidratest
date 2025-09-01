@@ -15,10 +15,16 @@ return new class extends Migration
             $table->id();
             $table->integer('queue_number');
             $table->enum('client_type', ['priority', 'regular']);
+
+            $table->unsignedBigInteger('step_id')->nullable();
+            $table->foreign('step_id')->references('id')->on('steps')->onDelete('set null');
+            
             $table->unsignedBigInteger('window_id')->nullable();
-            $table->foreign('window_id')->references('id')->on('windows')->onDelete('set null'); // optional: if a window is deleted, set null
-
-
+            $table->foreign('window_id')->references('id')->on('windows')->onDelete('set null');
+            
+            $table->unsignedBigInteger('section_id')->nullable();
+            $table->foreign('section_id')->references('id')->on('sections')->onDelete('set null');
+            
             $table->enum('queue_status', ['waiting', 'pending', 'serving'])->default('waiting');
             $table->timestamps(); // created_at & updated_at
         });

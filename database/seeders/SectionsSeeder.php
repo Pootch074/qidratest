@@ -20,10 +20,18 @@ class SectionsSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $sections = [
-            'section_name' => 'Crisis Intervention Section',
-            'division_id' => 1,
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now()
+            [
+                'section_name' => 'Crisis Intervention Section',
+                'division_id' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ],
+            [
+               'section_name' => 'Community-Based Services Section',
+                'division_id' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now() 
+            ],
         ];
         DB::table('sections')->insert($sections);
     }

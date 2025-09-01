@@ -12,7 +12,16 @@ class Transaction extends Model
     protected $fillable = [
         'queue_number',
         'client_type',
+        'step_id',
         'window_id',
+        'section_id',
         'queue_status',
     ];
+
+    // In Transaction.php (Model)
+    public function section()
+    {
+        return $this->belongsTo(Section::class);
+    }
+
 }

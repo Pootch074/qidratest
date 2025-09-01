@@ -6,6 +6,7 @@ use App\Models\Lgu;
 use App\Models\Province;
 use App\Models\Region;
 use App\Models\User;
+use App\Models\Section;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
@@ -18,6 +19,11 @@ class UsersController extends Controller
 
         // Return the admin/index.blade.php view
         return view('admin.index', compact('transactions'));
+    }
+    public function pacd()
+    {
+        $sections = Section::orderBy('section_name')->get(['id','section_name']);
+        return view('pacd.index', compact('sections'));
     }
     public function preassess()
     {
@@ -34,6 +40,10 @@ class UsersController extends Controller
     public function release()
     {
         return view('release.index');
+    }
+    public function user()
+    {
+        return view('user.index');
     }
 
     public function users()
