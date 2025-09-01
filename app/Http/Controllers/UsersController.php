@@ -9,16 +9,31 @@ use App\Models\User;
 use App\Models\Section;
 use Illuminate\Http\Request;
 
+
 class UsersController extends Controller
 {
 
     public function admin()
     {
-        // Fetch transactions for your table
-        $transactions = \App\Models\Transaction::orderBy('queue_number', 'desc')->get();
+        $user = auth()->user();
+        $userColumns = [
+            'first_name'       => 'First Name',
+            'last_name'        => 'Last Name',
+            'email'            => 'Email',
+            'position'         => 'Position',
+            'user_type'        => 'User Type',
+            'assigned_category'=> 'Category',
+            'window_id'        => 'Window ID',
+        ];
 
-        // Return the admin/index.blade.php view
-        return view('admin.index', compact('transactions'));
+        $users = User::where('section_id', $user->section_id)
+            ->latest()
+            ->get();
+
+
+
+        $transactions = \App\Models\Transaction::orderBy('queue_number', 'desc')->get();
+        return view('admin.index', compact('transactions', 'users', 'userColumns'));
     }
     public function pacd()
     {
