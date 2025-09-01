@@ -5,6 +5,7 @@ use App\Http\Controllers\UsersController;
 use App\Http\Middleware\CheckUserType;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TransactionsController;
+use App\Http\Controllers\EncodersController;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -50,4 +51,5 @@ Route::middleware(['auth', CheckUserType::class . ':1,2,3,4,5'])->group(function
 Route::middleware(['auth'])->group(function () {
     Route::get('admin/users', [UsersController::class, 'users'])->name('admin.users');
     Route::post('admin/users', [UsersController::class, 'store'])->name('admin.store');
+    // Route::get('/encode', [EncodersController::class, 'index'])->name('encode.index');
 });
