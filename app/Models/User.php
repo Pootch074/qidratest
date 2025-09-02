@@ -149,10 +149,14 @@ class User extends Authenticatable
     }
     public function window()
     {
-        return $this->belongsTo(Window::class, 'window_id');
+        return $this->belongsTo(Window::class);
     }
     public function step()
     {
-        return $this->belongsTo(Step::class, 'step_id');
+        return $this->belongsTo(Step::class);
+    }
+    public function section()
+    {
+        return $this->belongsTo(Section::class);
     }
 }

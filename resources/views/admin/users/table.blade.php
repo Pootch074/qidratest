@@ -60,9 +60,11 @@
                     <select name="user_type" required 
                             class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="">-- Select --</option>
-                        <option value="1">Admin</option>
-                        <option value="6">User</option>
+                        @foreach($userTypes as $typeId => $typeName)
+                            <option value="{{ $typeId }}">{{ $typeName }}</option>
+                        @endforeach
                     </select>
+
                 </div>
             </div>
 
@@ -83,9 +85,10 @@
                             class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="">-- Select Step --</option>
                         @foreach($steps as $step)
-                            <option value="{{ $step->id }}">{{ $step->name }}</option>
+                            <option value="{{ $step->id }}">{{ $step->step_number }} - {{ $step->name }}</option>
                         @endforeach
                     </select>
+
                 </div>
             </div>
 
@@ -99,6 +102,7 @@
                         <option value="{{ $window->id }}">{{ $window->window_number }}</option>
                     @endforeach
                 </select>
+
             </div>
 
             {{-- Password --}}
@@ -138,8 +142,15 @@
             @forelse ($users as $u)
                 <tr class="hover:bg-indigo-50 transition duration-200">
                     @foreach($userColumns as $field => $label)
-                        <td class="px-6 py-3 text-gray-700">{{ $u->$field ?? '—' }}</td>
+                        <td class="px-6 py-3 text-gray-700">
+                            @if($field === 'user_type')
+                                {{ $u->getUserTypeName() }}
+                            @else
+                                {{ $u->$field ?? '—' }}
+                            @endif
+                        </td>
                     @endforeach
+
 
                     {{-- Assigned Step --}}
                     <td class="px-6 py-3 font-medium text-gray-700">
@@ -221,15 +232,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td class="px-6 py-4">${u.last_name}</td>
                     <td class="px-6 py-4">${u.email}</td>
                     <td class="px-6 py-4">${u.position}</td>
-                    <td class="px-6 py-4">${u.user_type}</td>
+                    <td class="px-6 py-4">${u.user_type_name}</td>
                     <td class="px-6 py-4">${u.assigned_category}</td>
-                    <td class="px-6 py-4">${u.window_id}</td>
-                    <td class="px-6 py-4">${u.step?.name ?? '—'}</td>
+                    <td class="px-6 py-4">${u.window_number ?? '—'}</td>
+                    <td class="px-6 py-4">${u.step_number ?? '—'}</td>
                     <td class="px-6 py-4 space-x-2">
                         <a href="#" class="text-green-600 hover:underline">Edit</a>
                         <button onclick="deleteUser(${u.id})" class="text-red-600 hover:underline">Delete</button>
                     </td>
                 </tr>`;
+
                 document.querySelector('#usersTable tbody').insertAdjacentHTML('beforeend', row);
                 closeModal();
                 this.reset();

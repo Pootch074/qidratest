@@ -94,98 +94,113 @@
 
 
         {{-- SERVING --}}
-        <div class="w-full flex flex-col bg-white rounded-md shadow overflow-hidden">
+<div class="w-full flex flex-col bg-white rounded-md shadow overflow-hidden">
 
-            {{-- Top Bar: Step & Window --}}
-            <div class="bg-[#1a1172] text-white text-center font-bold py-2">
-                @if(session()->has('window_number') || session()->has('step_number'))
-                    STEP {{ session('step_number') }}
-                    WINDOW {{ session('window_number') }}
-                @endif
-            </div>
+    {{-- Top Bar: Step & Window --}}
+    <div class="bg-[#1a1172] text-white text-center font-bold py-2">
+        @if($stepNumber || $windowNumber)
+        STEP {{ $stepNumber ?? '-' }}
+        WINDOW {{ $windowNumber ?? '-' }}
+    @endif
+    </div>
 
-            {{-- Field Office / Division / Section Info --}}
-            <div class="bg-[#f5f8fd] p-4 text-center font-bold space-y-1 border-b border-gray-200">
-                <p class="mb-0">{{ strtoupper(session('field_office')) }}</p>
-                <p class="mb-0">{{ strtoupper(session('division_name')) }}</p>
-                <p class="mb-0">{{ strtoupper(session('section_name')) }}</p>
-            </div>
+    {{-- Field Office / Division / Section Info --}}
+    <div class="bg-[#f5f8fd] p-4 text-center font-bold space-y-1 border-b border-gray-200">
+        <p class="mb-0">{{ strtoupper($fieldOffice ?? '-') }}</p>
+    <p class="mb-0">{{ strtoupper($divisionName ?? '-') }}</p>
+    <p class="mb-0">{{ strtoupper($sectionName ?? '-') }}</p>
+    </div>
 
-            {{-- Currently Serving Queue --}}
-            <div class="flex flex-col items-center justify-start bg-[#f0f4ff]">
-                {{-- Serving Queue Label / Tech Info --}}
-                <div class="w-full p-6 bg-yellow-100 border-2 border-yellow-400 rounded-md text-center text-4xl font-bold mt-0">
-                    Serving Queue
-                </div>
-
-                {{-- Actual Queue Number --}}
-                <div class="w-full p-6 bg-yellow-100 border-2 border-yellow-400 rounded-md text-center text-4xl font-bold mt-0">
-                    @forelse($servingQueue as $queue)
-                        <div class="bg-white p-2 my-1 rounded shadow text-center font-bold">
-                            {{ $queue->lfgofkf }}
-                        </div>
-                    @empty
-                        <div class="text-gray-400 text-center py-4">
-                            No serving queues
-                        </div>
-                    @endforelse
-                </div>
-            </div>
-
-
-            {{-- Bottom Bar --}}
-            <div class="flex items-center justify-between bg-white p-2 border-t border-gray-200">
-
-                {{-- Buttons Component --}}
-                <div class="flex space-x-2">
-                    <button class="bg-red-600 text-white px-4 py-2 rounded-md flex items-center justify-center shadow">
-                        <i class="fas fa-users"></i>
-                    </button>
-                    <button class="bg-gray-400 text-white px-4 py-2 rounded-md shadow">
-                        <i class="fas fa-backward"></i>
-                    </button>
-                    <button class="bg-gray-400 text-white px-4 py-2 rounded-md shadow">
-                        <i class="fas fa-volume-up"></i>
-                    </button>
-                    <button class="bg-gray-400 text-white px-4 py-2 rounded-md shadow">
-                        <i class="fas fa-check"></i>
-                    </button>
-                </div>
-
-            </div>
+    {{-- Currently Serving Queue --}}
+    <div class="flex flex-col items-center justify-start bg-[#f0f4ff]">
+        {{-- Label --}}
+        <div class="w-full p-6 bg-yellow-100 border-2 border-yellow-400 rounded-md text-center text-4xl font-bold mt-0">
+            Serving Queue
         </div>
+
+        {{-- Queue List --}}
+        <div id="serving-queue" class="w-full p-6 bg-yellow-100 border-2 border-yellow-400 rounded-md text-center text-4xl font-bold mt-0 overflow-y-auto max-h-[70vh]">
+            @forelse($servingQueue as $queue)
+                <div class="{{ $queue->style_class }} text-white text-2xl p-2 my-1 rounded shadow text-center font-bold">
+                    {{ $queue->formatted_number }}
+                </div>
+            @empty
+                <div class="text-gray-400 text-center py-4">
+                    No serving queues
+                </div>
+            @endforelse
+        </div>
+    </div>
+
+    {{-- Bottom Bar / Actions --}}
+    <div class="flex items-center justify-between bg-white p-2 border-t border-gray-200">
+        <div class="flex space-x-2">
+            <button class="bg-red-600 text-white px-4 py-2 rounded-md flex items-center justify-center shadow">
+                <i class="fas fa-users"></i>
+            </button>
+            <button class="bg-gray-400 text-white px-4 py-2 rounded-md shadow">
+                <i class="fas fa-backward"></i>
+            </button>
+            <button class="bg-gray-400 text-white px-4 py-2 rounded-md shadow">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <button class="bg-gray-400 text-white px-4 py-2 rounded-md shadow">
+                <i class="fas fa-check"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
     </div>
 </div>
 @endsection
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    function renderQueue(list, container) {
-        if (list.length === 0) {
-            $(container).html('<div class="text-gray-400 text-center py-4">No queues</div>');
-        } else {
-            let html = '';
-            list.forEach(queue => {
-                html += `
-                    <div class="${queue.style_class} text-white text-2xl p-2 my-1 rounded shadow text-center font-bold">
+function renderQueue(list, container) {
+    if (!list || list.length === 0) {
+        $(container).html('<div class="text-gray-400 text-center py-4">No queues</div>');
+    } else {
+        let html = '';
+        list.forEach(queue => {
+            html += `<div class="${queue.style_class} text-white text-2xl p-2 my-1 rounded shadow text-center font-bold">
                         ${queue.formatted_number}
-                    </div>`;
-            });
-            $(container).html(html);
-        }
-    }
-
-    function fetchQueues() {
-        $.get("{{ route('queues.data') }}", function(data) {
-            renderQueue(data.regularQueues, '#upcoming-regular');
-            renderQueue(data.priorityQueues, '#upcoming-priority');
-            renderQueue(data.pendingRegular, '#pending-regular');
-            renderQueue(data.pendingPriority, '#pending-priority');
+                     </div>`;
         });
+        $(container).html(html);
     }
+}
 
-    // Fetch initially and then every 5 seconds
-    fetchQueues();
-    setInterval(fetchQueues, 1000);
+function fetchQueues() {
+    $.get("{{ route('queues.data') }}", function(data) {
+        // Upcoming
+        renderQueue(data.regularQueues, '#upcoming-regular');
+        renderQueue(data.priorityQueues, '#upcoming-priority');
+
+        // Pending
+        renderQueue(data.pendingRegular, '#pending-regular');
+        renderQueue(data.pendingPriority, '#pending-priority');
+
+        // Serving
+        renderQueue(data.servingQueue, '#serving-queue');
+
+        // Optional: Update step, window, division, section, and field office info
+        if(data.userInfo) {
+            $('#step-number').text(data.userInfo.stepNumber);
+            $('#window-number').text(data.userInfo.windowNumber);
+            $('#section-name').text(data.userInfo.sectionName);
+            $('#division-name').text(data.userInfo.divisionName);
+            $('#field-office').text(data.userInfo.fieldOffice);
+        }
+    });
+}
+
+// Initial load
+fetchQueues();
+
+// Refresh every 5 seconds
+setInterval(fetchQueues, 5000);
 </script>
+
+
 

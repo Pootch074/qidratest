@@ -64,7 +64,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('admin/users', [UsersController::class, 'store'])->name('admin.store');
     Route::get('pacd', [PacdController::class, 'index'])->name('pacd');
+
     Route::post('/pacd/generate/{section}', [PacdController::class, 'generateQueue'])->name('pacd.generate');
+
     Route::post('/admin/users/store', [UsersController::class, 'store'])->name('admin.store');
 
     Route::get('/queues/data', [UsersController::class, 'fetchQueues'])->name('queues.data');

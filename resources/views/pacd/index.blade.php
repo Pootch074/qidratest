@@ -1,36 +1,41 @@
 @extends('layouts.main')
-@section('title', 'Admin')
+@section('title', 'Transactions')
 @section('header')
 @endsection
 
 @section('content')
 <div class="w-full p-4 bg-[#cbdce8]" x-data="{ showModal: false, selectedSection: null }">
+    @php $authUser = Auth::user(); @endphp
 
     <div class="p-4">
-        {{-- Dashboard cards --}}
+        {{-- Dashboard / Section Buttons --}}
         <div class="grid grid-cols-3 gap-4 mb-6">
             @foreach($sections as $section)
-                <form id="form-{{ $section->id }}" 
-                      action="{{ route('pacd.generate', $section->id) }}" 
-                      method="POST" 
-                      class="section-form">
-                    @csrf
-                    <input type="hidden" name="client_type" id="client_type_{{ $section->id }}">
-                    <button type="button"
-                        @click="showModal = true; selectedSection = {{ $section->id }}"
-                        class="w-full h-24 flex items-center justify-center rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-bold shadow-md transition">
-                        {{ strtoupper($section->section_name) }}
-                    </button>
-                </form>
+                @if($authUser->user_type == 7 || $authUser->section_id == $section->id)
+                    <form id="form-{{ $section->id }}" 
+                          action="{{ route('pacd.generate', $section->id) }}" 
+                          method="POST" 
+                          class="section-form">
+                        @csrf
+                        <input type="hidden" name="client_type" id="client_type_{{ $section->id }}">
+                        <button type="button"
+                                @click="showModal = true; selectedSection = {{ $section->id }}"
+                                class="w-full h-24 flex items-center justify-center rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-bold shadow-md transition">
+                            {{ strtoupper($section->section_name) }}
+                        </button>
+                    </form>
+                @endif
             @endforeach
         </div>
 
+        {{-- Success Message --}}
         @if(session('success'))
             <div class="mt-4 p-2 bg-green-100 text-green-800 rounded">
                 {{ session('success') }}
             </div>
         @endif
 
+        {{-- Transactions Table --}}
         <div class="bg-gray-50 rounded-lg p-4 overflow-x-auto shadow-md">
             <h2 class="text-xl font-semibold text-gray-700 mb-4">Transactions</h2>
             <table class="w-full text-sm text-left rtl:text-right text-gray-500">
@@ -56,9 +61,9 @@
                                 {{ ucfirst($transaction->client_type) }}
                             </td>
 
-                            {{-- Step --}}
+                            {{-- Step Number --}}
                             <td class="px-6 py-4">
-                                {{ $transaction->step_id ?? '—' }}
+                                {{ $transaction->step->step_number ?? '—' }}
                             </td>
 
                             {{-- Section --}}
@@ -83,7 +88,7 @@
         </div>
     </div>
 
-    {{-- Modal --}}
+    {{-- Client Type Modal --}}
     <div x-show="showModal" 
          class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50"
          x-cloak>

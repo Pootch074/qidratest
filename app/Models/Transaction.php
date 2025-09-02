@@ -42,4 +42,11 @@ class Transaction extends Model
 
         return $styleMap[strtolower($this->client_type)] ?? 'bg-gray-300 text-black';
     }
+
+
+
+    public function step()
+    {
+        return $this->belongsTo(Step::class);
+    }
 }

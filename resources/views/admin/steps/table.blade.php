@@ -38,13 +38,33 @@
                     <label for="step_name" class="block text-sm font-medium text-gray-700">Step Name</label>
                     <select id="step_name" name="step_name" 
                             class="mt-1 block w-full border rounded-md p-2">
-                        <option value="None">None</option> 
-                        <option value="Encode">Encode</option>
-                        <option value="Initial Review">Initial Review</option>
-                        <option value="Verification">Verification</option>
-                        <option value="Assesment">Assesment</option>
-                        <option value="Approval">Approval</option>
+                        <option value="AppealProcessing">Appeal / Complaint Processing</option>
+                        <option value="Assessment">Assessment</option>
+                        <option value="CaseConference">Case Conference</option>
+                        <option value="CaseStudyPreparation">Case Study Preparation</option>
+                        <option value="Counseling">Counseling</option>
+                        <option value="DataUpdate">Data Update / Maintenance</option>
+                        <option value="Documentation">Documentation</option>
+                        <option value="Encode">Encoding</option>
+                        <option value="EmergencyResponse">Emergency / Urgent Action</option>
+                        <option value="EvaluationReport">Evaluation Report</option>
+                        <option value="FollowUp">Follow-up / Monitoring</option>
+                        <option value="HomeVisit">Home Visit</option>
+                        <option value="InitialInterview">Initial Interview</option>
+                        <option value="None">None</option>
+                        <option value="Orientation">Orientation / Briefing</option>
+                        <option value="Payment">Payment</option>
+                        <option value="Preassess">Pre-assessment</option>
                         <option value="Release">Release</option>
+                        <option value="Referral">Referral to Other Agencies</option>
+                        <option value="Reassessment">Re-assessment</option>
+                        <option value="Validation">Validation</option>
+                        <option value="Verification">Verification</option>
+                        <option value="Approval">Approval</option>
+                        <option value="ClientFeedback">Client Feedback / Survey</option>
+                        <option value="Closure">Case Closure</option>
+
+
                         {{-- add more if needed --}}
                     </select>
                 </div>

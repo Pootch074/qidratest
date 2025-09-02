@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Section;
+use App\Models\Division;
 use App\Models\Step;
 use App\Models\Window;
 use App\Models\Transaction;
@@ -72,7 +73,14 @@ class UsersController extends Controller
 
     public function users()
     {
-        $user = Auth::user();
+        $authUser = Auth::user();
+        $sectionId = $authUser->section_id;
+
+        // Fetch users in the same section with step and window
+        $users = User::with(['step', 'window'])
+            ->where('section_id', $sectionId)
+            ->latest()
+            ->get();
 
         $userColumns = [
             'first_name'        => 'First Name',
@@ -83,24 +91,25 @@ class UsersController extends Controller
             'assigned_category' => 'Category',
         ];
 
-        $users = User::with(['step', 'window'])
-            ->where('section_id', $user->section_id)
-            ->latest()
-            ->get();
+        // Steps that belong to the user's section
+        $steps = Step::where('section_id', $sectionId)->get();
 
-
-        // Fetch steps that belong to the user's section
-        $steps = Step::whereHas('section', function ($query) use ($user) {
-            $query->where('id', $user->section_id);
+        // Windows where step.section_id = user's section_id
+        $windows = Window::whereHas('step', function ($q) use ($sectionId) {
+            $q->where('section_id', $sectionId);
         })->get();
 
-        // Fetch windows that belong to steps in the user's section
-        $windows = Window::whereHas('step', function ($q) use ($user) {
-            $q->where('section_id', $user->section_id);
-        })->get();
+        // User types excluding Admin
+        $userTypes = collect(User::getUserTypes())
+            ->except([User::TYPE_ADMIN]);
 
-
-        return view('admin.users.table', compact('users', 'userColumns', 'steps', 'windows'));
+        return view('admin.users.table', compact(
+            'users',
+            'userColumns',
+            'steps',
+            'windows',
+            'userTypes'
+        ));
     }
 
 
@@ -111,11 +120,10 @@ class UsersController extends Controller
 
 
 
-    public function pacd()
-    {
-        $sections = Section::orderBy('section_name')->get(['id', 'section_name']);
-        return view('pacd.index', compact('sections'));
-    }
+
+
+
+
     public function preassess()
     {
         return view('preassess.index');
@@ -134,124 +142,137 @@ class UsersController extends Controller
     }
     public function user()
     {
-        $sectionId = Auth::user()->section_id;
+        $user = Auth::user();
+        $sectionId = $user->section_id;
 
-        // Upcoming queues: status = 'waiting'
+        // ---------- UPCOMING QUEUES ----------
         $upcomingQueues = Transaction::where('section_id', $sectionId)
             ->where('queue_status', 'waiting')
             ->orderBy('created_at', 'asc')
             ->get();
 
-        // Split into regular and priority queues
         $regularQueues = $upcomingQueues->filter(fn($q) => strtolower($q->client_type) === 'regular');
         $priorityQueues = $upcomingQueues->filter(fn($q) => strtolower($q->client_type) === 'priority');
 
-        // Format each queue
-        $regularQueues->transform(function ($queue) {
-            $prefix = 'R';
-            $queue->formatted_number = $prefix . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT);
-            $queue->style_class = 'bg-[#150e60]'; // dark blue for regular
-            return $queue;
-        });
+        $regularQueues->transform(fn($q) => tap($q, function ($q) {
+            $q->formatted_number = 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT);
+            $q->style_class = 'bg-[#150e60]';
+        }));
 
-        $priorityQueues->transform(function ($queue) {
-            $prefix = 'P';
-            $queue->formatted_number = $prefix . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT);
-            $queue->style_class = 'bg-red-600'; // red for priority
-            return $queue;
-        });
+        $priorityQueues->transform(fn($q) => tap($q, function ($q) {
+            $q->formatted_number = 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT);
+            $q->style_class = 'bg-red-600';
+        }));
 
+        // ---------- PENDING QUEUES ----------
         $pendingQueues = Transaction::where('section_id', $sectionId)
             ->where('queue_status', 'pending')
             ->orderBy('created_at', 'asc')
             ->get();
 
-        // Split into regular and priority queues
         $pendingRegularQueues = $pendingQueues->filter(fn($q) => strtolower($q->client_type) === 'regular');
         $pendingPriorityQueues = $pendingQueues->filter(fn($q) => strtolower($q->client_type) === 'priority');
 
-        // Format each queue
-        $pendingRegularQueues->transform(function ($queue) {
-            $prefix = 'R';
-            $queue->formatted_number = $prefix . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT);
-            $queue->style_class = 'bg-[#150e60]'; // dark blue
-            return $queue;
-        });
+        $pendingRegularQueues->transform(fn($q) => tap($q, function ($q) {
+            $q->formatted_number = 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT);
+            $q->style_class = 'bg-[#150e60]';
+        }));
 
-        $pendingPriorityQueues->transform(function ($queue) {
-            $prefix = 'P';
-            $queue->formatted_number = $prefix . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT);
-            $queue->style_class = 'bg-red-600'; // red
-            return $queue;
-        });
+        $pendingPriorityQueues->transform(fn($q) => tap($q, function ($q) {
+            $q->formatted_number = 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT);
+            $q->style_class = 'bg-red-600';
+        }));
 
+        // --- Fetch serving queue ---
         $servingQueue = Transaction::where('section_id', $sectionId)
             ->where('queue_status', 'serving')
             ->orderBy('updated_at', 'desc')
             ->get();
 
+        // --- Get logged-in user's step number, window number, and field office ---
+        $stepNumber = $user->step ? $user->step->step_number : null;
+        $windowNumber = $user->window ? $user->window->window_number : null;
+
+        // Field office via section → division → office
+        $fieldOffice = optional($user->section)
+            ->division
+            ->office
+            ->field_office ?? null;
+
+        $divisionName = optional($user->section)->division->division_name ?? null;
+        $sectionName = optional($user->section)->section_name ?? null;
+
+        // --- Pass all to view ---
         return view('user.index', compact(
             'regularQueues',
             'priorityQueues',
             'pendingRegularQueues',
             'pendingPriorityQueues',
-            'servingQueue'
+            'servingQueue',
+            'stepNumber',
+            'windowNumber',
+            'fieldOffice',
+            'divisionName',
+            'sectionName'
         ));
     }
 
+
+
     public function fetchQueues()
     {
-        $sectionId = Auth::user()->section_id;
+        $user = Auth::user();
+        $sectionId = $user->section_id;
+
+        // Helper function to format queues
+        $formatQueues = function ($queues) {
+            return $queues->map(function ($q) {
+                $q->formatted_number = strtoupper(substr($q->client_type, 0, 1))
+                    . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT);
+                $q->style_class = strtolower($q->client_type) === 'priority' ? 'bg-red-600' : 'bg-[#150e60]';
+                return $q;
+            })->values();
+        };
 
         // Upcoming
-        $upcomingQueues = Transaction::where('section_id', $sectionId)
+        $upcoming = Transaction::where('section_id', $sectionId)
             ->where('queue_status', 'waiting')
-            ->orderBy('created_at', 'asc')
-            ->get();
-
-        $regularQueues = $upcomingQueues->filter(fn($q) => strtolower($q->client_type) === 'regular');
-        $priorityQueues = $upcomingQueues->filter(fn($q) => strtolower($q->client_type) === 'priority');
-
-        $regularQueues->transform(function ($queue) {
-            $queue->formatted_number = 'R' . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT);
-            $queue->style_class = 'bg-[#150e60]';
-            return $queue;
-        });
-
-        $priorityQueues->transform(function ($queue) {
-            $queue->formatted_number = 'P' . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT);
-            $queue->style_class = 'bg-red-600';
-            return $queue;
-        });
+            ->orderBy('created_at', 'asc')->get();
+        $regularQueues = $formatQueues($upcoming->where('client_type', 'regular'));
+        $priorityQueues = $formatQueues($upcoming->where('client_type', 'priority'));
 
         // Pending
-        $pendingQueues = Transaction::where('section_id', $sectionId)
+        $pending = Transaction::where('section_id', $sectionId)
             ->where('queue_status', 'pending')
-            ->orderBy('created_at', 'asc')
-            ->get();
+            ->orderBy('created_at', 'asc')->get();
+        $pendingRegular = $formatQueues($pending->where('client_type', 'regular'));
+        $pendingPriority = $formatQueues($pending->where('client_type', 'priority'));
 
-        $pendingRegular = $pendingQueues->filter(fn($q) => strtolower($q->client_type) === 'regular');
-        $pendingPriority = $pendingQueues->filter(fn($q) => strtolower($q->client_type) === 'priority');
+        // Serving
+        $servingQueue = $formatQueues(Transaction::where('section_id', $sectionId)
+            ->where('queue_status', 'serving')
+            ->orderBy('updated_at', 'desc')
+            ->get());
 
-        $pendingRegular->transform(function ($queue) {
-            $queue->formatted_number = 'R' . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT);
-            $queue->style_class = 'bg-[#150e60]';
-            return $queue;
-        });
-
-        $pendingPriority->transform(function ($queue) {
-            $queue->formatted_number = 'P' . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT);
-            $queue->style_class = 'bg-red-600';
-            return $queue;
-        });
+        // User info
+        $userInfo = [
+            'stepNumber' => optional($user->step)->step_number ?? 'N/A',
+            'windowNumber' => optional($user->window)->window_number ?? 'N/A',
+            'sectionName' => optional($user->section)->section_name ?? 'N/A',
+            'divisionName' => optional(optional($user->section)->division)->division_name ?? 'N/A',
+            'fieldOffice' => $user->field_office ?? 'N/A',
+        ];
 
         return response()->json([
-            'regularQueues' => $regularQueues->values(),
-            'priorityQueues' => $priorityQueues->values(),
-            'pendingRegular' => $pendingRegular->values(),
-            'pendingPriority' => $pendingPriority->values(),
+            'regularQueues' => $regularQueues,
+            'priorityQueues' => $priorityQueues,
+            'pendingRegular' => $pendingRegular,
+            'pendingPriority' => $pendingPriority,
+            'servingQueue' => $servingQueue,
+            'userInfo' => $userInfo
         ]);
     }
+
 
 
 
@@ -284,7 +305,17 @@ class UsersController extends Controller
 
         return response()->json([
             'success' => true,
-            'user' => $user
+            'user' => [
+                'id' => $user->id,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'email' => $user->email,
+                'position' => $user->position,
+                'user_type_name' => $user->userType->name ?? '—',
+                'assigned_category' => $user->assigned_category,
+                'step_number' => $user->step->step_number ?? '—',
+                'window_number' => $user->window->window_number ?? '—',
+            ]
         ]);
     }
 }
