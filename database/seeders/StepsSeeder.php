@@ -49,22 +49,22 @@ class StepsSeeder extends Seeder
             ],
             [
                 'step_number' => 1,
-                'step_name' => null,
-                'section_id' => 2,
+                'step_name' => 'None',
+                'section_id' => 14,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ],
             [
                 'step_number' => 2,
-                'step_name' => null,
-                'section_id' => 2,
+                'step_name' => 'None',
+                'section_id' => 14,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ],
             [
                 'step_number' => 3,
-                'step_name' => null,
-                'section_id' => 2,
+                'step_name' => 'None',
+                'section_id' => 14,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ]
