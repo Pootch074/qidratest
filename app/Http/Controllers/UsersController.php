@@ -18,29 +18,46 @@ class UsersController extends Controller
     public function admin()
     {
         $user = Auth::user();
+        $sectionId = $user->section_id;
 
-        $waitingCount  = Transaction::where('queue_status', 'waiting')->count();
-        $pendingCount  = Transaction::where('queue_status', 'pending')->count();
-        $servingCount  = Transaction::where('queue_status', 'serving')->count();
+        // ✅ Transaction counts filtered by user's section
+        $waitingCount  = Transaction::where('queue_status', 'waiting')
+            ->where('section_id', $sectionId)
+            ->count();
+        $pendingCount  = Transaction::where('queue_status', 'pending')
+            ->where('section_id', $sectionId)
+            ->count();
+        $servingCount  = Transaction::where('queue_status', 'serving')
+            ->where('section_id', $sectionId)
+            ->count();
 
-        $priorityCount = Transaction::where('client_type', 'priority')->count();
-        $regularCount  = Transaction::where('client_type', 'regular')->count();
+        $priorityCount = Transaction::where('client_type', 'priority')
+            ->where('section_id', $sectionId)
+            ->count();
+        $regularCount  = Transaction::where('client_type', 'regular')
+            ->where('section_id', $sectionId)
+            ->count();
 
+        // ✅ Users in the same section
         $userColumns = [
-            'first_name'       => 'First Name',
-            'last_name'        => 'Last Name',
-            'email'            => 'Email',
-            'position'         => 'Position',
-            'user_type'        => 'User Type',
+            'first_name'        => 'First Name',
+            'last_name'         => 'Last Name',
+            'email'             => 'Email',
+            'position'          => 'Position',
+            'user_type'         => 'User Type',
             'assigned_category' => 'Category',
-            'window_id'        => 'Window ID',
+            'window_id'         => 'Window ID',
         ];
 
-        $users = User::where('section_id', $user->section_id)
+        $users = User::where('section_id', $sectionId)
             ->latest()
             ->get();
 
-        $transactions = Transaction::orderBy('queue_number', 'desc')->get();
+        // ✅ Transactions filtered by section and ordered by latest queue_number
+        $transactions = Transaction::where('section_id', $sectionId)
+            ->orderBy('queue_number', 'desc')
+            ->get();
+
         return view('admin.index', compact(
             'transactions',
             'users',
@@ -52,6 +69,7 @@ class UsersController extends Controller
             'regularCount'
         ));
     }
+
     public function users()
     {
         $user = Auth::user();

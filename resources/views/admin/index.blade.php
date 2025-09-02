@@ -7,47 +7,41 @@
 <div class="w-full p-4 bg-[#cbdce8]">
 
     <div class="p-4 sm:ml-64">
+        {{-- Dashboard cards --}}
+        <div class="grid grid-cols-3 gap-4 mb-6">
 
-{{-- Dashboard cards --}}
-<div class="grid grid-cols-3 gap-4 mb-6">
+            {{-- Waiting Clients --}}
+            <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
+                <p class="text-lg font-semibold text-gray-600">Waiting Clients</p>
+                <p class="text-2xl font-bold text-blue-600">{{ $waitingCount }}</p>
+            </div>
 
-    {{-- Waiting Clients --}}
-    <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
-        <p class="text-lg font-semibold text-gray-600">Waiting Clients</p>
-        <p class="text-2xl font-bold text-blue-600">{{ $waitingCount }}</p>
-    </div>
+            {{-- Pending Clients --}}
+            <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
+                <p class="text-lg font-semibold text-gray-600">Pending Clients</p>
+                <p class="text-2xl font-bold text-yellow-600">{{ $pendingCount }}</p>
+            </div>
 
-    {{-- Pending Clients --}}
-    <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
-        <p class="text-lg font-semibold text-gray-600">Pending Clients</p>
-        <p class="text-2xl font-bold text-yellow-600">{{ $pendingCount }}</p>
-    </div>
+            {{-- Serving Clients --}}
+            <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
+                <p class="text-lg font-semibold text-gray-600">Serving Clients</p>
+                <p class="text-2xl font-bold text-green-600">{{ $servingCount }}</p>
+            </div>
 
-    {{-- Serving Clients --}}
-    <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
-        <p class="text-lg font-semibold text-gray-600">Serving Clients</p>
-        <p class="text-2xl font-bold text-green-600">{{ $servingCount }}</p>
-    </div>
+            {{-- Priority Clients --}}
+            <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
+                <p class="text-lg font-semibold text-gray-600">Priority Clients</p>
+                <p class="text-2xl font-bold text-red-600">{{ $priorityCount }}</p>
+            </div>
 
-    {{-- Priority Clients --}}
-    <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
-        <p class="text-lg font-semibold text-gray-600">Priority Clients</p>
-        <p class="text-2xl font-bold text-red-600">{{ $priorityCount }}</p>
-    </div>
-
-    {{-- Regular Clients --}}
-    <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
-        <p class="text-lg font-semibold text-gray-600">Regular Clients</p>
-        <p class="text-2xl font-bold text-gray-800">{{ $regularCount }}</p>
-    </div>
-
-</div>
-
-
-
+            {{-- Regular Clients --}}
+            <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
+                <p class="text-lg font-semibold text-gray-600">Regular Clients</p>
+                <p class="text-2xl font-bold text-gray-800">{{ $regularCount }}</p>
+            </div>
+        </div>
         {{-- Transactions table --}}
         @include('admin.transactions.table') {{-- Table partial --}}
-        
     </div>
 </div>
 @endsection

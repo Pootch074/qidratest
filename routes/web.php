@@ -8,6 +8,7 @@ use App\Http\Controllers\TransactionsController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PacdController;
 use App\Http\Controllers\StepsController;
+use App\Http\Controllers\WindowsController;
 
 
 
@@ -45,6 +46,12 @@ Route::middleware(['auth', CheckUserType::class . ':1,2,3,4,5,6,7'])->group(func
 Route::middleware(['auth'])->group(function () {
     Route::get('admin/users', [UsersController::class, 'users'])->name('admin.users');
     Route::get('admin/steps', [StepsController::class, 'steps'])->name('admin.steps');
+    Route::get('admin/windows', [WindowsController::class, 'index'])->name('admin.windows');
+    Route::post('admin/windows', [WindowsController::class, 'store'])->name('windows.store');
+    Route::delete('admin/windows/{id}', [WindowsController::class, 'destroy'])->name('windows.destroy');
+
+
+
     Route::post('admin/steps', [StepsController::class, 'store'])->name('steps.store');
     Route::put('/steps/{id}', [StepsController::class, 'update'])->name('steps.update');
     // routes/web.php

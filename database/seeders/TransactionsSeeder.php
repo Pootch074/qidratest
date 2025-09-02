@@ -551,6 +551,16 @@ class TransactionsSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
+            [
+                'queue_number' => 1,
+                'client_type' => 'priority',
+                'step_id' => 1,
+                'window_id' => null,
+                'section_id' => 15,
+                'queue_status' => 'waiting',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
 
 
 
