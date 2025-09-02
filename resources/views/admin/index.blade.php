@@ -8,24 +8,45 @@
 
     <div class="p-4 sm:ml-64">
 
-        {{-- Dashboard cards --}}
-        <div class="grid grid-cols-3 gap-4 mb-6">
-            @for ($i = 0; $i < 6; $i++)
-                <div class="flex items-center justify-center h-24 rounded-sm bg-gray-50">
-                    <p class="text-2xl text-gray-400">
-                        <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-                        </svg>
-                    </p>
-                </div>
-            @endfor
-        </div>
+{{-- Dashboard cards --}}
+<div class="grid grid-cols-3 gap-4 mb-6">
+
+    {{-- Waiting Clients --}}
+    <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
+        <p class="text-lg font-semibold text-gray-600">Waiting Clients</p>
+        <p class="text-2xl font-bold text-blue-600">{{ $waitingCount }}</p>
+    </div>
+
+    {{-- Pending Clients --}}
+    <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
+        <p class="text-lg font-semibold text-gray-600">Pending Clients</p>
+        <p class="text-2xl font-bold text-yellow-600">{{ $pendingCount }}</p>
+    </div>
+
+    {{-- Serving Clients --}}
+    <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
+        <p class="text-lg font-semibold text-gray-600">Serving Clients</p>
+        <p class="text-2xl font-bold text-green-600">{{ $servingCount }}</p>
+    </div>
+
+    {{-- Priority Clients --}}
+    <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
+        <p class="text-lg font-semibold text-gray-600">Priority Clients</p>
+        <p class="text-2xl font-bold text-red-600">{{ $priorityCount }}</p>
+    </div>
+
+    {{-- Regular Clients --}}
+    <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
+        <p class="text-lg font-semibold text-gray-600">Regular Clients</p>
+        <p class="text-2xl font-bold text-gray-800">{{ $regularCount }}</p>
+    </div>
+
+</div>
+
+
 
         {{-- Transactions table --}}
-        <div class="bg-gray-50 rounded-lg p-4 overflow-x-auto shadow-md">
-            <h2 class="text-xl font-semibold text-gray-700 mb-4">Transactions</h2>
-            @include('admin.transactions.table') {{-- Table partial --}}
-        </div>
+        @include('admin.transactions.table') {{-- Table partial --}}
         
     </div>
 </div>

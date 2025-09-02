@@ -121,44 +121,59 @@
     </div>
 </div>
 
-        {{-- Users Table --}}
-        <div class="overflow-x-auto bg-white rounded shadow">
-            <table id="usersTable" class="w-full text-sm text-left text-gray-500">
-<thead>
-    <tr>
-        @foreach($userColumns as $label)
-            <th class="px-6 py-3">{{ $label }}</th>
-        @endforeach
-        <th class="px-6 py-3">Assigned Step</th>
-        <th class="px-6 py-3">Assigned Window</th>
-        <th class="px-6 py-3">Actions</th>
-    </tr>
-</thead>
+        {{-- ✅ Fancy Users Table --}}
+<div class="overflow-x-auto bg-white rounded-2xl shadow-lg border border-gray-200">
+    <table id="usersTable" class="min-w-full text-sm text-left border-collapse">
+        <thead>
+            <tr class="bg-[#150e60] text-white">
+                @foreach($userColumns as $label)
+                    <th class="px-6 py-3 font-semibold tracking-wide">{{ $label }}</th>
+                @endforeach
+                <th class="px-6 py-3 font-semibold tracking-wide">Assigned Step</th>
+                <th class="px-6 py-3 font-semibold tracking-wide">Assigned Window</th>
+                <th class="px-6 py-3 font-semibold tracking-wide text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+            @forelse ($users as $u)
+                <tr class="hover:bg-indigo-50 transition duration-200">
+                    @foreach($userColumns as $field => $label)
+                        <td class="px-6 py-3 text-gray-700">{{ $u->$field ?? '—' }}</td>
+                    @endforeach
 
-                <tbody>
-                    @forelse ($users as $u)
-                    <tr>
-                        @foreach($userColumns as $field => $label)
-                            <td class="px-6 py-4">{{ $u->$field ?? '—' }}</td>
-                        @endforeach
-                        <td class="px-6 py-4">{{ $u->step->step_number ?? '—' }}</td>
-                        <td class="px-6 py-4">{{ $u->window->window_number ?? '—' }}</td>
-                        <td class="px-6 py-4 space-x-2">
-                            <a href="#" class="text-green-600 hover:underline">Edit</a>
-                            <button onclick="deleteUser({{ $u->id }})" class="text-red-600 hover:underline">Delete</button>
-                        </td>
-                    </tr>
+                    {{-- Assigned Step --}}
+                    <td class="px-6 py-3 font-medium text-gray-700">
+                        {{ $u->step->step_number ?? '—' }}
+                    </td>
 
-                    @empty
-                        <tr>
-                            <td colspan="{{ count($userColumns)+2 }}" class="px-6 py-4 text-center text-gray-500">
-                                No users found.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                    {{-- Assigned Window --}}
+                    <td class="px-6 py-3 font-medium text-gray-700">
+                        {{ $u->window->window_number ?? '—' }}
+                    </td>
+
+                    {{-- Actions --}}
+                    <td class="px-6 py-3 text-center space-x-2">
+                        <a href="#"
+                           class="inline-block bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
+                           <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <button onclick="deleteUser({{ $u->id }})"
+                                class="inline-block bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
+                            <i class="fas fa-trash-alt"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="{{ count($userColumns) + 3 }}" class="px-6 py-6 text-center text-gray-500">
+                        🚫 No users found.
+                    </td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+
 
     </div>
 </div>

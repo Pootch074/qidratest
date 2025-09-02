@@ -39,9 +39,12 @@
                     <select id="step_name" name="step_name" 
                             class="mt-1 block w-full border rounded-md p-2">
                         <option value="None">None</option> 
+                        <option value="Encode">Encode</option>
                         <option value="Initial Review">Initial Review</option>
                         <option value="Verification">Verification</option>
+                        <option value="Assesment">Assesment</option>
                         <option value="Approval">Approval</option>
+                        <option value="Release">Release</option>
                         {{-- add more if needed --}}
                     </select>
                 </div>
@@ -55,52 +58,55 @@
     </div>
 
 
-        {{-- ✅ Steps Table --}}
-<div class="overflow-x-auto bg-white rounded shadow">
-    <table class="min-w-full border border-gray-300 text-sm">
-        <thead class="bg-[#1a1172] text-white">
-            <tr>
-                <th class="px-4 py-2 text-left">Step Number</th>
-                <th class="px-4 py-2 text-left">Step Name</th>
-                {{-- <th class="px-4 py-2 text-left">Section ID</th> --}}
-                <th class="px-4 py-2 text-left">Actions</th> {{-- ✅ New --}}
+{{-- ✅ Fancy Steps Table --}}
+<div class="overflow-x-auto bg-white rounded-2xl shadow-lg border border-gray-200">
+    <table class="min-w-full text-sm text-left border-collapse">
+        <thead>
+            <tr class="bg-[#150e60] text-white">
+                <th class="px-6 py-3 font-semibold tracking-wide">Step Number</th>
+                <th class="px-6 py-3 font-semibold tracking-wide">Step Name</th>
+                <th class="px-6 py-3 font-semibold tracking-wide text-center">Actions</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="divide-y divide-gray-200">
             @forelse($steps as $step)
-                <tr class="border-t hover:bg-gray-100" data-id="{{ $step->id }}">
-                    <td class="px-4 py-2">{{ $step->step_number }}</td>
+                <tr class="hover:bg-blue-50 transition duration-200" data-id="{{ $step->id }}">
+                    {{-- Step Number --}}
+                    <td class="px-6 py-3 font-medium text-gray-700">
+                        {{ $step->step_number }}
+                    </td>
 
-                    {{-- ✅ Editable Step Name --}}
-                    <td class="px-4 py-2">
-                        <span class="editable-step-name" data-id="{{ $step->id }}">
+                    {{-- Editable Step Name --}}
+                    <td class="px-6 py-3">
+                        <span class="editable-step-name cursor-pointer text-gray-800 hover:text-blue-600"
+                              data-id="{{ $step->id }}">
                             {{ $step->step_name }}
                         </span>
                         <input type="text"
-                            class="hidden w-full border rounded px-2 py-1 text-sm"
-                            value="{{ $step->step_name }}"
-                            data-id="{{ $step->id }}">
+                               class="hidden w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                               value="{{ $step->step_name }}"
+                               data-id="{{ $step->id }}">
                     </td>
 
-
-                    {{-- ✅ Delete Button --}}
-                    <td class="px-4 py-2">
-                        <button class="delete-step bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+                    {{-- Delete Button --}}
+                    <td class="px-6 py-3 text-center">
+                        <button class="delete-step bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg shadow-sm transition duration-200"
                             data-id="{{ $step->id }}">
-                            Delete
+                            <i class="fas fa-trash-alt"></i> Delete
                         </button>
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="4" class="text-center text-gray-500 py-4">
-                        No steps available for your section.
+                    <td colspan="3" class="text-center text-gray-500 py-6">
+                        🚫 No steps available for your section.
                     </td>
                 </tr>
             @endforelse
         </tbody>
     </table>
 </div>
+
 
 
 

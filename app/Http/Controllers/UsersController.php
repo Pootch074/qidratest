@@ -11,12 +11,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 
+
 class UsersController extends Controller
 {
 
     public function admin()
     {
         $user = Auth::user();
+
+        $waitingCount  = Transaction::where('queue_status', 'waiting')->count();
+        $pendingCount  = Transaction::where('queue_status', 'pending')->count();
+        $servingCount  = Transaction::where('queue_status', 'serving')->count();
+
+        $priorityCount = Transaction::where('client_type', 'priority')->count();
+        $regularCount  = Transaction::where('client_type', 'regular')->count();
+
         $userColumns = [
             'first_name'       => 'First Name',
             'last_name'        => 'Last Name',
@@ -32,7 +41,16 @@ class UsersController extends Controller
             ->get();
 
         $transactions = Transaction::orderBy('queue_number', 'desc')->get();
-        return view('admin.index', compact('transactions', 'users', 'userColumns'));
+        return view('admin.index', compact(
+            'transactions',
+            'users',
+            'userColumns',
+            'waitingCount',
+            'pendingCount',
+            'servingCount',
+            'priorityCount',
+            'regularCount'
+        ));
     }
     public function users()
     {
