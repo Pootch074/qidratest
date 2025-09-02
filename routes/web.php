@@ -46,6 +46,8 @@ Route::middleware(['auth', CheckUserType::class . ':1,2,3,4,5,6,7'])->group(func
 
 Route::middleware(['auth'])->group(function () {
     Route::get('admin/users', [UsersController::class, 'users'])->name('admin.users');
+    Route::get('/admin/users/json', [UsersController::class, 'usersJson'])->name('admin.users.json');
+
     Route::get('admin/steps', [StepsController::class, 'steps'])->name('admin.steps');
     Route::get('admin/windows', [WindowsController::class, 'index'])->name('admin.windows');
     Route::post('admin/windows', [WindowsController::class, 'store'])->name('windows.store');
@@ -70,6 +72,8 @@ Route::middleware(['auth'])->group(function () {
         ->name('pacd.transactions.table');
 
     Route::post('/admin/users/store', [UsersController::class, 'store'])->name('admin.store');
+    Route::delete('/admin/users/{user}', [UsersController::class, 'destroy'])->name('admin.users.destroy');
+
 
     Route::get('/queues/data', [UsersController::class, 'fetchQueues'])->name('queues.data');
 

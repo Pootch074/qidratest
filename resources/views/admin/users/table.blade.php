@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if(data.success) {
                 const u = data.user;
                 const row = `
-                <tr id="userRow-${u.id}" class="bg-white border-b hover:bg-gray-50 transition">
+                <tr id="userRow-${u.id}" class="hover:bg-indigo-50 transition duration-200">
                     <td class="px-6 py-4">${u.first_name}</td>
                     <td class="px-6 py-4">${u.last_name}</td>
                     <td class="px-6 py-4">${u.email}</td>
@@ -251,4 +251,121 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const userTypeSelect = document.querySelector('select[name="user_type"]');
+    const assignedCategory = document.querySelector('select[name="assigned_category"]');
+    const stepSelect = document.querySelector('select[name="step_id"]');
+    const windowSelect = document.querySelector('select[name="window_id"]');
+
+    const toggleFields = () => {
+        const selectedText = userTypeSelect.options[userTypeSelect.selectedIndex].text.toLowerCase();
+        const isDisplay = selectedText === 'display';
+
+        assignedCategory.disabled = isDisplay;
+        stepSelect.disabled = isDisplay;
+        windowSelect.disabled = isDisplay;
+
+        // Optional: visually indicate disabled state
+        [assignedCategory, stepSelect, windowSelect].forEach(field => {
+            field.classList.toggle('bg-gray-100', isDisplay);
+            field.classList.toggle('cursor-not-allowed', isDisplay);
+        });
+    };
+
+    // Trigger on change
+    userTypeSelect.addEventListener('change', toggleFields);
+
+    // Initialize in case the modal opens with Display selected
+    toggleFields();
+});
+</script>
+
+
+<script>
+    // Delete User Function
+function deleteUser(userId) {
+    if (!confirm('Are you sure you want to delete this user?')) return;
+
+    fetch(`/admin/users/${userId}`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            // Remove the user row from the table
+            const row = document.getElementById(`userRow-${userId}`);
+            if (row) row.remove();
+        } else {
+            alert('Error deleting user: ' + (data.message ?? 'Unknown error'));
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert('An error occurred while deleting the user.');
+    });
+}
+
+</script>
+
+<script>
+function renderUsers(users) {
+    const tbody = document.querySelector('#usersTable tbody');
+    tbody.innerHTML = '';
+
+    if (users.length === 0) {
+        tbody.innerHTML = `<tr>
+            <td colspan="{{ count($userColumns) + 3 }}" class="px-6 py-6 text-center text-gray-500">
+                🚫 No users found.
+            </td>
+        </tr>`;
+        return;
+    }
+
+    users.forEach(u => {
+        const row = document.createElement('tr');
+        row.id = `userRow-${u.id}`;
+        row.className = 'hover:bg-indigo-50 transition duration-200';
+        row.innerHTML = `
+            <td class="px-6 py-3 text-gray-700">${u.first_name}</td>
+            <td class="px-6 py-3 text-gray-700">${u.last_name}</td>
+            <td class="px-6 py-3 text-gray-700">${u.email}</td>
+            <td class="px-6 py-3 text-gray-700">${u.position}</td>
+            <td class="px-6 py-3 text-gray-700">${u.user_type_name}</td>
+            <td class="px-6 py-3 text-gray-700">${u.assigned_category}</td>
+            <td class="px-6 py-3 text-gray-700">${u.window_number ?? '—'}</td>
+            <td class="px-6 py-3 text-gray-700">${u.step_number ?? '—'}</td>
+            <td class="px-6 py-3 text-center space-x-2">
+                <a href="#" class="inline-block bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <button onclick="deleteUser(${u.id})" class="inline-block bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
+                    <i class="fas fa-trash-alt"></i> Delete
+                </button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+// Poll the endpoint every 1 second
+function fetchUsers() {
+    fetch("{{ route('admin.users.json') }}")
+        .then(res => res.json())
+        .then(data => renderUsers(data))
+        .catch(err => console.error(err));
+}
+
+// Initial fetch and interval
+fetchUsers();
+setInterval(fetchUsers, 1000);
+</script>
+
+
 @endsection

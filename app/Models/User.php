@@ -16,10 +16,10 @@ class User extends Authenticatable
     const TYPE_PACD = 7;
     const TYPE_DISPLAY = 8;
 
-    const TYPE_PREASSESS = 2;
-    const TYPE_ENCODE = 3;
-    const TYPE_ASSESSMENT = 4;
-    const TYPE_RELEASE = 5;
+    // const TYPE_PREASSESS = 2;
+    // const TYPE_ENCODE = 3;
+    // const TYPE_ASSESSMENT = 4;
+    // const TYPE_RELEASE = 5;
 
 
     const STATUS_INACTIVE = 0;
@@ -82,10 +82,10 @@ class User extends Authenticatable
             self::TYPE_PACD    => 'PACD',
             self::TYPE_DISPLAY    => 'Display',
 
-            self::TYPE_PREASSESS  => 'Preassess',
-            self::TYPE_ENCODE     => 'Encode',
-            self::TYPE_ASSESSMENT => 'Assessment',
-            self::TYPE_RELEASE    => 'Release',
+            // self::TYPE_PREASSESS  => 'Preassess',
+            // self::TYPE_ENCODE     => 'Encode',
+            // self::TYPE_ASSESSMENT => 'Assessment',
+            // self::TYPE_RELEASE    => 'Release',
         ];
     }
 
@@ -122,25 +122,25 @@ class User extends Authenticatable
         return $query->where('status', self::STATUS_ACTIVE);
     }
 
-    public function scopePreassess($query)
-    {
-        return $query->where('user_type', self::TYPE_PREASSESS);
-    }
+    // public function scopePreassess($query)
+    // {
+    //     return $query->where('user_type', self::TYPE_PREASSESS);
+    // }
 
-    public function scopeEncoders($query)
-    {
-        return $query->where('user_type', self::TYPE_ENCODE);
-    }
+    // public function scopeEncoders($query)
+    // {
+    //     return $query->where('user_type', self::TYPE_ENCODE);
+    // }
 
-    public function scopeAssessors($query)
-    {
-        return $query->where('user_type', self::TYPE_ASSESSMENT);
-    }
+    // public function scopeAssessors($query)
+    // {
+    //     return $query->where('user_type', self::TYPE_ASSESSMENT);
+    // }
 
-    public function scopeReleases($query)
-    {
-        return $query->where('user_type', self::TYPE_RELEASE);
-    }
+    // public function scopeReleases($query)
+    // {
+    //     return $query->where('user_type', self::TYPE_RELEASE);
+    // }
     public function user($query)
     {
         return $query->where('user_type', self::TYPE_USER);

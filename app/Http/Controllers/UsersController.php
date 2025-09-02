@@ -101,7 +101,7 @@ class UsersController extends Controller
 
         // User types excluding Admin
         $userTypes = collect(User::getUserTypes())
-            ->except([User::TYPE_ADMIN]);
+            ->except([User::TYPE_ADMIN, User::TYPE_PACD]);
 
         return view('admin.users.table', compact(
             'users',
@@ -112,15 +112,32 @@ class UsersController extends Controller
         ));
     }
 
+    public function usersJson()
+    {
+        $authUser = Auth::user();
+        $sectionId = $authUser->section_id;
 
+        $users = User::with(['step', 'window'])
+            ->where('section_id', $sectionId)
+            ->latest()
+            ->get();
 
+        $formatted = $users->map(function ($u) {
+            return [
+                'id' => $u->id,
+                'first_name' => $u->first_name,
+                'last_name' => $u->last_name,
+                'email' => $u->email,
+                'position' => $u->position,
+                'user_type_name' => $u->getUserTypeName(),
+                'assigned_category' => $u->assigned_category,
+                'step_number' => $u->step?->step_number,
+                'window_number' => $u->window?->window_number,
+            ];
+        });
 
-
-
-
-
-
-
+        return response()->json($formatted);
+    }
 
 
 
@@ -288,17 +305,21 @@ class UsersController extends Controller
             'last_name'         => 'required|string|max:255',
             'email'             => 'required|email|unique:users,email',
             'position'          => 'required|string|max:255',
-            'user_type'         => 'required|in:1,6',
-            'assigned_category' => 'required|in:regular,priority',
-            'step_id'           => 'required|exists:steps,id',
-            'window_id'         => 'required|exists:windows,id',
+            'user_type'         => 'required|in:1,6,8', // include Display
+            'assigned_category' => 'nullable|in:regular,priority',
+            'step_id'           => 'nullable|exists:steps,id',
+            'window_id'         => 'nullable|exists:windows,id',
             'password'          => 'required|string|min:6',
         ]);
 
-        // Automatically attach to the logged-in user's section
         $validated['section_id'] = $authUser->section_id;
 
-        // Hash the password
+        if ($validated['user_type'] == 8) { // Display user
+            $validated['assigned_category'] = null;
+            $validated['step_id'] = null;
+            $validated['window_id'] = null;
+        }
+
         $validated['password'] = bcrypt($validated['password']);
 
         $user = User::create($validated);
@@ -311,11 +332,21 @@ class UsersController extends Controller
                 'last_name' => $user->last_name,
                 'email' => $user->email,
                 'position' => $user->position,
-                'user_type_name' => $user->userType->name ?? '—',
+                'user_type_name' => $user->getUserTypeName(),
                 'assigned_category' => $user->assigned_category,
                 'step_number' => $user->step->step_number ?? '—',
                 'window_number' => $user->window->window_number ?? '—',
             ]
         ]);
+    }
+
+    public function destroy(User $user)
+    {
+        try {
+            $user->delete();
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
     }
 }
