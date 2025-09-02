@@ -99,50 +99,125 @@ class UsersController extends Controller
     public function user()
     {
         $sectionId = Auth::user()->section_id;
+
         // Upcoming queues: status = 'waiting'
         $upcomingQueues = Transaction::where('section_id', $sectionId)
             ->where('queue_status', 'waiting')
             ->orderBy('created_at', 'asc')
             ->get();
 
-        // Format each pending queue
-        $upcomingQueues->transform(function ($queue) {
-            $prefix = strtolower($queue->client_type) === 'priority' ? 'P' : 'R';
-            $queue->sdsddses = $prefix . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT);
+        // Split into regular and priority queues
+        $regularQueues = $upcomingQueues->filter(fn($q) => strtolower($q->client_type) === 'regular');
+        $priorityQueues = $upcomingQueues->filter(fn($q) => strtolower($q->client_type) === 'priority');
+
+        // Format each queue
+        $regularQueues->transform(function ($queue) {
+            $prefix = 'R';
+            $queue->formatted_number = $prefix . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT);
+            $queue->style_class = 'bg-[#150e60]'; // dark blue for regular
             return $queue;
         });
 
+        $priorityQueues->transform(function ($queue) {
+            $prefix = 'P';
+            $queue->formatted_number = $prefix . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT);
+            $queue->style_class = 'bg-red-600'; // red for priority
+            return $queue;
+        });
 
-        // Pending queues: status = 'pending'
         $pendingQueues = Transaction::where('section_id', $sectionId)
             ->where('queue_status', 'pending')
             ->orderBy('created_at', 'asc')
             ->get();
 
-        // Format each pending queue
-        $pendingQueues->transform(function ($queue) {
-            $prefix = strtolower($queue->client_type) === 'priority' ? 'P' : 'R';
-            $queue->nchdfm = $prefix . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT);
+        // Split into regular and priority queues
+        $pendingRegularQueues = $pendingQueues->filter(fn($q) => strtolower($q->client_type) === 'regular');
+        $pendingPriorityQueues = $pendingQueues->filter(fn($q) => strtolower($q->client_type) === 'priority');
+
+        // Format each queue
+        $pendingRegularQueues->transform(function ($queue) {
+            $prefix = 'R';
+            $queue->formatted_number = $prefix . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT);
+            $queue->style_class = 'bg-[#150e60]'; // dark blue
             return $queue;
         });
 
-        // Get the currently serving queue
+        $pendingPriorityQueues->transform(function ($queue) {
+            $prefix = 'P';
+            $queue->formatted_number = $prefix . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT);
+            $queue->style_class = 'bg-red-600'; // red
+            return $queue;
+        });
+
         $servingQueue = Transaction::where('section_id', $sectionId)
             ->where('queue_status', 'serving')
-            ->orderBy('updated_at', 'desc') // latest serving
-            ->get(); // get a single record
+            ->orderBy('updated_at', 'desc')
+            ->get();
 
-        $servingQueue->transform(function ($queue) {
-            $prefix = strtolower($queue->client_type) === 'priority' ? 'P' : 'R';
-            $queue->lfgofkf = $prefix . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT);
+        return view('user.index', compact(
+            'regularQueues',
+            'priorityQueues',
+            'pendingRegularQueues',
+            'pendingPriorityQueues',
+            'servingQueue'
+        ));
+    }
+
+    public function fetchQueues()
+    {
+        $sectionId = Auth::user()->section_id;
+
+        // Upcoming
+        $upcomingQueues = Transaction::where('section_id', $sectionId)
+            ->where('queue_status', 'waiting')
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        $regularQueues = $upcomingQueues->filter(fn($q) => strtolower($q->client_type) === 'regular');
+        $priorityQueues = $upcomingQueues->filter(fn($q) => strtolower($q->client_type) === 'priority');
+
+        $regularQueues->transform(function ($queue) {
+            $queue->formatted_number = 'R' . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT);
+            $queue->style_class = 'bg-[#150e60]';
             return $queue;
         });
 
+        $priorityQueues->transform(function ($queue) {
+            $queue->formatted_number = 'P' . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT);
+            $queue->style_class = 'bg-red-600';
+            return $queue;
+        });
 
+        // Pending
+        $pendingQueues = Transaction::where('section_id', $sectionId)
+            ->where('queue_status', 'pending')
+            ->orderBy('created_at', 'asc')
+            ->get();
 
+        $pendingRegular = $pendingQueues->filter(fn($q) => strtolower($q->client_type) === 'regular');
+        $pendingPriority = $pendingQueues->filter(fn($q) => strtolower($q->client_type) === 'priority');
 
-        return view('user.index', compact('upcomingQueues', 'pendingQueues', 'servingQueue'));
+        $pendingRegular->transform(function ($queue) {
+            $queue->formatted_number = 'R' . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT);
+            $queue->style_class = 'bg-[#150e60]';
+            return $queue;
+        });
+
+        $pendingPriority->transform(function ($queue) {
+            $queue->formatted_number = 'P' . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT);
+            $queue->style_class = 'bg-red-600';
+            return $queue;
+        });
+
+        return response()->json([
+            'regularQueues' => $regularQueues->values(),
+            'priorityQueues' => $priorityQueues->values(),
+            'pendingRegular' => $pendingRegular->values(),
+            'pendingPriority' => $pendingPriority->values(),
+        ]);
     }
+
+
 
 
 
