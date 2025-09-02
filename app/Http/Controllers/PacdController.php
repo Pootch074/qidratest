@@ -63,4 +63,20 @@ class PacdController extends Controller
         return redirect()->back()
             ->with('success', "Queue #{$formattedQueue} created for {$section->section_name}");
     }
+
+    public function transactionsTable()
+    {
+        $user = Auth::user();
+
+        if ($user->user_type == 7) { // PACD sees all sections
+            $transactions = Transaction::with(['step', 'section'])->latest()->get();
+        } else {
+            $transactions = Transaction::with(['step', 'section'])
+                ->where('section_id', $user->section_id)
+                ->latest()
+                ->get();
+        }
+
+        return view('pacd.transactions.table', compact('transactions'));
+    }
 }

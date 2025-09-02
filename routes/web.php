@@ -64,8 +64,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('admin/users', [UsersController::class, 'store'])->name('admin.store');
     Route::get('pacd', [PacdController::class, 'index'])->name('pacd');
-
     Route::post('/pacd/generate/{section}', [PacdController::class, 'generateQueue'])->name('pacd.generate');
+    Route::get('pacd/transactions/table', [PacdController::class, 'transactionsTable'])
+        ->name('pacd.transactions.table');
 
     Route::post('/admin/users/store', [UsersController::class, 'store'])->name('admin.store');
 
