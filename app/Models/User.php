@@ -14,6 +14,7 @@ class User extends Authenticatable
     const TYPE_ADMIN = 1;
     const TYPE_USER = 6;
     const TYPE_PACD = 7;
+    const TYPE_DISPLAY = 8;
 
     const TYPE_PREASSESS = 2;
     const TYPE_ENCODE = 3;
@@ -79,6 +80,7 @@ class User extends Authenticatable
             self::TYPE_ADMIN      => 'Admin',
             self::TYPE_USER    => 'User',
             self::TYPE_PACD    => 'PACD',
+            self::TYPE_DISPLAY    => 'Display',
 
             self::TYPE_PREASSESS  => 'Preassess',
             self::TYPE_ENCODE     => 'Encode',
@@ -147,6 +149,12 @@ class User extends Authenticatable
     {
         return $query->where('user_type', self::TYPE_PACD);
     }
+    public function display($query)
+    {
+        return $query->where('user_type', self::TYPE_DISPLAY);
+    }
+
+
     public function window()
     {
         return $this->belongsTo(Window::class);

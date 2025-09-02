@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PacdController;
 use App\Http\Controllers\StepsController;
 use App\Http\Controllers\WindowsController;
+use App\Http\Controllers\DisplayController;
 
 
 
@@ -71,4 +72,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/users/store', [UsersController::class, 'store'])->name('admin.store');
 
     Route::get('/queues/data', [UsersController::class, 'fetchQueues'])->name('queues.data');
+
+    Route::get('/admin/display', [DisplayController::class, 'index'])->name('admin.display.index');
 });
