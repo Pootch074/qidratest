@@ -30,7 +30,7 @@ class LoginController extends Controller
             // ✅ Load user with office/division/section chain
             $user = User::with('window.step.section.division.office')->find(Auth::id());
 
-            
+
             $section  = optional(optional(optional($user->window)->step)->section);
             $division = optional($section->division);
             $office   = optional($division->office);
@@ -43,7 +43,7 @@ class LoginController extends Controller
             $request->session()->put('section_name',   $section->section_name ?? null);
             $request->session()->put('division_name',  $division->division_name ?? null);
             $request->session()->put('field_office',   $office->field_office ?? null);
-            
+
             // Redirect based on user_type
             switch ($user->user_type) {
                 case 1:
@@ -60,7 +60,9 @@ class LoginController extends Controller
                     return redirect()->route('user');
                 case 7:
                     return redirect()->route('pacd');
-                    
+                case 8:
+                    return redirect()->route('display');
+
                 default:
                     return redirect()->route('login');
             }

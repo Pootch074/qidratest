@@ -77,5 +77,5 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/queues/data', [UsersController::class, 'fetchQueues'])->name('queues.data');
 
-    Route::get('/admin/display', [DisplayController::class, 'index'])->name('admin.display.index');
+    Route::get('display', [DisplayController::class, 'index'])->name('display');
 });
