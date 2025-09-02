@@ -20,7 +20,7 @@
                         <input type="hidden" name="client_type" id="client_type_{{ $section->id }}">
                         <button type="button"
                                 @click="showModal = true; selectedSection = {{ $section->id }}"
-                                class="w-full h-24 flex items-center justify-center rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-bold shadow-md transition">
+                                class="w-full h-24 flex items-center justify-center rounded-lg bg-[#150e60] text-white font-bold shadow-md transition">
                             {{ strtoupper($section->section_name) }}
                         </button>
                     </form>
