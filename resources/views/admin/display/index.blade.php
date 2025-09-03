@@ -7,7 +7,7 @@
 <div class="w-full h-[84vh] flex flex-col md:flex-row">
     <!-- Left Section: Queue Information Panel -->
     <div class="md:w-1/2 w-full bg-blue-400 p-6 flex flex-col justify-start items-start space-y-6 h-full">
-        <h2 class="text-2xl font-bold text-white">Steps</h2>
+        {{-- <h2 class="text-2xl font-bold text-white">Steps</h2> --}}
 
         <!-- Steps container -->
         <div id="stepsContainer" class="flex flex-col space-y-4 w-full"></div>
@@ -20,13 +20,7 @@
 
     <!-- Right Section: Media & Info Panel -->
     <div class="md:w-1/2 w-full bg-[#1f2937] text-white p-6 flex flex-col justify-between h-full">
-        <!-- Now Serving -->
-        <div class="mt-6 w-full">
-            <h2 class="text-2xl font-bold text-white">Now Serving</h2>
-            <div id="nowServing" class="text-3xl font-extrabold text-yellow-300 mt-4">
-                Waiting for next client...
-            </div>
-        </div>
+
 
         <!-- Video Section -->
         <div class="w-full flex flex-col items-center mb-3 space-y-4">
