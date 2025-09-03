@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /** ---------------- Fetch Steps ---------------- **/
     function fetchSteps() {
-        fetch("/steps")
+        fetch(window.appRoutes.steps)
             .then(response => response.json())
             .then(data => {
                 const container = document.getElementById('stepsContainer');
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /** ---------------- Fetch Latest Transaction ---------------- **/
     function fetchLatestTransaction() {
-        fetch("/display/transactions/latest")
+        fetch(window.appRoutes.latestTransaction)
             .then(res => res.json())
             .then(data => {
                 if (!data || !data.id) return;

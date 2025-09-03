@@ -59,6 +59,13 @@
     </div>
 </div>
 
+{{-- Pass Laravel routes into JS --}}
+<script>
+    window.appRoutes = {
+        steps: "{{ url('/steps') }}",
+        latestTransaction: "{{ url('/display/transactions/latest') }}"
+    };
+</script>
 
 {{-- Include external JS --}}
 <script src="{{ asset('js/display.js') }}"></script>
