@@ -17,7 +17,7 @@
 <body class="min-h-screen flex flex-col">
 
     <div class="flex items-center justify-between px-4 w-full h-[8vh] bg-gray-800 shadow">
-        @include('layouts.inc.header')
+        @include('layouts.inc.displayheader')
     </div>
 
     

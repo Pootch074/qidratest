@@ -162,7 +162,24 @@ class UsersSeeder extends Seeder
                 'email_verified_at' => Carbon::now(),
                 'password' => Hash::make('password'),
                 'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),]
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'first_name' => 'Display',
+                'last_name' => 'CIS',
+                'email' => 'displaycis@gmail.com', 
+                'position' => 'SWOII', 
+                'section_id' => 15,
+                'user_type' => 8,
+                'assigned_category' => null,
+                'step_id' => null,
+                'window_id' => null,
+                'status' => 1,
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('password'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]
         ];
 
         DB::table('users')->insert($users);

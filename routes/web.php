@@ -61,6 +61,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/steps/{id}', [StepsController::class, 'destroy'])->name('steps.destroy');
     Route::get('/steps/check/{sectionId}/{stepNumber}', [StepsController::class, 'check']);
 
+    Route::get('/steps', [DisplayController::class, 'getStepsBySectionId'])->name('steps');
 
 
 

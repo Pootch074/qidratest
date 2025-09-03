@@ -14,3 +14,5 @@ Route::post('/users', [\App\Http\Controllers\Api\UsersController::class, 'post']
 Route::put('/users/{id}', [\App\Http\Controllers\Api\UsersController::class, 'put'])->name('api-users-put');
 Route::delete('/users/{id}', [\App\Http\Controllers\Api\UsersController::class, 'delete'])->name('api-users-delete');
 
+
+

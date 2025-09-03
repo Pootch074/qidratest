@@ -5,39 +5,20 @@
 
 @section('content')
 <div class="w-full h-[84vh] flex flex-col md:flex-row">
-    <!-- Left Section: Queue Information Panel -->
-    <div class="md:w-1/2 w-full bg-blue-400 p-6 flex flex-col justify-center items-start space-y-8 h-full">
-        <!-- Queue Number -->
-        <div class="text-center md:text-left w-full">
-            <h1 class="text-6xl md:text-8xl font-bold text-[#1f2937]">A-012</h1>
-            <p class="mt-2 text-xl md:text-2xl text-gray-600">Now Serving</p>
-        </div>
+<!-- Left Section: Queue Information Panel -->
+<div class="md:w-1/2 w-full bg-blue-400 p-6 flex flex-col justify-start items-start space-y-6 h-full">
+    <h2 class="text-2xl font-bold text-white">Steps</h2>
 
-        <!-- Service Window -->
-        <div class="w-full">
-            <p class="text-2xl md:text-3xl font-semibold text-gray-700">Window: <span class="text-[#2563eb]">3</span></p>
-        </div>
-
-        <!-- Steps/Status -->
-        <div class="w-full">
-            <h2 class="text-xl md:text-2xl font-semibold mb-3 text-gray-800">Client Steps</h2>
-            <ul class="space-y-2 overflow-y-auto max-h-[50vh]">
-                <li class="flex justify-between items-center bg-gray-100 p-3 rounded-md shadow-sm">
-                    <span>Step 1: Registration</span>
-                    <span class="text-green-600 font-semibold">Completed</span>
-                </li>
-                <li class="flex justify-between items-center bg-gray-100 p-3 rounded-md shadow-sm">
-                    <span>Step 2: Verification</span>
-                    <span class="text-yellow-500 font-semibold">In Progress</span>
-                </li>
-                <li class="flex justify-between items-center bg-gray-100 p-3 rounded-md shadow-sm">
-                    <span>Step 3: Processing</span>
-                    <span class="text-gray-400 font-semibold">Pending</span>
-                </li>
-                <!-- Add more steps if needed -->
-            </ul>
-        </div>
+    <!-- Steps container (grid-based) -->
+    <div id="stepsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+        <!-- JS will inject steps here -->
     </div>
+
+    <!-- Fallback message -->
+    <div id="noSteps" class="hidden text-white text-lg font-medium">
+        No steps available for your section.
+    </div>
+</div>
 
     <!-- Right Section: Media & Info Panel -->
     <div class="md:w-1/2 w-full bg-[#1f2937] text-white p-6 flex flex-col justify-between h-full">
@@ -130,5 +111,67 @@
 
     // Update display on page load
     updateVolumeDisplay();
+</script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch("{{ url('/steps') }}")
+            .then(response => {
+                    console.log("Raw response:", response);
+                    return response.json();
+                })
+            .then(data => {
+                const container = document.getElementById('stepsContainer');
+                const noSteps = document.getElementById('noSteps');
+
+                if (data.length === 0) {
+                    noSteps.classList.remove('hidden');
+                    return;
+                }
+
+            data.forEach(step => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-lg shadow-md p-4 flex flex-col";
+
+                // Step info
+                let html = `
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                        Step ${step.step_number}
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-3">${step.step_name}</p>
+                `;
+
+                // Windows
+                if (step.windows.length > 0) {
+                    html += `<div class="space-y-2">`;
+                    step.windows.forEach(win => {
+                        html += `
+                            <div class="px-3 py-2 bg-blue-100 rounded text-gray-700 text-sm">
+                                Window ${win.window_number}
+                            </div>
+                        `;
+                    });
+                    html += `</div>`;
+                } else {
+                    html += `<p class="text-gray-400 italic text-sm">No windows assigned</p>`;
+                }
+
+                card.innerHTML = html;
+                container.appendChild(card);
+            });
+
+
+
+
+
+
+            })
+            .catch(err => {
+                console.error("Error fetching steps:", err);
+                document.getElementById('noSteps').textContent = "Error loading steps.";
+                document.getElementById('noSteps').classList.remove('hidden');
+            });
+    });
 </script>
 @endsection
