@@ -79,4 +79,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/queues/data', [UsersController::class, 'fetchQueues'])->name('queues.data');
 
     Route::get('display', [DisplayController::class, 'index'])->name('display');
+
+    // routes/web.php
+Route::get('/display/transactions/latest', [DisplayController::class, 'getLatestTransaction']);
+
 });

@@ -47,11 +47,23 @@ class PacdController extends Controller
         // Increment or start at 1
         $newQueueNumber = $lastQueue ? $lastQueue + 1 : 1;
 
+        // ✅ Get the first step for this section (step_number = 1)
+        $firstStep = \App\Models\Step::where('section_id', $section->id)
+            ->where('step_number', 1)
+            ->first();
+
+        // ✅ Find the window associated with this step
+        $window = null;
+        if ($firstStep) {
+            $window = \App\Models\Window::where('step_id', $firstStep->id)->first();
+        }
+
         // Create new transaction
         $transaction = Transaction::create([
             'queue_number' => $newQueueNumber,
             'client_type'  => $clientType,
-            'window_id'    => null,
+            'step_id'      => $firstStep ? $firstStep->id : null, // ✅ Assign step_id
+            'window_id'    => $window ? $window->id : null,       // ✅ Assign window_id
             'section_id'   => $section->id,
             'queue_status' => 'waiting',
         ]);
@@ -63,6 +75,8 @@ class PacdController extends Controller
         return redirect()->back()
             ->with('success', "Queue #{$formattedQueue} created for {$section->section_name}");
     }
+
+
 
     public function transactionsTable()
     {
