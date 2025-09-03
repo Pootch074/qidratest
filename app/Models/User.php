@@ -15,6 +15,7 @@ class User extends Authenticatable
     const TYPE_USER = 6;
     const TYPE_PACD = 7;
     const TYPE_DISPLAY = 8;
+    const TYPE_IDSCAN = 9;
 
     // const TYPE_PREASSESS = 2;
     // const TYPE_ENCODE = 3;
@@ -81,6 +82,7 @@ class User extends Authenticatable
             self::TYPE_USER    => 'User',
             self::TYPE_PACD    => 'PACD',
             self::TYPE_DISPLAY    => 'Display',
+            self::TYPE_IDSCAN    => 'Idscan',
 
             // self::TYPE_PREASSESS  => 'Preassess',
             // self::TYPE_ENCODE     => 'Encode',
@@ -152,6 +154,10 @@ class User extends Authenticatable
     public function display($query)
     {
         return $query->where('user_type', self::TYPE_DISPLAY);
+    }
+    public function idscan($query)
+    {
+        return $query->where('user_type', self::TYPE_IDSCAN);
     }
 
 

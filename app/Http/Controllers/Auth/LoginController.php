@@ -62,7 +62,8 @@ class LoginController extends Controller
                     return redirect()->route('pacd');
                 case 8:
                     return redirect()->route('display');
-
+                case 9:
+                    return redirect()->route('idscan');
                 default:
                     return redirect()->route('login');
             }

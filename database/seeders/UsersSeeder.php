@@ -68,6 +68,31 @@ class UsersSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
+
+
+
+
+            [  
+                'first_name' => 'IDScan',
+                'last_name' => 'User',
+                'email' => 'idscan@gmail.com', 
+                'position' => null, 
+                'section_id' => null,
+                'user_type' => 9,
+                'assigned_category' => null,
+                'step_id' => null,
+                'window_id' => null,
+                'status' => 1,
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('password'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+
+
+
+
+
             [
                 'first_name' => 'Preassess',
                 'last_name' => 'User',

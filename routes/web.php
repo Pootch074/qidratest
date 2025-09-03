@@ -10,6 +10,7 @@ use App\Http\Controllers\PacdController;
 use App\Http\Controllers\StepsController;
 use App\Http\Controllers\WindowsController;
 use App\Http\Controllers\DisplayController;
+use App\Http\Controllers\IdscanController;
 
 
 
@@ -34,7 +35,7 @@ Route::get('/auth/login', [LoginController::class, 'login'])->name('login');
 Route::post('/auth/login', [LoginController::class, 'authenticate'])->name('authenticate');
 
 // Routes Preassess
-Route::middleware(['auth', CheckUserType::class . ':1,2,3,4,5,6,7'])->group(function () {
+Route::middleware(['auth', CheckUserType::class . ':1,2,3,4,5,6,7,8,9'])->group(function () {
     Route::get('admin', [UsersController::class, 'admin'])->name('admin');
     Route::get('preassess', [UsersController::class, 'preassess'])->name('preassess');
     Route::get('encode', [UsersController::class, 'encode'])->name('encode');
@@ -79,6 +80,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/queues/data', [UsersController::class, 'fetchQueues'])->name('queues.data');
 
     Route::get('display', [DisplayController::class, 'index'])->name('display');
+
+    Route::get('idscan', [IdscanController::class, 'index'])->name('idscan');
 
     // routes/web.php
 Route::get('/display/transactions/latest', [DisplayController::class, 'getLatestTransaction']);
