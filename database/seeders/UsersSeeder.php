@@ -135,7 +135,7 @@ class UsersSeeder extends Seeder
             [
                 'first_name' => 'CBSS',
                 'last_name' => 'User',
-                'email' => 'cbss@user.com', // change as needed
+                'email' => 'cbss@gmail.com', // change as needed
                 'position' => 'SWOII', // optional
                 'section_id' => 14,
                 'user_type' => 6,
@@ -147,7 +147,22 @@ class UsersSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-            ]
+            ],
+            [
+                'first_name' => 'Display',
+                'last_name' => 'CBSS',
+                'email' => 'displaycbss@gmail.com', 
+                'position' => 'SWOII', 
+                'section_id' => 14,
+                'user_type' => 8,
+                'assigned_category' => null,
+                'step_id' => null,
+                'window_id' => null,
+                'status' => 1,
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('password'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),]
         ];
 
         DB::table('users')->insert($users);
