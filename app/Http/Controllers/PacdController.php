@@ -82,7 +82,7 @@ class PacdController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->user_type == 7) { // PACD sees all sections
+        if ($user->user_type == 3) { // PACD sees all sections
             $transactions = Transaction::with(['step', 'section'])->latest()->get();
         } else {
             $transactions = Transaction::with(['step', 'section'])

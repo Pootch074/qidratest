@@ -49,21 +49,14 @@ class LoginController extends Controller
                 case 1:
                     return redirect()->route('admin');
                 case 2:
-                    return redirect()->route('preassess');
-                case 3:
-                    return redirect()->route('encode');
-                case 4:
-                    return redirect()->route('assessment');
-                case 5:
-                    return redirect()->route('release');
-                case 6:
-                    return redirect()->route('user');
-                case 7:
-                    return redirect()->route('pacd');
-                case 8:
-                    return redirect()->route('display');
-                case 9:
                     return redirect()->route('idscan');
+                case 3:
+                    return redirect()->route('pacd');
+                case 5:
+                    return redirect()->route('user');
+                case 6:
+                    return redirect()->route('display');
+                
                 default:
                     return redirect()->route('login');
             }

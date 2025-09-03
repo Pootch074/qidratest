@@ -27,7 +27,7 @@
         {{-- Dashboard / Section Buttons --}}
         <div class="grid grid-cols-3 gap-4 mb-6">
             @foreach($sections as $section)
-                @if($authUser->user_type == 7 || $authUser->section_id == $section->id)
+                @if($authUser->user_type == 3 || $authUser->section_id == $section->id)
                     <form id="form-{{ $section->id }}" 
                           action="{{ route('pacd.generate', $section->id) }}" 
                           method="POST" 

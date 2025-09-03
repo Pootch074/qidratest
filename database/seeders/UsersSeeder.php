@@ -52,33 +52,13 @@ class UsersSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
-            [
-                'first_name' => 'PACD',
-                'last_name' => 'User',
-                'email' => env('ADMIN_EMAIL', 'pacd@gmail.com'),
-                'position' => 'SWAID',
-                'section_id' => null,
-                'user_type' => 7,
-                'assigned_category' => null,
-                'step_id' => null,
-                'window_id' => null,
-                'status' => 1,
-                'email_verified_at' => Carbon::now(),
-                'password' => Hash::make('password'),
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-
-
-
-
             [  
                 'first_name' => 'IDScan',
                 'last_name' => 'User',
                 'email' => 'idscan@gmail.com', 
                 'position' => null, 
                 'section_id' => null,
-                'user_type' => 9,
+                'user_type' => 2,
                 'assigned_category' => null,
                 'step_id' => null,
                 'window_id' => null,
@@ -94,69 +74,22 @@ class UsersSeeder extends Seeder
 
 
             [
-                'first_name' => 'Preassess',
+                'first_name' => 'PACD',
                 'last_name' => 'User',
-                'email' => 'pu@gmail.com', // change as needed
-                'position' => 'SWOII', // optional
-                'section_id' => 15,
-                'user_type' => 2,
-                'assigned_category' => 'regular',
-                'step_id' => null,
-                'window_id' => 1,
-                'status' => 1,
-                'email_verified_at' => Carbon::now(),
-                'password' => Hash::make('password'),
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'first_name' => 'Encode',
-                'last_name' => 'User',
-                'email' => 'eu@gmail.com', // change as needed
-                'position' => 'SWOII', // optional
-                'section_id' => 15,
+                'email' => env('ADMIN_EMAIL', 'pacd@gmail.com'),
+                'position' => 'SWAID',
+                'section_id' => null,
                 'user_type' => 3,
-                'assigned_category' => 'regular',
-                'step_id' => null,
-                'window_id' => 2,
-                'status' => 1,
-                'email_verified_at' => Carbon::now(),
-                'password' => Hash::make('password'),
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'first_name' => 'Assessment',
-                'last_name' => 'User',
-                'email' => 'au@gmail.com', // change as needed
-                'position' => 'SWOII', // optional
-                'section_id' => 15,
-                'user_type' => 4,
                 'assigned_category' => null,
                 'step_id' => null,
-                'window_id' => 3,
+                'window_id' => null,
                 'status' => 1,
                 'email_verified_at' => Carbon::now(),
                 'password' => Hash::make('password'),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
-            [
-                'first_name' => 'Release',
-                'last_name' => 'User',
-                'email' => 'ru@gmail.com', // change as needed
-                'position' => 'SWOII', // optional
-                'section_id' => 15,
-                'user_type' => 5,
-                'assigned_category' => null,
-                'step_id' => null,
-                'window_id' => 7,
-                'status' => 1,
-                'email_verified_at' => Carbon::now(),
-                'password' => Hash::make('password'),
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
+            
             [
                 'first_name' => 'CBSS',
                 'last_name' => 'User',
@@ -173,13 +106,17 @@ class UsersSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
+
+
+
+
             [
-                'first_name' => 'Display',
-                'last_name' => 'CBSS',
+                'first_name' => 'CBSS',
+                'last_name' => 'Display',
                 'email' => 'displaycbss@gmail.com', 
                 'position' => 'SWOII', 
                 'section_id' => 14,
-                'user_type' => 8,
+                'user_type' => 6,
                 'assigned_category' => null,
                 'step_id' => null,
                 'window_id' => null,
@@ -190,12 +127,12 @@ class UsersSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                'first_name' => 'Display',
-                'last_name' => 'CIS',
+                'first_name' => 'CIS',
+                'last_name' => 'Display',
                 'email' => 'displaycis@gmail.com', 
                 'position' => 'SWOII', 
                 'section_id' => 15,
-                'user_type' => 8,
+                'user_type' => 6,
                 'assigned_category' => null,
                 'step_id' => null,
                 'window_id' => null,
