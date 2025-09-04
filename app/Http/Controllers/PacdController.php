@@ -17,11 +17,14 @@ class PacdController extends Controller
 
     // Sections for buttons
     if (is_null($user->section_id)) {
-        // User has no assigned section → show all sections
-        $sections = Section::orderBy('section_name')->get(['id', 'section_name']);
+        // User has no assigned section → show all, except section_id = 15
+        $sections = Section::where('id', '!=', 15)
+            ->orderBy('section_name')
+            ->get(['id', 'section_name']);
     } else {
-        // User already assigned to a section → fetch only that section
+        // Keep existing behavior → only the user's section
         $sections = Section::where('id', $user->section_id)
+            ->orderBy('section_name')
             ->get(['id', 'section_name']);
     }
 
@@ -41,6 +44,7 @@ class PacdController extends Controller
 
     return view('pacd.index', compact('sections', 'transactions'));
 }
+
 
 
     public function generateQueue(Request $request, Section $section)
@@ -90,9 +94,14 @@ class PacdController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->user_type == 3) { // PACD sees all sections
-            $transactions = Transaction::with(['step', 'section'])->latest()->get();
+        if (is_null($user->section_id)) {
+            // No assigned section → show all transactions except section_id = 15
+            $transactions = Transaction::with(['step', 'section'])
+                ->where('section_id', '!=', 15)
+                ->latest()
+                ->get();
         } else {
+            // User has assigned section → only their section's transactions
             $transactions = Transaction::with(['step', 'section'])
                 ->where('section_id', $user->section_id)
                 ->latest()
@@ -101,4 +110,6 @@ class PacdController extends Controller
 
         return view('pacd.transactions.table', compact('transactions'));
     }
+
+
 }
