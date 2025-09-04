@@ -5,47 +5,33 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Section;
 use App\Models\User;
+use App\Models\Step;
+use App\Models\Window;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
-
 
 class PacdController extends Controller
 {
     public function index()
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    // Sections for buttons
-    if (is_null($user->section_id)) {
-        // User has no assigned section → show all, except section_id = 15
-        $sections = Section::where('id', '!=', 15)
-            ->orderBy('section_name')
-            ->get(['id', 'section_name']);
-    } else {
-        // Keep existing behavior → only the user's section
-        $sections = Section::where('id', $user->section_id)
-            ->orderBy('section_name')
-            ->get(['id', 'section_name']);
+        // Sections for buttons
+        if (is_null($user->section_id)) {
+            // User has no assigned section → show all, except these IDs
+            $sections = Section::whereNotIn('id', [2,3,4,5,6,7,8,10,11,15])
+                ->orderBy('section_name')
+                ->get(['id', 'section_name']);
+        } else {
+            // User has assigned section → show only that section
+            $sections = Section::where('id', $user->section_id)
+                ->orderBy('section_name')
+                ->get(['id', 'section_name']);
+        }
+
+        // ✅ Only pass sections here
+        return view('pacd.index', compact('sections'));
     }
-
-    // Transactions
-    if ($user->user_type == User::TYPE_PACD) {
-        // PACD sees all transactions
-        $transactions = Transaction::with(['section', 'step'])
-            ->orderBy('queue_number', 'desc')
-            ->get();
-    } else {
-        // Normal users see only their section
-        $transactions = Transaction::with(['section', 'step'])
-            ->where('section_id', $user->section_id)
-            ->orderBy('queue_number', 'desc')
-            ->get();
-    }
-
-    return view('pacd.index', compact('sections', 'transactions'));
-}
-
-
 
     public function generateQueue(Request $request, Section $section)
     {
@@ -60,22 +46,22 @@ class PacdController extends Controller
         $newQueueNumber = $lastQueue ? $lastQueue + 1 : 1;
 
         // ✅ Get the first step for this section (step_number = 1)
-        $firstStep = \App\Models\Step::where('section_id', $section->id)
+        $firstStep = Step::where('section_id', $section->id)
             ->where('step_number', 1)
             ->first();
 
         // ✅ Find the window associated with this step
         $window = null;
         if ($firstStep) {
-            $window = \App\Models\Window::where('step_id', $firstStep->id)->first();
+            $window = Window::where('step_id', $firstStep->id)->first();
         }
 
         // Create new transaction
         $transaction = Transaction::create([
             'queue_number' => $newQueueNumber,
             'client_type'  => $clientType,
-            'step_id'      => $firstStep ? $firstStep->id : null, // ✅ Assign step_id
-            'window_id'    => $window ? $window->id : null,       // ✅ Assign window_id
+            'step_id'      => $firstStep ? $firstStep->id : null,
+            'window_id'    => $window ? $window->id : null,
             'section_id'   => $section->id,
             'queue_status' => 'waiting',
         ]);
@@ -88,8 +74,6 @@ class PacdController extends Controller
             ->with('success', "Queue #{$formattedQueue} created for {$section->section_name}");
     }
 
-
-
     public function transactionsTable()
     {
         $user = Auth::user();
@@ -97,7 +81,7 @@ class PacdController extends Controller
         if (is_null($user->section_id)) {
             // No assigned section → show all transactions except section_id = 15
             $transactions = Transaction::with(['step', 'section'])
-                ->where('section_id', '!=', 15)
+                ->whereNotIn('section_id', [15])
                 ->latest()
                 ->get();
         } else {
@@ -110,6 +94,4 @@ class PacdController extends Controller
 
         return view('pacd.transactions.table', compact('transactions'));
     }
-
-
 }
