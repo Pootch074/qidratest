@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("current-time").textContent =
             now.toLocaleTimeString();
     }
-    setInterval(updateDateTime, 100);
+    setInterval(updateDateTime, 1000);
     updateDateTime();
 
     /** ---------------- Video Volume Controls ---------------- **/
@@ -58,6 +58,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /** ---------------- Fetch Steps ---------------- **/
+    const lastAnnouncedPerWindow = {}; // Track last announced transaction per window
+
     function fetchSteps() {
         fetch(window.appRoutes.steps)
             .then((response) => response.json())
@@ -86,12 +88,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     if (step.windows.length > 0) {
                         html += `<div class="space-y-2">`;
+
                         step.windows.forEach((win) => {
                             html += `
-                            <div class="px-3 py-2 bg-blue-100 rounded text-gray-700 text-sm">
+                            <div class="px-3 py-2 bg-blue-800 rounded text-gray-700 text-sm">
                                 <div class="font-semibold">Window ${win.window_number}</div>
                         `;
-                            // Show serving transaction if exists, else idle
+
                             if (
                                 win.transactions &&
                                 win.transactions.length > 0
@@ -106,10 +109,34 @@ document.addEventListener("DOMContentLoaded", () => {
                                 });
                                 html += `</ul>`;
                             } else {
-                                html += `<p class="text-gray-500 italic text-xs mt-1">Currently idle</p>`;
+                                html += `<p class="text-gray-1000 italic text-xs mt-1">Currently idle</p>`;
                             }
+
                             html += `</div>`;
+
+                            // ------------------- Speech Synthesis -------------------
+                            // Only announce new transactions per window
+                            if (
+                                win.transactions &&
+                                win.transactions.length > 0
+                            ) {
+                                const tx = win.transactions[0]; // assuming only one serving transaction per window
+                                if (
+                                    lastAnnouncedPerWindow[win.window_id] !==
+                                    tx.id
+                                ) {
+                                    lastAnnouncedPerWindow[win.window_id] =
+                                        tx.id;
+                                    announce(
+                                        tx.queue_number,
+                                        step.step_number,
+                                        win.window_number
+                                    );
+                                }
+                            }
+                            // ---------------------------------------------------------
                         });
+
                         html += `</div>`;
                     } else {
                         html += `<p class="text-gray-400 italic text-sm">No windows assigned</p>`;
@@ -148,6 +175,6 @@ document.addEventListener("DOMContentLoaded", () => {
     /** ---------------- Initial Load + Intervals ---------------- **/
     fetchSteps();
     fetchLatestTransaction();
-    setInterval(fetchSteps, 100);
-    setInterval(fetchLatestTransaction, 100);
+    setInterval(fetchSteps, 1000);
+    setInterval(fetchLatestTransaction, 1000);
 });
