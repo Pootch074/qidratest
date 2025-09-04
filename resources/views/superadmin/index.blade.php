@@ -1,10 +1,10 @@
-@extends('layouts.main')
+@extends('layouts.superadmin')
 @section('title', 'SUPER ADMIN')
 @section('header')
 @endsection
 
 @section('content')
-<div class="w-full min-h-screen bg-gray-50 py-10 px-6">
+<div class="p-4 sm:ml-64">
     <div class="max-w-6xl mx-auto">
 
         <!-- Page Title -->

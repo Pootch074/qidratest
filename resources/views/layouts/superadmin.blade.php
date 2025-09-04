@@ -16,25 +16,28 @@
 
 <body class="min-h-screen flex flex-col">
 
-    <div class="flex items-center justify-between px-4 w-full h-[8vh] bg-gray-800 shadow">
-        @include('layouts.inc.displayheader')
+    <div class="flex items-center justify-between px-4 py-2 bg-white shadow">
+        @include('layouts.inc.header')
     </div>
 
+    <div>
+        @include('layouts.inc.superadminsidebar')
+    </div>
     
     
 
     <div class="flex flex-1">
-        @yield('content')
+            @yield('content')
     </div>
 
 
-    <div class="w-full h-[8vh]  bg-gray-800">
-        @include('layouts.inc.displayfooter')
+    <div class="w-full h-[8vh] bg-white">
+        @include('layouts.inc.footer')
     </div>
 
 
 
-    @yield('scripts')
+    @yield('script')
     @stack('scripts')
     @livewireScripts
 </body>

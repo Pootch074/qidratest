@@ -23,7 +23,7 @@ class WindowsController extends Controller
             ->whereHas('step', function ($query) use ($user) {
                 $query->where('section_id', $user->section_id);
             })
-            ->orderBy('window_number')
+            ->orderBy('step_id', 'asc')
             ->get();
 
         return view('admin.windows.table', compact('steps', 'windows'));
