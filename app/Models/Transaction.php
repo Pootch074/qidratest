@@ -49,4 +49,9 @@ class Transaction extends Model
     {
         return $this->belongsTo(Step::class);
     }
+    // Relationship to Window
+    public function window()
+    {
+        return $this->belongsTo(Window::class);
+    }
 }
