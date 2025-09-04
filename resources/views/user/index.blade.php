@@ -1,217 +1,131 @@
 @extends('layouts.main')
+
 @section('title', 'Encode')
-@section('header')
-@endsection
 
 @section('content')
 <div class="w-full h-[84vh] p-4 bg-[#cbdce8]">
     <div class="grid grid-cols-3 gap-2 h-full">
-{{-- UPCOMING --}}
-<div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
-    <div class="bg-[#1a1172] text-white text-center font-bold py-2">UPCOMING</div>
 
-    <div class="grid grid-cols-2 gap-4 p-2 bg-[#f5f8fd] flex-1">
-        {{-- Regular Queue (Left) --}}
-        <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
-            <div class="bg-[#1a1172] text-white text-center font-bold py-2">REGULAR</div>
-            <div id="upcoming-regular" class="flex-1 bg-[#f5f8fd] p-2 overflow-y-auto max-h-[70vh]">
-                @forelse($regularQueues as $queue)
-                    <div class="{{ $queue->style_class }} text-white text-2xl p-2 my-1 rounded shadow text-center font-bold">
-                        {{ $queue->formatted_number }}
-                    </div>
-                @empty
-                    <div class="text-gray-400 text-center py-4">
-                        No regular queues
-                    </div>
-                @endforelse
-            </div>
-        </div>
+        {{-- UPCOMING --}}
+        <x-queue-panel 
+            title="UPCOMING" 
+            regularId="upcoming-regular" 
+            priorityId="upcoming-priority"
+            :regularQueues="$regularQueues"
+            :priorityQueues="$priorityQueues"
+        />
 
-        {{-- Priority Queue (Right) --}}
-        <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
-            <div class="bg-[#1a1172] text-white text-center font-bold py-2">PRIORITY</div>
-            <div id="upcoming-priority" class="flex-1 bg-[#f5f8fd] p-2 overflow-y-auto max-h-[70vh]">
-                @forelse($priorityQueues as $queue)
-                    <div class="{{ $queue->style_class }} text-white text-2xl p-2 my-1 rounded shadow text-center font-bold">
-                        {{ $queue->formatted_number }}
-                    </div>
-                @empty
-                    <div class="text-gray-400 text-center py-4">
-                        No priority queues
-                    </div>
-                @endforelse
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-
-{{-- PENDING --}}
-<div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
-    <div class="bg-[#1a1172] text-white text-center font-bold py-2">
-        PENDING
-    </div>
-
-    <div class="grid grid-cols-2 gap-4 p-2 bg-[#f5f8fd] flex-1">
-        {{-- Regular Queue (Left) --}}
-        <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
-            <div class="bg-[#1a1172] text-white text-center font-bold py-2">REGULAR</div>
-            <div id="pending-regular" class="flex-1 bg-[#f5f8fd] p-2 overflow-y-auto max-h-[70vh]">
-
-                
-                @forelse($pendingRegularQueues as $queue)
-                    <div class="{{ $queue->style_class }} text-white text-2xl p-2 my-1 rounded shadow text-center font-bold">
-                        {{ $queue->formatted_number }}
-                    </div>
-                @empty
-                    <div class="text-gray-400 text-center py-4">
-                        No regular pending queues
-                    </div>
-                @endforelse
-            </div>
-        </div>
-
-        {{-- Priority Queue (Right) --}}
-        <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
-            <div class="bg-[#1a1172] text-white text-center font-bold py-2">PRIORITY</div>
-            <div id="pending-priority" class="flex-1 bg-[#f5f8fd] p-2 overflow-y-auto max-h-[70vh]">
-                @forelse($pendingPriorityQueues as $queue)
-                    <div class="{{ $queue->style_class }} text-white text-2xl p-2 my-1 rounded shadow text-center font-bold">
-                        {{ $queue->formatted_number }}
-                    </div>
-                @empty
-                    <div class="text-gray-400 text-center py-4">
-                        No priority pending queues
-                    </div>
-                @endforelse
-            </div>
-        </div>
-    </div>
-</div>
-
-
+        {{-- PENDING --}}
+        <x-queue-panel 
+            title="PENDING" 
+            regularId="pending-regular" 
+            priorityId="pending-priority"
+            :regularQueues="$pendingRegularQueues"
+            :priorityQueues="$pendingPriorityQueues"
+        />
 
         {{-- SERVING --}}
         <div class="w-full flex flex-col bg-white rounded-md shadow overflow-hidden">
 
-            {{-- Top Bar: Step & Window --}}
+            {{-- Step & Window --}}
             <div class="bg-[#1a1172] text-white text-center font-bold py-2">
                 @if($stepNumber || $windowNumber)
-                STEP {{ $stepNumber ?? '-' }}
-                WINDOW {{ $windowNumber ?? '-' }}
-            @endif
+                    STEP {{ $stepNumber ?? '-' }} &nbsp; WINDOW {{ $windowNumber ?? '-' }}
+                @endif
             </div>
 
-            {{-- Field Office / Division / Section Info --}}
+            {{-- Office Info --}}
             <div class="bg-[#f5f8fd] p-4 text-center font-bold space-y-1 border-b border-gray-200">
-                <p class="mb-0">{{ strtoupper($fieldOffice ?? '-') }}</p>
-            <p class="mb-0">{{ strtoupper($divisionName ?? '-') }}</p>
-            <p class="mb-0">{{ strtoupper($sectionName ?? '-') }}</p>
+                <p>{{ strtoupper($fieldOffice ?? '-') }}</p>
+                <p>{{ strtoupper($divisionName ?? '-') }}</p>
+                <p>{{ strtoupper($sectionName ?? '-') }}</p>
             </div>
 
-            {{-- Currently Serving Queue --}}
-            <div class="flex flex-col items-center justify-start bg-[#f0f4ff]">
-                {{-- Label --}}
-                <div class="w-full p-6 rounded-md text-center text-4xl font-bold mt-0">
-                    Now Serving
-                </div>
-
-                {{-- Queue List --}}
-                <div id="serving-queue" class="w-full p-6 rounded-md text-center text-4xl font-bold mt-0 overflow-y-auto max-h-[70vh]">
+            {{-- Now Serving --}}
+            <div class="flex flex-col items-center bg-[#f0f4ff]">
+                <div class="w-full p-6 text-center text-4xl font-bold">Now Serving</div>
+                <div id="serving-queue" class="w-full p-6 text-center text-4xl font-bold overflow-y-auto max-h-[70vh]">
                     @forelse($servingQueue as $queue)
-                        <div class="{{ $queue->style_class }} text-white text-2xl p-2 my-1 rounded shadow text-center font-bold">
-                            {{ $queue->formatted_number }}
-                        </div>
+                        <x-queue-badge :queue="$queue" />
                     @empty
-                        <div class="text-gray-400 text-center py-4">
-                            No serving queues
-                        </div>
+                        <div class="text-gray-400 text-center py-4">No serving queues</div>
                     @endforelse
                 </div>
             </div>
 
-           {{-- Bottom Bar / Actions --}}
-<div class="flex flex-col items-center bg-white p-4 border-t border-gray-200 space-y-3">
-    {{-- Top Row: Next Regular + Next Priority --}}
-    <div class="flex space-x-2">
-        <button class="bg-blue-600 text-white px-5 text-xl py-2 rounded-md shadow">
-            Next Regular
-        </button>
-        <button class="bg-red-600 text-white px-5 text-xl py-2 rounded-md shadow">
-            Next Priority
-        </button>
-    </div>
-
-    {{-- Bottom Row: Skip + Recall + Proceed --}}
-    <div class="flex space-x-2">
-        <button class="bg-gray-400 text-white px-5 text-xl py-2 rounded-md shadow">
-            Skip
-        </button>
-        <button class="bg-gray-400 text-white px-5 text-xl py-2 rounded-md shadow">
-            Recall
-        </button>
-        <button class="bg-gray-400 text-white px-5 text-xl py-2 rounded-md shadow">
-            Proceed
-        </button>
-    </div>
-</div>
-
-
-            
+            {{-- Actions --}}
+            <div class="flex flex-col items-center bg-white p-4 border-t border-gray-200 space-y-3">
+                <div class="flex space-x-2">
+                    <button id="nextRegularBtn" class="bg-blue-600 text-white px-5 text-xl py-2 rounded-md shadow">Next Regular</button>
+                    <button id="nextPriorityBtn" class="bg-red-600 text-white px-5 text-xl py-2 rounded-md shadow">Next Priority</button>
+                </div>
+                <div class="flex space-x-2">
+                    <button class="bg-gray-400 text-white px-5 text-xl py-2 rounded-md shadow">Skip</button>
+                    <button class="bg-gray-400 text-white px-5 text-xl py-2 rounded-md shadow">Recall</button>
+                    <button class="bg-gray-400 text-white px-5 text-xl py-2 rounded-md shadow">Proceed</button>
+                </div>
+            </div>
         </div>
-
     </div>
 </div>
 @endsection
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@push('scripts')
 <script>
-function renderQueue(list, container) {
-    if (!list || list.length === 0) {
-        $(container).html('<div class="text-gray-400 text-center py-4">No queues</div>');
-    } else {
-        let html = '';
-        list.forEach(queue => {
-            html += `<div class="${queue.style_class} text-white text-2xl p-2 my-1 rounded shadow text-center font-bold">
-                        ${queue.formatted_number}
-                     </div>`;
-        });
-        $(container).html(html);
-    }
-}
+document.addEventListener('DOMContentLoaded', () => {
 
-function fetchQueues() {
-    $.get("{{ route('queues.data') }}", function(data) {
-        // Upcoming
-        renderQueue(data.regularQueues, '#upcoming-regular');
-        renderQueue(data.priorityQueues, '#upcoming-priority');
+    const renderQueue = (list, containerId) => {
+        const container = document.querySelector(containerId);
+        if (!container) return;
 
-        // Pending
-        renderQueue(data.pendingRegular, '#pending-regular');
-        renderQueue(data.pendingPriority, '#pending-priority');
-
-        // Serving
-        renderQueue(data.servingQueue, '#serving-queue');
-
-        // Optional: Update step, window, division, section, and field office info
-        if(data.userInfo) {
-            $('#step-number').text(data.userInfo.stepNumber);
-            $('#window-number').text(data.userInfo.windowNumber);
-            $('#section-name').text(data.userInfo.sectionName);
-            $('#division-name').text(data.userInfo.divisionName);
-            $('#field-office').text(data.userInfo.fieldOffice);
+        if (!list || list.length === 0) {
+            container.innerHTML = `<div class="text-gray-400 text-center py-4">No queues</div>`;
+            return;
         }
-    });
-}
 
-// Initial load
-fetchQueues();
+        container.innerHTML = list.map(queue => `
+            <div class="${queue.style_class} text-white text-2xl p-2 my-1 rounded shadow text-center font-bold">
+                ${queue.formatted_number}
+            </div>
+        `).join('');
+    };
 
-// Refresh every 5 seconds
-setInterval(fetchQueues, 1000);
+    const fetchQueues = () => {
+        fetch("{{ route('queues.data') }}")
+            .then(res => res.json())
+            .then(data => {
+                renderQueue(data.regularQueues, '#upcoming-regular');
+                renderQueue(data.priorityQueues, '#upcoming-priority');
+                renderQueue(data.pendingRegular, '#pending-regular');
+                renderQueue(data.pendingPriority, '#pending-priority');
+                renderQueue(data.servingQueue, '#serving-queue');
+            })
+            .catch(err => console.error(err));
+    };
+
+    // Initial load + auto refresh
+    fetchQueues();
+    setInterval(fetchQueues, 5000);
+
+    // Button handlers
+    const bindAction = (btnId, routeName) => {
+        const btn = document.getElementById(btnId);
+        if (!btn) return;
+        btn.addEventListener('click', () => {
+            fetch(routeName, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => alert(data.message))
+            .catch(err => console.error(err));
+        });
+    };
+
+    bindAction('nextRegularBtn', "{{ route('users.nextRegular') }}");
+});
 </script>
-
-
-
+@endpush

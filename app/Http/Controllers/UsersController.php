@@ -10,6 +10,7 @@ use App\Models\Window;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 
 
@@ -349,4 +350,63 @@ class UsersController extends Controller
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
+
+
+
+
+
+    public function nextRegular()
+{
+    $user = Auth::user();
+
+    // Validate required fields exist
+    if (!$user->step_id || !$user->window_id || !$user->section_id) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'User is not assigned to a step, window, or section.'
+        ], 400);
+    }
+
+    // Use transaction + lock to prevent race conditions
+    $transaction = DB::transaction(function () use ($user) {
+        $record = Transaction::where('queue_status', 'waiting')
+            ->where('client_type', 'regular')
+            ->where('step_id', $user->step_id)
+            ->where('window_id', $user->window_id)
+            ->where('section_id', $user->section_id)
+            ->lockForUpdate() // prevent concurrent grabs
+            ->orderBy('created_at', 'asc')
+            ->first();
+
+        if ($record) {
+            $record->update([
+                'queue_status' => 'serving',
+            ]);
+        }
+
+        return $record;
+    });
+
+    if ($transaction) {
+        return response()->json([
+            'status' => 'success',
+            'message' => "Serving client {$transaction->client_type}{$transaction->queue_number}",
+            'transaction' => $transaction
+        ]);
+    }
+
+    return response()->json([
+        'status' => 'empty',
+        'message' => 'No regular clients waiting in the queue.'
+    ]);
+}
+
+
+
+
+
+
+
+
+
 }

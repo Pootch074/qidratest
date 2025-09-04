@@ -43,6 +43,7 @@ Route::middleware(['auth', CheckUserType::class . ':1,2,3,4,5,6,7,8,9'])->group(
     Route::get('assessment', [UsersController::class, 'assessment'])->name('assessment');
     Route::get('release', [UsersController::class, 'release'])->name('release');
     Route::get('user', [UsersController::class, 'user'])->name('user');
+    
 });
 
 
@@ -92,4 +93,16 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('superadmin', [SuperAdminController::class, 'index'])->name('superadmin');
     Route::post('superadmin/store', [SuperAdminController::class, 'store'])->name('superadmin.store');
+
+
+    Route::post('/users/next-regular', [UsersController::class, 'nextRegular'])->name('users.nextRegular');
+
+
+
+
+
+
+
+
+
 });
