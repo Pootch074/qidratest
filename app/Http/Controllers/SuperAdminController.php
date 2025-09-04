@@ -11,13 +11,14 @@ class SuperAdminController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::where('user_type', User::TYPE_ADMIN);
+        $query = User::with('section')->admins(); // scope instead of raw where
 
-        // 🔎 Search by name or email
+        // 🔎 Search by first_name, last_name, or email
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
+                $q->where('first_name', 'like', "%{$search}%")
+                ->orWhere('last_name', 'like', "%{$search}%")
                 ->orWhere('email', 'like', "%{$search}%");
             });
         }
@@ -28,29 +29,34 @@ class SuperAdminController extends Controller
         }
 
         $admins = $query->latest()->get();
-
-        // All sections for filter dropdown
         $sections = Section::orderBy('section_name')->get();
 
         return view('superadmin.index', compact('admins', 'sections'));
-
     }
 
+
+    /**
+     * Store a new admin user (user_type = 1).
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-            'section'  => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'last_name'  => 'required|string|max:255',
+            'email'      => 'required|email|unique:users,email',
+            'password'   => 'required|string|min:8|confirmed',
+            'position'   => 'nullable|string|max:255',
+            'section_id' => 'required|exists:sections,id',
         ]);
 
         User::create([
-            'name'      => $validated['name'],
-            'email'     => $validated['email'],
-            'password'  => Hash::make($validated['password']), // secure hashing
-            'section'   => $validated['section'],
-            'user_type' => 1, // hardcoded for admin
+            'first_name' => $validated['first_name'],
+            'last_name'  => $validated['last_name'],
+            'email'      => $validated['email'],
+            'password'   => Hash::make($validated['password']),
+            'position'   => $validated['position'] ?? null,
+            'section_id' => $validated['section_id'],
+            'user_type'  => User::TYPE_ADMIN, // constant for clarity
         ]);
 
         return redirect()->route('superadmin.index')->with('success', 'Admin user added successfully.');

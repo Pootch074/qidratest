@@ -112,6 +112,17 @@ class User extends Authenticatable
         }
     }
 
+    public function scopeAdmins($query)
+    {
+        return $query->where('user_type', self::TYPE_ADMIN);
+    }
+
+    public function scopeSuperAdmins($query)
+    {
+        return $query->where('user_type', self::TYPE_SUPERADMIN);
+    }
+
+
     public function scopeActive($query)
     {
         return $query->where('status', self::STATUS_ACTIVE);

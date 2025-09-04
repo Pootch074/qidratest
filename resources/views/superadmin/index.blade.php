@@ -58,28 +58,34 @@
 
         <!-- Admin Users Table -->
         <div class="overflow-x-auto bg-white shadow rounded-xl">
-            <table class="w-full border-collapse text-left">
-                <thead class="bg-gray-100 text-gray-700 text-sm uppercase tracking-wide">
+                <table class="w-full border-collapse text-left">
+                    <thead class="bg-gray-100 text-gray-700 text-sm uppercase tracking-wide">
                     <tr>
                         <th class="px-6 py-4">#</th>
-                        <th class="px-6 py-4">Name</th>
+                        <th class="px-6 py-4">First Name</th>
+                        <th class="px-6 py-4">Last Name</th>
                         <th class="px-6 py-4">Email</th>
                         <th class="px-6 py-4">Section</th>
-                        <th class="px-6 py-4">Created At</th>
+                        <th class="px-6 py-4">Position</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 text-gray-700">
                     @forelse($admins as $index => $admin)
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-6 py-4 text-sm">{{ $index + 1 }}</td>
-                            <td class="px-6 py-4 text-sm font-medium">{{ $admin->name }}</td>
+                            <td class="px-6 py-4 text-sm">{{ $admin->first_name }}</td>
+                            <td class="px-6 py-4 text-sm">{{ $admin->last_name }}</td>
                             <td class="px-6 py-4 text-sm">{{ $admin->email }}</td>
-                            <td class="px-6 py-4 text-sm">{{ $admin->section }}</td>
-                            <td class="px-6 py-4 text-sm">{{ $admin->created_at->format('Y-m-d') }}</td>
+                            <td class="px-6 py-4 text-sm">
+                                {{ $admin->section ? $admin->section->section_name : 'N/A' }}
+                            </td>
+                            <td class="px-6 py-4 text-sm">{{ $admin->position ?? '—' }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-6 text-center text-gray-500 text-sm">No admin users found.</td>
+                            <td colspan="6" class="px-6 py-6 text-center text-gray-500 text-sm">
+                                No admin users found.
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
