@@ -12,28 +12,36 @@ use Illuminate\Support\Facades\Auth;
 class PacdController extends Controller
 {
     public function index()
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        // Sections for buttons
+    // Sections for buttons
+    if (is_null($user->section_id)) {
+        // User has no assigned section → show all sections
         $sections = Section::orderBy('section_name')->get(['id', 'section_name']);
-
-        // Transactions
-        if ($user->user_type == User::TYPE_PACD) {
-            // PACD sees all transactions
-            $transactions = Transaction::with(['section', 'step'])
-                ->orderBy('queue_number', 'desc')
-                ->get();
-        } else {
-            // Normal users see only their section
-            $transactions = Transaction::with(['section', 'step'])
-                ->where('section_id', $user->section_id)
-                ->orderBy('queue_number', 'desc')
-                ->get();
-        }
-
-        return view('pacd.index', compact('sections', 'transactions'));
+    } else {
+        // User already assigned to a section → fetch only that section
+        $sections = Section::where('id', $user->section_id)
+            ->get(['id', 'section_name']);
     }
+
+    // Transactions
+    if ($user->user_type == User::TYPE_PACD) {
+        // PACD sees all transactions
+        $transactions = Transaction::with(['section', 'step'])
+            ->orderBy('queue_number', 'desc')
+            ->get();
+    } else {
+        // Normal users see only their section
+        $transactions = Transaction::with(['section', 'step'])
+            ->where('section_id', $user->section_id)
+            ->orderBy('queue_number', 'desc')
+            ->get();
+    }
+
+    return view('pacd.index', compact('sections', 'transactions'));
+}
+
 
     public function generateQueue(Request $request, Section $section)
     {
