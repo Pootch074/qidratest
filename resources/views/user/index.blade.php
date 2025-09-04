@@ -94,62 +94,73 @@
 
 
         {{-- SERVING --}}
-<div class="w-full flex flex-col bg-white rounded-md shadow overflow-hidden">
+        <div class="w-full flex flex-col bg-white rounded-md shadow overflow-hidden">
 
-    {{-- Top Bar: Step & Window --}}
-    <div class="bg-[#1a1172] text-white text-center font-bold py-2">
-        @if($stepNumber || $windowNumber)
-        STEP {{ $stepNumber ?? '-' }}
-        WINDOW {{ $windowNumber ?? '-' }}
-    @endif
-    </div>
+            {{-- Top Bar: Step & Window --}}
+            <div class="bg-[#1a1172] text-white text-center font-bold py-2">
+                @if($stepNumber || $windowNumber)
+                STEP {{ $stepNumber ?? '-' }}
+                WINDOW {{ $windowNumber ?? '-' }}
+            @endif
+            </div>
 
-    {{-- Field Office / Division / Section Info --}}
-    <div class="bg-[#f5f8fd] p-4 text-center font-bold space-y-1 border-b border-gray-200">
-        <p class="mb-0">{{ strtoupper($fieldOffice ?? '-') }}</p>
-    <p class="mb-0">{{ strtoupper($divisionName ?? '-') }}</p>
-    <p class="mb-0">{{ strtoupper($sectionName ?? '-') }}</p>
-    </div>
+            {{-- Field Office / Division / Section Info --}}
+            <div class="bg-[#f5f8fd] p-4 text-center font-bold space-y-1 border-b border-gray-200">
+                <p class="mb-0">{{ strtoupper($fieldOffice ?? '-') }}</p>
+            <p class="mb-0">{{ strtoupper($divisionName ?? '-') }}</p>
+            <p class="mb-0">{{ strtoupper($sectionName ?? '-') }}</p>
+            </div>
 
-    {{-- Currently Serving Queue --}}
-    <div class="flex flex-col items-center justify-start bg-[#f0f4ff]">
-        {{-- Label --}}
-        <div class="w-full p-6 bg-yellow-100 border-2 border-yellow-400 rounded-md text-center text-4xl font-bold mt-0">
-            Serving Queue
-        </div>
-
-        {{-- Queue List --}}
-        <div id="serving-queue" class="w-full p-6 bg-yellow-100 border-2 border-yellow-400 rounded-md text-center text-4xl font-bold mt-0 overflow-y-auto max-h-[70vh]">
-            @forelse($servingQueue as $queue)
-                <div class="{{ $queue->style_class }} text-white text-2xl p-2 my-1 rounded shadow text-center font-bold">
-                    {{ $queue->formatted_number }}
+            {{-- Currently Serving Queue --}}
+            <div class="flex flex-col items-center justify-start bg-[#f0f4ff]">
+                {{-- Label --}}
+                <div class="w-full p-6 rounded-md text-center text-4xl font-bold mt-0">
+                    Now Serving
                 </div>
-            @empty
-                <div class="text-gray-400 text-center py-4">
-                    No serving queues
+
+                {{-- Queue List --}}
+                <div id="serving-queue" class="w-full p-6 rounded-md text-center text-4xl font-bold mt-0 overflow-y-auto max-h-[70vh]">
+                    @forelse($servingQueue as $queue)
+                        <div class="{{ $queue->style_class }} text-white text-2xl p-2 my-1 rounded shadow text-center font-bold">
+                            {{ $queue->formatted_number }}
+                        </div>
+                    @empty
+                        <div class="text-gray-400 text-center py-4">
+                            No serving queues
+                        </div>
+                    @endforelse
                 </div>
-            @endforelse
-        </div>
+            </div>
+
+           {{-- Bottom Bar / Actions --}}
+<div class="flex flex-col items-center bg-white p-4 border-t border-gray-200 space-y-3">
+    {{-- Top Row: Next Regular + Next Priority --}}
+    <div class="flex space-x-2">
+        <button class="bg-blue-600 text-white px-5 text-xl py-2 rounded-md shadow">
+            Next Regular
+        </button>
+        <button class="bg-red-600 text-white px-5 text-xl py-2 rounded-md shadow">
+            Next Priority
+        </button>
     </div>
 
-    {{-- Bottom Bar / Actions --}}
-    <div class="flex items-center justify-between bg-white p-2 border-t border-gray-200">
-        <div class="flex space-x-2">
-            <button class="bg-red-600 text-white px-4 py-2 rounded-md flex items-center justify-center shadow">
-                <i class="fas fa-users"></i>
-            </button>
-            <button class="bg-gray-400 text-white px-4 py-2 rounded-md shadow">
-                <i class="fas fa-backward"></i>
-            </button>
-            <button class="bg-gray-400 text-white px-4 py-2 rounded-md shadow">
-                <i class="fas fa-volume-up"></i>
-            </button>
-            <button class="bg-gray-400 text-white px-4 py-2 rounded-md shadow">
-                <i class="fas fa-check"></i>
-            </button>
-        </div>
+    {{-- Bottom Row: Skip + Recall + Proceed --}}
+    <div class="flex space-x-2">
+        <button class="bg-gray-400 text-white px-5 text-xl py-2 rounded-md shadow">
+            Skip
+        </button>
+        <button class="bg-gray-400 text-white px-5 text-xl py-2 rounded-md shadow">
+            Recall
+        </button>
+        <button class="bg-gray-400 text-white px-5 text-xl py-2 rounded-md shadow">
+            Proceed
+        </button>
     </div>
 </div>
+
+
+            
+        </div>
 
     </div>
 </div>
@@ -199,7 +210,7 @@ function fetchQueues() {
 fetchQueues();
 
 // Refresh every 5 seconds
-setInterval(fetchQueues, 5000);
+setInterval(fetchQueues, 1000);
 </script>
 
 
