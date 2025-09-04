@@ -110,11 +110,18 @@
 
                     {{-- Delete Button --}}
                     <td class="px-6 py-3 text-center">
-                        <button class="delete-step bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg shadow-sm transition duration-200"
-                            data-id="{{ $step->id }}">
-                            <i class="fas fa-trash-alt"></i> Delete
-                        </button>
+                        @if($step->step_number === 1)
+                            <button class="bg-gray-400 text-white px-4 py-1.5 rounded-lg shadow-sm cursor-not-allowed" disabled>
+                                <i class="fas fa-ban"></i> Protected
+                            </button>
+                        @else
+                            <button class="delete-step bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg shadow-sm transition duration-200"
+                                data-id="{{ $step->id }}">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </button>
+                        @endif
                     </td>
+
                 </tr>
             @empty
                 <tr>

@@ -86,11 +86,18 @@
 
                             {{-- Delete Button --}}
                             <td class="px-6 py-3 text-center">
-                                <button class="delete-window bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg shadow-sm transition duration-200"
-                                    data-id="{{ $window->id }}">
-                                    <i class="fas fa-trash-alt"></i> Delete
-                                </button>
+                                @if($window->window_number == 1)
+                                    <button class="bg-gray-400 text-white px-4 py-1.5 rounded-lg shadow-sm cursor-not-allowed opacity-60" disabled>
+                                        <i class="fas fa-ban"></i> Protected
+                                    </button>
+                                @else
+                                    <button class="delete-window bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg shadow-sm transition duration-200"
+                                        data-id="{{ $window->id }}">
+                                        <i class="fas fa-trash-alt"></i> Delete
+                                    </button>
+                                @endif
                             </td>
+
                         </tr>
                     @empty
                         <tr>
