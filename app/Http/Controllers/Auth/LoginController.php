@@ -46,6 +46,8 @@ class LoginController extends Controller
 
             // Redirect based on user_type
             switch ($user->user_type) {
+                case 0:
+                    return redirect()->route('superadmin');
                 case 1:
                     return redirect()->route('admin');
                 case 2:

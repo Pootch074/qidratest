@@ -11,6 +11,7 @@ use App\Http\Controllers\StepsController;
 use App\Http\Controllers\WindowsController;
 use App\Http\Controllers\DisplayController;
 use App\Http\Controllers\IdscanController;
+use App\Http\Controllers\SuperAdminController;
 
 
 
@@ -84,6 +85,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('idscan', [IdscanController::class, 'index'])->name('idscan');
 
     // routes/web.php
-Route::get('/display/transactions/latest', [DisplayController::class, 'getLatestTransaction']);
+    Route::get('/display/transactions/latest', [DisplayController::class, 'getLatestTransaction']);
 
+
+    Route::get('superadmin', [SuperAdminController::class, 'index'])->name('superadmin');
+    Route::post('superadmin/store', [SuperAdminController::class, 'store'])->name('superadmin.store');
 });

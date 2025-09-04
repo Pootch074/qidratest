@@ -21,6 +21,22 @@ class UsersSeeder extends Seeder
 
         $users = [
             [
+                'first_name' => 'Super',
+                'last_name' => 'Admin',
+                'email' => env('ADMIN_EMAIL', 'superadmin@admin.com'),
+                'position' => 'Super Admin',
+                'section_id' =>null,
+                'user_type' => 0,
+                'assigned_category' => null,
+                'step_id' => null,
+                'window_id' => null,
+                'status' => 1,
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('password'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
                 'first_name' => 'CIS',
                 'last_name' => 'Admin',
                 'email' => env('ADMIN_EMAIL', 'cis@admin.com'),
