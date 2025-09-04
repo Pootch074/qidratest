@@ -37,7 +37,7 @@
 
                     <div class="mb-4">
                         <label for="window_number" class="block text-sm font-medium text-gray-700">Window Number</label>
-                        <input type="number" id="window_number" name="window_number" min="1"
+                        <input type="number" id="window_number" name="window_number" min="1" max="10"
                             class="mt-1 block w-full border rounded-md p-2" required>
                     </div>
 
@@ -208,6 +208,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
         });
     });
+
+
+    // ✅ Check if window_number already exists
+    const windowInput = document.getElementById('window_number');
+    const saveWindowBtn = document.querySelector('#addWindowForm button[type="submit"]');
+
+    if (windowInput && saveWindowBtn) {
+        windowInput.addEventListener('input', () => {
+            const windowNumber = windowInput.value;
+            const stepId = document.getElementById('step_id')?.value; // in case windows are unique per step
+            if (!windowNumber) return;
+
+            fetch(`/windows/check/${stepId}/${windowNumber}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.exists) {
+                        windowInput.setCustomValidity("Window number already exists for this step.");
+                        windowInput.reportValidity();
+                        saveWindowBtn.disabled = true;
+                    } else {
+                        windowInput.setCustomValidity("");
+                        saveWindowBtn.disabled = false;
+                    }
+                })
+                .catch(() => {
+                    windowInput.setCustomValidity("Error checking window number.");
+                    saveWindowBtn.disabled = true;
+                });
+        });
+    }
+
 });
 </script>
 @endsection

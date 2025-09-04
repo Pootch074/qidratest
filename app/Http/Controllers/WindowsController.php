@@ -81,4 +81,14 @@ class WindowsController extends Controller
             'message' => 'Window deleted successfully.'
         ]);
     }
+
+    public function check($stepId, $windowNumber)
+{
+    $exists = \App\Models\Window::where('step_id', $stepId)
+        ->where('window_number', $windowNumber)
+        ->exists();
+
+    return response()->json(['exists' => $exists]);
+}
+
 }

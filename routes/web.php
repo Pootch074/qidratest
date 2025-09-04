@@ -54,6 +54,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('admin/windows', [WindowsController::class, 'index'])->name('admin.windows');
     Route::post('admin/windows', [WindowsController::class, 'store'])->name('windows.store');
     Route::delete('admin/windows/{id}', [WindowsController::class, 'destroy'])->name('windows.destroy');
+    Route::get('/windows/check/{stepId}/{windowNumber}', [WindowsController::class, 'check'])->name('windows.check');
+
 
 
 
