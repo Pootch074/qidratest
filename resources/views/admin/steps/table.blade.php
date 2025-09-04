@@ -29,7 +29,7 @@
                 <div class="mb-4">
                     <label for="step_number" class="block text-sm font-medium text-gray-700">Step Number</label>
                     <input type="number" id="step_number" name="step_number" 
-                        min="0"
+                        min="1" max="10"
                         class="mt-1 block w-full border rounded-md p-2"
                         required>
                 </div>

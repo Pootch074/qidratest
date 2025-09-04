@@ -26,7 +26,8 @@ class StepsController extends Controller
             'step_number' => [
                 'required',
                 'integer',
-                'min:0',
+                'min:1',
+                'max:10',
                 Rule::unique('steps')->where(function ($query) {
                     return $query->where('section_id', Auth::user()->section_id);
                 }),
