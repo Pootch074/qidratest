@@ -121,7 +121,7 @@ class UsersSeeder extends Seeder
             [
                 'first_name' => 'CBSS',
                 'last_name' => 'User',
-                'email' => 'cbss@gmail.com', // change as needed
+                'email' => 'usercbss@gmail.com', // change as needed
                 'position' => 'SWOII', // optional
                 'section_id' => 14,
                 'user_type' => 5,

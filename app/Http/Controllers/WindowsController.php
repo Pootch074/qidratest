@@ -83,12 +83,17 @@ class WindowsController extends Controller
     }
 
     public function check($stepId, $windowNumber)
-{
-    $exists = \App\Models\Window::where('step_id', $stepId)
-        ->where('window_number', $windowNumber)
-        ->exists();
+    {
+        // Defensive: make sure we only check valid stepId and number within 1–10
+        if (!is_numeric($windowNumber) || $windowNumber < 1 || $windowNumber > 10) {
+            return response()->json(['exists' => false]);
+        }
 
-    return response()->json(['exists' => $exists]);
-}
+        $exists = Window::where('step_id', $stepId)
+            ->where('window_number', $windowNumber)
+            ->exists();
+
+        return response()->json(['exists' => $exists]);
+    }
 
 }
