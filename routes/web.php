@@ -13,12 +13,6 @@ use App\Http\Controllers\DisplayController;
 use App\Http\Controllers\IdscanController;
 use App\Http\Controllers\SuperAdminController;
 
-
-
-
-
-
-
 // Routes that require authentication
 Route::middleware(['auth'])->group(function () {
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');

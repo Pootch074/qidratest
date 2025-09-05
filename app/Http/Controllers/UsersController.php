@@ -102,7 +102,7 @@ class UsersController extends Controller
 
         // User types excluding Admin
         $userTypes = collect(User::getUserTypes())
-            ->except([User::TYPE_ADMIN, User::TYPE_PACD]);
+            ->except([User::TYPE_SUPERADMIN,User::TYPE_ADMIN,User::TYPE_IDSCAN, User::TYPE_PACD]);
 
         return view('admin.users.table', compact(
             'users',
