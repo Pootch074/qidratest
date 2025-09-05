@@ -93,17 +93,14 @@
             </div>
 
             {{-- Assign Window --}}
-            <div>
-                <label class="block text-sm font-medium text-gray-600">Assign Window</label>
-                <select name="window_id" required 
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">-- Select Window --</option>
-                    @foreach($windows as $window)
-                        <option value="{{ $window->id }}">{{ $window->window_number }}</option>
-                    @endforeach
-                </select>
+<div>
+    <label class="block text-sm font-medium text-gray-600">Assign Window</label>
+<select name="window_id" required disabled
+        class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <option value="">-- Select Window --</option>
+</select>
 
-            </div>
+</div>
 
             {{-- Password --}}
             <div>
@@ -217,37 +214,48 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         const formData = new FormData(this);
 
-        fetch("{{ route('admin.store') }}", {
-            method: 'POST',
-            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            if(data.success) {
-                const u = data.user;
-                const row = `
-                <tr id="userRow-${u.id}" class="hover:bg-indigo-50 transition duration-200">
-                    <td class="px-6 py-4">${u.first_name}</td>
-                    <td class="px-6 py-4">${u.last_name}</td>
-                    <td class="px-6 py-4">${u.email}</td>
-                    <td class="px-6 py-4">${u.position}</td>
-                    <td class="px-6 py-4">${u.user_type_name}</td>
-                    <td class="px-6 py-4">${u.assigned_category}</td>
-                    <td class="px-6 py-4">${u.window_number ?? '—'}</td>
-                    <td class="px-6 py-4">${u.step_number ?? '—'}</td>
-                    <td class="px-6 py-4 space-x-2">
-                        <a href="#" class="text-green-600 hover:underline">Edit</a>
-                        <button onclick="deleteUser(${u.id})" class="text-red-600 hover:underline">Delete</button>
-                    </td>
-                </tr>`;
+        fetch("{{ route('admin.users.store') }}", {
+    method: 'POST',
+    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+    body: formData
+})
+.then(async res => {
+    if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text);
+    }
+    return res.json();
+})
+.then(data => {
+    if(data.success) {
+        const u = data.user;
+        const row = `
+        <tr id="userRow-${u.id}" class="hover:bg-indigo-50 transition duration-200">
+            <td class="px-6 py-4">${u.first_name}</td>
+            <td class="px-6 py-4">${u.last_name}</td>
+            <td class="px-6 py-4">${u.email}</td>
+            <td class="px-6 py-4">${u.position}</td>
+            <td class="px-6 py-4">${u.user_type_name}</td>
+            <td class="px-6 py-4">${u.assigned_category}</td>
+            <td class="px-6 py-4">${u.step_number ?? '—'}</td>
+            <td class="px-6 py-4">${u.window_number ?? '—'}</td>
+            <td class="px-6 py-4 space-x-2">
+                <a href="#" class="text-green-600 hover:underline">Edit</a>
+                <button onclick="deleteUser(${u.id})" class="text-red-600 hover:underline">Delete</button>
+            </td>
+        </tr>`;
+        document.querySelector('#usersTable tbody').insertAdjacentHTML('beforeend', row);
+        closeModal();
+        this.reset();
+    } else {
+        alert('Error: ' + (data.message ?? 'Unknown error'));
+    }
+})
+.catch(err => {
+    console.error("Save user failed:", err);
+    alert("Save failed. Check console for details.");
+});
 
-                document.querySelector('#usersTable tbody').insertAdjacentHTML('beforeend', row);
-                closeModal();
-                this.reset();
-            } else alert('Error: ' + data.message);
-        })
-        .catch(err => console.error(err));
     });
 });
 </script>
@@ -319,7 +327,7 @@ function renderUsers(users) {
     const tbody = document.querySelector('#usersTable tbody');
     tbody.innerHTML = '';
 
-    if (users.length === 0) {
+    if (!users || users.length === 0) {
         tbody.innerHTML = `<tr>
             <td colspan="{{ count($userColumns) + 3 }}" class="px-6 py-6 text-center text-gray-500">
                 🚫 No users found.
@@ -332,6 +340,7 @@ function renderUsers(users) {
         const row = document.createElement('tr');
         row.id = `userRow-${u.id}`;
         row.className = 'hover:bg-indigo-50 transition duration-200';
+
         row.innerHTML = `
             <td class="px-6 py-3 text-gray-700">${u.first_name}</td>
             <td class="px-6 py-3 text-gray-700">${u.last_name}</td>
@@ -339,8 +348,11 @@ function renderUsers(users) {
             <td class="px-6 py-3 text-gray-700">${u.position}</td>
             <td class="px-6 py-3 text-gray-700">${u.user_type_name}</td>
             <td class="px-6 py-3 text-gray-700">${u.assigned_category}</td>
-            <td class="px-6 py-3 text-gray-700">${u.window_number ?? '—'}</td>
+
+            <!-- IMPORTANT: Step then Window (match the table header) -->
             <td class="px-6 py-3 text-gray-700">${u.step_number ?? '—'}</td>
+            <td class="px-6 py-3 text-gray-700">${u.window_number ?? '—'}</td>
+
             <td class="px-6 py-3 text-center space-x-2">
                 <a href="#" class="inline-block bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
                     <i class="fas fa-edit"></i> Edit
@@ -353,6 +365,10 @@ function renderUsers(users) {
         tbody.appendChild(row);
     });
 }
+
+
+
+
 
 // Poll the endpoint every 1 second
 function fetchUsers() {
@@ -367,5 +383,36 @@ fetchUsers();
 setInterval(fetchUsers, 1000);
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const stepSelect = document.querySelector('select[name="step_id"]');
+    const windowSelect = document.querySelector('select[name="window_id"]');
+
+    stepSelect.addEventListener('change', function () {
+        const stepId = this.value;
+
+        // reset window dropdown
+        windowSelect.innerHTML = '<option value="">-- Select Window --</option>';
+        windowSelect.disabled = true;
+
+        if (stepId) {
+            fetch(`/windows/by-step/${stepId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        data.forEach(w => {
+                            let opt = document.createElement('option');
+                            opt.value = w.id;
+                            opt.textContent = w.window_number;
+                            windowSelect.appendChild(opt);
+                        });
+                        windowSelect.disabled = false;
+                    }
+                })
+                .catch(err => console.error(err));
+        }
+    });
+});
+</script>
 
 @endsection

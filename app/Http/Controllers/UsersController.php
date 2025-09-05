@@ -77,7 +77,7 @@ class UsersController extends Controller
         $authUser = Auth::user();
         $sectionId = $authUser->section_id;
 
-        // Fetch users in the same section with step and window
+        // Fetch users (with step and window relations)
         $users = User::with(['step', 'window'])
             ->where('section_id', $sectionId)
             ->latest()
@@ -95,14 +95,12 @@ class UsersController extends Controller
         // Steps that belong to the user's section
         $steps = Step::where('section_id', $sectionId)->get();
 
-        // Windows where step.section_id = user's section_id
-        $windows = Window::whereHas('step', function ($q) use ($sectionId) {
-            $q->where('section_id', $sectionId);
-        })->get();
+        // Windows will be loaded dynamically by step
+        $windows = []; // keep empty initially
 
         // User types excluding Admin
         $userTypes = collect(User::getUserTypes())
-            ->except([User::TYPE_SUPERADMIN,User::TYPE_ADMIN,User::TYPE_IDSCAN, User::TYPE_PACD]);
+            ->except([User::TYPE_SUPERADMIN, User::TYPE_ADMIN, User::TYPE_IDSCAN, User::TYPE_PACD]);
 
         return view('admin.users.table', compact(
             'users',
@@ -285,46 +283,50 @@ class UsersController extends Controller
     public function store(Request $request)
     {
         $authUser = Auth::user();
+        $sectionId = $authUser->section_id;
 
         $validated = $request->validate([
             'first_name'        => 'required|string|max:255',
             'last_name'         => 'required|string|max:255',
             'email'             => 'required|email|unique:users,email',
             'position'          => 'required|string|max:255',
-            'user_type'         => 'required|in:1,6,8', // include Display
-            'assigned_category' => 'nullable|in:regular,priority',
-            'step_id'           => 'nullable|exists:steps,id',
-            'window_id'         => 'nullable|exists:windows,id',
+            'user_type'         => 'required|string',
+            'assigned_category' => 'required|string|in:regular,priority',
+            'step_id'           => 'required|exists:steps,id',
+            'window_id'         => 'required|exists:windows,id',
             'password'          => 'required|string|min:6',
         ]);
 
-        $validated['section_id'] = $authUser->section_id;
-
-        if ($validated['user_type'] == 8) { // Display user
-            $validated['assigned_category'] = null;
-            $validated['step_id'] = null;
-            $validated['window_id'] = null;
-        }
-
-        $validated['password'] = bcrypt($validated['password']);
-
-        $user = User::create($validated);
+        // Create new user
+        $user = User::create([
+            'first_name'        => $validated['first_name'],
+            'last_name'         => $validated['last_name'],
+            'email'             => $validated['email'],
+            'position'          => $validated['position'],
+            'user_type'         => $validated['user_type'],
+            'assigned_category' => $validated['assigned_category'],
+            'step_id'           => $validated['step_id'],
+            'window_id'         => $validated['window_id'],
+            'section_id'        => $sectionId,
+            'password'          => bcrypt($validated['password']),
+        ]);
 
         return response()->json([
             'success' => true,
             'user' => [
-                'id' => $user->id,
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
-                'email' => $user->email,
-                'position' => $user->position,
-                'user_type_name' => $user->getUserTypeName(),
-                'assigned_category' => $user->assigned_category,
-                'step_number' => $user->step->step_number ?? '—',
-                'window_number' => $user->window->window_number ?? '—',
-            ]
+                'id'               => $user->id,
+                'first_name'       => $user->first_name,
+                'last_name'        => $user->last_name,
+                'email'            => $user->email,
+                'position'         => $user->position,
+                'user_type_name'   => $user->getUserTypeName(),
+                'assigned_category'=> $user->assigned_category,
+                'window_number'    => $user->window->window_number ?? null,
+                'step_number'      => $user->step->step_number ?? null,
+            ],
         ]);
     }
+
 
     public function destroy(User $user)
     {
@@ -385,6 +387,22 @@ class UsersController extends Controller
         'message' => 'No regular clients waiting in the queue.'
     ]);
 }
+
+
+public function getWindowsByStep($stepId)
+    {
+        $authUser = Auth::user();
+        $sectionId = $authUser->section_id;
+
+        $windows = Window::where('step_id', $stepId)
+            ->whereHas('step', function ($q) use ($sectionId) {
+                $q->where('section_id', $sectionId);
+            })
+            ->get(['id', 'window_number']);
+
+        return response()->json($windows);
+    }
+
 
 
 

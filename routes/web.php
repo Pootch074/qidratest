@@ -40,7 +40,7 @@ Route::middleware(['auth', CheckUserType::class . ':0,1,2,3,5,6'])->group(functi
 Route::middleware(['auth'])->group(function () {
     Route::get('admin/users', [UsersController::class, 'users'])->name('admin.users');
     Route::get('admin/users/json', [UsersController::class, 'usersJson'])->name('admin.users.json');
-    Route::post('admin/users', [UsersController::class, 'store'])->name('admin.store');
+    Route::post('admin/users/store', [UsersController::class, 'store'])->name('admin.users.store');
     Route::delete('admin/users/{user}', [UsersController::class, 'destroy'])->name('admin.users.destroy');
     Route::get('/queues/data', [UsersController::class, 'fetchQueues'])->name('queues.data');
     Route::post('/users/next-regular', [UsersController::class, 'nextRegular'])->name('users.nextRegular');
@@ -65,4 +65,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/queue/store', [TransactionsController::class, 'store'])->name('queue.store');
 
     Route::post('superadmin/store', [SuperAdminController::class, 'store'])->name('superadmin.store');
+
+    Route::get('/windows/by-step/{step}', [UsersController::class, 'getWindowsByStep'])
+     ->name('windows.byStep');
+
 });

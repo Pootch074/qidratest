@@ -58,7 +58,7 @@
         e.preventDefault();
         const formData = new FormData(this);
 
-        fetch("{{ route('admin.store') }}", {
+        fetch("{{ route('admin.users.store') }}", {
             method: 'POST',
             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
             body: formData
