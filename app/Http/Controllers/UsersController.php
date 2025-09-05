@@ -347,10 +347,10 @@ class UsersController extends Controller
     $user = Auth::user();
 
     // Validate required fields exist
-    if (!$user->step_id || !$user->window_id || !$user->section_id) {
+    if (!$user->step_id || !$user->section_id || !$user->window_id) {
         return response()->json([
             'status' => 'error',
-            'message' => 'User is not assigned to a step, window, or section.'
+            'message' => 'User is not assigned to a step, section, or window.'
         ], 400);
     }
 
@@ -359,7 +359,6 @@ class UsersController extends Controller
         $record = Transaction::where('queue_status', 'waiting')
             ->where('client_type', 'regular')
             ->where('step_id', $user->step_id)
-            ->where('window_id', $user->window_id)
             ->where('section_id', $user->section_id)
             ->lockForUpdate() // prevent concurrent grabs
             ->orderBy('created_at', 'asc')
@@ -368,6 +367,7 @@ class UsersController extends Controller
         if ($record) {
             $record->update([
                 'queue_status' => 'serving',
+                'window_id'    => $user->window_id, // ✅ assign current cashier's window
             ]);
         }
 
@@ -377,7 +377,7 @@ class UsersController extends Controller
     if ($transaction) {
         return response()->json([
             'status' => 'success',
-            'message' => "Serving client {$transaction->client_type}{$transaction->queue_number}",
+            'message' => "Serving client {$transaction->client_type}{$transaction->queue_number} at window {$user->window_id}",
             'transaction' => $transaction
         ]);
     }
@@ -387,6 +387,8 @@ class UsersController extends Controller
         'message' => 'No regular clients waiting in the queue.'
     ]);
 }
+
+
 
 
 public function getWindowsByStep($stepId)
