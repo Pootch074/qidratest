@@ -142,22 +142,7 @@ class UsersController extends Controller
 
 
 
-    public function preassess()
-    {
-        return view('preassess.index');
-    }
-    public function encode()
-    {
-        return view('encode.index');
-    }
-    public function assessment()
-    {
-        return view('assessment.index');
-    }
-    public function release()
-    {
-        return view('release.index');
-    }
+    
     public function user()
     {
         $user = Auth::user();

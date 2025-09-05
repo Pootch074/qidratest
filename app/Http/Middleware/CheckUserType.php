@@ -20,7 +20,7 @@ class CheckUserType
      */
     public function handle(Request $request, Closure $next, ...$types): Response
     {
-        if (auth()->check() && in_array(auth()->user()->user_type, $types)) {
+        if (Auth::check() && in_array(Auth::user()->user_type, $types)) {
             return $next($request);
         }
         abort(403, 'Unauthorized');
