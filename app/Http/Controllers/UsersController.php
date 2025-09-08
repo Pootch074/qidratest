@@ -16,6 +16,99 @@ use Illuminate\Support\Facades\DB;
 
 class UsersController extends Controller
 {
+    private function getQueuesForUser($user)
+    {
+        $sectionId = $user->section_id;
+
+        // Formatter for queues
+        $formatQueues = function ($queues) {
+            return $queues->map(function ($q) {
+                $q->formatted_number = strtoupper(substr($q->client_type, 0, 1))
+                    . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT);
+                $q->style_class = strtolower($q->client_type) === 'priority'
+                    ? 'bg-red-600'
+                    : 'bg-[#150e60]';
+                return $q;
+            })->values();
+        };
+
+        return [
+            'regularQueues' => $formatQueues(Transaction::where('section_id', $sectionId)
+                ->where('step_id', $user->step_id)
+                ->where('queue_status', 'waiting')
+                ->where('client_type', 'regular')
+                ->orderBy('created_at', 'asc')
+                ->get()),
+
+            'priorityQueues' => $formatQueues(Transaction::where('section_id', $sectionId)
+                ->where('step_id', $user->step_id)
+                ->where('queue_status', 'waiting')
+                ->where('client_type', 'priority')
+                ->orderBy('created_at', 'asc')
+                ->get()),
+
+            'pendingRegularQueues' => $formatQueues(Transaction::where('section_id', $sectionId)
+                ->where('queue_status', 'pending')
+                ->where('client_type', 'regular')
+                ->orderBy('created_at', 'asc')
+                ->get()),
+
+            'pendingPriorityQueues' => $formatQueues(Transaction::where('section_id', $sectionId)
+                ->where('queue_status', 'pending')
+                ->where('client_type', 'priority')
+                ->orderBy('created_at', 'asc')
+                ->get()),
+
+            'servingQueue' => $formatQueues(Transaction::where('section_id', $sectionId)
+                ->where('queue_status', 'serving')
+                ->orderBy('updated_at', 'desc')
+                ->get()),
+        ];
+    }
+
+
+    public function user()
+    {
+        $user = Auth::user();
+        logger()->info('Logged-in user step_id: ' . $user->step_id);
+
+        $queues = $this->getQueuesForUser($user);
+
+        $stepNumber   = optional($user->step)->step_number;
+        $windowNumber = optional($user->window)->window_number;
+        $fieldOffice  = optional($user->section?->division?->office)->field_office;
+        $divisionName = optional($user->section?->division)->division_name;
+        $sectionName  = optional($user->section)->section_name;
+
+        return view('user.index', array_merge($queues, compact(
+            'stepNumber',
+            'windowNumber',
+            'fieldOffice',
+            'divisionName',
+            'sectionName'
+        )));
+    }
+
+    /**
+     * User dashboard (JSON endpoint for polling/AJAX).
+     */
+    public function fetchQueues()
+    {
+        $user = Auth::user();
+        $queues = $this->getQueuesForUser($user);
+
+        $userInfo = [
+            'stepNumber'   => optional($user->step)->step_number ?? 'N/A',
+            'windowNumber' => optional($user->window)->window_number ?? 'N/A',
+            'sectionName'  => optional($user->section)->section_name ?? 'N/A',
+            'divisionName' => optional($user->section?->division)->division_name ?? 'N/A',
+            'fieldOffice'  => optional($user->section?->division?->office)->field_office ?? 'N/A',
+        ];
+
+        return response()->json(array_merge($queues, [
+            'userInfo' => $userInfo
+        ]));
+    }
 
     public function admin()
     {
@@ -141,138 +234,11 @@ class UsersController extends Controller
 
 
     
-    public function user()
-    {
-        $user = Auth::user();
-        $sectionId = $user->section_id;
-
-        // ---------- UPCOMING QUEUES ----------
-        $upcomingQueues = Transaction::where('section_id', $sectionId)
-            ->where('queue_status', 'waiting')
-            ->orderBy('created_at', 'asc')
-            ->get();
-
-        $regularQueues = $upcomingQueues->filter(fn($q) => strtolower($q->client_type) === 'regular');
-        $priorityQueues = $upcomingQueues->filter(fn($q) => strtolower($q->client_type) === 'priority');
-
-        $regularQueues->transform(fn($q) => tap($q, function ($q) {
-            $q->formatted_number = 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT);
-            $q->style_class = 'bg-[#150e60]';
-        }));
-
-        $priorityQueues->transform(fn($q) => tap($q, function ($q) {
-            $q->formatted_number = 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT);
-            $q->style_class = 'bg-red-600';
-        }));
-
-        // ---------- PENDING QUEUES ----------
-        $pendingQueues = Transaction::where('section_id', $sectionId)
-            ->where('queue_status', 'pending')
-            ->orderBy('created_at', 'asc')
-            ->get();
-
-        $pendingRegularQueues = $pendingQueues->filter(fn($q) => strtolower($q->client_type) === 'regular');
-        $pendingPriorityQueues = $pendingQueues->filter(fn($q) => strtolower($q->client_type) === 'priority');
-
-        $pendingRegularQueues->transform(fn($q) => tap($q, function ($q) {
-            $q->formatted_number = 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT);
-            $q->style_class = 'bg-[#150e60]';
-        }));
-
-        $pendingPriorityQueues->transform(fn($q) => tap($q, function ($q) {
-            $q->formatted_number = 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT);
-            $q->style_class = 'bg-red-600';
-        }));
-
-        // --- Fetch serving queue ---
-        $servingQueue = Transaction::where('section_id', $sectionId)
-            ->where('queue_status', 'serving')
-            ->orderBy('updated_at', 'desc')
-            ->get();
-
-        // --- Get logged-in user's step number, window number, and field office ---
-        $stepNumber = $user->step ? $user->step->step_number : null;
-        $windowNumber = $user->window ? $user->window->window_number : null;
-
-        // Field office via section → division → office
-        $fieldOffice = optional($user->section)
-            ->division
-            ->office
-            ->field_office ?? null;
-
-        $divisionName = optional($user->section)->division->division_name ?? null;
-        $sectionName = optional($user->section)->section_name ?? null;
-
-        // --- Pass all to view ---
-        return view('user.index', compact(
-            'regularQueues',
-            'priorityQueues',
-            'pendingRegularQueues',
-            'pendingPriorityQueues',
-            'servingQueue',
-            'stepNumber',
-            'windowNumber',
-            'fieldOffice',
-            'divisionName',
-            'sectionName'
-        ));
-    }
+    
 
 
 
-    public function fetchQueues()
-    {
-        $user = Auth::user();
-        $sectionId = $user->section_id;
-
-        // Helper function to format queues
-        $formatQueues = function ($queues) {
-            return $queues->map(function ($q) {
-                $q->formatted_number = strtoupper(substr($q->client_type, 0, 1))
-                    . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT);
-                $q->style_class = strtolower($q->client_type) === 'priority' ? 'bg-red-600' : 'bg-[#150e60]';
-                return $q;
-            })->values();
-        };
-
-        // Upcoming
-        $upcoming = Transaction::where('section_id', $sectionId)
-            ->where('queue_status', 'waiting')
-            ->orderBy('created_at', 'asc')->get();
-        $regularQueues = $formatQueues($upcoming->where('client_type', 'regular'));
-        $priorityQueues = $formatQueues($upcoming->where('client_type', 'priority'));
-
-        // Pending
-        $pending = Transaction::where('section_id', $sectionId)
-            ->where('queue_status', 'pending')
-            ->orderBy('created_at', 'asc')->get();
-        $pendingRegular = $formatQueues($pending->where('client_type', 'regular'));
-        $pendingPriority = $formatQueues($pending->where('client_type', 'priority'));
-
-        // Serving
-        $servingQueue = $formatQueues(Transaction::where('section_id', $sectionId)
-            ->where('queue_status', 'serving')
-            ->orderBy('updated_at', 'desc')
-            ->get());
-
-        // User info
-        $userInfo = [
-            'stepNumber' => optional($user->step)->step_number ?? 'N/A',
-            'windowNumber' => optional($user->window)->window_number ?? 'N/A',
-            'sectionName' => optional($user->section)->section_name ?? 'N/A',
-            'divisionName' => optional(optional($user->section)->division)->division_name ?? 'N/A',
-            'fieldOffice' => $user->field_office ?? 'N/A',
-        ];
-
-        return response()->json([
-            'regularQueues' => $regularQueues,
-            'priorityQueues' => $priorityQueues,
-            'pendingRegular' => $pendingRegular,
-            'pendingPriority' => $pendingPriority,
-            'servingQueue' => $servingQueue,
-            'userInfo' => $userInfo
-        ]);
-    }
+    
 
 
 
@@ -433,6 +399,118 @@ class UsersController extends Controller
             'message' => 'No priority clients waiting in the queue.'
         ]);
     }
+
+
+    
+    public function skipQueue()
+{
+    $user = Auth::user();
+
+    if (!$user->step_id || !$user->section_id || !$user->window_id) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'User is not assigned to a step, section, or window.'
+        ], 400);
+    }
+
+    $transaction = DB::transaction(function () use ($user) {
+        // Find the currently serving transaction
+        $current = Transaction::where('queue_status', 'serving')
+            ->where('section_id', $user->section_id)
+            ->where('step_id', $user->step_id)
+            ->where('window_id', $user->window_id)
+            ->lockForUpdate()
+            ->first();
+
+        if (!$current) {
+            return null;
+        }
+
+        // Move it back to pending and clear window
+        $current->update([
+            'queue_status' => 'pending',
+            'window_id' => null,
+        ]);
+
+        return $current;
+    });
+
+    if ($transaction) {
+        return response()->json([
+            'status' => 'success',
+            'message' => "Queue {$transaction->client_type}{$transaction->queue_number} has been skipped."
+        ]);
+    }
+
+    return response()->json([
+        'status' => 'empty',
+        'message' => 'No active serving queue to skip.'
+    ]);
+}
+
+    public function proceedQueue()
+{
+    $user = Auth::user();
+
+    if (!$user->step_id || !$user->section_id || !$user->window_id) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'User is not assigned to a step, section, or window.'
+        ], 400);
+    }
+
+    $transaction = DB::transaction(function () use ($user) {
+        // Find the currently serving transaction
+        $current = Transaction::where('queue_status', 'serving')
+            ->where('section_id', $user->section_id)
+            ->where('step_id', $user->step_id)
+            ->where('window_id', $user->window_id)
+            ->lockForUpdate()
+            ->first();
+
+        if (!$current) {
+            return null;
+        }
+
+        // Find the next step in the same section
+        $nextStep = Step::where('section_id', $user->section_id)
+            ->where('step_number', '>', $user->step->step_number)
+            ->orderBy('step_number', 'asc')
+            ->first();
+
+        if ($nextStep) {
+            // Move to the next step
+            $current->update([
+                'step_id' => $nextStep->id,
+                'queue_status' => 'waiting',
+                'window_id' => null,
+            ]);
+        } else {
+            // No next step -> finish
+            $current->update([
+                'queue_status' => 'completed',
+                'window_id' => null,
+            ]);
+        }
+
+        return $current;
+    });
+
+    if ($transaction) {
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Queue successfully proceeded to the next step or completed.'
+        ]);
+    }
+
+    return response()->json([
+        'status' => 'empty',
+        'message' => 'No active serving queue to proceed.'
+    ]);
+}
+
+
+    
 
 
 

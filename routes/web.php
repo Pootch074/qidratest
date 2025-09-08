@@ -45,6 +45,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/queues/data', [UsersController::class, 'fetchQueues'])->name('queues.data');
     Route::post('/users/next-regular', [UsersController::class, 'nextRegular'])->name('users.nextRegular');
     Route::post('/users/next-priority', [UsersController::class, 'nextPriority'])->name('users.nextPriority');
+    Route::post('/queue/skip', [UsersController::class, 'skipQueue'])->name('users.skipQueue');
+    Route::post('/queue/proceed', [UsersController::class, 'proceedQueue'])->name('users.proceedQueue');
+
+
 
 
 

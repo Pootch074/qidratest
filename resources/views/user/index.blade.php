@@ -60,10 +60,11 @@
                     <button id="nextPriorityBtn" class="bg-red-600 text-white px-5 text-xl py-2 rounded-md shadow">Next Priority</button>
                 </div>
                 <div class="flex space-x-2">
-                    <button class="bg-gray-400 text-white px-5 text-xl py-2 rounded-md shadow">Skip</button>
-                    <button class="bg-gray-400 text-white px-5 text-xl py-2 rounded-md shadow">Recall</button>
-                    <button class="bg-gray-400 text-white px-5 text-xl py-2 rounded-md shadow">Proceed</button>
-                </div>
+    <button id="skipBtn" class="bg-gray-400 text-white px-5 text-xl py-2 rounded-md shadow">Skip</button>
+    <button id="recallBtn" class="bg-gray-400 text-white px-5 text-xl py-2 rounded-md shadow">Recall</button>
+    <button id="proceedBtn" class="bg-gray-400 text-white px-5 text-xl py-2 rounded-md shadow">Proceed</button>
+</div>
+
             </div>
         </div>
     </div>
@@ -127,6 +128,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     bindAction('nextRegularBtn', "{{ route('users.nextRegular') }}");
     bindAction('nextPriorityBtn', "{{ route('users.nextPriority') }}");
+    bindAction('skipBtn', "{{ route('users.skipQueue') }}");
+    bindAction('proceedBtn', "{{ route('users.proceedQueue') }}");
 
 });
 </script>
