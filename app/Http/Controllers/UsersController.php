@@ -343,55 +343,102 @@ class UsersController extends Controller
 
 
     public function nextRegular()
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    // Validate required fields exist
-    if (!$user->step_id || !$user->section_id || !$user->window_id) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'User is not assigned to a step, section, or window.'
-        ], 400);
-    }
+        // Validate required fields exist
+        if (!$user->step_id || !$user->section_id || !$user->window_id) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User is not assigned to a step, section, or window.'
+            ], 400);
+        }
 
-    // Use transaction + lock to prevent race conditions
-    $transaction = DB::transaction(function () use ($user) {
-        $record = Transaction::where('queue_status', 'waiting')
-            ->where('client_type', 'regular')
-            ->where('step_id', $user->step_id)
-            ->where('section_id', $user->section_id)
-            ->lockForUpdate() // prevent concurrent grabs
-            ->orderBy('created_at', 'asc')
-            ->first();
+        // Use transaction + lock to prevent race conditions
+        $transaction = DB::transaction(function () use ($user) {
+            $record = Transaction::where('queue_status', 'waiting')
+                ->where('client_type', 'regular')
+                ->where('step_id', $user->step_id)
+                ->where('section_id', $user->section_id)
+                ->lockForUpdate() // prevent concurrent grabs
+                ->orderBy('created_at', 'asc')
+                ->first();
 
-        if ($record) {
-            $record->update([
-                'queue_status' => 'serving',
-                'window_id'    => $user->window_id, // ✅ assign current cashier's window
+            if ($record) {
+                $record->update([
+                    'queue_status' => 'serving',
+                    'window_id'    => $user->window_id, // ✅ assign current cashier's window
+                ]);
+            }
+
+            return $record;
+        });
+
+        if ($transaction) {
+            return response()->json([
+                'status' => 'success',
+                'message' => "Serving client {$transaction->client_type}{$transaction->queue_number} at window {$user->window_id}",
+                'transaction' => $transaction
             ]);
         }
 
-        return $record;
-    });
-
-    if ($transaction) {
         return response()->json([
-            'status' => 'success',
-            'message' => "Serving client {$transaction->client_type}{$transaction->queue_number} at window {$user->window_id}",
-            'transaction' => $transaction
+            'status' => 'empty',
+            'message' => 'No regular clients waiting in the queue.'
         ]);
     }
 
-    return response()->json([
-        'status' => 'empty',
-        'message' => 'No regular clients waiting in the queue.'
-    ]);
-}
+
+
+    public function nextPriority()
+    {
+        $user = Auth::user();
+
+        if (!$user->step_id || !$user->section_id || !$user->window_id) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User is not assigned to a step, section, or window.'
+            ], 400);
+        }
+
+        $transaction = DB::transaction(function () use ($user) {
+            $record = Transaction::where('queue_status', 'waiting')
+                ->where('client_type', 'priority')
+                ->where('step_id', $user->step_id)
+                ->where('section_id', $user->section_id)
+                ->lockForUpdate()
+                ->orderBy('created_at', 'asc')
+                ->first();
+
+            if ($record) {
+                $record->update([
+                    'queue_status' => 'serving',
+                    'window_id'    => $user->window_id,
+                ]);
+            }
+
+            return $record;
+        });
+
+        if ($transaction) {
+            return response()->json([
+                'status' => 'success',
+                'message' => "Serving PRIORITY client {$transaction->client_type}{$transaction->queue_number} at window {$user->window_id}",
+                'transaction' => $transaction
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'empty',
+            'message' => 'No priority clients waiting in the queue.'
+        ]);
+    }
 
 
 
 
-public function getWindowsByStep($stepId)
+
+    public function getWindowsByStep($stepId)
     {
         $authUser = Auth::user();
         $sectionId = $authUser->section_id;

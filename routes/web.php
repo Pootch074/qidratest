@@ -44,6 +44,10 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('admin/users/{user}', [UsersController::class, 'destroy'])->name('admin.users.destroy');
     Route::get('/queues/data', [UsersController::class, 'fetchQueues'])->name('queues.data');
     Route::post('/users/next-regular', [UsersController::class, 'nextRegular'])->name('users.nextRegular');
+    Route::post('/users/next-priority', [UsersController::class, 'nextPriority'])->name('users.nextPriority');
+
+
+
 
     Route::get('admin/steps', [StepsController::class, 'steps'])->name('admin.steps');
     Route::post('admin/steps', [StepsController::class, 'store'])->name('steps.store');
@@ -68,5 +72,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/windows/by-step/{step}', [UsersController::class, 'getWindowsByStep'])
      ->name('windows.byStep');
+     
 
 });

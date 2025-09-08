@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial load + auto refresh
     fetchQueues();
-    setInterval(fetchQueues, 5000);
+    setInterval(fetchQueues, 2000);
 
     // Button handlers
     const bindAction = (btnId, routeName) => {
@@ -126,6 +126,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     bindAction('nextRegularBtn', "{{ route('users.nextRegular') }}");
+    bindAction('nextPriorityBtn', "{{ route('users.nextPriority') }}");
+
 });
 </script>
 @endpush
