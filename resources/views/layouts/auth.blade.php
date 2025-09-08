@@ -5,6 +5,7 @@
     <title>{{ config('app.name', 'DSWD - Qidratest') }}</title>
     @vite(['resources/js/app.js'])
     @yield('header')
+    @livewireStyles
   </head>
   <body class="login-bgd">
     <div class="container-fluid">
@@ -14,5 +15,6 @@
         @yield('content')
     </div>
     @yield('scripts')
+    @livewireScripts
   </body>
 </html>
