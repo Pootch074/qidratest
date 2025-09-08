@@ -70,7 +70,7 @@
 </div>
 @endsection
 
-@push('scripts')
+@section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -130,4 +130,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
-@endpush
+@endsection
