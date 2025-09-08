@@ -232,20 +232,6 @@ class UsersController extends Controller
     }
 
 
-
-    
-    
-
-
-
-    
-
-
-
-
-
-
-
     public function store(Request $request)
     {
         $authUser = Auth::user();
@@ -303,10 +289,6 @@ class UsersController extends Controller
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
-
-
-
-
 
     public function nextRegular()
     {
@@ -403,50 +385,50 @@ class UsersController extends Controller
 
     
     public function skipQueue()
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    if (!$user->step_id || !$user->section_id || !$user->window_id) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'User is not assigned to a step, section, or window.'
-        ], 400);
-    }
-
-    $transaction = DB::transaction(function () use ($user) {
-        // Find the currently serving transaction
-        $current = Transaction::where('queue_status', 'serving')
-            ->where('section_id', $user->section_id)
-            ->where('step_id', $user->step_id)
-            ->where('window_id', $user->window_id)
-            ->lockForUpdate()
-            ->first();
-
-        if (!$current) {
-            return null;
+        if (!$user->step_id || !$user->section_id || !$user->window_id) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User is not assigned to a step, section, or window.'
+            ], 400);
         }
 
-        // Move it back to pending and clear window
-        $current->update([
-            'queue_status' => 'pending',
-            'window_id' => null,
-        ]);
+        $transaction = DB::transaction(function () use ($user) {
+            // Find the currently serving transaction
+            $current = Transaction::where('queue_status', 'serving')
+                ->where('section_id', $user->section_id)
+                ->where('step_id', $user->step_id)
+                ->where('window_id', $user->window_id)
+                ->lockForUpdate()
+                ->first();
 
-        return $current;
-    });
+            if (!$current) {
+                return null;
+            }
 
-    if ($transaction) {
+            // Move it back to pending and clear window
+            $current->update([
+                'queue_status' => 'pending',
+                'window_id' => null,
+            ]);
+
+            return $current;
+        });
+
+        if ($transaction) {
+            return response()->json([
+                'status' => 'success',
+                'message' => "Queue {$transaction->client_type}{$transaction->queue_number} has been skipped."
+            ]);
+        }
+
         return response()->json([
-            'status' => 'success',
-            'message' => "Queue {$transaction->client_type}{$transaction->queue_number} has been skipped."
+            'status' => 'empty',
+            'message' => 'No active serving queue to skip.'
         ]);
     }
-
-    return response()->json([
-        'status' => 'empty',
-        'message' => 'No active serving queue to skip.'
-    ]);
-}
 
     public function proceedQueue()
 {
@@ -481,15 +463,15 @@ class UsersController extends Controller
         if ($nextStep) {
             // Move to the next step
             $current->update([
-                'step_id' => $nextStep->id,
+                'step_id'      => $nextStep->id,
                 'queue_status' => 'waiting',
-                'window_id' => null,
+                'window_id'    => null,
             ]);
         } else {
-            // No next step -> finish
+            // ✅ No next step -> mark as completed
             $current->update([
                 'queue_status' => 'completed',
-                'window_id' => null,
+                'window_id'    => null,
             ]);
         }
 
@@ -498,8 +480,10 @@ class UsersController extends Controller
 
     if ($transaction) {
         return response()->json([
-            'status' => 'success',
-            'message' => 'Queue successfully proceeded to the next step or completed.'
+            'status'  => 'success',
+            'message' => $transaction->queue_status === 'completed'
+                ? 'Queue has been completed.'
+                : 'Queue successfully proceeded to the next step.',
         ]);
     }
 
@@ -508,11 +492,6 @@ class UsersController extends Controller
         'message' => 'No active serving queue to proceed.'
     ]);
 }
-
-
-    
-
-
 
 
 
@@ -529,14 +508,5 @@ class UsersController extends Controller
 
         return response()->json($windows);
     }
-
-
-
-
-
-
-
-
-
 
 }
