@@ -5,8 +5,6 @@
 
 @section('content')
 
-<div class="w-full p-4 bg-[#cbdce8]">
-    <h1>ID SCAAAAAAAAAAAAAN</h1>
-</div>
+@livewire('client-form')
 @endsection
 
