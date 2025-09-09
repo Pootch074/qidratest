@@ -219,32 +219,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ✅ Check if window_number already exists
     const windowInput = document.getElementById('window_number');
-    const saveWindowBtn = document.querySelector('#addWindowForm button[type="submit"]');
+const saveWindowBtn = document.querySelector('#addWindowForm button[type="submit"]');
 
-    if (windowInput && saveWindowBtn) {
-        windowInput.addEventListener('input', () => {
-            const windowNumber = windowInput.value;
-            const stepId = document.getElementById('step_id')?.value; // in case windows are unique per step
-            if (!windowNumber) return;
+if (windowInput && saveWindowBtn) {
+    windowInput.addEventListener('input', () => {
+        const windowNumber = windowInput.value;
+        const stepId = document.getElementById('step_id')?.value; // Windows are unique per step
+        if (!windowNumber || !stepId) return;
 
-            fetch(`/windows/check/${stepId}/${windowNumber}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.exists) {
-                        windowInput.setCustomValidity("Window number already exists for this step.");
-                        windowInput.reportValidity();
-                        saveWindowBtn.disabled = true;
-                    } else {
-                        windowInput.setCustomValidity("");
-                        saveWindowBtn.disabled = false;
-                    }
-                })
-                .catch(() => {
-                    windowInput.setCustomValidity("Error checking window number.");
+        // ✅ Use dynamic base URL
+        fetch(`${window.appBaseUrl}/windows/check/${stepId}/${windowNumber}`)
+            .then(res => {
+                if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+                return res.json();
+            })
+            .then(data => {
+                if (data.exists) {
+                    windowInput.setCustomValidity("Window number already exists for this step.");
+                    windowInput.reportValidity();
                     saveWindowBtn.disabled = true;
-                });
-        });
-    }
+                } else {
+                    windowInput.setCustomValidity("");
+                    saveWindowBtn.disabled = false;
+                }
+            })
+            .catch(err => {
+                console.error('Window uniqueness check failed:', err);
+                windowInput.setCustomValidity("Error checking window number.");
+                saveWindowBtn.disabled = true;
+            });
+    });
+}
+
 
 });
 </script>
