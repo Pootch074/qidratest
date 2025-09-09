@@ -249,10 +249,7 @@
 
                     {{-- Actions --}}
                     <td class="px-6 py-3 text-center space-x-2">
-                        <a href="#"
-                           class="inline-block bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
-                           <i class="fas fa-edit"></i> Edit
-                        </a>
+                        
                         <button onclick="deleteUser({{ $u->id }})"
                                 class="inline-block bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
                             <i class="fas fa-trash-alt"></i> Delete
@@ -352,9 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td class="px-6 py-3 text-gray-700">${u.step_number ?? '—'}</td>
                 <td class="px-6 py-3 text-gray-700">${u.window_number ?? '—'}</td>
                 <td class="px-6 py-3 text-center space-x-2">
-                    <a href="#" class="inline-block bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
-                        <i class="fas fa-edit"></i> Edit
-                    </a>
+                    
                     <button onclick="deleteUser(${u.id})" class="inline-block bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
                         <i class="fas fa-trash-alt"></i> Delete
                     </button>
@@ -469,9 +464,7 @@ function renderUsers(users) {
             <td class="px-6 py-3 text-gray-700">${u.window_number ?? '—'}</td>
 
             <td class="px-6 py-3 text-center space-x-2">
-                <a href="#" class="inline-block bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
-                    <i class="fas fa-edit"></i> Edit
-                </a>
+                
                 <button onclick="deleteUser(${u.id})" class="inline-block bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
                     <i class="fas fa-trash-alt"></i> Delete
                 </button>
