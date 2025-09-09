@@ -391,17 +391,23 @@ document.addEventListener('DOMContentLoaded', () => {
     stepSelect.addEventListener('change', function () {
         const stepId = this.value;
 
-        // reset window dropdown
+        // Reset window dropdown
         windowSelect.innerHTML = '<option value="">-- Select Window --</option>';
         windowSelect.disabled = true;
 
         if (stepId) {
-            fetch(`/windows/by-step/${stepId}`)
-                .then(res => res.json())
+            // Use dynamic base URL
+            const url = `${window.appBaseUrl}/windows/by-step/${stepId}`;
+
+            fetch(url)
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+                    return res.json();
+                })
                 .then(data => {
                     if (data.length > 0) {
                         data.forEach(w => {
-                            let opt = document.createElement('option');
+                            const opt = document.createElement('option');
                             opt.value = w.id;
                             opt.textContent = w.window_number;
                             windowSelect.appendChild(opt);
@@ -409,10 +415,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         windowSelect.disabled = false;
                     }
                 })
-                .catch(err => console.error(err));
+                .catch(err => {
+                    console.error('Failed to fetch windows:', err);
+                });
         }
     });
 });
 </script>
+
+
 
 @endsection

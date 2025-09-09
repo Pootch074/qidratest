@@ -2,17 +2,20 @@
 <html lang="en">
 
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {{-- <link rel="icon" type="image/png" href="/dswd.png"> --}}
     <title>{{ config('app.name', 'DSWD - Qidra') }} - {{ strtoupper(auth()->user()->getUserTypeName()) }} </title>
+    
     @vite(['resources/js/app.js'])
-
-    @yield('header')
     @livewireStyles
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- insert here the content of the @section('header') -->
     @yield('header') 
+    
+    <script>
+        window.appBaseUrl = "{{ url('') }}";
+    </script>
 </head>
 
 <body class="min-h-screen flex flex-col">
