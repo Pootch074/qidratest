@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreign('section_id')->references('id')->on('sections')->onDelete('set null');
 
             $table->tinyInteger('user_type')->nullable();
-            $table->enum('assigned_category', ['regular', 'priority'])->nullable();
+            $table->enum('assigned_category', ['regular', 'priority', 'both'])->nullable();
 
             $table->unsignedBigInteger('step_id')->nullable();
             $table->foreign('step_id')->references('id')->on('steps')->onDelete('set null');

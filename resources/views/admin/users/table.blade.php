@@ -150,6 +150,7 @@
             <option value="" disabled selected>-- Select Category --</option>
             <option value="regular">Regular</option>
             <option value="priority">Priority</option>
+            <option value="both">Both</option>
         </select>
     </div> 
                 
