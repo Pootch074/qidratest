@@ -51,15 +51,101 @@
             {{-- Position & User Type --}}
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-600">Position</label>
-                    <input type="text" name="position" required 
-                           class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
+  <label class="block text-sm font-medium text-gray-600">Position</label>
+  <select 
+    name="position" 
+    required 
+    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+  >
+    <option value="" disabled selected>-- Select Position --</option>
+    <option value="Accountant III">Accountant III</option>
+    <option value="Administrative Aide I">Administrative Aide I</option>
+    <option value="Administrative Aide II">Administrative Aide II</option>
+    <option value="Administrative Aide III">Administrative Aide III</option>
+    <option value="Administrative Aide IV">Administrative Aide IV</option>
+    <option value="Administrative Aide V">Administrative Aide V</option>
+    <option value="Administrative Aide VI">Administrative Aide VI</option>
+    <option value="Administrative Assistant I">Administrative Assistant I</option>
+    <option value="Administrative Assistant II">Administrative Assistant II</option>
+    <option value="Administrative Assistant III">Administrative Assistant III</option>
+    <option value="Administrative Assistant III (Bookkeeper)">Administrative Assistant III (Bookkeeper)</option>
+    <option value="Administrative Officer I">Administrative Officer I</option>
+    <option value="Administrative Officer II">Administrative Officer II</option>
+    <option value="Administrative Officer III">Administrative Officer III</option>
+    <option value="Administrative Officer IV">Administrative Officer IV</option>
+    <option value="Administrative Officer V">Administrative Officer V</option>
+    <option value="Area Coordinator">Area Coordinator</option>
+    <option value="Budget Assistant">Budget Assistant</option>
+    <option value="Cash Clerk">Cash Clerk</option>
+    <option value="Chief Administrative Officer">Chief Administrative Officer</option>
+    <option value="Community Development Assistant II">Community Development Assistant II</option>
+    <option value="Community Development Officer II">Community Development Officer II</option>
+    <option value="Community Development Officer III">Community Development Officer III</option>
+    <option value="Community Development Officer IV">Community Development Officer IV</option>
+    <option value="Community Development Officer V">Community Development Officer V</option>
+    <option value="Community Empowerment Facilitator">Community Empowerment Facilitator</option>
+    <option value="Community Facilitator">Community Facilitator</option>
+    <option value="Community Facilitator Aide">Community Facilitator Aide</option>
+    <option value="Encoder">Encoder</option>
+    <option value="Executive Assistant">Executive Assistant</option>
+    <option value="Financial Analyst I">Financial Analyst I</option>
+    <option value="Financial Analyst II">Financial Analyst II</option>
+    <option value="Financial Analyst III">Financial Analyst III</option>
+    <option value="Houseparent I">Houseparent I</option>
+    <option value="Houseparent II">Houseparent II</option>
+    <option value="Houseparent III">Houseparent III</option>
+    <option value="Management and Audit Analyst II">Management and Audit Analyst II</option>
+    <option value="Manpower Development Officer I">Manpower Development Officer I</option>
+    <option value="Manpower Development Officer II">Manpower Development Officer II</option>
+    <option value="Medical Officer IV">Medical Officer IV</option>
+    <option value="Monitoring &amp; Evaluation Officer II">Monitoring &amp; Evaluation Officer II</option>
+    <option value="Monitoring &amp; Evaluation Officer III">Monitoring &amp; Evaluation Officer III</option>
+    <option value="Municipal Monitor">Municipal Monitor</option>
+    <option value="Notifier">Notifier</option>
+    <option value="Planning Officer I">Planning Officer I</option>
+    <option value="Planning Officer II">Planning Officer II</option>
+    <option value="Planning Officer III">Planning Officer III</option>
+    <option value="Planning Officer IV">Planning Officer IV</option>
+    <option value="Procurement Officer">Procurement Officer</option>
+    <option value="Project Development Officer I">Project Development Officer I</option>
+    <option value="Project Development Officer II">Project Development Officer II</option>
+    <option value="Project Development Officer III">Project Development Officer III</option>
+    <option value="Project Development Officer IV">Project Development Officer IV</option>
+    <option value="Project Development Officer V">Project Development Officer V</option>
+    <option value="Project Evaluation Officer III">Project Evaluation Officer III</option>
+    <option value="Project Evaluation Officer IV">Project Evaluation Officer IV</option>
+    <option value="Psychologist I">Psychologist I</option>
+    <option value="Social Marketing Officer">Social Marketing Officer</option>
+    <option value="Social Welfare Aide">Social Welfare Aide</option>
+    <option value="Social Welfare Assistant">Social Welfare Assistant</option>
+    <option value="Social Welfare Officer I">Social Welfare Officer I</option>
+    <option value="Social Welfare Officer II">Social Welfare Officer II</option>
+    <option value="Social Welfare Officer III">Social Welfare Officer III</option>
+    <option value="Social Welfare Officer IV">Social Welfare Officer IV</option>
+    <option value="Social Welfare Officer V">Social Welfare Officer V</option>
+    <option value="Statistician Aide">Statistician Aide</option>
+    <option value="Statistician II">Statistician II</option>
+    <option value="Supervising Administrative Officer">Supervising Administrative Officer</option>
+    <option value="Teacher (ECCD)">Teacher (ECCD)</option>
+    <option value="Technical Facilitator">Technical Facilitator</option>
+    <option value="Training Assistant">Training Assistant</option>
+    <option value="Training Specialist I">Training Specialist I</option>
+    <option value="Training Specialist II">Training Specialist II</option>
+    <option value="Training Specialist III">Training Specialist III</option>
+    <option value="Training Specialist IV">Training Specialist IV</option>
+    <option value="Utility Worker">Utility Worker</option>
+    <option value="Utility Worker II">Utility Worker II</option>
+    <option value="Validator">Validator</option>
+    <option value="Director II">Director II</option>
+    <option value="Director III">Director III</option>
+    <option value="Director IV">Director IV</option>
+  </select>
+</div>
                 <div>
                     <label class="block text-sm font-medium text-gray-600">User Type</label>
                     <select name="user_type" required 
                             class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">-- Select --</option>
+                        <option value="" disabled selected>-- Select --</option>
                         @foreach($userTypes as $typeId => $typeName)
                             <option value="{{ $typeId }}">{{ $typeName }}</option>
                         @endforeach
@@ -74,7 +160,7 @@
                     <label class="block text-sm font-medium text-gray-600">Assign Category</label>
                     <select name="assigned_category" required 
                             class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">-- Select --</option>
+                        <option value="" disabled selected>-- Select Category --</option>
                         <option value="regular">Regular</option>
                         <option value="priority">Priority</option>
                     </select>
@@ -83,9 +169,9 @@
                     <label class="block text-sm font-medium text-gray-600">Assign Step</label>
                     <select name="step_id" required 
                             class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">-- Select Step --</option>
+                        <option value="" disabled selected>-- Select Step --</option>
                         @foreach($steps as $step)
-                            <option value="{{ $step->id }}">{{ $step->step_number }} - {{ $step->name }}</option>
+                            <option value="{{ $step->id }}">{{ $step->step_number }} - {{ $step->step_name }}</option>
                         @endforeach
                     </select>
 
@@ -97,7 +183,7 @@
     <label class="block text-sm font-medium text-gray-600">Assign Window</label>
 <select name="window_id" required disabled
         class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-    <option value="">-- Select Window --</option>
+    <option value="" disabled selected>-- Select Window --</option>
 </select>
 
 </div>
