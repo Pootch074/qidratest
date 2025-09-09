@@ -10,5 +10,5 @@ class Client extends Model
     use HasFactory;
 
     // Allow mass assignment for the full_name field
-    protected $fillable = ['full_name'];
+    protected $fillable = ['full_name', 'ticket_status'];
 }

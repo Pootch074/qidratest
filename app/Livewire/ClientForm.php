@@ -19,6 +19,7 @@ class ClientForm extends Component
 
         Client::create([
             'full_name' => $this->full_name,
+            'ticket_status' => 'not_issued'
         ]);
 
         session()->flash('success', 'Client saved successfully!');

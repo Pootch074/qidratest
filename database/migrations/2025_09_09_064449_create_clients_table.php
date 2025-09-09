@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
             $table->string('full_name');
+            $table->enum('ticket_status', ['issued', 'not_issued', 'cancelled']);
             $table->timestamps();
         });
     }

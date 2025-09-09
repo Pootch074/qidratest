@@ -7,6 +7,7 @@ use App\Models\Section;
 use App\Models\User;
 use App\Models\Step;
 use App\Models\Window;
+use App\Models\Client;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,6 +16,12 @@ class PacdController extends Controller
     public function index()
     {
         $user = Auth::user();
+
+
+        $clients = Client::where('ticket_status', 'not_issued')
+            ->orderBy('id')
+            ->limit(1)
+            ->get(['id', 'full_name']);
 
         // Sections for buttons
         if (is_null($user->section_id)) {
@@ -30,7 +37,7 @@ class PacdController extends Controller
         }
 
         // ✅ Only pass sections here
-        return view('pacd.index', compact('sections'));
+        return view('pacd.index', compact('sections', 'clients'));
     }
 
     public function generateQueue(Request $request, Section $section)
@@ -111,4 +118,14 @@ class PacdController extends Controller
 
         return view('pacd.sections.cards', compact('sections'));
     }
+
+    // public function clientsTable()
+    // {
+    //     $clients = Client::where('ticket_status', 'not_issued')
+    //         ->orderBy('id')
+    //         ->get(['id', 'full_name']);
+
+
+    //     return view('pacd.clients.table', compact('clients'));
+    // }
 }
