@@ -167,32 +167,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ✅ Step number uniqueness check
     const stepInput = document.getElementById('step_number');
-const saveBtn = document.querySelector('form button[type="submit"]');
+    const saveBtn = document.querySelector('form button[type="submit"]');
 
-if (stepInput && saveBtn) {
-    stepInput.addEventListener('input', () => {
-        const stepNumber = stepInput.value;
-        if (!stepNumber) return;
+    if (stepInput && saveBtn) {
+        stepInput.addEventListener('input', () => {
+            const stepNumber = stepInput.value;
+            if (!stepNumber) return;
 
-        // ✅ Use dynamic base URL
-        fetch(`${window.appBaseUrl}/steps/check/${sectionId}/${stepNumber}`)
-            .then(res => {
-                if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-                return res.json();
-            })
-            .then(data => {
-                if (data.exists) {
-                    stepInput.setCustomValidity("Step number already exists in your section.");
-                    stepInput.reportValidity();
-                    saveBtn.disabled = true;
-                } else {
-                    stepInput.setCustomValidity("");
-                    saveBtn.disabled = false;
-                }
-            })
-            .catch(err => console.error('Step uniqueness check failed:', err));
-    });
-}
+            // ✅ Use dynamic base URL
+            fetch(`${window.appBaseUrl}/steps/check/${sectionId}/${stepNumber}`)
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+                    return res.json();
+                })
+                .then(data => {
+                    if (data.exists) {
+                        stepInput.setCustomValidity("Step number already exists in your section.");
+                        stepInput.reportValidity();
+                        saveBtn.disabled = true;
+                    } else {
+                        stepInput.setCustomValidity("");
+                        saveBtn.disabled = false;
+                    }
+                })
+                .catch(err => console.error('Step uniqueness check failed:', err));
+        });
+    }
 
 
     // ✅ Inline edit for step names
@@ -259,19 +259,23 @@ if (stepInput && saveBtn) {
 
     // ✅ Delete step
     const deleteButtons = document.querySelectorAll('.delete-step');
+
     deleteButtons.forEach(button => {
         button.addEventListener('click', () => {
             const id = button.dataset.id;
             if (!confirm("Are you sure you want to delete this step?")) return;
 
-            fetch(`/steps/${id}`, {
+            fetch(`${window.appBaseUrl}/steps/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 }
             })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+                return res.json();
+            })
             .then(data => {
                 if (data.success) {
                     const row = document.querySelector(`tr[data-id="${id}"]`);
@@ -280,11 +284,13 @@ if (stepInput && saveBtn) {
                     alert("Error deleting step.");
                 }
             })
-            .catch(() => {
+            .catch(err => {
+                console.error('Delete step failed:', err);
                 alert("Failed to delete step.");
             });
         });
     });
+
 });
 </script>
 @endsection
