@@ -182,12 +182,20 @@
 
 
             {{-- Password --}}
-            <div>
-                <label class="block text-sm font-medium text-gray-600">Password</label>
-                <input type="password" name="password" required
-                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter password">
-            </div>
+<div class="relative">
+    <label class="block text-sm font-medium text-gray-600">Password</label>
+    <input id="password" type="password" name="password" required
+        class="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="Enter password">
+    <!-- Eye button -->
+    <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500">
+        <!-- Default: Eye icon -->
+        <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 110-10 5 5 0 010 10z" />
+            <path d="M10 7a3 3 0 100 6 3 3 0 000-6z" />
+        </svg>
+    </button>
+</div>
 
 
             {{-- Buttons --}}
@@ -529,6 +537,21 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
+{{-- Password eye toggle --}}
+<script>
+    const passwordInput = document.getElementById('password');
+    const togglePassword = document.getElementById('togglePassword');
+    const eyeIcon = document.getElementById('eyeIcon');
 
+    togglePassword.addEventListener('click', () => {
+        const type = passwordInput.type === 'password' ? 'text' : 'password';
+        passwordInput.type = type;
+
+        // Optionally change the icon
+        eyeIcon.innerHTML = type === 'password' 
+            ? '<path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 110-10 5 5 0 010 10z" /><path d="M10 7a3 3 0 100 6 3 3 0 000-6z" />' 
+            : '<path d="M3.707 3.707a1 1 0 00-1.414 1.414l1.095 1.094C2.52 7.083 1.732 8.462 1 10c.73 2.89 4 7 9 7 1.605 0 3.123-.483 4.414-1.293l1.879 1.879a1 1 0 001.414-1.414l-14-14zM10 5a5 5 0 014.546 3.032l-1.479 1.478A3 3 0 0010 7a3 3 0 00-1.667.516L7.044 7.03A5 5 0 0110 5z"/>';
+    });
+</script>
 
 @endsection

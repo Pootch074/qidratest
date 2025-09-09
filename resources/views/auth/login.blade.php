@@ -39,39 +39,39 @@
             </div>
 
             <!-- Password Input with Eye Toggle (Alpine) -->
-<div class="relative" x-data="{ show: false }">
-    <!-- Left Icon -->
-    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-        <img src="{{ asset('assets/icons/icon-password.png') }}" alt="Password" class="w-6 h-6">
-    </span>
+            <div class="relative" x-data="{ show: false }">
+                <!-- Left Icon -->
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                    <img src="{{ asset('assets/icons/icon-password.png') }}" alt="Password" class="w-6 h-6">
+                </span>
 
-    <!-- Password Field -->
-    <input :type="show ? 'text' : 'password'" name="password" id="password"
-        autocomplete="current-password" required
-        placeholder="********"
-        class="block w-full h-14 pl-12 pr-12 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition outline-none">
+                <!-- Password Field -->
+                <input :type="show ? 'text' : 'password'" name="password" id="password"
+                    autocomplete="current-password" required
+                    placeholder="********"
+                    class="block w-full h-14 pl-12 pr-12 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition outline-none">
 
-    <!-- Eye Toggle Button -->
-    <button type="button" @click="show = !show"
-        class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 focus:outline-none">
+                <!-- Eye Toggle Button -->
+                <button type="button" @click="show = !show"
+                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 focus:outline-none">
 
-        <!-- Closed eye (default) -->
-        <svg x-show="!show" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-             viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M13.875 18.825A10.05 10.05 0 0112 19c-7 0-10-7-10-7a20.02 20.02 0 013.956-4.911M6.1 6.1A9.956 9.956 0 0112 5c7 0 10 7 10 7a19.998 19.998 0 01-3.96 4.906M6.1 6.1L18 18" />
-        </svg>
+                    <!-- Closed eye (default) -->
+                    <svg x-show="!show" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13.875 18.825A10.05 10.05 0 0112 19c-7 0-10-7-10-7a20.02 20.02 0 013.956-4.911M6.1 6.1A9.956 9.956 0 0112 5c7 0 10 7 10 7a19.998 19.998 0 01-3.96 4.906M6.1 6.1L18 18" />
+                    </svg>
 
-        <!-- Open eye -->
-        <svg x-show="show" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-             viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-        </svg>
-    </button>
-</div>
+                    <!-- Open eye -->
+                    <svg x-show="show" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                </button>
+            </div>
 
 
 
