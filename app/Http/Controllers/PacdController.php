@@ -89,4 +89,26 @@ class PacdController extends Controller
 
         return view('pacd.transactions.table', compact('transactions'));
     }
+
+    public function sectionsCards()
+    {
+        $user = Auth::user();
+
+        // Sections for buttons
+        if (is_null($user->section_id)) {
+            // User has no assigned section → show all, except these IDs
+            $sections = Section::whereNotIn('id', [2,3,4,5,6,7,8,10,11,15])
+                ->orderBy('section_name')
+                ->get(['id', 'section_name']);
+        } else {
+            // User has assigned section → show only that section
+            $sections = Section::where('id', $user->section_id)
+                ->orderBy('section_name')
+                ->get(['id', 'section_name']);
+        }
+
+        
+
+        return view('pacd.sections.cards', compact('sections'));
+    }
 }
