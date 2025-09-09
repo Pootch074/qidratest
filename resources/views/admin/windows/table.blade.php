@@ -188,33 +188,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ✅ Delete window
     const deleteButtons = document.querySelectorAll('.delete-window');
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const id = button.dataset.id;
-            if (!confirm("Are you sure you want to delete this window?")) return;
 
-            fetch(`/admin/windows/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    const row = document.querySelector(`tr[data-id="${id}"]`);
-                    if (row) row.remove();
-                } else {
-                    alert("Error deleting window.");
-                }
-            })
-            .catch(() => {
-                alert("Failed to delete window.");
-            });
+deleteButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const id = button.dataset.id;
+        if (!confirm("Are you sure you want to delete this window?")) return;
 
+        fetch(`${window.appBaseUrl}/admin/windows/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+            return res.json();
+        })
+        .then(data => {
+            if (data.success) {
+                const row = document.querySelector(`tr[data-id="${id}"]`);
+                if (row) row.remove();
+            } else {
+                alert("Error deleting window.");
+            }
+        })
+        .catch(err => {
+            console.error('Delete window failed:', err);
+            alert("Failed to delete window.");
         });
     });
+});
+
 
 
     // ✅ Check if window_number already exists
