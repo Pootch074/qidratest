@@ -294,32 +294,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <script>
     // Delete User Function
-function deleteUser(userId) {
-    if (!confirm('Are you sure you want to delete this user?')) return;
+    function deleteUser(userId) {
+        if (!confirm('Are you sure you want to delete this user?')) return;
 
-    fetch(`/admin/users/${userId}`, {
-        method: 'DELETE',
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'application/json'
-        }
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            // Remove the user row from the table
-            const row = document.getElementById(`userRow-${userId}`);
-            if (row) row.remove();
-        } else {
-            alert('Error deleting user: ' + (data.message ?? 'Unknown error'));
-        }
-    })
-    .catch(err => {
-        console.error(err);
-        alert('An error occurred while deleting the user.');
-    });
-}
-
+        fetch(`${window.appBaseUrl}/admin/users/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json'
+            }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+            return res.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Remove the user row from the table
+                const row = document.getElementById(`userRow-${userId}`);
+                if (row) row.remove();
+            } else {
+                alert('Error deleting user: ' + (data.message ?? 'Unknown error'));
+            }
+        })
+        .catch(err => {
+            console.error('Delete user failed:', err);
+            alert('An error occurred while deleting the user.');
+        });
+    }
 </script>
 
 <script>
