@@ -141,30 +141,23 @@
     <option value="Director IV">Director IV</option>
   </select>
 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-600">User Type</label>
-                    <select name="user_type" required 
-                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="" disabled selected>-- Select --</option>
-                        @foreach($userTypes as $typeId => $typeName)
-                            <option value="{{ $typeId }}">{{ $typeName }}</option>
-                        @endforeach
-                    </select>
 
-                </div>
+    {{-- Assign Category --}}   
+    <div>
+        <label class="block text-sm font-medium text-gray-600">Assign Category</label>
+        <select name="assigned_category" required 
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="" disabled selected>-- Select Category --</option>
+            <option value="regular">Regular</option>
+            <option value="priority">Priority</option>
+        </select>
+    </div> 
+                
             </div>
 
-            {{-- Assign Category & Step --}}
+            {{-- Assign Step --}}
             <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-600">Assign Category</label>
-                    <select name="assigned_category" required 
-                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="" disabled selected>-- Select Category --</option>
-                        <option value="regular">Regular</option>
-                        <option value="priority">Priority</option>
-                    </select>
-                </div>
+                
                 <div>
                     <label class="block text-sm font-medium text-gray-600">Assign Step</label>
                     <select name="step_id" required 
@@ -174,19 +167,19 @@
                             <option value="{{ $step->id }}">{{ $step->step_number }} - {{ $step->step_name }}</option>
                         @endforeach
                     </select>
+                </div>
 
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Assign Window</label>
+                    <select name="window_id" required disabled
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="" disabled selected>-- Select Window --</option>
+                    </select>
                 </div>
             </div>
 
             {{-- Assign Window --}}
-<div>
-    <label class="block text-sm font-medium text-gray-600">Assign Window</label>
-<select name="window_id" required disabled
-        class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-    <option value="" disabled selected>-- Select Window --</option>
-</select>
 
-</div>
 
             {{-- Password --}}
             <div>
@@ -275,81 +268,108 @@
 
 @section('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('addUserModal');
     const openBtn = document.getElementById('openAddUserModal');
     const closeBtn = document.getElementById('closeAddUserModal');
     const cancelBtn = document.getElementById('cancelAddUser');
+    const form = document.getElementById('addUserForm');
+    const tbody = document.querySelector('#usersTable tbody');
 
-    // Open modal with animation
+    // --- Modal Open / Close ---
     openBtn.addEventListener('click', () => {
         modal.classList.remove('hidden');
         setTimeout(() => modal.firstElementChild.classList.remove('scale-95'), 10);
     });
 
-    // Close modal
     const closeModal = () => {
         modal.firstElementChild.classList.add('scale-95');
         setTimeout(() => modal.classList.add('hidden'), 200);
+        form.reset();
     };
     closeBtn.addEventListener('click', closeModal);
     cancelBtn.addEventListener('click', closeModal);
 
-    // Add user AJAX
-    document.getElementById('addUserForm').addEventListener('submit', function(e) {
+    // --- Add User AJAX ---
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const formData = new FormData(this);
 
-        fetch("{{ route('admin.users.store') }}", {
-    method: 'POST',
-    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-    body: formData
-})
-.then(async res => {
-    if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text);
-    }
-    return res.json();
-})
-.then(data => {
-    if(data.success) {
-        const u = data.user;
-        const row = `
-        <tr id="userRow-${u.id}" class="hover:bg-indigo-50 transition duration-200">
-            <td class="px-6 py-4">${u.first_name}</td>
-            <td class="px-6 py-4">${u.last_name}</td>
-            <td class="px-6 py-4">${u.email}</td>
-            <td class="px-6 py-4">${u.position}</td>
-            <td class="px-6 py-4">${u.user_type_name}</td>
-            <td class="px-6 py-4">${u.assigned_category}</td>
-            <td class="px-6 py-4">${u.step_number ?? '—'}</td>
-            <td class="px-6 py-4">${u.window_number ?? '—'}</td>
-            <td class="px-6 py-4 space-x-2">
-                <a href="#" class="text-green-600 hover:underline">Edit</a>
-                <button onclick="deleteUser(${u.id})" class="text-red-600 hover:underline">Delete</button>
-            </td>
-        </tr>`;
-        document.querySelector('#usersTable tbody').insertAdjacentHTML('beforeend', row);
-        closeModal();
-        this.reset();
-    } else {
-        alert('Error: ' + (data.message ?? 'Unknown error'));
-    }
-})
-.catch(err => {
-    console.error("Save user failed:", err);
-    alert("Save failed. Check console for details.");
-});
+        const data = {
+            first_name: form.first_name.value,
+            last_name: form.last_name.value,
+            email: form.email.value,
+            position: form.position.value,
+            assigned_category: form.assigned_category.value,
+            step_id: form.step_id.value,
+            window_id: form.window_id.value,
+            password: form.password.value
+        };
 
+        try {
+            const res = await fetch("{{ route('admin.users.store') }}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const json = await res.json();
+
+            if (!res.ok || !json.success) {
+                // Validation errors or other server errors
+                let msg = json.message || 'Unknown error';
+                if (json.errors) {
+                    msg += '\n' + Object.values(json.errors).flat().join('\n');
+                }
+                alert(msg);
+                return;
+            }
+
+            // Success: Add row to table
+            const u = json.user;
+            const row = document.createElement('tr');
+            row.id = `userRow-${u.id}`;
+            row.className = 'hover:bg-indigo-50 transition duration-200';
+            row.innerHTML = `
+                <td class="px-6 py-3 text-gray-700">${u.first_name}</td>
+                <td class="px-6 py-3 text-gray-700">${u.last_name}</td>
+                <td class="px-6 py-3 text-gray-700">${u.email}</td>
+                <td class="px-6 py-3 text-gray-700">${u.position}</td>
+                <td class="px-6 py-3 text-gray-700">${u.user_type_name}</td>
+                <td class="px-6 py-3 text-gray-700">${u.assigned_category}</td>
+                <td class="px-6 py-3 text-gray-700">${u.step_number ?? '—'}</td>
+                <td class="px-6 py-3 text-gray-700">${u.window_number ?? '—'}</td>
+                <td class="px-6 py-3 text-center space-x-2">
+                    <a href="#" class="inline-block bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <button onclick="deleteUser(${u.id})" class="inline-block bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(row);
+
+            closeModal();
+
+        } catch (err) {
+            console.error('Add user failed:', err);
+            alert('Add user failed. Check console for details.');
+        }
     });
+
 });
+
 </script>
 
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const userTypeSelect = document.querySelector('select[name="user_type"]');
+const userTypeSelect = document.querySelector('select[name="user_type"]');
+if (userTypeSelect) {
     const assignedCategory = document.querySelector('select[name="assigned_category"]');
     const stepSelect = document.querySelector('select[name="step_id"]');
     const windowSelect = document.querySelector('select[name="window_id"]');
@@ -362,18 +382,16 @@ document.addEventListener('DOMContentLoaded', () => {
         stepSelect.disabled = isDisplay;
         windowSelect.disabled = isDisplay;
 
-        // Optional: visually indicate disabled state
         [assignedCategory, stepSelect, windowSelect].forEach(field => {
             field.classList.toggle('bg-gray-100', isDisplay);
             field.classList.toggle('cursor-not-allowed', isDisplay);
         });
     };
 
-    // Trigger on change
     userTypeSelect.addEventListener('change', toggleFields);
-
-    // Initialize in case the modal opens with Display selected
     toggleFields();
+}
+
 });
 </script>
 

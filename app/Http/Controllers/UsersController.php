@@ -238,30 +238,30 @@ class UsersController extends Controller
         $sectionId = $authUser->section_id;
 
         $validated = $request->validate([
-            'first_name'        => 'required|string|max:255',
-            'last_name'         => 'required|string|max:255',
-            'email'             => 'required|email|unique:users,email',
-            'position'          => 'required|string|max:255',
-            'user_type'         => 'required|string',
-            'assigned_category' => 'required|string|in:regular,priority',
-            'step_id'           => 'required|exists:steps,id',
-            'window_id'         => 'required|exists:windows,id',
-            'password'          => 'required|string|min:6',
-        ]);
+        'first_name'        => 'required|string|max:255',
+        'last_name'         => 'required|string|max:255',
+        'email'             => 'required|email|unique:users,email',
+        'position'          => 'required|string|max:255',
+        'assigned_category' => 'required|string|in:regular,priority',
+        'step_id'           => 'required|exists:steps,id',
+        'window_id'         => 'required|exists:windows,id',
+        'password'          => 'required|string|min:6',
+    ]);
 
-        // Create new user
-        $user = User::create([
-            'first_name'        => $validated['first_name'],
-            'last_name'         => $validated['last_name'],
-            'email'             => $validated['email'],
-            'position'          => $validated['position'],
-            'user_type'         => $validated['user_type'],
-            'assigned_category' => $validated['assigned_category'],
-            'step_id'           => $validated['step_id'],
-            'window_id'         => $validated['window_id'],
-            'section_id'        => $sectionId,
-            'password'          => bcrypt($validated['password']),
-        ]);
+        $validated['user_type'] = 5; // Newly added users always TYPE_USER
+
+$user = User::create([
+    'first_name'        => $validated['first_name'],
+    'last_name'         => $validated['last_name'],
+    'email'             => $validated['email'],
+    'position'          => $validated['position'],
+    'user_type'         => $validated['user_type'], // now safe
+    'assigned_category' => $validated['assigned_category'],
+    'step_id'           => $validated['step_id'],
+    'window_id'         => $validated['window_id'] ?? null, // optional
+    'section_id'        => Auth::user()->section_id,
+    'password'          => bcrypt($validated['password']),
+]);
 
         return response()->json([
             'success' => true,
