@@ -115,18 +115,18 @@ document.addEventListener("DOMContentLoaded", () => {
         step.step_name && step.step_name !== "None" ? step.step_name : "";
 
     let html = `
-        <h3 class="text-3xl font-bold text-[#000000] mb-2 flex items-center space-x-2">
+        <h3 class="text-3xl font-bold text-[#000000] mb-2 flex items-center justify-center space-x-2">
             <span>Step ${step.step_number}</span>
             ${stepNameDisplay ? `<span>${stepNameDisplay}</span>` : ""}
         </h3>
     `;
 
     if (step.windows.length > 0) {
-        html += `<div class="space-y-2">`;
+        html += `<div class="grid grid-cols-2 gap-2 bg-pink-500">`;
 
         step.windows.forEach((win) => {
             html += `
-                <div class="px-3 py-2 bg-[#150e60] rounded text-[#FFFFFF] text-2xl">
+                <div class="px-3 py-2 bg-[#2e3192] rounded text-[#FFFFFF] text-2xl">
                     <div class="font-semibold">Window ${win.window_number}</div>
             `;
 
@@ -175,6 +175,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
     }
+
+
+
+
+    
 
     /** ---------------- Fetch Latest Transaction ---------------- **/
     function fetchLatestTransaction() {

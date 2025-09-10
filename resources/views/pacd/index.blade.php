@@ -1,11 +1,10 @@
 @extends('layouts.pacd')
-@section('title', 'Transactions')
+@section('title', 'PACD')
 @section('header')
 @endsection
 
 @section('content')
-<div class="w-full p-4 bg-gray-50" 
-     x-data="{ showSectionModal: false, showClientTypeModal: false, selectedSection: null, selectedClientId: null }">
+<div class="w-full p-4 bg-gray-50" x-data="{ showSectionModal: false, showClientTypeModal: false, selectedSection: null, selectedClientId: null }">
     @php $authUser = Auth::user(); @endphp
 
     <div class="p-4 sm:ml-64">

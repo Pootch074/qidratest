@@ -5,33 +5,30 @@
 
 @section('content')
 <div class="w-full h-[84vh] flex flex-col md:flex-row">
-    <!-- Left Section: Queue Information Panel -->
-    {{-- <div class="md:w-1/2 w-full bg-[#cbdce8] p-6 flex flex-col h-full"> --}}
-    <div class="md:w-1/2 w-full bg-gray-800 p-3 flex flex-col h-full">
-        <!-- Steps container as a responsive grid -->
-        <div id="stepsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 w-full">
-            {{-- Steps will be dynamically injected here as cards --}}
+    <div class="md:w-7/12 w-full bg-gray-800 p-3 flex flex-col h-full">
+        {{-- <div id="stepsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 w-full"> --}}
+        <div id="stepsContainer" class="flex flex-col gap-4 w-full">
         </div>
 
-        <!-- Fallback message -->
         <div id="noSteps" class="hidden text-white text-lg font-medium mt-4">
             No steps available for your section.
         </div>
     </div>
 
-    <!-- Right Section: Media & Info Panel -->
-    {{-- <div class="md:w-1/2 w-full bg-[#150e60] text-white p-6 flex flex-col justify-between h-full"> --}}
-    <div class="md:w-1/2 w-full bg-gray-800 text-white p-2 flex flex-col justify-between h-full">
-        <!-- Video Section -->
-        <div class="w-full flex flex-col items-center mb-3 space-y-4">
+    <div class="md:w-5/12 w-full bg-gray-800 text-white p-2 flex flex-col justify-start h-full">
+        <!-- Date & Time -->
+        <div class="w-full text-center">
+            <p id="current-date" class="text-1xl md:text-2xl font-semibold mb-2"></p>
+            <p id="current-time" class="text-2xl md:text-3xl font-bold"></p>
+        </div>
+
+        <div class="w-full flex flex-col items-center mt-5 space-y-4">
             <div class="w-full md:w-full">
                 <video id="customVideo" class="w-full rounded-lg shadow-lg" autoplay muted loop>
                     <source src="{{ asset('assets/videos/dswd.mp4') }}" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
             </div>
-
-            <!-- Controls Section -->
             <div class="flex flex-col items-center space-y-2 bg-gray-800 bg-opacity-80 p-4 rounded-md w-full">
                 <div class="flex justify-center space-x-4">
                     <button id="volDown" class="px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-white">Vol -</button>
@@ -45,11 +42,7 @@
             </div>
         </div>
 
-        <!-- Date & Time -->
-        <div class="w-full text-center">
-            <p id="current-date" class="text-1xl md:text-2xl font-semibold mb-2"></p>
-            <p id="current-time" class="text-2xl md:text-3xl font-bold"></p>
-        </div>
+        
     </div>
 </div>
 

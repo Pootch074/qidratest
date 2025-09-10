@@ -149,5 +149,7 @@ class PacdController extends Controller
         return view('pacd.scanned_id.table', compact('clients'));
     }
 
+    
+
 
 }
