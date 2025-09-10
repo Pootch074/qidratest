@@ -38,7 +38,7 @@
                <img src="{{ asset('assets/icons/ticket.png') }}" 
                      alt="Users" 
                      class="shrink-0 w-7 h-7 transition duration-75 group-hover:opacity-80">
-               <span class="flex-1 ms-3 whitespace-nowrap">Generate Manual Ticket</span>
+               <span class="flex-1 ms-3 whitespace-nowrap">Manual Ticket</span>
             </a>
          </li>
       </ul>

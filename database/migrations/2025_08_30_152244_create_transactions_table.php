@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->string('full_name')->nullable();
-            $table->integer('queue_number');
-            $table->enum('client_type', ['priority', 'regular']);
+            $table->integer('queue_number')->nullable();
+            $table->enum('client_type', ['priority', 'regular'])->nullable();
             
             $table->enum('ticket_status', ['issued', 'cancelled'])->nullable();
 

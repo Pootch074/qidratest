@@ -70,7 +70,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/pacd/generate/{section}', [PacdController::class, 'generateQueue'])->name('pacd.generate');
     Route::get('pacd/transactions/table', [PacdController::class, 'transactionsTable'])->name('pacd.transactions.table');
     Route::get('pacd/sections/cards', [PacdController::class, 'sectionsCards'])->name('pacd.sections.cards');
-    // Route::get('/pacd/clients/table', [PacdController::class, 'clientsTable'])->name('pacd.clients.table');
 
 
     Route::post('/queue/store', [TransactionsController::class, 'store'])->name('queue.store');
@@ -79,6 +78,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/windows/by-step/{step}', [UsersController::class, 'getWindowsByStep'])
      ->name('windows.byStep');
+
+
+    Route::get('/pacd/scanned_id/table', [PacdController::class, 'clientsTable'])
+    ->name('pacd.scanned_id.table');
+
      
 
 });

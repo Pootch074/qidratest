@@ -4,7 +4,8 @@
 @endsection
 
 @section('content')
-<div class="w-full p-4 bg-gray-50" x-data="{ showSectionModal: false, showClientTypeModal: false, selectedSection: null }">
+<div class="w-full p-4 bg-gray-50" 
+     x-data="{ showSectionModal: false, showClientTypeModal: false, selectedSection: null, selectedClientId: null }">
     @php $authUser = Auth::user(); @endphp
 
     <div class="p-4 sm:ml-64">
@@ -17,25 +18,19 @@
                     <thead class="bg-[#2e3192] text-white">
                         <tr>
                             <th class="px-4 py-2 border-b text-left">Full Name</th>
+                            <th class="px-4 py-2 border-b text-left">Time</th>
+                            <th class="px-4 py-2 border-b text-left">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @foreach($clients as $index => $client)
-                            <tr>
-                                <td class="px-4 py-2 border-b">{{ $client->full_name }}</td>
-                            </tr>
-                        @endforeach
+                    <tbody id="clients-table-body">
+                        @include('pacd.scanned_id.table', ['clients' => $clients])
                     </tbody>
+
+
                 </table>
             </div>
 
-            {{-- Generate Queue Button --}}
-            <div class="mt-4 flex justify-end">
-                <button @click="showSectionModal = true"
-                    class="px-6 py-2 rounded-lg font-semibold text-white bg-green-600 hover:bg-green-700 transition duration-200 shadow">
-                    Generate Queue
-                </button>
-            </div>
+            
 
             {{-- Hidden forms for each section --}}
             @foreach($sections as $section)
@@ -44,8 +39,10 @@
                     method="POST" class="hidden">
                     @csrf
                     <input type="hidden" name="client_type" id="client_type_{{ $section->id }}">
+                    <input type="hidden" name="client_id" id="client_id_{{ $section->id }}">
                 </form>
             @endforeach
+
 
             {{-- Section Selection Modal --}}
             <div x-show="showSectionModal"
@@ -79,19 +76,23 @@
                     <h3 class="text-lg font-semibold text-gray-700 mb-4">Choose Client Type</h3>
                     <div class="flex justify-around">
                         <button @click="
-                                    document.getElementById('client_type_' + selectedSection).value='regular';
-                                    document.getElementById('form-' + selectedSection).submit();
-                                    showClientTypeModal=false;"
-                                class="px-4 py-2 bg-[#2e3192] hover:bg-[#5057c9] text-white rounded-lg shadow">
-                            Regular
-                        </button>
+    document.getElementById('client_type_' + selectedSection).value='regular';
+    document.getElementById('client_id_' + selectedSection).value=selectedClientId;
+    document.getElementById('form-' + selectedSection).submit();
+    showClientTypeModal=false;"
+    class="px-4 py-2 bg-[#2e3192] hover:bg-[#5057c9] text-white rounded-lg shadow">
+    Regular
+</button>
+
                         <button @click="
-                                    document.getElementById('client_type_' + selectedSection).value='priority';
-                                    document.getElementById('form-' + selectedSection).submit();
-                                    showClientTypeModal=false;"
-                                class="px-4 py-2 bg-[#ee1c25] hover:bg-[#F4676E] text-white rounded-lg shadow">
-                            Priority
-                        </button>
+    document.getElementById('client_type_' + selectedSection).value='priority';
+    document.getElementById('client_id_' + selectedSection).value=selectedClientId;
+    document.getElementById('form-' + selectedSection).submit();
+    showClientTypeModal=false;"
+    class="px-4 py-2 bg-[#ee1c25] hover:bg-[#F4676E] text-white rounded-lg shadow">
+    Priority
+</button>
+
                     </div>
                     <div class="mt-4 text-right">
                         <button @click="showClientTypeModal = false; selectedSection=null" 

@@ -18,10 +18,9 @@ class PacdController extends Controller
         $user = Auth::user();
 
 
-        $clients = Client::where('ticket_status', 'not_issued')
+        $clients = Transaction::where('ticket_status', null)
             ->orderBy('id')
-            ->limit(1)
-            ->get(['id', 'full_name']);
+            ->get(['id', 'full_name', 'created_at']);
 
         // Sections for buttons
         if (is_null($user->section_id)) {
@@ -41,39 +40,47 @@ class PacdController extends Controller
     }
 
     public function generateQueue(Request $request, Section $section)
-{
-    $clientType = $request->input('client_type', 'regular'); // default to regular
+    {
+        $clientType = $request->input('client_type', 'regular'); // default to regular
+        $clientId   = $request->input('client_id');
 
-    // Get the highest queue_number for this specific section + client_type
-    $lastQueue = Transaction::where('section_id', $section->id)
-        ->where('client_type', $clientType)
-        ->max('queue_number');
+        // 🔎 Find the client waiting in the "scanned IDs" list
+        $client = Transaction::where('id', $clientId)
+            ->whereNull('ticket_status')
+            ->firstOrFail();
 
-    // Increment or start at 1
-    $newQueueNumber = $lastQueue ? $lastQueue + 1 : 1;
+        // Get the highest queue_number for this section + client_type
+        $lastQueue = Transaction::where('section_id', $section->id)
+            ->where('client_type', $clientType)
+            ->max('queue_number');
 
-    // ✅ Get the first step for this section (step_number = 1)
-    $firstStep = Step::where('section_id', $section->id)
-        ->where('step_number', 1)
-        ->first();
+        // Increment or start at 1
+        $newQueueNumber = $lastQueue ? $lastQueue + 1 : 1;
 
-    // Create new transaction (no window_id set here)
-    $transaction = Transaction::create([
-        'queue_number' => $newQueueNumber,
-        'client_type'  => $clientType,
-        'step_id'      => $firstStep ? $firstStep->id : null,
-        'window_id'    => null, // ✅ Always null
-        'section_id'   => $section->id,
-        'queue_status' => 'waiting',
-    ]);
+        // ✅ Get the first step for this section (step_number = 1)
+        $firstStep = Step::where('section_id', $section->id)
+            ->where('step_number', 1)
+            ->first();
 
-    // Build formatted queue label (R001, P001, etc.)
-    $prefix = strtoupper(substr($clientType, 0, 1));
-    $formattedQueue = $prefix . str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT);
+        // 🔄 Update the existing client record instead of creating a new one
+        $client->update([
+            'queue_number' => $newQueueNumber,
+            'client_type'  => $clientType,
+            'step_id'      => $firstStep ? $firstStep->id : null,
+            'window_id'    => null,
+            'section_id'   => $section->id,
+            'queue_status' => 'waiting',
+            'ticket_status'=> 'issued',
+        ]);
 
-    return redirect()->back()
-        ->with('success', "Queue #{$formattedQueue} created for {$section->section_name}");
-}
+        // Build formatted queue label (R001, P001, etc.)
+        $prefix = strtoupper(substr($clientType, 0, 1));
+        $formattedQueue = $prefix . str_pad($client->queue_number, 3, '0', STR_PAD_LEFT);
+
+        return redirect()->back()
+            ->with('success', "Queue #{$formattedQueue} created for {$section->section_name} (Client: {$client->full_name})");
+    }
+
 
 
     public function transactionsTable()
@@ -119,13 +126,13 @@ class PacdController extends Controller
         return view('pacd.sections.cards', compact('sections'));
     }
 
-    // public function clientsTable()
-    // {
-    //     $clients = Client::where('ticket_status', 'not_issued')
-    //         ->orderBy('id')
-    //         ->get(['id', 'full_name']);
+    public function clientsTable()
+    {
+        $clients = Transaction::whereNull('ticket_status')
+            ->orderBy('id')
+            ->get(['id', 'full_name', 'created_at']);
 
+        return view('pacd.scanned_id.table', compact('clients'));
+    }
 
-    //     return view('pacd.clients.table', compact('clients'));
-    // }
 }
