@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+            $table->string('full_name')->nullable();
             $table->integer('queue_number');
             $table->enum('client_type', ['priority', 'regular']);
+            
+            $table->enum('ticket_status', ['issued', 'cancelled'])->nullable();
 
             $table->unsignedBigInteger('step_id')->nullable();
             $table->foreign('step_id')->references('id')->on('steps')->onDelete('set null');
