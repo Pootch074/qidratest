@@ -12,17 +12,17 @@
 
         {{-- Scanned ID Table --}}
         <div class="bg-white rounded-lg p-4 overflow-x-auto shadow-lg">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Scanned Client ID</h2>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Scanned Clients</h2>
             <div class="overflow-x-auto rounded-lg shadow">
-                <table class="min-w-full bg-white border border-gray-200">
+                <table class="min-w-full divide-y divide-gray-200 text-gray-700">
                     <thead class="bg-[#2e3192] text-white">
                         <tr>
-                            <th class="px-4 py-2 border-b text-left">Full Name</th>
-                            <th class="px-4 py-2 border-b text-left">Time</th>
-                            <th class="px-4 py-2 border-b text-left">Action</th>
+                            <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Full Name</th>
+                            <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Time</th>
+                            <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Action</th>
                         </tr>
                     </thead>
-                    <tbody id="clients-table-body">
+                    <tbody class="bg-white divide-y divide-gray-200" id="clients-table-body">
                         @include('pacd.scanned_id.table', ['clients' => $clients])
                     </tbody>
 

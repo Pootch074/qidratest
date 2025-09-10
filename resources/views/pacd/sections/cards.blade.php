@@ -11,7 +11,7 @@
 
     <div class="p-4 sm:ml-64">
         <div class="bg-white rounded-lg p-4 overflow-x-auto shadow-lg">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Sections</h2>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Manual Queue</h2>
             {{-- Dashboard / Section Buttons --}}
             <div class="grid grid-cols-3 gap-4 mb-6">
                 @foreach($sections as $section)

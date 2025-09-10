@@ -11,7 +11,7 @@
 
     {{-- Transactions Table --}}
     <div class="bg-white rounded-lg p-4 overflow-x-auto shadow-lg">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Transactions</h2>
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">In Queue Clients</h2>
         <table class="min-w-full divide-y divide-gray-200 text-gray-700">
             <thead class="bg-[#2e3192] text-white">
                 <tr>

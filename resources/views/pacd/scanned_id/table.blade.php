@@ -1,8 +1,8 @@
 @foreach($clients as $client)
-    <tr>
-        <td class="px-4 py-2 border-b">{{ $client->full_name }}</td>
-        <td class="px-4 py-2 border-b">{{ \Carbon\Carbon::parse($client->created_at)->format('M d Y, h:i A') }}</td>
-        <td class="px-4 py-2 border-b">
+    <tr class="odd:bg-white even:bg-gray-50 hover:bg-indigo-50 transition duration-200">
+        <td class="px-4 py-2">{{ $client->full_name }}</td>
+        <td class="px-4 py-2">{{ \Carbon\Carbon::parse($client->created_at)->format('M d Y, h:i A') }}</td>
+        <td class="px-4 py-2">
             <button 
                 @click="selectedClientId={{ $client->id }}; showSectionModal=true"
                 class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow">
