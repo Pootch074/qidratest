@@ -23,7 +23,7 @@
             .catch(err => console.error("Error refreshing clients:", err));
     }
 
-    setInterval(refreshClientsTable, 2000);
+    setInterval(refreshClientsTable, 1000);
 </script>
 @endsection
 

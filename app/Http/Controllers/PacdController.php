@@ -128,11 +128,23 @@ class PacdController extends Controller
 
     public function clientsTable()
     {
-        $clients = Transaction::whereNull('ticket_status')
-            ->orderBy('id')
-            ->get(['id', 'full_name', 'created_at']);
+        $user = Auth::user();
+
+        $query = Transaction::whereNull('ticket_status')
+            ->orderBy('id');
+
+        if (is_null($user->section_id)) {
+            // User has no section → fetch only records where section_id is NULL
+            $query->whereNull('section_id');
+        } else {
+            // User has a section → fetch only records matching their section_id
+            $query->where('section_id', $user->section_id);
+        }
+
+        $clients = $query->get(['id', 'full_name', 'created_at']);
 
         return view('pacd.scanned_id.table', compact('clients'));
     }
+
 
 }
