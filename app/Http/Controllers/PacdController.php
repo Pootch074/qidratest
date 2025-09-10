@@ -91,18 +91,21 @@ class PacdController extends Controller
             // No assigned section → show all transactions except section_id = 15
             $transactions = Transaction::with(['step', 'section'])
                 ->whereNotIn('section_id', [15])
+                ->where('queue_number', '>', 0) // ✅ Exclude queue_number = 0
                 ->latest()
                 ->get();
         } else {
             // User has assigned section → only their section's transactions
             $transactions = Transaction::with(['step', 'section'])
                 ->where('section_id', $user->section_id)
+                ->where('queue_number', '>', 0) // ✅ Exclude queue_number = 0
                 ->latest()
                 ->get();
         }
 
         return view('pacd.transactions.table', compact('transactions'));
     }
+
 
     public function sectionsCards()
     {
