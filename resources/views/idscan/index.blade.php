@@ -5,6 +5,5 @@
 
 @section('content')
 
-@livewire('client-form')
 @endsection
 
