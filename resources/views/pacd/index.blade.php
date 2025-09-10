@@ -1,14 +1,14 @@
-@extends('layouts.main')
+@extends('layouts.pacd')
 @section('title', 'Transactions')
 @section('header')
 @endsection
 
 @section('content')
-<div class="w-full p-4 bg-[#cbdce8]" 
-     x-data="{ showSectionModal: false, showClientTypeModal: false, selectedSection: null }">
+<div class="w-full p-4 bg-[#cbdce8]" x-data="{ showSectionModal: false, showClientTypeModal: false, selectedSection: null }">
     @php $authUser = Auth::user(); @endphp
 
-    <div class="p-4">
+    <div class="p-4 sm:ml-64">
+        <div class="p-4">
 
         {{-- ✅ Navigation Bar --}}
         <nav class="bg-white rounded-lg p-4 mb-6 shadow flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0 md:space-x-4">
@@ -27,6 +27,7 @@
             </div>
         </nav>
     </div>
+
 
     <div class="p-4">
         {{-- Clients Table --}}
@@ -122,8 +123,12 @@
             </div>
         </div>
     </div>
-</div>
 
-{{-- Alpine.js --}}
-<script src="//unpkg.com/alpinejs" defer></script>
+
+
+
+
+    </div>
+</div>
 @endsection
+
