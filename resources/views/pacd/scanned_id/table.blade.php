@@ -23,7 +23,6 @@
             .catch(err => console.error("Error refreshing clients:", err));
     }
 
-    // Refresh every 5 seconds
     setInterval(refreshClientsTable, 2000);
 </script>
 @endsection

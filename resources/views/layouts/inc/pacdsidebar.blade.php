@@ -20,7 +20,7 @@
                <img src="{{ asset('assets/icons/scan.png') }}" 
                      alt="Users" 
                      class="shrink-0 w-7 h-7 transition duration-75 group-hover:opacity-80">
-               <span class="ms-3">Scanned ID</span>
+               <span class="ms-3">Scanned Client ID</span>
             </a>
          </li>
 

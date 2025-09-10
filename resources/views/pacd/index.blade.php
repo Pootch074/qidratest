@@ -12,7 +12,7 @@
 
         {{-- Scanned ID Table --}}
         <div class="bg-white rounded-lg p-4 overflow-x-auto shadow-lg">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Scanned ID</h2>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Scanned Client ID</h2>
             <div class="overflow-x-auto rounded-lg shadow">
                 <table class="min-w-full bg-white border border-gray-200">
                     <thead class="bg-[#2e3192] text-white">
