@@ -61,6 +61,8 @@ class UsersController extends Controller
 
             'servingQueue' => $formatQueues(Transaction::where('section_id', $sectionId)
                 ->where('queue_status', 'serving')
+                ->where('step_id', Auth::user()->step_id)
+                ->where('window_id', Auth::user()->window_id)
                 ->orderBy('updated_at', 'desc')
                 ->get()),
         ];
