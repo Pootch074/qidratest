@@ -4,21 +4,16 @@
 @endsection
 
 @section('content')
-<div class="w-full p-4 bg-[#cbdce8]">
+<div class="w-full p-4 bg-gray-50">
+    @include('layouts.inc.pacdsidebar')
 
-    {{-- Back Navigation --}}
-    <nav class="bg-white rounded-lg p-4 mb-6 shadow flex items-center space-x-4">
-        <a href="{{ route('pacd') }}"
-           class="px-4 py-2 rounded font-semibold text-white bg-red-800  hover:bg-[#d92d27] transition duration-200">
-            Back
-        </a>
-    </nav>
+    <div class="p-4 sm:ml-64">
 
     {{-- Transactions Table --}}
     <div class="bg-white rounded-lg p-4 overflow-x-auto shadow-lg">
         <h2 class="text-2xl font-semibold text-gray-800 mb-4">Transactions</h2>
         <table class="min-w-full divide-y divide-gray-200 text-gray-700">
-            <thead class="bg-[#150e60] text-white">
+            <thead class="bg-[#2e3192] text-white">
                 <tr>
                     <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider rounded-tl-lg">Queue Number</th>
                     <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Client Type</th>
@@ -37,11 +32,11 @@
                         {{-- Client Type Badge --}}
                         <td class="px-6 py-4">
                             @if(strtolower($transaction->client_type) === 'priority')
-                                <span class="px-2 py-1 rounded-full text-white text-xs bg-[#d92d27]">
+                                <span class="px-2 py-1 rounded-full text-white text-xs bg-[#ee1c25]">
                                     Priority
                                 </span>
                             @else
-                                <span class="px-2 py-1 rounded-full text-white text-xs bg-[#150e60]">
+                                <span class="px-2 py-1 rounded-full text-white text-xs bg-[#2e3192]">
                                     Regular
                                 </span>
                             @endif
@@ -75,5 +70,9 @@
             </tbody>
         </table>
     </div>
+
+         </div>
+
+    
 </div>
 @endsection
