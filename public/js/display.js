@@ -108,56 +108,58 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 data.forEach((step) => {
     const card = document.createElement("div");
-    card.className = "bg-white rounded-lg shadow-md p-2 flex flex-col";
+    card.className = "rounded-lg shadow-md p-2 flex flex-col";
 
     // Only display valid step names
     const stepNameDisplay =
         step.step_name && step.step_name !== "None" ? step.step_name : "";
 
     let html = `
-        <h3 class="text-3xl font-bold text-[#000000] mb-2 flex items-center justify-center space-x-2">
-            <span>Step ${step.step_number}</span>
+        <h3 class="text-3xl font-bold text-[#000000] mb-2 flex items-center justify-center space-x-2 bg-white">
+            <span>STEP ${step.step_number}</span>
             ${stepNameDisplay ? `<span>${stepNameDisplay}</span>` : ""}
         </h3>
     `;
 
     if (step.windows.length > 0) {
-        html += `<div class="grid grid-cols-2 gap-2 bg-pink-500">`;
+    html += `<div class="grid grid-cols-2 gap-2">`;
 
-        step.windows.forEach((win) => {
-            html += `
-                <div class="px-3 py-2 bg-[#2e3192] rounded text-[#FFFFFF] text-2xl">
-                    <div class="font-semibold">Window ${win.window_number}</div>
-            `;
+    step.windows.forEach((win) => {
+        // Determine first transaction if available
+        let firstTx = win.transactions && win.transactions.length > 0 ? win.transactions[0] : null;
 
-            if (win.transactions && win.transactions.length > 0) {
-                html += `<ul class="mt-1 space-y-1">`;
-                win.transactions.forEach((tx) => {
-                    html += `
-                        <li class="bg-[#FFFFFF] text-[#000000] px-2 py-1 rounded text-5xl font-bold text-center">
-                            ${tx.queue_number} 
-                        </li>
-                    `;
-                });
-                html += `</ul>`;
-            } else {
-                html += `<p class="text-gray-1000 italic text-xs mt-1">Currently idle</p>`;
+        html += `
+            <div class="rounded-lg text-[#FFFFFF] text-2xl font-semibold flex flex-col items-center justify-center w-full">
+                <div class="flex items-center w-full h-full rounded-lg border-4 border-[#2e3192]">
+                    <span class="bg-[#2e3192] px-3 py-1 text-center w-1/5">
+                        <p class="text-lg font-semibold">Window</p>
+                        <p class="text-5xl font-bold">${win.window_number}</p>
+                    </span>
+                    ${
+                        firstTx
+                            ? `<span class="flex items-center justify-center bg-[#FFFFFF] text-[#000000] px-3 py-1 text-7xl font-bold text-center w-4/5 h-full rounded-r-lg">
+                                    ${firstTx.queue_number}
+                                </span>`
+                            : `<span class="flex items-center justify-center bg-[#FFFFFF] text-[#000000] italic px-3 py-1 text-sm text-center w-4/5 h-full rounded-r-lg">Currently idle</span>`
+                    }
+                </div>
+            </div>
+        `;
+
+        // Keep speech synthesis logic unchanged
+        if (firstTx) {
+            if (lastAnnouncedPerWindow[win.window_id] !== firstTx.id) {
+                lastAnnouncedPerWindow[win.window_id] = firstTx.id;
+                announce(firstTx.queue_number, step.step_number, win.window_number);
             }
+        }
+    });
 
-            html += `</div>`;
+    html += `</div>`;
+}
 
-            // Speech synthesis logic remains unchanged
-            if (win.transactions && win.transactions.length > 0) {
-                const tx = win.transactions[0];
-                if (lastAnnouncedPerWindow[win.window_id] !== tx.id) {
-                    lastAnnouncedPerWindow[win.window_id] = tx.id;
-                    announce(tx.queue_number, step.step_number, win.window_number);
-                }
-            }
-        });
 
-        html += `</div>`;
-    } else {
+ else {
         html += `<p class="text-gray-400 italic text-sm">No windows assigned</p>`;
     }
 
