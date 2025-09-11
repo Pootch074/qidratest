@@ -31,7 +31,7 @@
             <!-- Email Input -->
             <div class="relative">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                    <img src="{{ asset('assets/icons/icon-email.png') }}" alt="Email" class="w-6 h-6">
+                    <img src="{{ Vite::asset('resources/images/icons/icon-email.png') }}" alt="Email" class="w-6 h-6">
                 </span>
                 <input type="email" name="email" id="email" autocomplete="email" required
                     placeholder="jdcruz@dswd.gov.ph"
@@ -42,7 +42,7 @@
             <div class="relative" x-data="{ show: false }">
                 <!-- Left Icon -->
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                    <img src="{{ asset('assets/icons/icon-password.png') }}" alt="Password" class="w-6 h-6">
+                    <img src="{{ Vite::asset('resources/images/icons/icon-password.png') }}" alt="Password" class="w-6 h-6">
                 </span>
 
                 <!-- Password Field -->
@@ -56,10 +56,10 @@
                     class="absolute inset-y-0 right-0 flex items-center pr-3 focus:outline-none">
 
                     <!-- Closed eye (default) -->
-                    <img x-show="!show" src="{{ asset('assets/icons/eye-close.png') }}" alt="Show Password" class="w-5 h-5">
+                    <img x-show="!show" src="{{ Vite::asset('resources/images/icons/eye-close.png') }}" alt="Show Password" class="w-5 h-5">
 
                     <!-- Open eye -->
-                    <img x-show="show" src="{{ asset('assets/icons/eye-open.png') }}" alt="Hide Password" class="w-5 h-5">
+                    <img x-show="show" src="{{ Vite::asset('resources/images/icons/eye-open.png') }}" alt="Hide Password" class="w-5 h-5">
                 </button>
             </div>
 
