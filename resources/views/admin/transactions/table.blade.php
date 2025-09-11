@@ -4,7 +4,7 @@
 
     <table class="min-w-full text-sm text-left border-collapse mt-2">
         <thead>
-            <tr class="bg-gradient-to-r bg-[#150e60] text-white">
+            <tr class="bg-gradient-to-r bg-[#2e3192] text-white">
                 <th scope="col" class="px-6 py-3 font-semibold tracking-wide">Queue Number</th>
                 <th scope="col" class="px-6 py-3 font-semibold tracking-wide">Client Type</th>
                 <th scope="col" class="px-6 py-3 font-semibold tracking-wide">Step</th>

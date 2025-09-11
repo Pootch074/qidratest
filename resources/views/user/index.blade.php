@@ -3,7 +3,7 @@
 @section('title', 'Encode')
 
 @section('content')
-<div class="w-full h-[84vh] p-4 bg-[#cbdce8]">
+<div class="w-full h-[84vh] p-4 bg-gray-200">
     <div class="grid grid-cols-3 gap-2 h-full">
 
         {{-- UPCOMING --}}

@@ -4,14 +4,14 @@
 @endsection
 
 @section('content')
-<div class="w-full p-4 bg-[#cbdce8]">
+<div class="w-full p-4 bg-gray-200">
     <div class="p-4 sm:ml-64">
 
         {{-- Header & Add User --}}
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-semibold text-gray-700">Users</h2>
             <button id="openAddUserModal" 
-                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                 Add User
             </button>
         </div>
@@ -202,9 +202,9 @@
             {{-- Buttons --}}
             <div class="flex justify-end space-x-3">
                 <button type="button" id="cancelAddUser" 
-                        class="px-5 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">Cancel</button>
+                        class="text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-gray-300 dark:focus:ring-gray-800 shadow-lg shadow-gray-500/50 dark:shadow-lg dark:shadow-gray-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Cancel</button>
                 <button type="submit" 
-                        class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Save</button>
+                        class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Save</button>
             </div>
         </form>
     </div>
@@ -214,7 +214,7 @@
 <div class="overflow-x-auto bg-white rounded-2xl shadow-lg border border-gray-200">
     <table id="usersTable" class="min-w-full text-sm text-left border-collapse">
         <thead>
-            <tr class="bg-[#150e60] text-white">
+            <tr class="bg-[#2e3192] text-white">
                 @foreach($userColumns as $label)
                     <th class="px-6 py-3 font-semibold tracking-wide">{{ $label }}</th>
                 @endforeach
@@ -251,7 +251,7 @@
                     <td class="px-6 py-3 text-center space-x-2">
                         
                         <button onclick="deleteUser({{ $u->id }})"
-                                class="inline-block bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
+                                class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                             <i class="fas fa-trash-alt"></i> Delete
                         </button>
                     </td>
@@ -350,7 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td class="px-6 py-3 text-gray-700">${u.window_number ?? '—'}</td>
                 <td class="px-6 py-3 text-center space-x-2">
                     
-                    <button onclick="deleteUser(${u.id})" class="inline-block bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
+                    <button onclick="deleteUser(${u.id})" class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                         <i class="fas fa-trash-alt"></i> Delete
                     </button>
                 </td>
@@ -465,7 +465,7 @@ function renderUsers(users) {
 
             <td class="px-6 py-3 text-center space-x-2">
                 
-                <button onclick="deleteUser(${u.id})" class="inline-block bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg shadow-sm transition duration-200">
+                <button onclick="deleteUser(${u.id})" class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                     <i class="fas fa-trash-alt"></i> Delete
                 </button>
             </td>

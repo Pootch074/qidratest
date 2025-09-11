@@ -4,14 +4,14 @@
 @endsection
 
 @section('content')
-<div class="w-full p-4 bg-[#cbdce8]">
+<div class="w-full p-4 bg-gray-200">
     <div class="p-4 sm:ml-64">
 
         {{-- Header & Add Window --}}
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-semibold text-gray-700">Windows</h2>
             <button id="openAddWindowModal" 
-                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                 Add Window
             </button>
         </div>
@@ -41,10 +41,12 @@
                             class="mt-1 block w-full border rounded-md p-2" required>
                     </div>
 
-                    <button type="submit" 
-                        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-                        Save Window
-                    </button>
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" id="cancelAddUser" class="text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-gray-300 dark:focus:ring-gray-800 shadow-lg shadow-gray-500/50 dark:shadow-lg dark:shadow-gray-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Cancel</button>
+                        <button type="submit" class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Save Window</button>
+
+                    </div>
+                    
                 </form>
             </div>
         </div>
@@ -53,7 +55,7 @@
         <div class="overflow-x-auto bg-white rounded-2xl shadow-lg border border-gray-200">
             <table class="min-w-full text-sm text-left border-collapse">
                 <thead>
-                    <tr class="bg-[#150e60] text-white">
+                    <tr class="bg-[#2e3192] text-white">
                         <th class="px-6 py-3 font-semibold tracking-wide">Window Number</th>
                         <th class="px-6 py-3 font-semibold tracking-wide">Step</th>
                         <th class="px-6 py-3 font-semibold tracking-wide text-center">Actions</th>
@@ -87,11 +89,12 @@
                             {{-- Delete Button --}}
                             <td class="px-6 py-3 text-center">
                                 @if($window->window_number == 1)
-                                    <button class="bg-gray-400 text-white px-4 py-1.5 rounded-lg shadow-sm cursor-not-allowed opacity-60" disabled>
+                                    <button class="bg-gray-400 text-white px-4 py-1.5 rounded-lg shadow-sm cursor-not-allowed" disabled>
+                                              
                                         <i class="fas fa-ban"></i> Protected
                                     </button>
                                 @else
-                                    <button class="delete-window bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg shadow-sm transition duration-200"
+                                    <button class="delete-window text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
                                         data-id="{{ $window->id }}">
                                         <i class="fas fa-trash-alt"></i> Delete
                                     </button>
@@ -120,10 +123,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // ✅ Modal Toggle
     const openBtn = document.getElementById('openAddWindowModal');
     const closeBtn = document.getElementById('closeAddWindowModal');
+    const cancelBtn = document.getElementById('cancelAddUser');
     const modal = document.getElementById('addWindowModal');
 
     if (openBtn && modal) openBtn.addEventListener('click', () => modal.classList.remove('hidden'));
     if (closeBtn && modal) closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
+    if (cancelBtn && modal) cancelBtn.addEventListener('click', () => modal.classList.add('hidden'));
 
     // ✅ Inline edit for step of a window
     const editableSpans = document.querySelectorAll('.editable-window-step');

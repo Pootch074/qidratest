@@ -1,7 +1,7 @@
 @extends('layouts.auth')
 @section('content')
 
-<div id="auth-login" class="flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8 bg-gray-50">
+<div id="auth-login" class="flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8 bg-gray-200">
 
     <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 space-y-6">
         
@@ -63,13 +63,9 @@
                 </button>
             </div>
 
-
-
-
-
             <!-- Terms Checkbox -->
             <div class="flex items-center space-x-2 pl-2">
-                <input type="checkbox" name="terms" id="terms" required class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300">
+                <input type="checkbox" name="terms" id="terms" required class="w-4 h-4 text-indigo-600 rounded focus:ring-[#2e3192] border-gray-300">
                 <label for="terms" class="text-sm text-gray-700">
                     I agree to the <a href="#" class="text-indigo-600 hover:underline">Terms and Conditions</a>.
                 </label>

@@ -4,14 +4,14 @@
 @endsection
 
 @section('content')
-<div class="w-full p-4 bg-[#cbdce8]">
+<div class="w-full p-4 bg-gray-200">
     <div class="p-4 sm:ml-64">
 
         {{-- Header & Add Step --}}
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-semibold text-gray-700">Steps</h2>
             <button id="openAddUserModal" 
-                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                 Add Step
             </button>
         </div>
@@ -69,10 +69,11 @@
                     </select>
                 </div>
 
-                <button type="submit" 
-                    class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-                    Save Step
-                </button>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" id="cancelAddUser" class="text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-gray-300 dark:focus:ring-gray-800 shadow-lg shadow-gray-500/50 dark:shadow-lg dark:shadow-gray-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Cancel</button>
+                    <button type="submit" class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Save Step</button>
+                </div>
+                
             </form>
         </div>
     </div>
@@ -115,7 +116,7 @@
                                 <i class="fas fa-ban"></i> Protected
                             </button>
                         @else
-                            <button class="delete-step bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg shadow-sm transition duration-200"
+                            <button class="delete-step text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
                                 data-id="{{ $step->id }}">
                                 <i class="fas fa-trash-alt"></i> Delete
                             </button>
@@ -153,6 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const openBtn = document.getElementById('openAddUserModal');
     const closeBtn = document.getElementById('closeAddUserModal');
     const closeBtnFooter = document.getElementById('closeAddUserModalBtn');
+    const cancelBtn = document.getElementById('cancelAddUser');
     const modal = document.getElementById('addUserModal');
 
     if (openBtn && modal) {
@@ -164,6 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeBtnFooter && modal) {
         closeBtnFooter.addEventListener('click', () => modal.classList.add('hidden'));
     }
+    if (cancelBtn && modal) cancelBtn.addEventListener('click', () => modal.classList.add('hidden'));
 
     // ✅ Step number uniqueness check
     const stepInput = document.getElementById('step_number');
