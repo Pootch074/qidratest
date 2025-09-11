@@ -3,14 +3,10 @@
         @if(auth()->user()->avatar)
             <img src="{{ auth()->user()->avatar }}" alt="Profile" class="w-8 h-8 rounded-full mr-5">
         @else
-            <svg class="w-8 h-8 rounded-full mr-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="24" height="24" fill="gray"/>
-                <circle cx="12" cy="8" r="4" fill="white"/>
-                <path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="white"/>
-            </svg>
+            <img src="{{ Vite::asset('resources/images/icons/user-circle-fill.png') }}" alt="">
         @endif
         <div class="hidden sm:block mr-5 text-left">
-            <span class="block">{{ Str::upper(auth()->user()->first_name) }}</span>
+            <span class="block text-">{{ Str::upper(auth()->user()->first_name) }}</span>
             <small class="text-gray-400 block text-xs">{{ auth()->user()->getUserTypeName() }}</small>
         </div>
         <div class="w-5 h-5" aria-hidden="true">
