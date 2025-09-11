@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     loadVoices();
 
-    function announce(formattedQueue, stepNumber, windowNumber, repeat = 1) {
+    function announce(formattedQueue, stepNumber, windowNumber, repeat = 2) {
         const message = `Client number ${formattedQueue}, please proceed to step ${stepNumber} window ${windowNumber}.`;
 
         for (let i = 0; i < repeat; i++) {
