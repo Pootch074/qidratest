@@ -7,10 +7,10 @@
 <div class="w-full h-[84vh] flex flex-col md:flex-row">
     <div class="md:w-7/12 w-full bg-gray-800 p-3 flex flex-col h-full">
         {{-- <div id="stepsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 w-full"> --}}
-        <div id="stepsContainer" class="flex flex-col gap-4 w-full">
+        <div id="stepsContainer" class="flex flex-col w-full h-full justify-between">
         </div>
 
-        <div id="noSteps" class="hidden text-white text-lg font-medium mt-4">
+        <div id="noSteps" class="hidden text-white text-lg font-medium">
             No steps available for your section.
         </div>
     </div>
@@ -46,6 +46,10 @@
     </div>
 </div>
 
+
+@endsection
+
+@section('scripts')
 {{-- Pass Laravel routes into JS --}}
 <script>
     window.appRoutes = {

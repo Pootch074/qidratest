@@ -108,14 +108,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 data.forEach((step) => {
     const card = document.createElement("div");
-    card.className = "rounded-lg shadow-md p-2 flex flex-col";
+    card.className = "rounded-lg shadow-md p-1 mb-3 flex flex-col";
 
     // Only display valid step names
     const stepNameDisplay =
         step.step_name && step.step_name !== "None" ? step.step_name : "";
 
     let html = `
-        <h3 class="text-3xl font-bold text-[#000000] mb-2 flex items-center justify-center space-x-2 bg-white">
+        <h3 class="text-3xl font-bold text-[#000000] mb-1 flex items-center justify-center space-x-2 bg-white">
             <span>STEP ${step.step_number}</span>
             ${stepNameDisplay ? `<span>${stepNameDisplay}</span>` : ""}
         </h3>
@@ -133,11 +133,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="flex items-center w-full h-full rounded-lg border-4 border-[#2e3192]">
                     <span class="bg-[#2e3192] px-3 py-1 text-center w-1/5">
                         <p class="text-lg font-semibold">Window</p>
-                        <p class="text-5xl font-bold">${win.window_number}</p>
+                        <p class="text-4xl font-bold">${win.window_number}</p>
                     </span>
                     ${
                         firstTx
-                            ? `<span class="flex items-center justify-center bg-[#FFFFFF] text-[#000000] px-3 py-1 text-7xl font-bold text-center w-4/5 h-full rounded-r-lg">
+                            ? `<span class="flex items-center justify-center bg-[#FFFFFF] text-[#000000] px-3 py-1 text-4xl font-bold text-center w-4/5 h-full rounded-r-lg">
                                     ${firstTx.queue_number}
                                 </span>`
                             : `<span class="flex items-center justify-center bg-[#FFFFFF] text-[#000000] italic px-3 py-1 text-sm text-center w-4/5 h-full rounded-r-lg">Currently idle</span>`
