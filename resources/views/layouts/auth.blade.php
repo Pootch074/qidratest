@@ -7,7 +7,7 @@
     @yield('header')
     @livewireStyles
   </head>
-  <body class="login-bgd">
+  <body>
     <div class="container-fluid">
         <!-- <div class="m-5">
             <img src="{{ asset('assets/images/dswd-sdca.png') }}" alt="DSWD - Qidra">
