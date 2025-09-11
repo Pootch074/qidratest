@@ -9,9 +9,7 @@
   </head>
   <body>
     <div class="container-fluid">
-        <!-- <div class="m-5">
-            <img src="{{ Vite::asset('resources/images/icons/dswd-white.png') }}" alt="DSWD - Qidra">
-        </div> -->
+        
         @yield('content')
     </div>
     @yield('scripts')
