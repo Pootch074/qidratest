@@ -4,7 +4,6 @@ import Quill from "quill";
 import 'quill/dist/quill.snow.css';
 import '../css/app.css';
 import '../css/custom.scss';
-import '../images/background.png';
 
 import.meta.glob([
   '../images/**',
