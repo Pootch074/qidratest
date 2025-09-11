@@ -18,16 +18,7 @@
             
         </div>
 
-
-
-
-
-
-
-
-        <!-- decorative icon that switches based on "open" -->
         <div class="w-5 h-5" aria-hidden="true">
-        <!-- caret-up shown when NOT open -->
         <img
             x-show="!open"
             x-cloak
@@ -35,8 +26,6 @@
             alt=""
             class="w-5 h-5 object-contain"
         />
-
-        <!-- caret-down shown when open -->
         <img
             x-show="open"
             x-cloak
@@ -45,7 +34,6 @@
             class="w-5 h-5 object-contain"
         />
         </div>
-
     </button>
 
     <!-- Dropdown Menu -->
