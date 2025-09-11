@@ -1,4 +1,6 @@
-<div x-data="{ open: false }" class="relative ml-auto">
+<div x-data="{ open: false }" class="flex items-center justify-between w-full px-4">
+    <img class="h-25 w-auto" src="{{ Vite::asset('resources/images/dswd-white.png') }}" alt="Logo">
+
     <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
         @if(auth()->user()->avatar)
             <img src="{{ auth()->user()->avatar }}" alt="Profile" class="w-8 h-8 rounded-full mr-5">
