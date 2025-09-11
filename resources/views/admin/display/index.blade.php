@@ -58,6 +58,5 @@
     };
 </script>
 
-{{-- Include external JS --}}
-<script src="{{ asset('js/display.js') }}"></script>
+@vite('resources/js/display.js')
 @endsection
