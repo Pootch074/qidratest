@@ -132,18 +132,17 @@
   </select>
 </div>
 
-    {{-- Assign Category --}}   
-    <div>
-        <label class="block text-sm font-medium text-gray-600">Assign Category</label>
-        <select name="assigned_category" required 
-                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="" disabled selected>-- Select Category --</option>
-            <option value="regular">Regular</option>
-            <option value="priority">Priority</option>
-            <option value="both">Both</option>
-        </select>
-    </div> 
-                
+                {{-- Assign Category --}}   
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Assign Category</label>
+                    <select name="assigned_category" required 
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="" disabled selected>-- Select Category --</option>
+                        <option value="regular">Regular</option>
+                        <option value="priority">Priority</option>
+                        <option value="both">Both</option>
+                    </select>
+                </div> 
             </div>
 
             {{-- Assign Step --}}
@@ -169,24 +168,37 @@
                 </div>
             </div>
 
-            {{-- Assign Window --}}
-
-
             {{-- Password --}}
-<div class="relative">
-    <label class="block text-sm font-medium text-gray-600">Password</label>
-    <input id="password" type="password" name="password" required
-        class="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        placeholder="Enter password">
-    <!-- Eye button -->
-    <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500">
-        <!-- Default: Eye icon -->
-        <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 110-10 5 5 0 010 10z" />
-            <path d="M10 7a3 3 0 100 6 3 3 0 000-6z" />
-        </svg>
-    </button>
-</div>
+            <div x-data="{ show: false }" class="relative">
+                <label for="password" class="block text-sm font-medium text-gray-600">Password</label>
+                
+                <input 
+                    id="password" 
+                    name="password" 
+                    :type="show ? 'text' : 'password'" 
+                    required
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter password">
+                
+                <!-- Eye toggle button -->
+                <button type="button" 
+                        @click="show = !show"
+                        class="absolute inset-y-0 right-0 flex items-center pt-4 pr-3 text-gray-500 focus:outline-none">
+
+                    <!-- Closed eye -->
+                    <img x-show="!show" 
+                        src="{{ Vite::asset('resources/images/icons/eye-close.png') }}" 
+                        alt="Show Password" 
+                        class="h-5 w-5">
+
+                    <!-- Open eye -->
+                    <img x-show="show" 
+                        src="{{ Vite::asset('resources/images/icons/eye-open.png') }}" 
+                        alt="Hide Password" 
+                        class="h-5 w-5">
+                </button>
+            </div>
+
 
 
             {{-- Buttons --}}
