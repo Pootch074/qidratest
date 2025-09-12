@@ -35,7 +35,7 @@ class WindowsController extends Controller
 
         $request->validate([
             'step_id' => 'required|exists:steps,id',
-            'window_number' => 'required|integer|min:1',
+            'window_number' => 'required|integer|min:1|max:10',
         ]);
 
         // Ensure step belongs to user's section
@@ -84,7 +84,7 @@ class WindowsController extends Controller
 
     public function check($stepId, $windowNumber)
     {
-        // Defensive: make sure we only check valid stepId and number within 1–10
+        // Defensive: validate inputs
         if (!is_numeric($windowNumber) || $windowNumber < 1 || $windowNumber > 10) {
             return response()->json(['exists' => false]);
         }
@@ -96,4 +96,12 @@ class WindowsController extends Controller
         return response()->json(['exists' => $exists]);
     }
 
+    // 🚫 Block updates to Step or Window
+    public function update(Request $request, $id)
+    {
+        return response()->json([
+            'success' => false,
+            'message' => 'Updating windows or steps is not allowed.'
+        ], 405);
+    }
 }

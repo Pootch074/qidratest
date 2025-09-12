@@ -167,7 +167,7 @@ function renderUsers(users) {
 
     if (!users || users.length === 0) {
         tbody.innerHTML = `<tr>
-            <td colspan="${window.userColumnsCount}" class="px-6 py-6 text-center text-gray-500">
+            <td colspan="${window.userColumnsCount}" class="px-6 py-3 text-center text-gray-500">
                 🚫 No users found.
             </td>
         </tr>`;
@@ -177,7 +177,7 @@ function renderUsers(users) {
     users.forEach(u => {
         const row = document.createElement('tr');
         row.id = `userRow-${u.id}`;
-        row.className = 'hover:bg-indigo-50 transition duration-200';
+        row.className = 'odd:bg-white even:bg-gray-200 hover:bg-indigo-50 transition duration-200';
 
         row.innerHTML = `
             <td class="px-6 py-3 text-gray-700">${u.first_name}</td>
@@ -197,7 +197,7 @@ function renderUsers(users) {
         delBtn.className = "text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 \
                             hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-red-300 \
                             dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 \
-                            font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2";
+                            font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2";
         delBtn.innerHTML = `<i class="fas fa-trash-alt"></i> Delete`;
 
         // ✅ Attach event listener
