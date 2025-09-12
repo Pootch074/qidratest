@@ -35,16 +35,21 @@
 
                             {{-- Client Type Badge --}}
                             <td class="px-6 py-4">
-                                @if(strtolower($transaction->client_type) === 'priority')
+                                @if (strtolower($transaction->client_type) === 'priority')
                                     <span class="px-2 py-1 rounded-full text-white text-xs bg-[#ee1c25]">
                                         Priority
                                     </span>
-                                @else
+                                @elseif (strtolower($transaction->client_type) === 'regular')
                                     <span class="px-2 py-1 rounded-full text-white text-xs bg-[#2e3192]">
                                         Regular
                                     </span>
+                                @elseif (strtolower($transaction->client_type) === 'returnee')
+                                    <span class="px-2 py-1 rounded-full text-white text-xs bg-orange-500">
+                                        Returnee
+                                    </span>
                                 @endif
                             </td>
+
 
                             <td class="px-6 py-4">{{ $transaction->step->step_number ?? '—' }}</td>
                             <td class="px-6 py-4">{{ $transaction->section->section_name ?? '—' }}</td>

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('full_name')->nullable();
             $table->integer('queue_number')->nullable();
-            $table->enum('client_type', ['priority', 'regular'])->nullable();
+            $table->enum('client_type', ['priority', 'regular','returnee'])->nullable();
             
             $table->enum('ticket_status', ['issued', 'cancelled'])->nullable();
 

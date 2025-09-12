@@ -40,56 +40,70 @@ class PacdController extends Controller
     }
 
     public function generateQueue(Request $request, Section $section)
-{
-    $clientType = $request->input('client_type', 'regular');
-    $clientId   = $request->input('client_id');            // from scanning flow
-    $clientName = $request->input('manual_client_name');   // from manual flow
+    {
+        $clientType = $request->input('client_type', 'regular');
+        $clientId   = $request->input('client_id');            // from scanning flow
+        $clientName = $request->input('manual_client_name');   // from manual flow
 
-    if ($clientId) {
-        // 🔎 Scanned client flow → update existing record
-        $client = Transaction::where('id', $clientId)
-            ->whereNull('ticket_status')
-            ->firstOrFail();
-    } else {
-        // 📝 Manual flow → create new record
-        $client = new Transaction([
-            'full_name'    => $clientName,
-            'ticket_status'=> null,
+        if ($clientId) {
+            // 🔎 Scanned client flow → update existing record
+            $client = Transaction::where('id', $clientId)
+                ->whereNull('ticket_status')
+                ->firstOrFail();
+        } else {
+            // 📝 Manual flow → create new record
+            $client = new Transaction([
+                'full_name'    => $clientName,
+                'ticket_status'=> null,
+            ]);
+        }
+
+        // Get last queue number for this section + client_type
+        $lastQueue = Transaction::where('section_id', $section->id)
+            ->where('client_type', $clientType)
+            ->max('queue_number');
+
+        $newQueueNumber = $lastQueue ? $lastQueue + 1 : 1;
+
+        // Get first step for this section
+        $firstStep = Step::where('section_id', $section->id)
+            ->where('step_number', 1)
+            ->first();
+
+        // Update or fill fields
+        $client->fill([
+            'queue_number' => $newQueueNumber,
+            'client_type'  => $clientType,
+            'step_id'      => $firstStep?->id,
+            'window_id'    => null,
+            'section_id'   => $section->id,
+            'queue_status' => 'waiting',
+            'ticket_status'=> 'issued',
         ]);
+
+        $client->save();
+
+        // Format queue label
+        $prefix = strtoupper(substr($clientType, 0, 1));
+        $formattedQueue = $prefix . str_pad($client->queue_number, 3, '0', STR_PAD_LEFT);
+
+        // 👉 If JSON is expected (fetch / axios), return JSON
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success'      => true,
+                'queue_number' => $formattedQueue,
+                'client_type'  => ucfirst($clientType),
+                'client_name'  => $client->full_name,
+                'section'      => $section->section_name,
+            ]);
+        }
+
+        // 👉 Otherwise, fallback to redirect (normal form POST)
+        return redirect()->back()
+            ->with('success', "Queue #{$formattedQueue} created for {$section->section_name} (Client: {$client->full_name})");
     }
 
-    // Get last queue number for this section + client_type
-    $lastQueue = Transaction::where('section_id', $section->id)
-        ->where('client_type', $clientType)
-        ->max('queue_number');
 
-    $newQueueNumber = $lastQueue ? $lastQueue + 1 : 1;
-
-    // Get first step for this section
-    $firstStep = Step::where('section_id', $section->id)
-        ->where('step_number', 1)
-        ->first();
-
-    // Update or fill fields
-    $client->fill([
-        'queue_number' => $newQueueNumber,
-        'client_type'  => $clientType,
-        'step_id'      => $firstStep?->id,
-        'window_id'    => null,
-        'section_id'   => $section->id,
-        'queue_status' => 'waiting',
-        'ticket_status'=> 'issued',
-    ]);
-
-    $client->save();
-
-    // Format queue label
-    $prefix = strtoupper(substr($clientType, 0, 1));
-    $formattedQueue = $prefix . str_pad($client->queue_number, 3, '0', STR_PAD_LEFT);
-
-    return redirect()->back()
-        ->with('success', "Queue #{$formattedQueue} created for {$section->section_name} (Client: {$client->full_name})");
-}
 
 
 

@@ -56,20 +56,32 @@
 
             {{-- Modal for Client Type --}}
             <div x-show="showModal" 
-                 class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50"
-                 x-cloak>
+                class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50"
+                x-cloak>
                 <div class="bg-white rounded-lg shadow-lg w-80 p-6">
                     <h3 class="text-lg font-semibold text-gray-700 mb-4">Choose Client Type</h3>
-                    <div class="flex justify-around">
-                        <button @click="document.getElementById('client_type_' + selectedSection).value='regular'; 
-                                        document.getElementById('form-' + selectedSection).submit();" 
-                                class="px-4 py-2 bg-[#2e3192] hover:bg-[#5057c9] text-white rounded-lg shadow">
+                    <div class="flex flex-wrap justify-center gap-3">
+                        {{-- Regular --}}
+                        <button type="button"
+                            @click="generateQueue(selectedSection, 'regular')"
+                            class="px-4 py-2 bg-[#2e3192] hover:bg-[#5057c9] text-white rounded-lg shadow">
                             Regular
                         </button>
-                        <button @click="document.getElementById('client_type_' + selectedSection).value='priority'; 
-                                        document.getElementById('form-' + selectedSection).submit();" 
-                                class="px-4 py-2 bg-[#ee1c25] hover:bg-[#F4676E] text-white rounded-lg shadow">
-                            Priority
+
+                        {{-- Priority only for section_id == 15 --}}
+                        @if($authUser->section_id == 15)
+                            <button type="button"
+                                @click="generateQueue(selectedSection, 'priority')"
+                                class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow">
+                                Priority
+                            </button>
+                        @endif
+
+                        {{-- Returnee --}}
+                        <button type="button"
+                            @click="generateQueue(selectedSection, 'returnee')"
+                            class="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg shadow">
+                            Returnee
                         </button>
                     </div>
                     <div class="mt-4 text-right">
@@ -80,6 +92,9 @@
                     </div>
                 </div>
             </div>
+
+
+
 
             {{-- Success Message --}}
             @if(session('success'))
@@ -92,4 +107,57 @@
     </div>
 </div>
 
+@endsection
+
+@section('scripts')
+<script>
+function generateQueue(sectionId, type) {
+    const clientNameInput = document.querySelector('input[x-model="clientName"]');
+    const clientName = clientNameInput ? clientNameInput.value : '';
+
+    // Open window immediately (prevents popup blocking)
+    const printWindow = window.open('', '', 'width=500,height=700');
+
+    fetch(`/pacd/generate/${sectionId}`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            client_type: type,
+            manual_client_name: clientName
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            // Fill content into the already-opened window
+            printWindow.document.write(`
+                <div style="text-align:center;font-family:sans-serif;padding:20px;">
+                    <h2 style="margin-bottom:5px;">${data.section}</h2>
+                    <h1 style="font-size:60px;margin:10px 0;">${data.queue_number}</h1>
+                    <p style="font-size:18px;margin:0;">${data.client_type} Client</p>
+                    <p style="margin-top:10px;">${data.client_name}</p>
+                </div>
+            `);
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.print();
+            printWindow.close();
+        } else {
+            alert('Error generating queue');
+            printWindow.close();
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        printWindow.close();
+    });
+}
+
+
+</script>
 @endsection
