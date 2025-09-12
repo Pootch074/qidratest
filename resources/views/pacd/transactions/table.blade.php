@@ -1,10 +1,10 @@
-@extends('layouts.main')
+@extends('layouts.pacd')
 @section('title', 'Transactions')
 @section('header')
 @endsection
 
 @section('content')
-<div class="w-full p-4 bg-gray-50">
+<div class="w-full p-4 bg-gray-200">
     @include('layouts.inc.pacdsidebar')
 
     <div class="p-4 sm:ml-64">
@@ -25,7 +25,7 @@
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
                 @forelse ($transactions as $transaction)
-                    <tr class="odd:bg-white even:bg-gray-50 hover:bg-indigo-50 transition duration-200">
+                    <tr class="odd:bg-white even:bg-gray-200 hover:bg-indigo-50 transition duration-200">
                         <td class="px-6 py-4 font-semibold">
                             {{ strtoupper(substr($transaction->client_type, 0, 1)) . str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT) }}
                         </td>

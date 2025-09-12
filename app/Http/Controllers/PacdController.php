@@ -40,46 +40,57 @@ class PacdController extends Controller
     }
 
     public function generateQueue(Request $request, Section $section)
-    {
-        $clientType = $request->input('client_type', 'regular'); // default to regular
-        $clientId   = $request->input('client_id');
+{
+    $clientType = $request->input('client_type', 'regular');
+    $clientId   = $request->input('client_id');            // from scanning flow
+    $clientName = $request->input('manual_client_name');   // from manual flow
 
-        // 🔎 Find the client waiting in the "scanned IDs" list
+    if ($clientId) {
+        // 🔎 Scanned client flow → update existing record
         $client = Transaction::where('id', $clientId)
             ->whereNull('ticket_status')
             ->firstOrFail();
-
-        // Get the highest queue_number for this section + client_type
-        $lastQueue = Transaction::where('section_id', $section->id)
-            ->where('client_type', $clientType)
-            ->max('queue_number');
-
-        // Increment or start at 1
-        $newQueueNumber = $lastQueue ? $lastQueue + 1 : 1;
-
-        // ✅ Get the first step for this section (step_number = 1)
-        $firstStep = Step::where('section_id', $section->id)
-            ->where('step_number', 1)
-            ->first();
-
-        // 🔄 Update the existing client record instead of creating a new one
-        $client->update([
-            'queue_number' => $newQueueNumber,
-            'client_type'  => $clientType,
-            'step_id'      => $firstStep ? $firstStep->id : null,
-            'window_id'    => null,
-            'section_id'   => $section->id,
-            'queue_status' => 'waiting',
-            'ticket_status'=> 'issued',
+    } else {
+        // 📝 Manual flow → create new record
+        $client = new Transaction([
+            'full_name'    => $clientName,
+            'ticket_status'=> null,
         ]);
-
-        // Build formatted queue label (R001, P001, etc.)
-        $prefix = strtoupper(substr($clientType, 0, 1));
-        $formattedQueue = $prefix . str_pad($client->queue_number, 3, '0', STR_PAD_LEFT);
-
-        return redirect()->back()
-            ->with('success', "Queue #{$formattedQueue} created for {$section->section_name} (Client: {$client->full_name})");
     }
+
+    // Get last queue number for this section + client_type
+    $lastQueue = Transaction::where('section_id', $section->id)
+        ->where('client_type', $clientType)
+        ->max('queue_number');
+
+    $newQueueNumber = $lastQueue ? $lastQueue + 1 : 1;
+
+    // Get first step for this section
+    $firstStep = Step::where('section_id', $section->id)
+        ->where('step_number', 1)
+        ->first();
+
+    // Update or fill fields
+    $client->fill([
+        'queue_number' => $newQueueNumber,
+        'client_type'  => $clientType,
+        'step_id'      => $firstStep?->id,
+        'window_id'    => null,
+        'section_id'   => $section->id,
+        'queue_status' => 'waiting',
+        'ticket_status'=> 'issued',
+    ]);
+
+    $client->save();
+
+    // Format queue label
+    $prefix = strtoupper(substr($clientType, 0, 1));
+    $formattedQueue = $prefix . str_pad($client->queue_number, 3, '0', STR_PAD_LEFT);
+
+    return redirect()->back()
+        ->with('success', "Queue #{$formattedQueue} created for {$section->section_name} (Client: {$client->full_name})");
+}
+
 
 
 
