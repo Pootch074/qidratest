@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             ? `<span class="flex items-center justify-center bg-[#FFFFFF] text-[#000000] px-3 py-1 text-4xl font-bold text-center w-4/5 h-full rounded-r-lg">
                                     ${firstTx.queue_number}
                                 </span>`
-                            : `<span class="flex items-center justify-center bg-[#FFFFFF] text-[#000000] italic px-3 py-1 text-sm text-center w-4/5 h-full rounded-r-lg">🚫</span>`
+                            : `<span class="flex items-center justify-center bg-[#FFFFFF] text-[#000000] px-3 py-1 text-sm text-center w-4/5 h-full rounded-r-lg">🚫</span>`
                     }
                 </div>
             </div>
