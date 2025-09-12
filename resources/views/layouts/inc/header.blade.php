@@ -6,7 +6,7 @@
             <img src="{{ Vite::asset('resources/images/icons/user-circle-fill.png') }}" alt="">
         @endif
         <div class="hidden sm:block mr-5 text-left">
-            <span class="block text-">{{ Str::upper(auth()->user()->first_name) }}</span>
+            <span class="block text-white">{{ Str::upper(auth()->user()->first_name) }}</span>
             <small class="text-gray-400 block text-xs">{{ auth()->user()->getUserTypeName() }}</small>
         </div>
         <div class="w-5 h-5" aria-hidden="true">
