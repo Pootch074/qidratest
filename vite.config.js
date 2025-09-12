@@ -9,7 +9,8 @@ export default defineConfig({
             input: [
                 'resources/css/custom.scss', 
                 'resources/js/app.js',
-                'resources/js/display.js'
+                'resources/js/display.js',
+                'resources/js/adminUsers.js'
             ],
             refresh: true,
         }),
