@@ -6,16 +6,6 @@
 @section('content')
 <div class="w-full p-4 bg-gray-200">
     <div class="p-4 sm:ml-64">
-
-        {{-- Header & Add User --}}
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-semibold text-gray-700">Users</h2>
-            <button id="openAddUserModal" 
-                class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
-                Add User
-            </button>
-        </div>
-
         {{-- ✅ Add User Modal --}}
         <div id="addUserModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-8 transform transition-transform duration-300 scale-95">
@@ -210,342 +200,82 @@
     </div>
 </div>
 
-        {{-- ✅ Fancy Users Table --}}
-<div class="overflow-x-auto bg-white rounded-2xl shadow-lg border border-gray-200">
-    <table id="usersTable" class="min-w-full text-sm text-left border-collapse">
-        <thead>
-            <tr class="bg-[#2e3192] text-white">
-                @foreach($userColumns as $label)
-                    <th class="px-6 py-3 font-semibold tracking-wide">{{ $label }}</th>
-                @endforeach
-                <th class="px-6 py-3 font-semibold tracking-wide">Assigned Step</th>
-                <th class="px-6 py-3 font-semibold tracking-wide">Assigned Window</th>
-                <th class="px-6 py-3 font-semibold tracking-wide text-center">Actions</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-200">
-            @forelse ($users as $u)
-                <tr class="hover:bg-indigo-50 transition duration-200">
-                    @foreach($userColumns as $field => $label)
-                        <td class="px-6 py-3 text-gray-700">
-                            @if($field === 'user_type')
-                                {{ $u->getUserTypeName() }}
-                            @else
-                                {{ $u->$field ?? '—' }}
-                            @endif
-                        </td>
-                    @endforeach
+
+        
+
+        <div class="bg-white rounded-lg p-4 shadow-lg h-[60vh] flex flex-col">
+            {{-- Header & Add User --}}
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-gray-700">Users</h2>
+                <button id="openAddUserModal" 
+                    class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                    Add User
+                </button>
+            </div>
+            <div class="overflow-x-auto flex-1">
+                <table id="usersTable" class="min-w-full text-sm text-left border-collapse">
+                    <thead>
+                        <tr class="bg-[#2e3192] text-white">
+                            @foreach($userColumns as $label)
+                                <th class="px-6 py-3 font-semibold tracking-wide">{{ $label }}</th>
+                            @endforeach
+                            <th class="px-6 py-3 font-semibold tracking-wide">Assigned Step</th>
+                            <th class="px-6 py-3 font-semibold tracking-wide">Assigned Window</th>
+                            <th class="px-6 py-3 font-semibold tracking-wide text-center rounded-tr-lg">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        @forelse ($users as $u)
+                            <tr class="hover:bg-indigo-50 transition duration-200">
+                                @foreach($userColumns as $field => $label)
+                                    <td class="px-6 py-3 text-gray-700">
+                                        @if($field === 'user_type')
+                                            {{ $u->getUserTypeName() }}
+                                        @else
+                                            {{ $u->$field ?? '—' }}
+                                        @endif
+                                    </td>
+                                @endforeach
 
 
-                    {{-- Assigned Step --}}
-                    <td class="px-6 py-3 font-medium text-gray-700">
-                        {{ $u->step->step_number ?? '—' }}
-                    </td>
+                                {{-- Assigned Step --}}
+                                <td class="px-6 py-3 font-medium text-gray-700">
+                                    {{ $u->step->step_number ?? '—' }}
+                                </td>
 
-                    {{-- Assigned Window --}}
-                    <td class="px-6 py-3 font-medium text-gray-700">
-                        {{ $u->window->window_number ?? '—' }}
-                    </td>
+                                {{-- Assigned Window --}}
+                                <td class="px-6 py-3 font-medium text-gray-700">
+                                    {{ $u->window->window_number ?? '—' }}
+                                </td>
 
-                    {{-- Actions --}}
-                    <td class="px-6 py-3 text-center space-x-2">
-                        
-                        <button onclick="deleteUser({{ $u->id }})"
-                                class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
-                            <i class="fas fa-trash-alt"></i> Delete
-                        </button>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="{{ count($userColumns) + 3 }}" class="px-6 py-6 text-center text-gray-500">
-                        🚫 No users found.
-                    </td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
-</div>
-
-
+                                {{-- Actions --}}
+                                <td class="px-6 py-3 text-center space-x-2">
+                                    
+                                    <button onclick="deleteUser({{ $u->id }})"
+                                            class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                                        <i class="fas fa-trash-alt"></i> Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="{{ count($userColumns) + 3 }}" class="px-6 py-6 text-center text-gray-500">
+                                    🚫 No users found.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 @endsection
 
 @section('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const modal = document.getElementById('addUserModal');
-    const openBtn = document.getElementById('openAddUserModal');
-    const closeBtn = document.getElementById('closeAddUserModal');
-    const cancelBtn = document.getElementById('cancelAddUser');
-    const form = document.getElementById('addUserForm');
-    const tbody = document.querySelector('#usersTable tbody');
-
-    // --- Modal Open / Close ---
-    openBtn.addEventListener('click', () => {
-        modal.classList.remove('hidden');
-        setTimeout(() => modal.firstElementChild.classList.remove('scale-95'), 10);
-    });
-
-    const closeModal = () => {
-        modal.firstElementChild.classList.add('scale-95');
-        setTimeout(() => modal.classList.add('hidden'), 200);
-        form.reset();
-    };
-    closeBtn.addEventListener('click', closeModal);
-    cancelBtn.addEventListener('click', closeModal);
-
-    // --- Add User AJAX ---
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const data = {
-            first_name: form.first_name.value,
-            last_name: form.last_name.value,
-            email: form.email.value,
-            position: form.position.value,
-            assigned_category: form.assigned_category.value,
-            step_id: form.step_id.value,
-            window_id: form.window_id.value,
-            password: form.password.value
-        };
-
-        try {
-            const res = await fetch("{{ route('admin.users.store') }}", {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-
-            const json = await res.json();
-
-            if (!res.ok || !json.success) {
-                // Validation errors or other server errors
-                let msg = json.message || 'Unknown error';
-                if (json.errors) {
-                    msg += '\n' + Object.values(json.errors).flat().join('\n');
-                }
-                alert(msg);
-                return;
-            }
-
-            // Success: Add row to table
-            const u = json.user;
-            const row = document.createElement('tr');
-            row.id = `userRow-${u.id}`;
-            row.className = 'hover:bg-indigo-50 transition duration-200';
-            row.innerHTML = `
-                <td class="px-6 py-3 text-gray-700">${u.first_name}</td>
-                <td class="px-6 py-3 text-gray-700">${u.last_name}</td>
-                <td class="px-6 py-3 text-gray-700">${u.email}</td>
-                <td class="px-6 py-3 text-gray-700">${u.position}</td>
-                <td class="px-6 py-3 text-gray-700">${u.user_type_name}</td>
-                <td class="px-6 py-3 text-gray-700">${u.assigned_category}</td>
-                <td class="px-6 py-3 text-gray-700">${u.step_number ?? '—'}</td>
-                <td class="px-6 py-3 text-gray-700">${u.window_number ?? '—'}</td>
-                <td class="px-6 py-3 text-center space-x-2">
-                    
-                    <button onclick="deleteUser(${u.id})" class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
-                        <i class="fas fa-trash-alt"></i> Delete
-                    </button>
-                </td>
-            `;
-            tbody.appendChild(row);
-
-            closeModal();
-
-        } catch (err) {
-            console.error('Add user failed:', err);
-            alert('Add user failed. Check console for details.');
-        }
-    });
-
-});
-
+    window.appBaseUrl = "{{ url('') }}";
+    window.userColumnsCount = {{ count($userColumns) + 3 }};
 </script>
-
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-const userTypeSelect = document.querySelector('select[name="user_type"]');
-if (userTypeSelect) {
-    const assignedCategory = document.querySelector('select[name="assigned_category"]');
-    const stepSelect = document.querySelector('select[name="step_id"]');
-    const windowSelect = document.querySelector('select[name="window_id"]');
-
-    const toggleFields = () => {
-        const selectedText = userTypeSelect.options[userTypeSelect.selectedIndex].text.toLowerCase();
-        const isDisplay = selectedText === 'display';
-
-        assignedCategory.disabled = isDisplay;
-        stepSelect.disabled = isDisplay;
-        windowSelect.disabled = isDisplay;
-
-        [assignedCategory, stepSelect, windowSelect].forEach(field => {
-            field.classList.toggle('bg-gray-100', isDisplay);
-            field.classList.toggle('cursor-not-allowed', isDisplay);
-        });
-    };
-
-    userTypeSelect.addEventListener('change', toggleFields);
-    toggleFields();
-}
-
-});
-</script>
-
-
-<script>
-    // Delete User Function
-    function deleteUser(userId) {
-        if (!confirm('Are you sure you want to delete this user?')) return;
-
-        fetch(`${window.appBaseUrl}/admin/users/${userId}`, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Accept': 'application/json'
-            }
-        })
-        .then(res => {
-            if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-            return res.json();
-        })
-        .then(data => {
-            if (data.success) {
-                // Remove the user row from the table
-                const row = document.getElementById(`userRow-${userId}`);
-                if (row) row.remove();
-            } else {
-                alert('Error deleting user: ' + (data.message ?? 'Unknown error'));
-            }
-        })
-        .catch(err => {
-            console.error('Delete user failed:', err);
-            alert('An error occurred while deleting the user.');
-        });
-    }
-</script>
-
-<script>
-function renderUsers(users) {
-    const tbody = document.querySelector('#usersTable tbody');
-    tbody.innerHTML = '';
-
-    if (!users || users.length === 0) {
-        tbody.innerHTML = `<tr>
-            <td colspan="{{ count($userColumns) + 3 }}" class="px-6 py-6 text-center text-gray-500">
-                🚫 No users found.
-            </td>
-        </tr>`;
-        return;
-    }
-
-    users.forEach(u => {
-        const row = document.createElement('tr');
-        row.id = `userRow-${u.id}`;
-        row.className = 'hover:bg-indigo-50 transition duration-200';
-
-        row.innerHTML = `
-            <td class="px-6 py-3 text-gray-700">${u.first_name}</td>
-            <td class="px-6 py-3 text-gray-700">${u.last_name}</td>
-            <td class="px-6 py-3 text-gray-700">${u.email}</td>
-            <td class="px-6 py-3 text-gray-700">${u.position}</td>
-            <td class="px-6 py-3 text-gray-700">${u.user_type_name}</td>
-            <td class="px-6 py-3 text-gray-700">${u.assigned_category}</td>
-
-            <!-- IMPORTANT: Step then Window (match the table header) -->
-            <td class="px-6 py-3 text-gray-700">${u.step_number ?? '—'}</td>
-            <td class="px-6 py-3 text-gray-700">${u.window_number ?? '—'}</td>
-
-            <td class="px-6 py-3 text-center space-x-2">
-                
-                <button onclick="deleteUser(${u.id})" class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
-                    <i class="fas fa-trash-alt"></i> Delete
-                </button>
-            </td>
-        `;
-        tbody.appendChild(row);
-    });
-}
-
-
-
-
-
-// Poll the endpoint every 1 second
-function fetchUsers() {
-    fetch("{{ route('admin.users.json') }}")
-        .then(res => res.json())
-        .then(data => renderUsers(data))
-        .catch(err => console.error(err));
-}
-
-// Initial fetch and interval
-fetchUsers();
-setInterval(fetchUsers, 1000);
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const stepSelect = document.querySelector('select[name="step_id"]');
-    const windowSelect = document.querySelector('select[name="window_id"]');
-
-    stepSelect.addEventListener('change', function () {
-        const stepId = this.value;
-
-        // Reset window dropdown
-        windowSelect.innerHTML = '<option value="">-- Select Window --</option>';
-        windowSelect.disabled = true;
-
-        if (stepId) {
-            // Use dynamic base URL
-            const url = `${window.appBaseUrl}/windows/by-step/${stepId}`;
-
-            fetch(url)
-                .then(res => {
-                    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-                    return res.json();
-                })
-                .then(data => {
-                    if (data.length > 0) {
-                        data.forEach(w => {
-                            const opt = document.createElement('option');
-                            opt.value = w.id;
-                            opt.textContent = w.window_number;
-                            windowSelect.appendChild(opt);
-                        });
-                        windowSelect.disabled = false;
-                    }
-                })
-                .catch(err => {
-                    console.error('Failed to fetch windows:', err);
-                });
-        }
-    });
-});
-</script>
-
-{{-- Password eye toggle --}}
-<script>
-    const passwordInput = document.getElementById('password');
-    const togglePassword = document.getElementById('togglePassword');
-    const eyeIcon = document.getElementById('eyeIcon');
-
-    togglePassword.addEventListener('click', () => {
-        const type = passwordInput.type === 'password' ? 'text' : 'password';
-        passwordInput.type = type;
-
-        // Optionally change the icon
-        eyeIcon.innerHTML = type === 'password' 
-            ? '<path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 110-10 5 5 0 010 10z" /><path d="M10 7a3 3 0 100 6 3 3 0 000-6z" />' 
-            : '<path d="M3.707 3.707a1 1 0 00-1.414 1.414l1.095 1.094C2.52 7.083 1.732 8.462 1 10c.73 2.89 4 7 9 7 1.605 0 3.123-.483 4.414-1.293l1.879 1.879a1 1 0 001.414-1.414l-14-14zM10 5a5 5 0 014.546 3.032l-1.479 1.478A3 3 0 0010 7a3 3 0 00-1.667.516L7.044 7.03A5 5 0 0110 5z"/>';
-    });
-</script>
-
+@vite('resources/js/adminUsers.js')
 @endsection
