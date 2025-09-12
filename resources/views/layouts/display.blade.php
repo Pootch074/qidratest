@@ -10,7 +10,12 @@
     @yield('header')
     @livewireStyles
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
+    
+    <!-- ✅ Global app URL -->
+    <script>
+        window.appUrl = "{{ url('/') }}";
+    </script>
+    
     <!-- insert here the content of the @section('header') -->
     @yield('header') 
 </head>
