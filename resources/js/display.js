@@ -108,14 +108,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 data.forEach((step) => {
     const card = document.createElement("div");
-    card.className = "rounded-lg shadow-md p-1 mb-3 flex flex-col bg-gray-50";
+    card.className = "rounded-lg shadow-md p-1 mb-3 flex flex-col bg-gray-200";
 
     // Only display valid step names
     const stepNameDisplay =
         step.step_name && step.step_name !== "None" ? step.step_name : "";
 
     let html = `
-        <h3 class="text-3xl font-bold text-[#000000] mb-1 flex items-center justify-center space-x-2 bg-white">
+        <h3 class="text-3xl font-bold text-[#000000] mb-1 flex items-center justify-center space-x-2 bg-white rounded">
             <span>STEP ${step.step_number}</span>
             ${stepNameDisplay ? `<span>${stepNameDisplay}</span>` : ""}
         </h3>
