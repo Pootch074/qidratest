@@ -111,53 +111,161 @@
 
 @section('scripts')
 <script>
-function generateQueue(sectionId, type) {
+window.generateQueue = async function(sectionId, type) {
     const clientNameInput = document.querySelector('input[x-model="clientName"]');
     const clientName = clientNameInput ? clientNameInput.value : '';
 
-    // Open window immediately (prevents popup blocking)
-    const printWindow = window.open('', '', 'width=500,height=700');
+    try {
+        const res = await fetch(`/pacd/generate/${sectionId}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                client_type: type,
+                manual_client_name: clientName
+            })
+        });
 
-    fetch(`/pacd/generate/${sectionId}`, {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            'X-Requested-With': 'XMLHttpRequest',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            client_type: type,
-            manual_client_name: clientName
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            // Fill content into the already-opened window
-            printWindow.document.write(`
-                <div style="text-align:center;font-family:sans-serif;padding:20px;">
-                    <h2 style="margin-bottom:5px;">${data.section}</h2>
-                    <h1 style="font-size:60px;margin:10px 0;">${data.queue_number}</h1>
-                    <p style="font-size:18px;margin:0;">${data.client_type} Client</p>
-                    <p style="margin-top:10px;">${data.client_name}</p>
-                </div>
-            `);
-            printWindow.document.close();
-            printWindow.focus();
-            printWindow.print();
-            printWindow.close();
-        } else {
-            alert('Error generating queue');
-            printWindow.close();
+        // try to parse JSON, if server returns HTML this will throw
+        const data = await res.json();
+
+        if (!data || !data.success) {
+            console.error('Server returned error:', data);
+            alert('Error generating queue. Check console for details.');
+            return;
         }
-    })
-    .catch(err => {
-        console.error(err);
-        printWindow.close();
-    });
-}
 
+        // build the ticket HTML (centered visually)
+        const ticketHtml = `
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Queue Ticket</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  html,body{height:100%;margin:0;padding:0;-webkit-print-color-adjust:exact;}
+  body{display:flex;align-items:center;justify-content:center;font-family:Arial,Helvetica,sans-serif;background:#fff;}
+  .ticket{width:320px;padding:26px;border-radius:12px;border:2px dashed #333;text-align:center;box-sizing:border-box;}
+  .section{color:#2e3192;font-weight:700;font-size:18px;margin:0}
+  .number{font-size:72px;margin:18px 0;font-weight:900;letter-spacing:2px}
+  .meta{font-size:16px;margin:6px 0;color:#333}
+  .small{font-size:12px;color:#666;margin-top:12px}
+  @media print{
+    @page { margin: 6mm; }
+    body { background: #fff; }
+    .ticket { border: none; box-shadow: none; width: 100%; padding: 6mm; }
+  }
+</style>
+</head>
+<body>
+  <div class="ticket">
+    <div class="section">${escapeHtml(data.section)}</div>
+    <div class="number">${escapeHtml(data.queue_number)}</div>
+    <div class="meta">${escapeHtml(data.client_type)} Client</div>
+    <div class="meta">${escapeHtml(data.client_name)}</div>
+    <small class="small">Generated: ${escapeHtml(new Date().toLocaleString())}</small>
+  </div>
+</body>
+</html>`.trim();
 
+        // create hidden iframe
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'fixed';
+        iframe.style.right = '9999px'; // keep off-screen
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = '0';
+        document.body.appendChild(iframe);
+
+        // write ticket into iframe
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        doc.open();
+        doc.write(ticketHtml);
+        doc.close();
+
+        // wait a little for content to render then print
+        iframe.onload = () => {
+            try {
+                iframe.contentWindow.focus();
+                // small timeout to ensure layout/fonts are ready
+                setTimeout(() => {
+                    iframe.contentWindow.print();
+                    // remove iframe after short delay
+                    setTimeout(() => {
+                        try { document.body.removeChild(iframe); } catch(e) {}
+                    }, 700);
+                }, 200);
+            } catch (err) {
+                console.warn('iframe print failed, falling back to popup', err);
+                // fallback to popup if iframe fails
+                fallbackPopupPrint(ticketHtml);
+            }
+        };
+
+        // Some browsers fire onload inconsistently for doc.write content — ensure print anyway
+        setTimeout(() => {
+            try {
+                if (iframe && iframe.contentWindow) {
+                    iframe.contentWindow.focus();
+                    iframe.contentWindow.print();
+                    setTimeout(() => { try { document.body.removeChild(iframe); } catch(e) {} }, 700);
+                }
+            } catch (err) {
+                console.warn('timeout print failed, fallback', err);
+                fallbackPopupPrint(ticketHtml);
+            }
+        }, 600);
+
+        // best-effort: close the Alpine modal
+        try {
+            const root = document.querySelector('[x-data]');
+            if (root && root.__x && root.__x.$data) {
+                root.__x.$data.showModal = false;
+                root.__x.$data.showSections = false;
+            } else if (window.Alpine) {
+                // Alpine v3: try to find component
+                const comp = window.Alpine.discover && window.Alpine.discover((el) => el.hasAttribute('x-data'));
+                if (comp && comp.$data) comp.$data.showModal = false;
+            } else {
+                // fallback hide selector-based
+                const modal = document.querySelector('[x-show="showModal"]');
+                if (modal) modal.style.display = 'none';
+            }
+        } catch (e) { /* non-fatal */ }
+
+    } catch (err) {
+        console.error('Request/print error:', err);
+        alert('Printing failed — check console for details.');
+    }
+
+    // small helper functions
+    function escapeHtml(str) {
+        return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function fallbackPopupPrint(html) {
+        // last-resort: open popup (may be blocked)
+        const w = 420, h = 560;
+        const left = Math.max(0, Math.floor((screen.width - w) / 2));
+        const top = Math.max(0, Math.floor((screen.height - h) / 2));
+        const popup = window.open('', '', `width=${w},height=${h},left=${left},top=${top},noopener,noreferrer`);
+        if (!popup) {
+            alert('Popup blocked. Please allow popups for printing.');
+            return;
+        }
+        popup.document.open();
+        popup.document.write(html);
+        popup.document.close();
+        popup.focus();
+        setTimeout(() => { try { popup.print(); popup.close(); } catch(e) { console.error(e); } }, 300);
+    }
+};
 </script>
+
 @endsection
+
