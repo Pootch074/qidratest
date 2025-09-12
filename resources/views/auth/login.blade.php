@@ -35,7 +35,7 @@
                 </span>
                 <input type="email" name="email" id="email" autocomplete="email" required
                     placeholder="jdcruz@dswd.gov.ph"
-                    class="block w-full h-14 pl-12 pr-4 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition outline-none">
+                    class="block w-full h-14 pl-12 pr-4 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] transition outline-none">
             </div>
 
             <!-- Password Input with Eye Toggle (Alpine) -->
@@ -49,7 +49,7 @@
                 <input :type="show ? 'text' : 'password'" name="password" id="password"
                     autocomplete="current-password" required
                     placeholder="********"
-                    class="block w-full h-14 pl-12 pr-12 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition outline-none">
+                    class="block w-full h-14 pl-12 pr-12 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] transition outline-none">
 
                 <!-- Eye Toggle Button -->
                 <button type="button" @click="show = !show"
@@ -74,7 +74,7 @@
             <!-- Submit Button -->
             <div>
                 <button type="submit"
-                    class="w-full flex justify-center items-center h-14 px-6 rounded-xl bg-[#2e3192] text-white font-semibold shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                    class="w-full flex justify-center items-center h-14 px-6 rounded-xl bg-[#2e3192] text-white font-semibold shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-[#2e3192] transition">
                     Login
                 </button>
             </div>
