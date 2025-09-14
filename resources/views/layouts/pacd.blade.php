@@ -13,6 +13,11 @@
 
     <!-- insert here the content of the @section('header') -->
     @yield('header') 
+    <script>
+        window.routes = {
+            pacdGenerate: @json(route('pacd.generate', ['section' => '__SECTION__']))
+        };
+    </script>
 </head>
 
 <body class="min-h-screen flex flex-col">
@@ -39,11 +44,7 @@
     @yield('scripts')
     @stack('scripts')
     @livewireScripts
-    <script>
-        window.routes = {
-            pacdGenerate: @json(route('pacd.generate', ['section' => '__SECTION__']))
-        };
-    </script>
+    
 
 
 </body>
