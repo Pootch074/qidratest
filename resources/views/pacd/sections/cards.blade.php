@@ -116,7 +116,9 @@ window.generateQueue = async function(sectionId, type) {
     const clientName = clientNameInput ? clientNameInput.value : '';
 
     try {
-        const res = await fetch(`/pacd/generate/${sectionId}`, {
+        const url = window.routes.pacdGenerate.replace('__SECTION__', sectionId);
+        const res = await fetch(url, {
+
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),

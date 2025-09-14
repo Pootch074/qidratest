@@ -39,5 +39,12 @@
     @yield('scripts')
     @stack('scripts')
     @livewireScripts
+    <script>
+        window.routes = {
+            pacdGenerate: @json(route('pacd.generate', ['section' => '__SECTION__']))
+        };
+    </script>
+
+
 </body>
 </html>
