@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="w-full p-4 bg-gray-200" 
-     x-data="{ showSections: false, showModal: false, selectedSection: null, clientName: '' }">
+     x-data="queueApp()">
 
     @php $authUser = Auth::user(); @endphp
     @include('layouts.inc.pacdsidebar')
@@ -55,45 +55,43 @@
             </div>
 
             {{-- Modal for Client Type --}}
-            <div x-show="showModal" 
-                class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50"
-                x-cloak>
-                <div class="bg-white rounded-lg shadow-lg w-80 p-6">
-                    <h3 class="text-lg font-semibold text-gray-700 mb-4">Choose Client Type</h3>
-                    <div class="flex flex-wrap justify-center gap-3">
-                        {{-- Regular --}}
-                        <button type="button"
-                            @click="generateQueue(selectedSection, 'regular')"
-                            class="px-4 py-2 bg-[#2e3192] hover:bg-[#5057c9] text-white rounded-lg shadow">
-                            Regular
-                        </button>
+<div x-show="showModal" 
+    class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50"
+    x-cloak>
+    <div class="bg-white rounded-lg shadow-lg w-80 p-6">
+        <h3 class="text-lg font-semibold text-gray-700 mb-4">Choose Client Type</h3>
+        <div class="flex flex-wrap justify-center gap-3">
+            {{-- Regular --}}
+            <button type="button"
+                @click="generateQueue(selectedSection, 'regular').then(() => reset())"
+                class="px-4 py-2 bg-[#2e3192] hover:bg-[#5057c9] text-white rounded-lg shadow">
+                Regular
+            </button>
 
-                        {{-- Priority only for section_id == 15 --}}
-                        @if($authUser->section_id == 15)
-                            <button type="button"
-                                @click="generateQueue(selectedSection, 'priority')"
-                                class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow">
-                                Priority
-                            </button>
-                        @endif
+            {{-- Priority only for section_id == 15 --}}
+            @if($authUser->section_id == 15)
+                <button type="button"
+                    @click="generateQueue(selectedSection, 'priority').then(() => reset())"
+                    class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow">
+                    Priority
+                </button>
+            @endif
 
-                        {{-- Returnee --}}
-                        <button type="button"
-                            @click="generateQueue(selectedSection, 'returnee')"
-                            class="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg shadow">
-                            Returnee
-                        </button>
-                    </div>
-                    <div class="mt-4 text-right">
-                        <button @click="showModal = false" 
-                                class="text-gray-500 hover:text-gray-700">
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-
+            {{-- Returnee --}}
+            <button type="button"
+                @click="generateQueue(selectedSection, 'returnee').then(() => reset())"
+                class="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg shadow">
+                Returnee
+            </button>
+        </div>
+        <div class="mt-4 text-right">
+            <button @click="reset()" 
+                    class="text-gray-500 hover:text-gray-700">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
 
 
             {{-- Success Message --}}
@@ -111,163 +109,114 @@
 
 @section('scripts')
 <script>
-window.generateQueue = async function(sectionId, type) {
-    const clientNameInput = document.querySelector('input[x-model="clientName"]');
-    const clientName = clientNameInput ? clientNameInput.value : '';
+function queueApp() {
+    return {
+        showSections: false,
+        showModal: false,
+        selectedSection: null,
+        clientName: '',
 
-    try {
-        const url = window.routes.pacdGenerate.replace('__SECTION__', sectionId);
-        const res = await fetch(url, {
+        async generateQueue(sectionId, type) {
+            try {
+                const url = window.routes.pacdGenerate.replace('__SECTION__', sectionId);
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        client_type: type,
+                        manual_client_name: this.clientName
+                    })
+                });
 
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                client_type: type,
-                manual_client_name: clientName
-            })
-        });
+                const data = await res.json();
+                if (!data || !data.success) {
+                    console.error('Server returned error:', data);
+                    alert('Error generating queue.');
+                    return;
+                }
 
-        // try to parse JSON, if server returns HTML this will throw
-        const data = await res.json();
+                const ticketHtml = this.buildTicketHtml(data);
 
-        if (!data || !data.success) {
-            console.error('Server returned error:', data);
-            alert('Error generating queue. Check console for details.');
-            return;
-        }
+                // Create hidden iframe for printing
+                const iframe = document.createElement('iframe');
+                Object.assign(iframe.style, {
+                    position: 'fixed', right: '9999px', width: '0', height: '0', border: '0'
+                });
+                document.body.appendChild(iframe);
 
-        // build the ticket HTML (centered visually)
-        const ticketHtml = `
+                const doc = iframe.contentDocument || iframe.contentWindow.document;
+                doc.open(); doc.write(ticketHtml); doc.close();
+
+                iframe.onload = () => {
+                    const printWindow = iframe.contentWindow;
+
+                    // Reset after print OR cancel
+                    printWindow.onafterprint = () => {
+                        try {
+                            const root = document.querySelector('[x-data]');
+                            if (root && root.__x && root.__x.$data && typeof root.__x.$data.reset === 'function') {
+                                root.__x.$data.reset();
+                            }
+                        } catch (e) {
+                            console.warn("Reset after print failed", e);
+                        }
+
+                        try { document.body.removeChild(iframe); } catch {}
+                    };
+
+                    printWindow.focus();
+                    setTimeout(() => { printWindow.print(); }, 150);
+                };
+
+            } catch (err) {
+                console.error('Request/print error:', err);
+                alert('Printing failed — check console for details.');
+            }
+        },
+
+        buildTicketHtml(data) {
+            return `
 <!doctype html>
 <html>
 <head>
 <meta charset="utf-8">
 <title>Queue Ticket</title>
-<meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
-  html,body{height:100%;margin:0;padding:0;-webkit-print-color-adjust:exact;}
-  body{display:flex;align-items:center;justify-content:center;font-family:Arial,Helvetica,sans-serif;background:#fff;}
-  .ticket{width:320px;padding:26px;border-radius:12px;border:2px dashed #333;text-align:center;box-sizing:border-box;}
+  body{display:flex;align-items:center;justify-content:center;font-family:Arial,Helvetica,sans-serif;margin:0;}
+  .ticket{width:320px;padding:26px;border-radius:12px;border:2px dashed #333;text-align:center;}
   .section{color:#2e3192;font-weight:700;font-size:18px;margin:0}
   .number{font-size:72px;margin:18px 0;font-weight:900;letter-spacing:2px}
   .meta{font-size:16px;margin:6px 0;color:#333}
   .small{font-size:12px;color:#666;margin-top:12px}
-  @media print{
-    @page { margin: 6mm; }
-    body { background: #fff; }
-    .ticket { border: none; box-shadow: none; width: 100%; padding: 6mm; }
-  }
+  @media print{ @page { margin:6mm; } .ticket{border:none;width:100%;padding:6mm;} }
 </style>
 </head>
 <body>
   <div class="ticket">
-    <div class="section">${escapeHtml(data.section)}</div>
-    <div class="number">${escapeHtml(data.queue_number)}</div>
-    <div class="meta">${escapeHtml(data.client_type)} Client</div>
-    <div class="meta">${escapeHtml(data.client_name)}</div>
-    <small class="small">Generated: ${escapeHtml(new Date().toLocaleString())}</small>
+    <div class="section">${this.escapeHtml(data.section)}</div>
+    <div class="number">${this.escapeHtml(data.queue_number)}</div>
+    <div class="meta">${this.escapeHtml(data.client_type)} Client</div>
+    <div class="meta">${this.escapeHtml(data.client_name)}</div>
+    <small class="small">Generated: ${this.escapeHtml(new Date().toLocaleString())}</small>
   </div>
 </body>
 </html>`.trim();
+        },
 
-        // create hidden iframe
-        const iframe = document.createElement('iframe');
-        iframe.style.position = 'fixed';
-        iframe.style.right = '9999px'; // keep off-screen
-        iframe.style.width = '0';
-        iframe.style.height = '0';
-        iframe.style.border = '0';
-        document.body.appendChild(iframe);
+        escapeHtml(str) {
+            return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        },
 
-        // write ticket into iframe
-        const doc = iframe.contentDocument || iframe.contentWindow.document;
-        doc.open();
-        doc.write(ticketHtml);
-        doc.close();
-
-        // wait a little for content to render then print
-        iframe.onload = () => {
-            try {
-                iframe.contentWindow.focus();
-                // small timeout to ensure layout/fonts are ready
-                setTimeout(() => {
-                    iframe.contentWindow.print();
-                    // remove iframe after short delay
-                    setTimeout(() => {
-                        try { document.body.removeChild(iframe); } catch(e) {}
-                    }, 700);
-                }, 200);
-            } catch (err) {
-                console.warn('iframe print failed, falling back to popup', err);
-                // fallback to popup if iframe fails
-                fallbackPopupPrint(ticketHtml);
-            }
-        };
-
-        // Some browsers fire onload inconsistently for doc.write content — ensure print anyway
-        setTimeout(() => {
-            try {
-                if (iframe && iframe.contentWindow) {
-                    iframe.contentWindow.focus();
-                    iframe.contentWindow.print();
-                    setTimeout(() => { try { document.body.removeChild(iframe); } catch(e) {} }, 700);
-                }
-            } catch (err) {
-                console.warn('timeout print failed, fallback', err);
-                fallbackPopupPrint(ticketHtml);
-            }
-        }, 600);
-
-        // best-effort: close the Alpine modal
-        try {
-            const root = document.querySelector('[x-data]');
-            if (root && root.__x && root.__x.$data) {
-                root.__x.$data.showModal = false;
-                root.__x.$data.showSections = false;
-            } else if (window.Alpine) {
-                // Alpine v3: try to find component
-                const comp = window.Alpine.discover && window.Alpine.discover((el) => el.hasAttribute('x-data'));
-                if (comp && comp.$data) comp.$data.showModal = false;
-            } else {
-                // fallback hide selector-based
-                const modal = document.querySelector('[x-show="showModal"]');
-                if (modal) modal.style.display = 'none';
-            }
-        } catch (e) { /* non-fatal */ }
-
-    } catch (err) {
-        console.error('Request/print error:', err);
-        alert('Printing failed — check console for details.');
-    }
-
-    // small helper functions
-    function escapeHtml(str) {
-        return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    }
-
-    function fallbackPopupPrint(html) {
-        // last-resort: open popup (may be blocked)
-        const w = 420, h = 560;
-        const left = Math.max(0, Math.floor((screen.width - w) / 2));
-        const top = Math.max(0, Math.floor((screen.height - h) / 2));
-        const popup = window.open('', '', `width=${w},height=${h},left=${left},top=${top},noopener,noreferrer`);
-        if (!popup) {
-            alert('Popup blocked. Please allow popups for printing.');
-            return;
+        reset() {
+            this.showSections = false;
+            this.showModal = false;
+            this.clientName = '';
         }
-        popup.document.open();
-        popup.document.write(html);
-        popup.document.close();
-        popup.focus();
-        setTimeout(() => { try { popup.print(); popup.close(); } catch(e) { console.error(e); } }, 300);
-    }
-};
+    };
+}
 </script>
-
 @endsection
-
