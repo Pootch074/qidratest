@@ -1,114 +1,132 @@
-
--- Offices Table
-CREATE TABLE `offices` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `field_office` VARCHAR(255) NOT NULL,
-  `created_at` TIMESTAMP NULL DEFAULT NULL,
-  `updated_at` TIMESTAMP NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_field_office` (`field_office`)
+TABLE `clients` (
+  `id` bigint UNSIGNED NOT NULL,
+  `full_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ticket_status` enum('issued','not_issued','cancelled') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Divisions Table
-CREATE TABLE `divisions` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `division_name` VARCHAR(255) NOT NULL,
-  `office_id` BIGINT UNSIGNED DEFAULT NULL,
-  `created_at` TIMESTAMP NULL DEFAULT NULL,
-  `updated_at` TIMESTAMP NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`office_id`) REFERENCES `offices`(`id`) ON DELETE SET NULL
+
+TABLE `divisions` (
+  `id` bigint UNSIGNED NOT NULL,
+  `division_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `office_id` bigint UNSIGNED DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+ALTER TABLE `divisions`
+  ADD CONSTRAINT `divisions_office_id_foreign` FOREIGN KEY (`office_id`) REFERENCES `offices` (`id`) ON DELETE SET NULL;
+
+TABLE `marquees` (
+  `id` bigint UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Sections Table
-CREATE TABLE `sections` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `section_name` VARCHAR(255) NOT NULL,
-  `division_id` BIGINT UNSIGNED DEFAULT NULL,
-  `created_at` TIMESTAMP NULL DEFAULT NULL,
-  `updated_at` TIMESTAMP NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`division_id`) REFERENCES `divisions`(`id`) ON DELETE SET NULL
+TABLE `migrations` (
+  `id` int UNSIGNED NOT NULL,
+  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Steps Table
-CREATE TABLE `steps` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `step_number` INT NOT NULL,
-  `step_name` VARCHAR(255) DEFAULT NULL,
-  `section_id` BIGINT UNSIGNED DEFAULT NULL,
-  `created_at` TIMESTAMP NULL DEFAULT NULL,
-  `updated_at` TIMESTAMP NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`section_id`) REFERENCES `sections`(`id`) ON DELETE SET NULL
+TABLE `offices` (
+  `id` bigint UNSIGNED NOT NULL,
+  `field_office` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Windows Table
-CREATE TABLE `windows` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `window_number` INT NOT NULL,
-  `step_id` BIGINT UNSIGNED DEFAULT NULL,
-  `created_at` TIMESTAMP NULL DEFAULT NULL,
-  `updated_at` TIMESTAMP NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`step_id`) REFERENCES `steps`(`id`) ON DELETE SET NULL
+TABLE `password_reset_tokens` (
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Users Table
-CREATE TABLE `users` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `first_name` VARCHAR(255) NOT NULL,
-  `last_name` VARCHAR(255) NOT NULL,
-  `email` VARCHAR(255) NOT NULL,
-  `position` VARCHAR(255) DEFAULT NULL,
-  `section_id` BIGINT UNSIGNED DEFAULT NULL,
-  `user_type` TINYINT DEFAULT NULL,
-  `assigned_category` ENUM('regular','priority') DEFAULT NULL,
-  `step_id` BIGINT UNSIGNED DEFAULT NULL,
-  `window_id` BIGINT UNSIGNED DEFAULT NULL,
-  `status` TINYINT NOT NULL DEFAULT 1,
-  `email_verified_at` TIMESTAMP NULL DEFAULT NULL,
-  `password` VARCHAR(255) NOT NULL,
-  `remember_token` VARCHAR(100) DEFAULT NULL,
-  `created_at` TIMESTAMP NULL DEFAULT NULL,
-  `updated_at` TIMESTAMP NULL DEFAULT NULL,
-  `deleted_at` TIMESTAMP NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_email` (`email`),
-  FOREIGN KEY (`section_id`) REFERENCES `sections`(`id`) ON DELETE SET NULL,
-  FOREIGN KEY (`step_id`) REFERENCES `steps`(`id`) ON DELETE SET NULL,
-  FOREIGN KEY (`window_id`) REFERENCES `windows`(`id`) ON DELETE SET NULL
+TABLE `sections` (
+  `id` bigint UNSIGNED NOT NULL,
+  `section_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `division_id` bigint UNSIGNED DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+ALTER TABLE `sections`
+  ADD CONSTRAINT `sections_division_id_foreign` FOREIGN KEY (`division_id`) REFERENCES `divisions` (`id`) ON DELETE SET NULL;
+
+TABLE `sessions` (
+  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` bigint UNSIGNED DEFAULT NULL,
+  `ip_address` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_agent` text COLLATE utf8mb4_unicode_ci,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `last_activity` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Transactions Table
-CREATE TABLE `transactions` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `queue_number` INT NOT NULL,
-  `client_type` ENUM('priority','regular') NOT NULL,
-  `step_id` BIGINT UNSIGNED DEFAULT NULL,
-  `window_id` BIGINT UNSIGNED DEFAULT NULL,
-  `section_id` BIGINT UNSIGNED DEFAULT NULL,
-  `queue_status` ENUM('waiting','pending','serving') NOT NULL DEFAULT 'waiting',
-  `created_at` TIMESTAMP NULL DEFAULT NULL,
-  `updated_at` TIMESTAMP NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`section_id`) REFERENCES `sections`(`id`) ON DELETE SET NULL,
-  FOREIGN KEY (`step_id`) REFERENCES `steps`(`id`) ON DELETE SET NULL,
-  FOREIGN KEY (`window_id`) REFERENCES `windows`(`id`) ON DELETE SET NULL
+TABLE `steps` (
+  `id` bigint UNSIGNED NOT NULL,
+  `step_number` int NOT NULL,
+  `step_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `section_id` bigint UNSIGNED DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+ALTER TABLE `steps`
+  ADD CONSTRAINT `steps_section_id_foreign` FOREIGN KEY (`section_id`) REFERENCES `sections` (`id`) ON DELETE SET NULL;
+
+TABLE `transactions` (
+  `id` bigint UNSIGNED NOT NULL,
+  `full_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `queue_number` int DEFAULT NULL,
+  `client_type` enum('priority','regular','returnee') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ticket_status` enum('issued','cancelled') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `step_id` bigint UNSIGNED DEFAULT NULL,
+  `window_id` bigint UNSIGNED DEFAULT NULL,
+  `section_id` bigint UNSIGNED DEFAULT NULL,
+  `queue_status` enum('waiting','pending','serving','completed') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'waiting',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+ALTER TABLE `transactions`
+  ADD CONSTRAINT `transactions_section_id_foreign` FOREIGN KEY (`section_id`) REFERENCES `sections` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `transactions_step_id_foreign` FOREIGN KEY (`step_id`) REFERENCES `steps` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `transactions_window_id_foreign` FOREIGN KEY (`window_id`) REFERENCES `windows` (`id`) ON DELETE SET NULL;
+
+TABLE `users` (
+  `id` bigint UNSIGNED NOT NULL,
+  `first_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `last_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `position` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `section_id` bigint UNSIGNED DEFAULT NULL,
+  `user_type` tinyint DEFAULT NULL,
+  `assigned_category` enum('regular','priority','both') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `step_id` bigint UNSIGNED DEFAULT NULL,
+  `window_id` bigint UNSIGNED DEFAULT NULL,
+  `status` tinyint NOT NULL DEFAULT '1',
+  `email_verified_at` timestamp NULL DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+ALTER TABLE `users`
+  ADD CONSTRAINT `users_section_id_foreign` FOREIGN KEY (`section_id`) REFERENCES `sections` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `users_step_id_foreign` FOREIGN KEY (`step_id`) REFERENCES `steps` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `users_window_id_foreign` FOREIGN KEY (`window_id`) REFERENCES `windows` (`id`) ON DELETE SET NULL;
+
+TABLE `videos` (
+  `id` bigint UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Videos Table
-CREATE TABLE `videos` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `created_at` TIMESTAMP NULL DEFAULT NULL,
-  `updated_at` TIMESTAMP NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
+TABLE `windows` (
+  `id` bigint UNSIGNED NOT NULL,
+  `window_number` int NOT NULL,
+  `step_id` bigint UNSIGNED DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+ALTER TABLE `windows`
+  ADD CONSTRAINT `windows_step_id_foreign` FOREIGN KEY (`step_id`) REFERENCES `steps` (`id`) ON DELETE SET NULL;
 
--- Marquees Table
-CREATE TABLE `marquees` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `created_at` TIMESTAMP NULL DEFAULT NULL,
-  `updated_at` TIMESTAMP NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

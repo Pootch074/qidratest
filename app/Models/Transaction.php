@@ -17,9 +17,7 @@ class Transaction extends Model
         'step_id',
         'window_id',
         'section_id',
-        'queue_status',
-        'created_at'
-
+        'queue_status'
     ];
 
     // In Transaction.php (Model)
@@ -30,22 +28,30 @@ class Transaction extends Model
     // Add accessor for formatted_number
     public function getFormattedNumberAttribute()
     {
-        $prefix = strtolower($this->client_type) === 'priority' ? 'P' : 'R';
+        $map = [
+            'priority' => 'P',
+            'regular'  => 'R',
+            'returnee' => 'T', // e.g. T001 for Returnee
+        ];
+        $prefix = $map[strtolower($this->client_type)] ?? 'R';
         return $prefix . str_pad($this->queue_number, 3, '0', STR_PAD_LEFT);
     }
+
 
     // Add accessor for client styling
     public function getStyleClassAttribute()
     {
         $styleMap = [
-            'priority' => 'bg-[#d92d27]',
-            'regular'  => 'bg-[#150e60]',
+            'priority' => 'bg-[#d92d27] text-white',
+            'regular'  => 'bg-[#150e60] text-white',
+            'returnee' => 'bg-yellow-600 text-white',
             'vip'      => 'bg-purple-500 text-white',
             'guest'    => 'bg-green-500 text-white',
         ];
 
         return $styleMap[strtolower($this->client_type)] ?? 'bg-gray-300 text-black';
     }
+
 
 
 
