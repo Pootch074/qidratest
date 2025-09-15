@@ -7,7 +7,6 @@ use App\Models\Section;
 use App\Models\User;
 use App\Models\Step;
 use App\Models\Window;
-use App\Models\Client;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
 
