@@ -510,4 +510,108 @@ class UsersController extends Controller
 
         return response()->json($windows);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function getQueues()
+    {
+        $user = Auth::user();
+
+        // Base query (scoped to logged-in user's section/step/window)
+        $baseQuery = Transaction::where('section_id', $user->section_id)
+            ->where('step_id', $user->step_id);
+
+        // 🔹 Upcoming (waiting)
+        $regularQueues = (clone $baseQuery)
+            ->where('queue_status', 'waiting')
+            ->where('client_type', 'regular')
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->map(fn($q) => [
+                'formatted_number' => 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                'style_class'      => 'bg-[#2e3192]',
+            ]);
+
+        $priorityQueues = (clone $baseQuery)
+            ->where('queue_status', 'waiting')
+            ->where('client_type', 'priority')
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->map(fn($q) => [
+                'formatted_number' => 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                'style_class'      => 'bg-[#ee1c25]',
+            ]);
+
+        // 🔹 Pending
+        $pendingRegular = (clone $baseQuery)
+            ->where('queue_status', 'pending')
+            ->where('client_type', 'regular')
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->map(fn($q) => [
+                'formatted_number' => 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                'style_class'      => 'bg-[#2e3192]',
+            ]);
+
+        $pendingPriority = (clone $baseQuery)
+            ->where('queue_status', 'pending')
+            ->where('client_type', 'priority')
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->map(fn($q) => [
+                'formatted_number' => 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                'style_class'      => 'bg-[#ee1c25]',
+            ]);
+
+        // 🔹 Serving (only 1)
+        $servingQueue = (clone $baseQuery)
+            ->where('queue_status', 'serving')
+            ->orderBy('updated_at', 'desc') // latest being served
+            ->limit(1)
+            ->get()
+            ->map(fn($q) => [
+                'formatted_number' => ($q->client_type === 'regular'
+                    ? 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT)
+                    : 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT)),
+                'style_class'      => $q->client_type === 'regular' ? 'bg-[#2e3192]' : 'bg-[#ee1c25]',
+            ]);
+
+        return response()->json([
+            'upcomingRegu' => $regularQueues,
+            'upcomingPrio' => $priorityQueues,
+            'pendingRegu'  => $pendingRegular,
+            'pendingPrio'  => $pendingPriority,
+            'servingQueue' => $servingQueue,
+        ]);
+    }
 }

@@ -19,7 +19,8 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Public Routes
-Route::get('/', function () {return Auth::check()? redirect()->intended()
+Route::get('/', function () {
+    return Auth::check() ? redirect()->intended()
         : redirect(route('login'));
 });
 
@@ -42,7 +43,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('admin/users/json', [UsersController::class, 'usersJson'])->name('admin.users.json');
     Route::post('admin/users/store', [UsersController::class, 'store'])->name('admin.users.store');
     Route::delete('admin/users/{user}', [UsersController::class, 'destroy'])->name('admin.users.destroy');
-    Route::get('/queues/data', [UsersController::class, 'fetchQueues'])->name('queues.data');
+    // Route::get('/queues/data', [UsersController::class, 'fetchQueues'])->name('queues.data');
     Route::post('/users/next-regular', [UsersController::class, 'nextRegular'])->name('users.nextRegular');
     Route::post('/users/next-priority', [UsersController::class, 'nextPriority'])->name('users.nextPriority');
     Route::post('/queue/skip', [UsersController::class, 'skipQueue'])->name('users.skipQueue');
@@ -77,12 +78,27 @@ Route::middleware(['auth'])->group(function () {
     Route::post('superadmin/store', [SuperAdminController::class, 'store'])->name('superadmin.store');
 
     Route::get('/windows/by-step/{step}', [UsersController::class, 'getWindowsByStep'])
-     ->name('windows.byStep');
+        ->name('windows.byStep');
 
 
     Route::get('/pacd/scanned_id/table', [PacdController::class, 'clientsTable'])
-    ->name('pacd.scanned_id.table');
+        ->name('pacd.scanned_id.table');
 
-     
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    Route::get('/queues/data', [UsersController::class, 'getQueues'])->name('queues.data');
 });
