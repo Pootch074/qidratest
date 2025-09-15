@@ -17,7 +17,7 @@
 
 <body class="min-h-screen flex flex-col">
 
-    <div class="flex items-center justify-between px-4 py-2 bg-white shadow">
+    <div class="flex items-center justify-between px-4 py-2 bg-[#2e3192] shadow">
         @include('layouts.inc.header')
     </div>
     
@@ -28,7 +28,7 @@
     </div>
 
 
-    <div class="w-full h-[8vh] bg-white">
+    <div class="w-full h-[8vh] bg-[#2e3192] shadow">
         @include('layouts.inc.footer')
     </div>
 

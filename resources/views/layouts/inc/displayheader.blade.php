@@ -8,9 +8,6 @@
             
         @endif
 
-
-
-
         <div class="hidden sm:block mr-5 text-left">
             <span class="block text-white font-semibold text-2xl">
                 {{ Str::upper(optional(auth()->user()->section)->section_name ?? 'NO SECTION') }}
