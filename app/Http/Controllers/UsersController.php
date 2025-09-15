@@ -240,30 +240,30 @@ class UsersController extends Controller
         $sectionId = $authUser->section_id;
 
         $validated = $request->validate([
-        'first_name'        => 'required|string|max:255',
-        'last_name'         => 'required|string|max:255',
-        'email'             => 'required|email|unique:users,email',
-        'position'          => 'required|string|max:255',
-        'assigned_category' => 'required|string|in:regular,priority',
-        'step_id'           => 'required|exists:steps,id',
-        'window_id'         => 'required|exists:windows,id',
-        'password'          => 'required|string|min:6',
-    ]);
+            'first_name'        => 'required|string|max:255',
+            'last_name'         => 'required|string|max:255',
+            'email'             => 'required|email|unique:users,email',
+            'position'          => 'required|string|max:255',
+            'assigned_category' => 'required|string|in:regular,priority',
+            'step_id'           => 'required|exists:steps,id',
+            'window_id'         => 'required|exists:windows,id',
+            'password'          => 'required|string|min:6',
+        ]);
 
         $validated['user_type'] = 5; // Newly added users always TYPE_USER
 
-$user = User::create([
-    'first_name'        => $validated['first_name'],
-    'last_name'         => $validated['last_name'],
-    'email'             => $validated['email'],
-    'position'          => $validated['position'],
-    'user_type'         => $validated['user_type'], // now safe
-    'assigned_category' => $validated['assigned_category'],
-    'step_id'           => $validated['step_id'],
-    'window_id'         => $validated['window_id'] ?? null, // optional
-    'section_id'        => Auth::user()->section_id,
-    'password'          => bcrypt($validated['password']),
-]);
+        $user = User::create([
+            'first_name'        => $validated['first_name'],
+            'last_name'         => $validated['last_name'],
+            'email'             => $validated['email'],
+            'position'          => $validated['position'],
+            'user_type'         => $validated['user_type'], // now safe
+            'assigned_category' => $validated['assigned_category'],
+            'step_id'           => $validated['step_id'],
+            'window_id'         => $validated['window_id'] ?? null, // optional
+            'section_id'        => Auth::user()->section_id,
+            'password'          => bcrypt($validated['password']),
+        ]);
 
         return response()->json([
             'success' => true,
@@ -274,7 +274,7 @@ $user = User::create([
                 'email'            => $user->email,
                 'position'         => $user->position,
                 'user_type_name'   => $user->getUserTypeName(),
-                'assigned_category'=> $user->assigned_category,
+                'assigned_category' => $user->assigned_category,
                 'window_number'    => $user->window->window_number ?? null,
                 'step_number'      => $user->step->step_number ?? null,
             ],
@@ -385,7 +385,7 @@ $user = User::create([
     }
 
 
-    
+
     public function skipQueue()
     {
         $user = Auth::user();
@@ -433,67 +433,67 @@ $user = User::create([
     }
 
     public function proceedQueue()
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    if (!$user->step_id || !$user->section_id || !$user->window_id) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'User is not assigned to a step, section, or window.'
-        ], 400);
-    }
-
-    $transaction = DB::transaction(function () use ($user) {
-        // Find the currently serving transaction
-        $current = Transaction::where('queue_status', 'serving')
-            ->where('section_id', $user->section_id)
-            ->where('step_id', $user->step_id)
-            ->where('window_id', $user->window_id)
-            ->lockForUpdate()
-            ->first();
-
-        if (!$current) {
-            return null;
+        if (!$user->step_id || !$user->section_id || !$user->window_id) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User is not assigned to a step, section, or window.'
+            ], 400);
         }
 
-        // Find the next step in the same section
-        $nextStep = Step::where('section_id', $user->section_id)
-            ->where('step_number', '>', $user->step->step_number)
-            ->orderBy('step_number', 'asc')
-            ->first();
+        $transaction = DB::transaction(function () use ($user) {
+            // Find the currently serving transaction
+            $current = Transaction::where('queue_status', 'serving')
+                ->where('section_id', $user->section_id)
+                ->where('step_id', $user->step_id)
+                ->where('window_id', $user->window_id)
+                ->lockForUpdate()
+                ->first();
 
-        if ($nextStep) {
-            // Move to the next step
-            $current->update([
-                'step_id'      => $nextStep->id,
-                'queue_status' => 'waiting',
-                'window_id'    => null,
-            ]);
-        } else {
-            // ✅ No next step -> mark as completed
-            $current->update([
-                'queue_status' => 'completed',
-                'window_id'    => null,
+            if (!$current) {
+                return null;
+            }
+
+            // Find the next step in the same section
+            $nextStep = Step::where('section_id', $user->section_id)
+                ->where('step_number', '>', $user->step->step_number)
+                ->orderBy('step_number', 'asc')
+                ->first();
+
+            if ($nextStep) {
+                // Move to the next step
+                $current->update([
+                    'step_id'      => $nextStep->id,
+                    'queue_status' => 'waiting',
+                    'window_id'    => null,
+                ]);
+            } else {
+                // ✅ No next step -> mark as completed
+                $current->update([
+                    'queue_status' => 'completed',
+                    'window_id'    => null,
+                ]);
+            }
+
+            return $current;
+        });
+
+        if ($transaction) {
+            return response()->json([
+                'status'  => 'success',
+                'message' => $transaction->queue_status === 'completed'
+                    ? 'Queue has been completed.'
+                    : 'Queue successfully proceeded to the next step.',
             ]);
         }
 
-        return $current;
-    });
-
-    if ($transaction) {
         return response()->json([
-            'status'  => 'success',
-            'message' => $transaction->queue_status === 'completed'
-                ? 'Queue has been completed.'
-                : 'Queue successfully proceeded to the next step.',
+            'status' => 'empty',
+            'message' => 'No active serving queue to proceed.'
         ]);
     }
-
-    return response()->json([
-        'status' => 'empty',
-        'message' => 'No active serving queue to proceed.'
-    ]);
-}
 
 
 
@@ -510,5 +510,4 @@ $user = User::create([
 
         return response()->json($windows);
     }
-
 }

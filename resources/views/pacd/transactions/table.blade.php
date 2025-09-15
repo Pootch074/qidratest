@@ -28,7 +28,24 @@
                     @forelse ($transactions as $transaction)
                         <tr class="odd:bg-white even:bg-gray-200 hover:bg-indigo-50 transition duration-200">
                             <td class="px-6 py-4 font-semibold">
-                                {{ strtoupper(substr($transaction->client_type, 0, 1)) . str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT) }}
+                                @php
+                                    switch (strtolower($transaction->client_type)) {
+                                        case 'priority':
+                                            $prefix = 'P';
+                                            break;
+                                        case 'regular':
+                                            $prefix = 'R';
+                                            break;
+                                        case 'returnee':
+                                            $prefix = 'T'; // 👈 force returnee to use T
+                                            break;
+                                        default:
+                                            $prefix = strtoupper(substr($transaction->client_type, 0, 1));
+                                    }
+                                @endphp
+
+                                {{ $prefix . str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT) }}
+
                             </td>
                             <td class="px-6 py-4">{{ $transaction->full_name ?? '—' }}</td>
 
@@ -44,7 +61,7 @@
                                         Regular
                                     </span>
                                 @elseif (strtolower($transaction->client_type) === 'returnee')
-                                    <span class="px-2 py-1 rounded-full text-white text-xs bg-orange-500">
+                                    <span class="px-2 py-1 rounded-full text-black text-xs bg-[#fef200]">
                                         Returnee
                                     </span>
                                 @endif

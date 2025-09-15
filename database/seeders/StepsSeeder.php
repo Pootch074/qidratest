@@ -125,7 +125,8 @@ class StepsSeeder extends Seeder
                 'step_name' => 'Pre-assessment',
                 'section_id' => 15,
                 'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()],
+                'updated_at' => Carbon::now()
+            ],
             [
                 'step_number' => 2,
                 'step_name' => 'Encoding',
@@ -165,7 +166,7 @@ class StepsSeeder extends Seeder
                 'updated_at' => Carbon::now()
             ],
             [
-                'step_number' => 3,
+                'step_number' => 1,
                 'step_name' => 'None',
                 'section_id' => 18,
                 'created_at' => Carbon::now(),

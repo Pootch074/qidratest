@@ -24,7 +24,7 @@ class PacdController extends Controller
         // Sections for buttons
         if (is_null($user->section_id)) {
             // User has no assigned section → show all, except these IDs
-            $sections = Section::whereNotIn('id', [2,3,4,5,6,7,8,10,11,15])
+            $sections = Section::whereNotIn('id', [2, 3, 4, 5, 6, 7, 8, 10, 11, 15])
                 ->orderBy('section_name')
                 ->get(['id', 'section_name']);
         } else {
@@ -53,7 +53,7 @@ class PacdController extends Controller
             // 📝 Manual flow → create new record
             $client = new Transaction([
                 'full_name'    => $clientName,
-                'ticket_status'=> null,
+                'ticket_status' => null,
             ]);
         }
 
@@ -77,13 +77,43 @@ class PacdController extends Controller
             'window_id'    => null,
             'section_id'   => $section->id,
             'queue_status' => 'waiting',
-            'ticket_status'=> 'issued',
+            'ticket_status' => 'issued',
         ]);
 
         $client->save();
 
         // Format queue label
-        $prefix = strtoupper(substr($clientType, 0, 1));
+        switch ($clientType) {
+            case 'priority':
+                $prefix = 'P';
+                break;
+            case 'regular':
+                $prefix = 'R';
+                break;
+            case 'returnee':
+                $prefix = 'T';   // 👈 force returnee to use T
+                break;
+            default:
+                $prefix = strtoupper(substr($clientType, 0, 1));
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         $formattedQueue = $prefix . str_pad($client->queue_number, 3, '0', STR_PAD_LEFT);
 
         // 👉 If JSON is expected (fetch / axios), return JSON
@@ -138,7 +168,7 @@ class PacdController extends Controller
         // Sections for buttons
         if (is_null($user->section_id)) {
             // User has no assigned section → show all, except these IDs
-            $sections = Section::whereNotIn('id', [2,3,4,5,6,7,8,10,11,15])
+            $sections = Section::whereNotIn('id', [2, 3, 4, 5, 6, 7, 8, 10, 11, 15])
                 ->orderBy('section_name')
                 ->get(['id', 'section_name']);
         } else {
@@ -148,7 +178,7 @@ class PacdController extends Controller
                 ->get(['id', 'section_name']);
         }
 
-        
+
 
         return view('pacd.sections.cards', compact('sections'));
     }
@@ -172,8 +202,4 @@ class PacdController extends Controller
 
         return view('pacd.scanned_id.table', compact('clients'));
     }
-
-    
-
-
 }

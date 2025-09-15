@@ -64,7 +64,7 @@
             {{-- Regular --}}
             <button type="button"
                 @click="generateQueue(selectedSection, 'regular').then(() => reset())"
-                class="px-4 py-2 bg-[#2e3192] hover:bg-[#5057c9] text-white rounded-lg shadow">
+                class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                 Regular
             </button>
 
@@ -72,7 +72,7 @@
             @if($authUser->section_id == 15)
                 <button type="button"
                     @click="generateQueue(selectedSection, 'priority').then(() => reset())"
-                    class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow">
+                    class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                     Priority
                 </button>
             @endif
@@ -80,7 +80,7 @@
             {{-- Returnee --}}
             <button type="button"
                 @click="generateQueue(selectedSection, 'returnee').then(() => reset())"
-                class="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg shadow">
+                class="text-gray-900 bg-gradient-to-r from-lime-200 via-lime-400 to-lime-500 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-lime-300 dark:focus:ring-lime-800 shadow-lg shadow-lime-500/50 dark:shadow-lg dark:shadow-lime-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                 Returnee
             </button>
         </div>
@@ -180,31 +180,31 @@ function queueApp() {
 
         buildTicketHtml(data) {
             return `
-<!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>Queue Ticket</title>
-<style>
-  body{display:flex;align-items:center;justify-content:center;font-family:Arial,Helvetica,sans-serif;margin:0;}
-  .ticket{width:320px;padding:26px;border-radius:12px;border:2px dashed #333;text-align:center;}
-  .section{color:#2e3192;font-weight:700;font-size:18px;margin:0}
-  .number{font-size:72px;margin:18px 0;font-weight:900;letter-spacing:2px}
-  .meta{font-size:16px;margin:6px 0;color:#333}
-  .small{font-size:12px;color:#666;margin-top:12px}
-  @media print{ @page { margin:6mm; } .ticket{border:none;width:100%;padding:6mm;} }
-</style>
-</head>
-<body>
-  <div class="ticket">
-    <div class="section">${this.escapeHtml(data.section)}</div>
-    <div class="number">${this.escapeHtml(data.queue_number)}</div>
-    <div class="meta">${this.escapeHtml(data.client_type)} Client</div>
-    <div class="meta">${this.escapeHtml(data.client_name)}</div>
-    <small class="small">Generated: ${this.escapeHtml(new Date().toLocaleString())}</small>
-  </div>
-</body>
-</html>`.trim();
+                <!doctype html>
+                <html>
+                <head>
+                <meta charset="utf-8">
+                <title>Queue Ticket</title>
+                <style>
+                body{display:flex;align-items:center;justify-content:center;font-family:Arial,Helvetica,sans-serif;margin:0;}
+                .ticket{width:320px;padding:26px;border-radius:12px;border:2px dashed #333;text-align:center;}
+                .section{color:#2e3192;font-weight:700;font-size:18px;margin:0}
+                .number{font-size:72px;margin:18px 0;font-weight:900;letter-spacing:2px}
+                .meta{font-size:16px;margin:6px 0;color:#333}
+                .small{font-size:12px;color:#666;margin-top:12px}
+                @media print{ @page { margin:6mm; } .ticket{border:none;width:100%;padding:6mm;} }
+                </style>
+                </head>
+                <body>
+                <div class="ticket">
+                    <div class="section">${this.escapeHtml(data.section)}</div>
+                    <div class="number">${this.escapeHtml(data.queue_number)}</div>
+                    <div class="meta">${this.escapeHtml(data.client_type)} Client</div>
+                    <div class="meta">${this.escapeHtml(data.client_name)}</div>
+                    <small class="small">Generated: ${this.escapeHtml(new Date().toLocaleString())}</small>
+                </div>
+                </body>
+                </html>`.trim();
         },
 
         escapeHtml(str) {
