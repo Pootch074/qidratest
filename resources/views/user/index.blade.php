@@ -106,57 +106,113 @@
         </div>
     </div>
 </div>
+
+
+
+
+<!-- Confirmation Modal (Light + Blur) -->
+<div id="popup-modal" tabindex="-1" class="hidden fixed inset-0 z-50 flex mt-10 items-center justify-center backdrop-blur-m p-4">
+    <div class="relative w-full max-w-md max-h-full">
+        <div class="relative bg-gray-200 rounded-lg shadow-lg transform transition-all duration-150 scale-95 opacity-0 border-2 border-[#2e3192]">
+            <!-- Close button -->
+            <button type="button" class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center" id="modalCloseBtn">
+                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                </svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+
+            <div class="p-4 md:p-5 text-center">
+                <svg class="mx-auto mb-4 text-gray-400 w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                </svg>
+                <h3 id="modalMessage" class="mb-5 text-lg font-normal text-gray-700">Are you sure you want to perform this action?</h3>
+                <button id="modalConfirmBtn" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                    Yes, confirm
+                </button>
+                <button id="modalCancelBtn" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-gray-100 rounded-lg border border-gray-300 hover:bg-gray-200 focus:z-10 focus:ring-4 focus:ring-gray-200">
+                    No, cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
 @endsection
+
 
 @section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
+    // Elements
     const servingQueueEl = document.getElementById('servingQueue');
-    const nextRegularBtn = document.getElementById('nextRegularBtn');
-    const nextPriorityBtn = document.getElementById('nextPriorityBtn');
-    const skipBtn = document.getElementById('skipBtn');
-    const recallBtn = document.getElementById('recallBtn');
-    const proceedBtn = document.getElementById('proceedBtn');
 
-    // Utility to toggle button enabled/disabled + styles
+    // Flowbite Modal Elements
+    const modal = document.getElementById('popup-modal');
+    const modalMessage = document.getElementById('modalMessage');
+    const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+    const modalCancelBtn = document.getElementById('modalCancelBtn');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+
+    let currentAction = null;
+
+    /*** === Modal Functions === ***/
+    const showModal = (message, actionCallback) => {
+        modalMessage.textContent = message;
+        currentAction = actionCallback;
+        modal.classList.remove('hidden');
+        // Animate in
+        const modalContent = modal.querySelector('div.relative.bg-gray-200');
+        modalContent.classList.remove('opacity-0', 'scale-95');
+        modalContent.classList.add('opacity-100', 'scale-100');
+    };
+
+    const hideModal = () => {
+        const modalContent = modal.querySelector('div.relative.bg-gray-200');
+        modalContent.classList.remove('opacity-100', 'scale-100');
+        modalContent.classList.add('opacity-0', 'scale-95');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            currentAction = null;
+        }, 150); // match transition
+    };
+
+    modalCancelBtn.addEventListener('click', hideModal);
+    modalCloseBtn.addEventListener('click', hideModal);
+    modalConfirmBtn.addEventListener('click', () => {
+        if (currentAction) currentAction();
+        hideModal();
+    });
+
+    /*** === Button State Management === */
     function setBtnState(btn, enabled) {
         if (!btn) return;
         btn.disabled = !enabled;
-        if (enabled) {
-            btn.classList.remove('opacity-50', 'cursor-not-allowed');
-        } else {
-            btn.classList.add('opacity-50', 'cursor-not-allowed');
-        }
+        btn.classList.toggle('opacity-50', !enabled);
+        btn.classList.toggle('cursor-not-allowed', !enabled);
     }
 
-    // 🔄 Toggle button states depending on serving queue
     function updateButtonStates() {
-        const content = servingQueueEl ? servingQueueEl.innerText.trim() : '';
+        const content = servingQueueEl?.innerText.trim() || '';
         const isEmpty = content.includes("🚫Empty");
 
-        if (isEmpty) {
-            // 🚫Empty → allow Next buttons, disable others
-            setBtnState(nextRegularBtn, true);
-            setBtnState(nextPriorityBtn, true);
-            setBtnState(skipBtn, false);
-            setBtnState(recallBtn, false);
-            setBtnState(proceedBtn, false);
-        } else {
-            // Serving queue present → disable Next, enable action buttons
-            setBtnState(nextRegularBtn, false);
-            setBtnState(nextPriorityBtn, false);
-            setBtnState(skipBtn, true);
-            setBtnState(recallBtn, true);
-            setBtnState(proceedBtn, true);
-        }
+        setBtnState(document.getElementById('nextRegularBtn'), isEmpty);
+        setBtnState(document.getElementById('nextPriorityBtn'), isEmpty);
+        setBtnState(document.getElementById('skipBtn'), !isEmpty);
+        setBtnState(document.getElementById('recallBtn'), !isEmpty);
+        setBtnState(document.getElementById('proceedBtn'), !isEmpty);
     }
 
+    /*** === Queue Rendering & Fetching === */
     const renderQueue = (list, containerId) => {
         const container = document.querySelector(containerId);
         if (!container) return;
 
-        if (!list || list.length === 0) {
+        if (!list?.length) {
             container.innerHTML = `<div class="text-gray-400 text-center py-4 text-sm">🚫Empty</div>`;
             return;
         }
@@ -177,52 +233,61 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderQueue(data.pendingRegu, '#pendingRegu');
                 renderQueue(data.pendingPrio, '#pendingPrio');
                 renderQueue(data.servingQueue, '#servingQueue');
-
-                updateButtonStates(); // 🔑 always update after refresh
+                updateButtonStates();
             })
             .catch(err => console.error(err));
     };
 
-    // Initial load + auto refresh
     fetchQueues();
     setInterval(fetchQueues, 2000);
 
-    // Button handlers
-    const bindAction = (btnId, routeName) => {
+    /*** === Bind Buttons With Confirmation Modal === */
+    const bindActionWithConfirm = (btnId, routeName, message) => {
         const btn = document.getElementById(btnId);
         if (!btn) return;
+
         btn.addEventListener('click', () => {
-            fetch(routeName, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
-                alert(data.message);
-                fetchQueues(); // refresh UI after action
-            })
-            .catch(err => console.error(err));
+            showModal(message, () => {
+                if (!routeName) return;
+                fetch(routeName, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    // alert(data.message);
+                    fetchQueues();
+                })
+                .catch(err => console.error(err));
+            });
         });
     };
 
-    bindAction('nextRegularBtn', "{{ route('users.nextRegular') }}");
-    bindAction('nextPriorityBtn', "{{ route('users.nextPriority') }}");
-    bindAction('skipBtn', "{{ route('users.skipQueue') }}");
-    bindAction('proceedBtn', "{{ route('users.proceedQueue') }}");
+    bindActionWithConfirm('nextRegularBtn', "{{ route('users.nextRegular') }}", "Proceed to the next Regular queue?");
+    bindActionWithConfirm('nextPriorityBtn', "{{ route('users.nextPriority') }}", "Proceed to the next Priority queue?");
+    bindActionWithConfirm('skipBtn', "{{ route('users.skipQueue') }}", "Are you sure you want to skip this queue?");
+    bindActionWithConfirm('recallBtn', "", "Are you sure you want to recall this queue?");
+    bindActionWithConfirm('proceedBtn', "{{ route('users.proceedQueue') }}", "Proceed with the current queue?");
 
-    // 🟢 Also check once on DOM ready
     updateButtonStates();
 });
 </script>
 
 
 <style>
-/* Shared queue button base style */
-.queue-btn {
-    @apply text-white font-medium rounded-lg text-sm py-2.5 text-center transition shadow;
+/* Tailwind modal transitions */
+#confirmModal > div {
+    @apply transform transition-all duration-150 ease-out opacity-0 scale-95;
+}
+#confirmModal.hidden > div {
+    @apply opacity-0 scale-95;
+}
+#confirmModal:not(.hidden) > div {
+    @apply opacity-100 scale-100;
 }
 </style>
 @endsection
+
