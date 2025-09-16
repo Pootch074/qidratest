@@ -1,18 +1,8 @@
 @extends('layouts.display')
 @section('title', 'Display')
 @section('header')
-<style>
-    @keyframes highlightFlash {
-    0% { background-color: #ffff00; color: #000; transform: scale(1); }
-    50% { background-color: #ff0000; color: #fff; transform: scale(1.2); }
-    100% { background-color: #ffffff; color: #000; transform: scale(1); }
-    }
 
-    .queue-highlight {
-        animation: highlightFlash 1s ease-in-out 2; /* repeat twice */
-    }
 
-</style>
 @endsection
 
 @section('content')

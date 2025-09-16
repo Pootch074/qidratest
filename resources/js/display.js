@@ -35,26 +35,22 @@ document.addEventListener("DOMContentLoaded", () => {
         video.loop = true;
         updateVolumeDisplay();
 
-        if (volUp) {
-            volUp.addEventListener("click", () => {
-                video.volume = Math.min(video.volume + step, 1);
-                if (video.volume > 0) video.muted = false;
-                updateVolumeDisplay();
-            });
-        }
-        if (volDown) {
-            volDown.addEventListener("click", () => {
-                video.volume = Math.max(video.volume - step, 0);
-                if (video.volume === 0) video.muted = true;
-                updateVolumeDisplay();
-            });
-        }
-        if (volMute) {
-            volMute.addEventListener("click", () => {
-                video.muted = !video.muted;
-                updateVolumeDisplay();
-            });
-        }
+        volUp?.addEventListener("click", () => {
+            video.volume = Math.min(video.volume + step, 1);
+            if (video.volume > 0) video.muted = false;
+            updateVolumeDisplay();
+        });
+
+        volDown?.addEventListener("click", () => {
+            video.volume = Math.max(video.volume - step, 0);
+            if (video.volume === 0) video.muted = true;
+            updateVolumeDisplay();
+        });
+
+        volMute?.addEventListener("click", () => {
+            video.muted = !video.muted;
+            updateVolumeDisplay();
+        });
     }
 
     /** ---------------- Speech Announcement ---------------- **/
@@ -81,36 +77,20 @@ document.addEventListener("DOMContentLoaded", () => {
             utterance.volume = 1;
 
             const setVoiceAndSpeak = () => {
-                if (availableVoices.length > voiceIndex) {
-                    utterance.voice = availableVoices[voiceIndex];
-                } else if (availableVoices.length > 0) {
-                    utterance.voice = availableVoices[0];
-                }
+                utterance.voice =
+                    availableVoices.length > voiceIndex
+                        ? availableVoices[voiceIndex]
+                        : availableVoices[0];
                 window.speechSynthesis.speak(utterance);
             };
 
-            if (availableVoices.length === 0) {
+            if (!availableVoices.length) {
                 window.speechSynthesis.onvoiceschanged = setVoiceAndSpeak;
             } else {
                 setVoiceAndSpeak();
             }
         }
     }
-
-
-
-function highlightQueueNumber(queueNumber) {
-    const elements = document.querySelectorAll(`.queue-number[data-queue="${queueNumber}"]`);
-    elements.forEach(el => {
-        el.classList.add("queue-highlight");
-        el.addEventListener("animationend", () => el.classList.remove("queue-highlight"), { once: true });
-    });
-}
-
-
-
-
-
 
     /** ---------------- Fetch Steps ---------------- **/
     function fetchSteps() {
@@ -122,7 +102,7 @@ function highlightQueueNumber(queueNumber) {
                 if (!container || !noSteps) return;
 
                 container.innerHTML = "";
-                if (!data || data.length === 0) {
+                if (!data || !data.length) {
                     noSteps.classList.remove("hidden");
                     return;
                 }
@@ -161,13 +141,10 @@ function highlightQueueNumber(queueNumber) {
                                                         ${firstTx.queue_number}
                                                 </span>`
                                                 : `<span class="flex items-center justify-center bg-[#FFFFFF] text-[#000000] px-3 py-1 text-sm text-center w-4/5 h-full rounded-r-lg">🚫</span>`
-
                                         }
                                     </div>
                                 </div>
                             `;
-
-                            
                         });
 
                         html += `</div>`;
@@ -205,10 +182,8 @@ function highlightQueueNumber(queueNumber) {
 
                 announce(formattedQueue, data.step_number, data.window_number);
 
-                // Highlight the element
-                highlightQueueNumber(data.queue_number);
+                // Highlight removed
             })
-
             .catch((err) => console.error("Error fetching transactions:", err));
     }
 

@@ -239,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     fetchQueues();
-    setInterval(fetchQueues, 2000);
+    setInterval(fetchQueues, 1000);
 
     /*** === Bind Buttons With Confirmation Modal === */
     const bindActionWithConfirm = (btnId, routeName, message) => {

@@ -16,8 +16,8 @@
         window.appUrl = "{{ url('/') }}";
     </script>
     
-    <!-- insert here the content of the @section('header') -->
     @yield('header') 
+    
 </head>
 
 <body class="min-h-screen flex flex-col">
