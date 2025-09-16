@@ -129,6 +129,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 .catch(err => console.error('Failed to fetch windows:', err));
         }
     });
+
+    // ===============================
+    // Step → Assign Category Logic
+    // ===============================
+    const stepSelect2 = document.querySelector('select[name="step_id"]');
+const categoryWrapper = document.getElementById('assignCategoryWrapper');
+const categorySelect = document.getElementById('assignedCategorySelect');
+const categoryHidden = document.getElementById('assignedCategoryHidden');
+
+function updateCategoryVisibility() {
+    if (!stepSelect2 || !categoryWrapper || !categorySelect || !categoryHidden) return;
+
+    const selectedText = stepSelect2.options[stepSelect2.selectedIndex]?.text || '';
+    const isStep3or4 = selectedText.startsWith('3') || selectedText.startsWith('4');
+
+    if (isStep3or4) {
+        // Hide dropdown, prevent validation
+        categoryWrapper.style.display = 'none';
+        categorySelect.removeAttribute('name');
+        categorySelect.required = false;
+        categorySelect.disabled = true;
+
+        categoryHidden.value = 'both';
+        categoryHidden.setAttribute('name', 'assigned_category');
+    } else {
+        // Show dropdown normally
+        categoryWrapper.style.display = '';
+        categorySelect.setAttribute('name', 'assigned_category');
+        categorySelect.required = true;
+        categorySelect.disabled = false;
+
+        categoryHidden.removeAttribute('name');
+    }
+}
+
+// Run only if wrapper exists
+if (stepSelect2 && categoryWrapper) {
+    updateCategoryVisibility();
+    stepSelect2.addEventListener('change', updateCategoryVisibility);
+}
+
 });
 
 // ===============================
