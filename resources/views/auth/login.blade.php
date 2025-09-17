@@ -1,13 +1,14 @@
 @extends('layouts.auth')
 @section('content')
 
-<div id="auth-login" class="flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8 bg-gray-200">
+<div id="auth-login" class="qidraBg flex h-auto justify-center px-4 py-12 sm:px-6 lg:px-8 mt-15">
 
     <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 space-y-6">
         
         <!-- Header -->
-        <div class="text-center">
-            <h2 class="text-3xl font-extrabold text-gray-900">Welcome to Qidra</h2>
+        <div class="text-center flex flex-col items-center">
+            <h2 class="text-2xl font-bold text-gray-900">Welcome to</h2>
+            <img x-show="show" src="{{ Vite::asset('resources/images/qidra-logo.png') }}" class="w-50">
             <p class="mt-2 text-sm text-gray-500">
                 Sign in to your account
             </p>
@@ -89,6 +90,7 @@
     </div>
 </div>
 @endsection
+@vite('resources/css/app.css')
 
 
 
