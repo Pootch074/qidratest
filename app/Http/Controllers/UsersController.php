@@ -11,6 +11,7 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 
 
@@ -533,7 +534,9 @@ class UsersController extends Controller
 
         // Base query (scoped to logged-in user's section/step/window)
         $baseQuery = Transaction::where('section_id', $user->section_id)
-            ->where('step_id', $user->step_id);
+            ->where('step_id', $user->step_id)
+            ->whereDate('created_at', Carbon::today());
+            
 
         // 🔹 Upcoming (waiting)
         $regularQueues = (clone $baseQuery)
