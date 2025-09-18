@@ -82,6 +82,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('display', [DisplayController::class, 'index'])->name('display');
 
     Route::get('idscan', [IdscanController::class, 'index'])->name('idscan');
+    Route::post('/upload-image', [IdscanController::class, 'uploadImage'])->name('upload.image');
 
     // routes/web.php
 Route::get('/display/transactions/latest', [DisplayController::class, 'getLatestTransaction']);
