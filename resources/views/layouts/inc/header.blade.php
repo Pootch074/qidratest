@@ -32,7 +32,7 @@
 
     <!-- Dropdown Menu -->
     <div x-show="open" x-transition @click.outside="open = false"
-        class="absolute right-0 mt-2 rounded-md shadow-lg">
+        class="absolute right-0 mt-20 rounded-md shadow-lg">
         <a href="{{ route('logout') }}" class="text-[#ee1c25] hover:text-white border border-[#ee1c25] hover:bg-[#ee1c25] focus:ring-1 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-[#ee1c25] dark:text-[#ee1c25] dark:hover:text-white dark:hover:bg-[#ee1c25] dark:focus:ring-gray-800">Logout</a>
     </div>
 </div>
