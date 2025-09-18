@@ -8,7 +8,7 @@
     @yield('header')
     @livewireStyles
   </head>
-  <body class="qidraBg ">
+  <body class="bg-gray-200">
     <div class="container-fluid">
         
         @yield('content')
