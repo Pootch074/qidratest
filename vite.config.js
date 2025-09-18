@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
     plugins: [
         laravel({
+            base: '/qidratest/public/',
             input: [
                 'resources/css/app.css',
                 'resources/css/custom.scss', 
