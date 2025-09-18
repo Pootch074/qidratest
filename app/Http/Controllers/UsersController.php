@@ -134,6 +134,9 @@ class UsersController extends Controller
         $regularCount  = Transaction::where('client_type', 'regular')
             ->where('section_id', $sectionId)
             ->count();
+        $completedCount  = Transaction::where('queue_status', 'completed')
+            ->where('section_id', $sectionId)
+            ->count();
 
         // ✅ Users in the same section
         $userColumns = [
@@ -163,7 +166,8 @@ class UsersController extends Controller
             'pendingCount',
             'servingCount',
             'priorityCount',
-            'regularCount'
+            'regularCount',
+            'completedCount'
         ));
     }
 

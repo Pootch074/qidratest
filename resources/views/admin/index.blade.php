@@ -28,16 +28,27 @@
                 <p class="text-2xl font-bold text-green-600">{{ $servingCount }}</p>
             </div>
 
-            {{-- Priority Clients --}}
-            <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
-                <p class="text-lg font-semibold text-gray-600">Priority Clients</p>
-                <p class="text-2xl font-bold text-red-600">{{ $priorityCount }}</p>
-            </div>
+            {{-- Priority Clients (visible only if section_id == 15) --}}
+            @auth
+                @if (Auth::user()->section_id == 15)
+                    <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
+                        <p class="text-lg font-semibold text-gray-600">Priority Clients</p>
+                        <p class="text-2xl font-bold text-red-600">{{ $priorityCount }}</p>
+                    </div>
+                @endif
+            @endauth
+
 
             {{-- Regular Clients --}}
             <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
                 <p class="text-lg font-semibold text-gray-600">Regular Clients</p>
                 <p class="text-2xl font-bold text-gray-800">{{ $regularCount }}</p>
+            </div>
+
+            {{-- Completed Clients --}}
+            <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
+                <p class="text-lg font-semibold text-gray-600">Completed Clients</p>
+                <p class="text-2xl font-bold text-gray-800">{{ $completedCount }}</p>
             </div>
         </div>
         {{-- Transactions table --}}
