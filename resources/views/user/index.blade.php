@@ -123,14 +123,20 @@
             </button>
 
             <div class="p-4 md:p-5 text-center">
-                <svg class="mx-auto mb-4 text-gray-400 w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                {{-- <svg class="mx-auto mb-4 text-gray-400 w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                </svg>
+                </svg> --}}
+                <img class="mx-auto mb-4 text-gray-400 w-13 h-13" src="{{ Vite::asset('resources/images/icons/alert-circle.png') }}" alt="">
+
                 <h3 id="modalMessage" class="mb-5 text-lg font-normal text-gray-700">Are you sure you want to perform this action?</h3>
-                <button id="modalConfirmBtn" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+
+
+                <button id="modalConfirmBtn" type="button" class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                     Yes, confirm
                 </button>
-                <button id="modalCancelBtn" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-gray-100 rounded-lg border border-gray-300 hover:bg-gray-200 focus:z-10 focus:ring-4 focus:ring-gray-200">
+
+
+                <button id="modalCancelBtn" type="button" class="text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-gray-300 dark:focus:ring-gray-800 shadow-lg shadow-gray-500/50 dark:shadow-lg dark:shadow-gray-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                     No, cancel
                 </button>
             </div>
@@ -274,6 +280,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateButtonStates();
 });
+
+
+
+
+
+
+
+document.getElementById('recallBtn').addEventListener('click', () => {
+    const servingQueueEl = document.getElementById('servingQueue');
+    const queueNumber = servingQueueEl?.innerText.trim(); // e.g., A001
+    const stepNumber = "{{ $stepNumber ?? 1 }}";
+    const windowNumber = "{{ $windowNumber ?? 1 }}";
+
+    if (!queueNumber) return;
+
+    fetch("{{ route('api.manualRecall') }}", {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ queue_number: queueNumber, step_number: stepNumber, window_number: windowNumber })
+    });
+});
+
 </script>
 
 
