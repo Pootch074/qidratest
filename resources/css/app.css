@@ -22,5 +22,6 @@
   background: url("../images/login-background.png") no-repeat center center fixed;
   background-size: cover;
   height: 100vh;
+  overflow: hidden;
 }
 
