@@ -1,13 +1,15 @@
 @extends('layouts.auth')
 @section('content')
 
-<div id="auth-login" class="qidraBg flex h-auto justify-center px-4 py-12 sm:px-6 lg:px-8 mt-20" style="background-image: url('{{ Vite::asset('resources/images/login-background.png') }}')">
+<div id="auth-login" 
+     class="qidraBg flex min-h-screen items-center justify-center px-4 sm:px-6 lg:px-8"
+     style="background-image: url('{{ Vite::asset('resources/images/login-background.png') }}')">
 
-    <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 space-y-6 h-[60vh] mt-20">
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 space-y-6">
         
         <!-- Header -->
         <div class="text-center flex flex-col items-center">
-            <h2 class="text-2xl font-bold text-gray-900">Welcome to</h2>
+            <h2 class="text-2xl font-bold text-gray-500">Welcome to</h2>
             <img x-show="show" src="{{ Vite::asset('resources/images/qidra-logo.png') }}" class="w-50">
             <p class="mt-2 text-sm text-gray-500">
                 Sign in to your account
