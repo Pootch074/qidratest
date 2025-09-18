@@ -287,23 +287,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-document.getElementById('recallBtn').addEventListener('click', () => {
-    const servingQueueEl = document.getElementById('servingQueue');
-    const queueNumber = servingQueueEl?.innerText.trim(); // e.g., A001
-    const stepNumber = "{{ $stepNumber ?? 1 }}";
-    const windowNumber = "{{ $windowNumber ?? 1 }}";
+// document.getElementById('recallBtn').addEventListener('click', () => {
+//     const servingQueueEl = document.getElementById('servingQueue');
+//     const queueNumber = servingQueueEl?.innerText.trim(); // e.g., A001
+//     const stepNumber = "{{ $stepNumber ?? 1 }}";
+//     const windowNumber = "{{ $windowNumber ?? 1 }}";
 
-    if (!queueNumber) return;
+//     if (!queueNumber) return;
 
-    fetch("{{ route('api.manualRecall') }}", {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ queue_number: queueNumber, step_number: stepNumber, window_number: windowNumber })
-    });
-});
+//     fetch("{{ route('api.manualRecall') }}", {
+//         method: 'POST',
+//         headers: {
+//             'X-CSRF-TOKEN': '{{ csrf_token() }}',
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify({ queue_number: queueNumber, step_number: stepNumber, window_number: windowNumber })
+//     });
+// });
 
 </script>
 
