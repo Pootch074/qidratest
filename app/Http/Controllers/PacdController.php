@@ -9,6 +9,7 @@ use App\Models\Step;
 use App\Models\Window;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class PacdController extends Controller
 {
@@ -181,6 +182,18 @@ class PacdController extends Controller
 
 
         return view('pacd.sections.cards', compact('sections'));
+    }
+
+    public function pendingQueues()
+    {
+        $yesterday = Carbon::yesterday()->toDateString(); // now in Asia/Manila
+        $sectionId = Auth::user()->section_id;
+
+        $pendingQueues = Transaction::where('queue_status', 'pending')
+            ->whereDate('created_at', $yesterday)
+            ->get();
+
+        return view('pacd.pending.table', compact('pendingQueues'));
     }
 
     public function clientsTable()

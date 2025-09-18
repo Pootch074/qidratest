@@ -12,7 +12,7 @@
 
     <div class="p-4 sm:ml-64">
         <div class="bg-white rounded-lg p-4 overflow-x-auto shadow-lg">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Manual Queue</h2>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Manual Ticket</h2>
 
             {{-- Step 1: Input Name + Generate Queue --}}
             <div class="flex items-center gap-4 mb-6">
@@ -80,7 +80,7 @@
             {{-- Returnee --}}
             <button type="button"
                 @click="generateQueue(selectedSection, 'returnee').then(() => reset())"
-                class="text-gray-900 bg-gradient-to-r from-lime-200 via-lime-400 to-lime-500 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-lime-300 dark:focus:ring-lime-800 shadow-lg shadow-lime-500/50 dark:shadow-lg dark:shadow-lime-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                class="text-gray-900 bg-gradient-to-r from-lime-200 via-lime-400 to-lime-500 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-lime-300 dark:focus:ring-lime-800 shadow-lg shadow-lime-500/50 dark:shadow-lg dark:shadow-lime-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                 Returnee
             </button>
         </div>

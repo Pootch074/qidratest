@@ -37,7 +37,18 @@
                <img src="{{ Vite::asset('resources/images/icons/ticket.png') }}" 
                      alt="Users" 
                      class="shrink-0 w-7 h-7 transition duration-75 group-hover:opacity-80">
-               <span class="flex-1 ms-3 whitespace-nowrap">Manual Queue</span>
+               <span class="flex-1 ms-3 whitespace-nowrap">Manual Ticket</span>
+            </a>
+         </li>
+
+         <li>
+            <a href="{{ route('pacd.pending.table') }}" 
+               class="flex items-center p-2 text-white rounded-lg group
+               {{ request()->routeIs('pacd.pending.table') ? 'bg-[#F03D46]' : 'hover:bg-[#5057c9]' }}">
+               <img src="{{ Vite::asset('resources/images/icons/pause-circle.png') }}" 
+                     alt="Users" 
+                     class="shrink-0 w-7 h-7 transition duration-75 group-hover:opacity-80">
+               <span class="flex-1 ms-3 whitespace-nowrap">Pending Queues</span>
             </a>
          </li>
       </ul>

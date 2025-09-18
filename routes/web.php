@@ -70,7 +70,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/pacd/generate/{section}', [PacdController::class, 'generateQueue'])->name('pacd.generate');
     Route::get('pacd/transactions/table', [PacdController::class, 'transactionsTable'])->name('pacd.transactions.table');
+
     Route::get('pacd/sections/cards', [PacdController::class, 'sectionsCards'])->name('pacd.sections.cards');
+
+    Route::get('pacd/pending/table', [PacdController::class, 'pendingQueues'])->name('pacd.pending.table');
 
 
     Route::post('/queue/store', [TransactionsController::class, 'store'])->name('queue.store');
