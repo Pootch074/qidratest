@@ -90,7 +90,7 @@
     </div>
 </div>
 @endsection
-@vite('resources/css/app.css')
+{{-- @vite('resources/css/app.css') --}}
 
 
 
