@@ -4,18 +4,8 @@
 @endsection
 
 @section('content')
-<div class="w-full p-4 bg-[#cbdce8]">
+<div class="w-full p-4 bg-gray-200">
     <div class="p-4 sm:ml-64">
-
-        {{-- Header & Add Window --}}
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-semibold text-gray-700">Windows</h2>
-            <button id="openAddWindowModal" 
-                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                Add Window
-            </button>
-        </div>
-
         {{-- ✅ Add Window Modal --}}
         <div id="addWindowModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300">
             <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-8 transform transition-transform duration-300 scale-95">
@@ -37,72 +27,75 @@
 
                     <div class="mb-4">
                         <label for="window_number" class="block text-sm font-medium text-gray-700">Window Number</label>
-                        <input type="number" id="window_number" name="window_number" min="1"
+                        <input type="number" id="window_number" name="window_number" min="1" max="10"
                             class="mt-1 block w-full border rounded-md p-2" required>
                     </div>
 
-                    <button type="submit" 
-                        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-                        Save Window
-                    </button>
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" id="cancelAddUser" class="text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-gray-300 dark:focus:ring-gray-800 shadow-lg shadow-gray-500/50 dark:shadow-lg dark:shadow-gray-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Cancel</button>
+                        <button type="submit" class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Save Window</button>
+                    </div>
                 </form>
             </div>
         </div>
 
-        {{-- ✅ Fancy Windows Table --}}
-        <div class="overflow-x-auto bg-white rounded-2xl shadow-lg border border-gray-200">
-            <table class="min-w-full text-sm text-left border-collapse">
-                <thead>
-                    <tr class="bg-[#150e60] text-white">
-                        <th class="px-6 py-3 font-semibold tracking-wide">Window Number</th>
-                        <th class="px-6 py-3 font-semibold tracking-wide">Step</th>
-                        <th class="px-6 py-3 font-semibold tracking-wide text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200">
-                    @forelse($windows as $window)
-                        <tr class="hover:bg-blue-50 transition duration-200" data-id="{{ $window->id }}">
-                            {{-- Window Number --}}
-                            <td class="px-6 py-3 font-medium text-gray-700">
-                                {{ $window->window_number }}
-                            </td>
+        <div class="bg-white rounded-lg p-4 shadow-lg h-[84vh] flex flex-col">
+            {{-- Header & Add Window --}}
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-gray-700">Windows</h2>
+                <button id="openAddWindowModal" 
+                    class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                    Add Window
+                </button>
+            </div>
 
-                            {{-- Editable Step --}}
-                            <td class="px-6 py-3">
-                                <span class="editable-window-step cursor-pointer text-gray-800 hover:text-blue-600"
-                                      data-id="{{ $window->id }}">
-                                    {{ $window->step->step_number ?? '—' }} - {{ $window->step->step_name ?? '—' }}
-                                </span>
-                                <select class="hidden w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
-                                        data-id="{{ $window->id }}">
-                                    @foreach($steps as $step)
-                                        <option value="{{ $step->id }}" 
-                                            @if($window->step_id == $step->id) selected @endif>
-                                            {{ $step->step_number }} - {{ $step->step_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </td>
-
-                            {{-- Delete Button --}}
-                            <td class="px-6 py-3 text-center">
-                                <button class="delete-window bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg shadow-sm transition duration-200"
-                                    data-id="{{ $window->id }}">
-                                    <i class="fas fa-trash-alt"></i> Delete
-                                </button>
-                            </td>
-                        </tr>
-                    @empty
+            <div class="overflow-x-auto flex-1">
+                <table class="min-w-full divide-y divide-gray-200 text-gray-700">
+                    <thead class="bg-[#2e3192] text-white sticky top-0 z-10">
                         <tr>
-                            <td colspan="3" class="text-center text-gray-500 py-6">
-                                🚫 No windows available.
-                            </td>
+                            <th class="px-6 py-3 font-semibold tracking-wide rounded-tl-lg">Step</th>
+                            <th class="px-6 py-3 font-semibold tracking-wide">Window Number</th>
+                            <th class="px-6 py-3 font-semibold tracking-wide text-center rounded-tr-lg">Actions</th>
                         </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200 overflow-y-auto">
+                        @forelse($windows as $window)
+                            <tr class="odd:bg-white even:bg-gray-200 hover:bg-indigo-50 transition duration-200" data-id="{{ $window->id }}">
+                                {{-- ✅ Step (read-only) --}}
+                                <td class="text-center px-6 py-3">
+                                    {{ $window->step->step_number ?? '—' }} - {{ $window->step->step_name ?? '—' }}
+                                </td>
 
+                                {{-- Window Number --}}
+                                <td class="text-center px-6 py-3 font-medium text-gray-700">
+                                    {{ $window->window_number }}
+                                </td>
+
+                                {{-- Delete Button --}}
+                                <td class="px-6 py-3 text-center">
+                                    @if($window->window_number == 1)
+                                        <button class="bg-gray-400 text-white px-4 py-1.5 rounded-lg shadow-sm cursor-not-allowed" disabled>
+                                            <i class="fas fa-ban"></i> Protected
+                                        </button>
+                                    @else
+                                        <button class="delete-window text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                                            data-id="{{ $window->id }}">
+                                            <i class="fas fa-trash-alt"></i> Delete
+                                        </button>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="text-center text-gray-500 py-6">
+                                    🚫 No windows available.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 @endsection
@@ -113,71 +106,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // ✅ Modal Toggle
     const openBtn = document.getElementById('openAddWindowModal');
     const closeBtn = document.getElementById('closeAddWindowModal');
+    const cancelBtn = document.getElementById('cancelAddUser');
     const modal = document.getElementById('addWindowModal');
 
     if (openBtn && modal) openBtn.addEventListener('click', () => modal.classList.remove('hidden'));
     if (closeBtn && modal) closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
-
-    // ✅ Inline edit for step of a window
-    const editableSpans = document.querySelectorAll('.editable-window-step');
-
-    editableSpans.forEach(span => {
-        span.addEventListener('click', () => {
-            const select = span.nextElementSibling;
-            if (!select) return;
-            span.classList.add('hidden');
-            select.classList.remove('hidden');
-            select.focus();
-        });
-    });
-
-    const selects = document.querySelectorAll('td select');
-    selects.forEach(select => {
-        select.addEventListener('blur', () => {
-            const id = select.dataset.id;
-            const newStepId = select.value;
-            const span = select.previousElementSibling;
-
-            if (!newStepId || newStepId == span.dataset.id) {
-                select.classList.add('hidden');
-                span.classList.remove('hidden');
-                return;
-            }
-
-            fetch(`/windows/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ step_id: newStepId })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    const stepText = select.options[select.selectedIndex].text;
-                    span.textContent = stepText;
-                } else {
-                    alert("Error updating window step.");
-                }
-                select.classList.add('hidden');
-                span.classList.remove('hidden');
-            })
-            .catch(() => {
-                alert("Failed to update window step.");
-                select.classList.add('hidden');
-                span.classList.remove('hidden');
-            });
-        });
-
-        select.addEventListener('keydown', e => {
-            if (e.key === 'Enter') select.blur();
-            if (e.key === 'Escape') {
-                select.classList.add('hidden');
-                select.previousElementSibling.classList.remove('hidden');
-            }
-        });
-    });
+    if (cancelBtn && modal) cancelBtn.addEventListener('click', () => modal.classList.add('hidden'));
 
     // ✅ Delete window
     const deleteButtons = document.querySelectorAll('.delete-window');
@@ -186,14 +120,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const id = button.dataset.id;
             if (!confirm("Are you sure you want to delete this window?")) return;
 
-            fetch(`/admin/windows/${id}`, {
+            fetch(`${window.appBaseUrl}/admin/windows/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 }
             })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+                return res.json();
+            })
             .then(data => {
                 if (data.success) {
                     const row = document.querySelector(`tr[data-id="${id}"]`);
@@ -202,12 +139,45 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert("Error deleting window.");
                 }
             })
-            .catch(() => {
+            .catch(err => {
+                console.error('Delete window failed:', err);
                 alert("Failed to delete window.");
             });
-
         });
     });
+
+    // ✅ Check if window_number already exists
+    const windowInput = document.getElementById('window_number');
+    const saveWindowBtn = document.querySelector('#addWindowForm button[type="submit"]');
+
+    if (windowInput && saveWindowBtn) {
+        windowInput.addEventListener('input', () => {
+            const windowNumber = windowInput.value;
+            const stepId = document.getElementById('step_id')?.value;
+            if (!windowNumber || !stepId) return;
+
+            fetch(`${window.appBaseUrl}/windows/check/${stepId}/${windowNumber}`)
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+                    return res.json();
+                })
+                .then(data => {
+                    if (data.exists) {
+                        windowInput.setCustomValidity("Window number already exists for this step.");
+                        windowInput.reportValidity();
+                        saveWindowBtn.disabled = true;
+                    } else {
+                        windowInput.setCustomValidity("");
+                        saveWindowBtn.disabled = false;
+                    }
+                })
+                .catch(err => {
+                    console.error('Window uniqueness check failed:', err);
+                    windowInput.setCustomValidity("Error checking window number.");
+                    saveWindowBtn.disabled = true;
+                });
+        });
+    }
 });
 </script>
 @endsection

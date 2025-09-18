@@ -21,6 +21,22 @@ class UsersSeeder extends Seeder
 
         $users = [
             [
+                'first_name' => 'Super',
+                'last_name' => 'Admin',
+                'email' => env('ADMIN_EMAIL', 'superadmin@admin.com'),
+                'position' => 'Super Admin',
+                'section_id' =>null,
+                'user_type' => 0,
+                'assigned_category' => null,
+                'step_id' => null,
+                'window_id' => null,
+                'status' => 1,
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('password'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
                 'first_name' => 'CIS',
                 'last_name' => 'Admin',
                 'email' => env('ADMIN_EMAIL', 'cis@admin.com'),
@@ -69,16 +85,28 @@ class UsersSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
 
-
-
-
-
             [
-                'first_name' => 'PACD',
-                'last_name' => 'User',
-                'email' => env('ADMIN_EMAIL', 'pacd@gmail.com'),
+                'first_name' => 'General',
+                'last_name' => 'PACD',
+                'email' => env('ADMIN_EMAIL', 'genpacd@gmail.com'),
                 'position' => 'SWAID',
                 'section_id' => null,
+                'user_type' => 3,
+                'assigned_category' => null,
+                'step_id' => null,
+                'window_id' => null,
+                'status' => 1,
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('password'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'first_name' => 'CIS',
+                'last_name' => 'PACD',
+                'email' => env('ADMIN_EMAIL', 'cispacd@gmail.com'),
+                'position' => 'SWAID',
+                'section_id' => 15,
                 'user_type' => 3,
                 'assigned_category' => null,
                 'step_id' => null,
@@ -93,13 +121,13 @@ class UsersSeeder extends Seeder
             [
                 'first_name' => 'CBSS',
                 'last_name' => 'User',
-                'email' => 'cbss@gmail.com', // change as needed
+                'email' => 'usercbss@gmail.com', // change as needed
                 'position' => 'SWOII', // optional
                 'section_id' => 14,
-                'user_type' => 6,
+                'user_type' => 5,
                 'assigned_category' => null,
-                'step_id' => 5,
-                'window_id' => 10,
+                'step_id' => 14,
+                'window_id' => 14,
                 'status' => 1,
                 'email_verified_at' => Carbon::now(),
                 'password' => Hash::make('password'),

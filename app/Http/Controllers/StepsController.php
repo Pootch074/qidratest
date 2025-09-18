@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Step;
+use App\Models\Window;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
@@ -21,26 +22,26 @@ class StepsController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'step_number' => [
-                'required',
-                'integer',
-                'min:0',
-                Rule::unique('steps')->where(function ($query) {
-                    return $query->where('section_id', Auth::user()->section_id);
-                }),
-            ],
-        ]);
+{
+    $request->validate([
+        'step_number' => 'required|integer|min:1|max:10',
+        'step_name'   => 'required|string|max:255',
+    ]);
 
-        Step::create([
-            'step_number' => $request->step_number,
-            'step_name' => $request->step_name ?: 'None',
-            'section_id' => Auth::user()->section_id,
-        ]);
+    $step = Step::create([
+        'step_number' => $request->step_number,
+        'step_name'   => $request->step_name,
+        'section_id'  => Auth::user()->section_id, // assuming steps are tied to sections
+    ]);
 
-        return redirect()->route('admin.steps')->with('success', 'Step added successfully!');
-    }
+    // ✅ Automatically create the first window
+    Window::create([
+        'window_number' => 1,
+        'step_id'       => $step->id,
+    ]);
+
+    return redirect()->route('admin.steps')->with('success', 'Step created with default window.');
+}
 
     public function update(Request $request, $id)
     {

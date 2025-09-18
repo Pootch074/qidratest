@@ -23,7 +23,7 @@ class WindowsController extends Controller
             ->whereHas('step', function ($query) use ($user) {
                 $query->where('section_id', $user->section_id);
             })
-            ->orderBy('window_number')
+            ->orderBy('step_id', 'asc')
             ->get();
 
         return view('admin.windows.table', compact('steps', 'windows'));
@@ -35,7 +35,7 @@ class WindowsController extends Controller
 
         $request->validate([
             'step_id' => 'required|exists:steps,id',
-            'window_number' => 'required|integer|min:1',
+            'window_number' => 'required|integer|min:1|max:10',
         ]);
 
         // Ensure step belongs to user's section
@@ -80,5 +80,28 @@ class WindowsController extends Controller
             'success' => true,
             'message' => 'Window deleted successfully.'
         ]);
+    }
+
+    public function check($stepId, $windowNumber)
+    {
+        // Defensive: validate inputs
+        if (!is_numeric($windowNumber) || $windowNumber < 1 || $windowNumber > 10) {
+            return response()->json(['exists' => false]);
+        }
+
+        $exists = Window::where('step_id', $stepId)
+            ->where('window_number', $windowNumber)
+            ->exists();
+
+        return response()->json(['exists' => $exists]);
+    }
+
+    // 🚫 Block updates to Step or Window
+    public function update(Request $request, $id)
+    {
+        return response()->json([
+            'success' => false,
+            'message' => 'Updating windows or steps is not allowed.'
+        ], 405);
     }
 }

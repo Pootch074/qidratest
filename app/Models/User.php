@@ -11,6 +11,7 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable, SoftDeletes;
 
+    const TYPE_SUPERADMIN = 0;
     const TYPE_ADMIN = 1;
     const TYPE_IDSCAN = 2;
     const TYPE_PACD = 3;
@@ -74,6 +75,7 @@ class User extends Authenticatable
     public static function getUserTypes(): array
     {
         return [
+            self::TYPE_SUPERADMIN      => 'Super Admin',
             self::TYPE_ADMIN      => 'Admin',
             self::TYPE_USER    => 'User',
             self::TYPE_PACD    => 'PACD',
@@ -109,6 +111,17 @@ class User extends Authenticatable
                 return 'Active';
         }
     }
+
+    public function scopeAdmins($query)
+    {
+        return $query->where('user_type', self::TYPE_ADMIN);
+    }
+
+    public function scopeSuperAdmins($query)
+    {
+        return $query->where('user_type', self::TYPE_SUPERADMIN);
+    }
+
 
     public function scopeActive($query)
     {

@@ -2,27 +2,17 @@
 import focus from '@alpinejs/focus'
 import Quill from "quill";
 import 'quill/dist/quill.snow.css';
-import movToggle from './movToggle';
-import levelToggle from './levelToggle';
-import remarks from './remarks';
-import recommendations from './recommendations';
-
 import '../css/app.css';
 import '../css/custom.scss';
-import '../images/background.png';
 
 import.meta.glob([
   '../images/**',
   '../fonts/**',
 ]);
 
-window.Alpine = Alpine;
+// window.Alpine = Alpine;
 window.Quill = Quill;
 
-Alpine.data('movToggle', movToggle);
-Alpine.data('levelToggle', levelToggle);
-Alpine.data('remarksEditor', remarks);
-Alpine.data('recommendationsEditor', recommendations);
 
 Alpine.plugin(focus);
 // Alpine.start();
