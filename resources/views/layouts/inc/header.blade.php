@@ -1,4 +1,7 @@
-<div x-data="{ open: false }" class="relative ml-auto">
+
+<div x-data="{ open: false }" class="flex items-center justify-between w-full px-4">
+    <img src="{{ Vite::asset('resources/images/qidra-logo-white.png') }}" class="h-10">
+    <div id="current-datetime" class="font-semibold text-white"></div>
     <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
         @if(auth()->user()->avatar)
             <img src="{{ auth()->user()->avatar }}" alt="Profile" class="w-8 h-8 rounded-full mr-5">
@@ -33,3 +36,22 @@
         <a href="{{ route('logout') }}" class="text-[#ee1c25] hover:text-white border border-[#ee1c25] hover:bg-[#ee1c25] focus:ring-1 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-[#ee1c25] dark:text-[#ee1c25] dark:hover:text-white dark:hover:bg-[#ee1c25] dark:focus:ring-gray-800">Logout</a>
     </div>
 </div>
+<script>
+    function updateDateTime() {
+        const now = new Date();
+        const optionsDate = { 
+            weekday: "long", 
+            year: "numeric", 
+            month: "long", 
+            day: "numeric" 
+        };
+
+        const dateTimeEl = document.getElementById("current-datetime");
+        if (dateTimeEl) {
+            dateTimeEl.textContent = 
+                now.toLocaleDateString(undefined, optionsDate) + " " + now.toLocaleTimeString();
+        }
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+</script>
