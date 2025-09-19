@@ -128,6 +128,7 @@ class PacdController extends Controller
             $transactions = Transaction::with(['step', 'section'])
                 ->whereNotIn('section_id', [15])
                 ->where('queue_number', '>', 0) // ✅ Exclude queue_number = 0
+                ->whereDate('created_at', $today)
                 ->whereDate('updated_at', $today) // ✅ Only today's transactions
                 ->latest()
                 ->get();
@@ -136,6 +137,7 @@ class PacdController extends Controller
             $transactions = Transaction::with(['step', 'section'])
                 ->where('section_id', $user->section_id)
                 ->where('queue_number', '>', 0) // ✅ Exclude queue_number = 0
+                ->whereDate('created_at', $today)
                 ->whereDate('updated_at', $today) // ✅ Only today's transactions
                 ->latest()
                 ->get();
