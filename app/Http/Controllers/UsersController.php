@@ -535,14 +535,14 @@ class UsersController extends Controller
         // Base query (scoped to logged-in user's section/step/window)
         $baseQuery = Transaction::where('section_id', $user->section_id)
             ->where('step_id', $user->step_id)
-            ->whereDate('created_at', Carbon::today());
+            ->whereDate('updated_at', Carbon::today());
             
 
         // 🔹 Upcoming (waiting)
         $regularQueues = (clone $baseQuery)
             ->where('queue_status', 'waiting')
             ->where('client_type', 'regular')
-            ->orderBy('created_at', 'asc')
+            ->orderBy('updated_at', 'asc')
             ->get()
             ->map(fn($q) => [
                 'formatted_number' => 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
@@ -552,7 +552,7 @@ class UsersController extends Controller
         $priorityQueues = (clone $baseQuery)
             ->where('queue_status', 'waiting')
             ->where('client_type', 'priority')
-            ->orderBy('created_at', 'asc')
+            ->orderBy('updated_at', 'asc')
             ->get()
             ->map(fn($q) => [
                 'formatted_number' => 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
@@ -563,7 +563,7 @@ class UsersController extends Controller
         $pendingRegular = (clone $baseQuery)
             ->where('queue_status', 'pending')
             ->where('client_type', 'regular')
-            ->orderBy('created_at', 'asc')
+            ->orderBy('updated_at', 'asc')
             ->get()
             ->map(fn($q) => [
                 'formatted_number' => 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
@@ -573,7 +573,7 @@ class UsersController extends Controller
         $pendingPriority = (clone $baseQuery)
             ->where('queue_status', 'pending')
             ->where('client_type', 'priority')
-            ->orderBy('created_at', 'asc')
+            ->orderBy('updated_at', 'asc')
             ->get()
             ->map(fn($q) => [
                 'formatted_number' => 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
