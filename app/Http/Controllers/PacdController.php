@@ -178,9 +178,6 @@ class PacdController extends Controller
                 ->orderBy('section_name')
                 ->get(['id', 'section_name']);
         }
-
-
-
         return view('pacd.sections.cards', compact('sections'));
     }
 
