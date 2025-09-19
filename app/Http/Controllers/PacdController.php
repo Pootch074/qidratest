@@ -120,19 +120,22 @@ class PacdController extends Controller
     public function transactionsTable()
     {
         $user = Auth::user();
+        $today = Carbon::today('Asia/Manila'); 
 
         if (is_null($user->section_id)) {
-            // No assigned section → show all transactions except section_id = 15
-            $transactions = Transaction::with(['step', 'section'])
-                ->whereNotIn('section_id', [15])
-                ->where('queue_number', '>', 0) // ✅ Exclude queue_number = 0
-                ->latest()
-                ->get();
+        // No assigned section → show all transactions except section_id = 15
+        $transactions = Transaction::with(['step', 'section'])
+            ->whereNotIn('section_id', [15])
+            ->where('queue_number', '>', 0) // ✅ Exclude queue_number = 0
+            ->whereDate('updated_at', $today) // ✅ Only today's transactions
+            ->latest()
+            ->get();
         } else {
             // User has assigned section → only their section's transactions
             $transactions = Transaction::with(['step', 'section'])
                 ->where('section_id', $user->section_id)
                 ->where('queue_number', '>', 0) // ✅ Exclude queue_number = 0
+                ->whereDate('updated_at', $today) // ✅ Only today's transactions
                 ->latest()
                 ->get();
         }
