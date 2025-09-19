@@ -74,7 +74,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('pacd/sections/cards', [PacdController::class, 'sectionsCards'])->name('pacd.sections.cards');
 
     Route::get('pacd/pending/table', [PacdController::class, 'pendingQueues'])->name('pacd.pending.table');
-
+    Route::post('/transactions/{id}/resume', [PacdController::class, 'resumeTransaction'])
+     ->name('transactions.resume');
 
     Route::post('/queue/store', [TransactionsController::class, 'store'])->name('queue.store');
 

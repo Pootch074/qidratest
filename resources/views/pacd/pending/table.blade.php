@@ -51,10 +51,14 @@
 
                             <td class="px-6 py-4 whitespace-nowrap">{{ $queue->section->section_name ?? 'N/A' }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <button onclick=""
-                                            class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
-                                        <i class="fas fa-trash-alt"></i> Resume Transaction
-                                    </button>
+<button onclick="resumeTransaction({{ $queue->id }})"
+    class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 
+           hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-green-300 
+           dark:focus:ring-green-800 shadow-lg shadow-green-500/50 
+           dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg 
+           text-sm px-5 py-2.5 text-center me-2 mb-2">
+    <i class="fas fa-play"></i> Resume Transaction
+</button>
                             </td>
                         </tr>
                     @empty
@@ -75,4 +79,26 @@
 
     
 </div>
+@endsection
+
+
+@section('scripts')
+<script>
+function resumeTransaction(id) {
+    fetch(`/transactions/${id}/resume`, {
+        method: "POST",
+        headers: {
+            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+            "Content-Type": "application/json",
+        },
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert("Transaction resumed!");
+            location.reload();
+        }
+    });
+}
+</script>
 @endsection

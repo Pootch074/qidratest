@@ -10,6 +10,7 @@ use App\Models\Window;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class PacdController extends Controller
 {
@@ -98,23 +99,6 @@ class PacdController extends Controller
                 $prefix = strtoupper(substr($clientType, 0, 1));
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         $formattedQueue = $prefix . str_pad($client->queue_number, 3, '0', STR_PAD_LEFT);
 
         // 👉 If JSON is expected (fetch / axios), return JSON
@@ -182,10 +166,26 @@ class PacdController extends Controller
         $sectionId = Auth::user()->section_id;
 
         $pendingQueues = Transaction::where('queue_status', 'pending')
-            ->whereDate('created_at', $yesterday)
+            ->whereDate('updated_at', $yesterday)
             ->get();
 
         return view('pacd.pending.table', compact('pendingQueues'));
+    }
+
+    public function resumeTransaction($id)
+    {
+        // Force Manila timezone
+        $now = Carbon::now('Asia/Manila');
+
+        // Update the transaction
+        DB::table('transactions')
+            ->where('id', $id)
+            ->update([
+                'client_type' => 'returnee',
+                'updated_at' => $now
+            ]);
+
+        return response()->json(['success' => true, 'message' => 'Transaction resumed']);
     }
 
     public function clientsTable()
