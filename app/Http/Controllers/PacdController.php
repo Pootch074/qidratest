@@ -43,8 +43,8 @@ class PacdController extends Controller
     public function generateQueue(Request $request, Section $section)
     {
         $clientType = $request->input('client_type', 'regular');
-        $clientId   = $request->input('client_id');            // from scanning flow
-        $clientName = $request->input('manual_client_name');   // from manual flow
+        $clientId   = $request->input('client_id');
+        $clientName = $request->input('manual_client_name');
 
         if ($clientId) {
             // 🔎 Scanned client flow → update existing record
@@ -59,9 +59,12 @@ class PacdController extends Controller
             ]);
         }
 
-        // Get last queue number for this section + client_type
+        // ✅ Only look at today’s records
+        $today = Carbon::today();
+
         $lastQueue = Transaction::where('section_id', $section->id)
             ->where('client_type', $clientType)
+            ->whereDate('created_at', $today)   // 👈 only today
             ->max('queue_number');
 
         $newQueueNumber = $lastQueue ? $lastQueue + 1 : 1;
@@ -71,7 +74,7 @@ class PacdController extends Controller
             ->where('step_number', 1)
             ->first();
 
-        // Update or fill fields
+        // Fill and save
         $client->fill([
             'queue_number' => $newQueueNumber,
             'client_type'  => $clientType,
@@ -93,7 +96,7 @@ class PacdController extends Controller
                 $prefix = 'R';
                 break;
             case 'returnee':
-                $prefix = 'T';   // 👈 force returnee to use T
+                $prefix = 'T';
                 break;
             default:
                 $prefix = strtoupper(substr($clientType, 0, 1));
@@ -101,7 +104,6 @@ class PacdController extends Controller
 
         $formattedQueue = $prefix . str_pad($client->queue_number, 3, '0', STR_PAD_LEFT);
 
-        // 👉 If JSON is expected (fetch / axios), return JSON
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
                 'success'      => true,
@@ -112,7 +114,6 @@ class PacdController extends Controller
             ]);
         }
 
-        // 👉 Otherwise, fallback to redirect (normal form POST)
         return redirect()->back()
             ->with('success', "Queue #{$formattedQueue} created for {$section->section_name} (Client: {$client->full_name})");
     }
