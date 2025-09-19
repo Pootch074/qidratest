@@ -326,7 +326,8 @@ class UsersController extends Controller
                 ->where('client_type', 'regular')
                 ->where('step_id', $user->step_id)
                 ->where('section_id', $user->section_id)
-                ->lockForUpdate() // prevent concurrent grabs
+                ->whereDate('updated_at', Carbon::today())
+                ->lockForUpdate()
                 ->orderBy('created_at', 'asc')
                 ->first();
 
@@ -372,6 +373,7 @@ class UsersController extends Controller
                 ->where('client_type', 'priority')
                 ->where('step_id', $user->step_id)
                 ->where('section_id', $user->section_id)
+                ->whereDate('updated_at', Carbon::today())
                 ->lockForUpdate()
                 ->orderBy('created_at', 'asc')
                 ->first();
@@ -419,6 +421,7 @@ class UsersController extends Controller
                 ->where('section_id', $user->section_id)
                 ->where('step_id', $user->step_id)
                 ->where('window_id', $user->window_id)
+                ->whereDate('updated_at', Carbon::today())
                 ->lockForUpdate()
                 ->first();
 
@@ -465,6 +468,7 @@ class UsersController extends Controller
             ->where('section_id', $user->section_id)
             ->where('step_id', $user->step_id)
             ->where('window_id', $user->window_id)
+            ->whereDate('updated_at', Carbon::today())
             ->lockForUpdate()
             ->first();
 
@@ -542,7 +546,7 @@ class UsersController extends Controller
         $regularQueues = (clone $baseQuery)
             ->where('queue_status', 'waiting')
             ->where('client_type', 'regular')
-            ->orderBy('updated_at', 'asc')
+            ->orderBy('created_at', 'asc')
             ->get()
             ->map(fn($q) => [
                 'formatted_number' => 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
@@ -552,7 +556,7 @@ class UsersController extends Controller
         $priorityQueues = (clone $baseQuery)
             ->where('queue_status', 'waiting')
             ->where('client_type', 'priority')
-            ->orderBy('updated_at', 'asc')
+            ->orderBy('created_at', 'asc')
             ->get()
             ->map(fn($q) => [
                 'formatted_number' => 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
