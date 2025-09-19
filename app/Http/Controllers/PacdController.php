@@ -133,11 +133,6 @@ class PacdController extends Controller
             ->with('success', "Queue #{$formattedQueue} created for {$section->section_name} (Client: {$client->full_name})");
     }
 
-
-
-
-
-
     public function transactionsTable()
     {
         $user = Auth::user();

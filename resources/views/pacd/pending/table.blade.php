@@ -26,7 +26,24 @@
                 <tbody class="bg-white divide-y divide-gray-200 overflow-y-auto">
                     @forelse ($pendingQueues as $queue)
                         <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">{{ $queue->queue_number }}</td>
+                            <td class="px-6 py-4 font-semibold">
+                                @php
+                                    switch (strtolower($queue->client_type)) {
+                                        case 'priority':
+                                            $prefix = 'P';
+                                            break;
+                                        case 'regular':
+                                            $prefix = 'R';
+                                            break;
+                                        case 'returnee':
+                                            $prefix = 'T'; // 👈 force returnee to use T
+                                            break;
+                                        default:
+                                            $prefix = strtoupper(substr($transaction->client_type, 0, 1));
+                                    }
+                                @endphp
+                                {{ $prefix . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT) }}</td>
+                            
                             <td class="px-6 py-4 whitespace-nowrap">{{ $queue->full_name }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 {{ $queue->step->step_number ?? 'N/A' }}
