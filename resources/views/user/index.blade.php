@@ -31,7 +31,7 @@
                 <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
                     <div class="bg-[#2e3192] text-white text-center font-bold text-2xl py-2">PENDING</div>
 
-                    <div class="grid grid-cols-2 gap-4 p-2 bg-white rounded-b-lg border-2 border-[#2e3192] flex-1">
+                    <div class="grid grid-cols-3 gap-4 p-2 bg-white rounded-b-lg border-2 border-[#2e3192] flex-1">
                         {{-- Regular --}}
                         <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
                             <div class="bg-[#2e3192] text-white text-center font-bold py-2">REGULAR</div>
@@ -48,6 +48,14 @@
                             </div>
                         </div>
 
+                        {{-- Returnee --}}
+                        <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
+                            <div class="bg-[#2e3192] text-white text-center font-bold py-2">DEFERRED</div>
+                            <div id="deferred" class="flex-1 bg-white p-2 overflow-y-auto max-h-[70vh]">
+                                {{-- Fetched Priority Queues --}}
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -57,7 +65,7 @@
             {{-- Step & Window --}}
             <div class="bg-[#2e3192] text-white text-center font-bold text-2xl py-2">
                 @if($stepNumber || $windowNumber)
-                    STEP {{ $stepNumber ?? '-' }} &nbsp; WINDOW {{ $windowNumber ?? '-' }}
+                    STEP {{ $stepNumber ?? '-' }} &nbsp;WINDOW {{ $windowNumber ?? '-' }}
                 @endif
             </div>
 
@@ -87,6 +95,10 @@
                         focus:ring-1 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 
                         shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 
                         font-medium rounded-lg text-sm py-2.5 text-center">Next Priority</button>
+
+                    <button id="deferBtn" class="queue-btn text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br 
+                        focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 
+                        font-medium rounded-lg text-sm px-5 py-2.5 text-center">DEFER</button>
                 </div>
                 <div class="flex space-x-2 w-full">
                     <button id="skipBtn" class="queue-btn flex-1 text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br 
@@ -202,16 +214,22 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.classList.toggle('cursor-not-allowed', !enabled);
     }
 
-    function updateButtonStates() {
-        const content = servingQueueEl?.innerText.trim() || '';
-        const isEmpty = content.includes("🚫Empty");
+function updateButtonStates(data) {
+    const servingEmpty = !data.servingQueue?.length;
+    const reguEmpty = !data.upcomingRegu?.length;
+    const prioEmpty = !data.upcomingPrio?.length;
 
-        setBtnState(document.getElementById('nextRegularBtn'), isEmpty);
-        setBtnState(document.getElementById('nextPriorityBtn'), isEmpty);
-        setBtnState(document.getElementById('skipBtn'), !isEmpty);
-        setBtnState(document.getElementById('recallBtn'), !isEmpty);
-        setBtnState(document.getElementById('proceedBtn'), !isEmpty);
-    }
+    // Serving-dependent buttons
+    setBtnState(document.getElementById('deferBtn'), !servingEmpty);
+    setBtnState(document.getElementById('skipBtn'), !servingEmpty);
+    setBtnState(document.getElementById('recallBtn'), !servingEmpty);
+    setBtnState(document.getElementById('proceedBtn'), !servingEmpty);
+
+    // Upcoming-based buttons
+    setBtnState(document.getElementById('nextRegularBtn'), !reguEmpty);
+    setBtnState(document.getElementById('nextPriorityBtn'), !prioEmpty);
+}
+
 
     /*** === Queue Rendering & Fetching === */
     const renderQueue = (list, containerId) => {
@@ -230,19 +248,21 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
     };
 
-    const fetchQueues = () => {
-        fetch("{{ route('queues.data') }}")
-            .then(res => res.json())
-            .then(data => {
-                renderQueue(data.upcomingRegu, '#upcomingRegu');
-                renderQueue(data.upcomingPrio, '#upcomingPrio');
-                renderQueue(data.pendingRegu, '#pendingRegu');
-                renderQueue(data.pendingPrio, '#pendingPrio');
-                renderQueue(data.servingQueue, '#servingQueue');
-                updateButtonStates();
-            })
-            .catch(err => console.error(err));
-    };
+const fetchQueues = () => {
+    fetch("{{ route('queues.data') }}")
+        .then(res => res.json())
+        .then(data => {
+            renderQueue(data.upcomingRegu, '#upcomingRegu');
+            renderQueue(data.upcomingPrio, '#upcomingPrio');
+            renderQueue(data.pendingRegu, '#pendingRegu');
+            renderQueue(data.pendingPrio, '#pendingPrio');
+            renderQueue(data.deferred, '#deferred');
+            renderQueue(data.servingQueue, '#servingQueue');
+            updateButtonStates(data); // ✅ pass queues
+        })
+        .catch(err => console.error(err));
+};
+
 
     fetchQueues();
     setInterval(fetchQueues, 1000);
@@ -277,6 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
     bindActionWithConfirm('skipBtn', "{{ route('users.skipQueue') }}", "Are you sure you want to skip this queue?");
     bindActionWithConfirm('recallBtn', "", "Are you sure you want to recall this queue?");
     bindActionWithConfirm('proceedBtn', "{{ route('users.proceedQueue') }}", "Proceed with the current queue?");
+    bindActionWithConfirm('deferBtn', "{{ route('users.returnQueue') }}", "Mark the current serving client as returnee?");
 
     updateButtonStates();
 });

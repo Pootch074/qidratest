@@ -12,11 +12,11 @@ class Transaction extends Model
     protected $fillable = [
         'full_name',
         'queue_number',
-        'client_type',
-        'ticket_status',
+        'section_id',
         'step_id',
         'window_id',
-        'section_id',
+        'client_type',
+        'ticket_status',
         'queue_status'
     ];
 

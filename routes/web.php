@@ -75,7 +75,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('pacd/pending/table', [PacdController::class, 'pendingQueues'])->name('pacd.pending.table');
     Route::post('/transactions/{id}/resume', [PacdController::class, 'resumeTransaction'])
-     ->name('transactions.resume');
+        ->name('transactions.resume');
 
     Route::post('/queue/store', [TransactionsController::class, 'store'])->name('queue.store');
 
@@ -105,4 +105,7 @@ Route::middleware(['auth'])->group(function () {
 
 
     Route::get('/queues/data', [UsersController::class, 'getQueues'])->name('queues.data');
+
+
+    Route::post('/users/returnQueue', [UsersController::class, 'returnQueue'])->name('users.returnQueue');
 });
