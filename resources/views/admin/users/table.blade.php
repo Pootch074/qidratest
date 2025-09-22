@@ -168,7 +168,8 @@
 @endif
 
 {{-- Hidden field, no name by default --}}
-<input type="hidden" id="assignedCategoryHidden" value="">
+<input type="hidden" id="assignedCategoryHidden" name="assigned_category" value="both">
+
 
 
                     </div>

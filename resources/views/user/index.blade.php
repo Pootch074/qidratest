@@ -226,9 +226,17 @@ function updateButtonStates(data) {
     setBtnState(document.getElementById('proceedBtn'), !servingEmpty);
 
     // Upcoming-based buttons
-    setBtnState(document.getElementById('nextRegularBtn'), !reguEmpty);
-    setBtnState(document.getElementById('nextPriorityBtn'), !prioEmpty);
+    // ✅ Disabled if (list empty) OR (something is already serving)
+    setBtnState(
+        document.getElementById('nextRegularBtn'),
+        servingEmpty && !reguEmpty
+    );
+    setBtnState(
+        document.getElementById('nextPriorityBtn'),
+        servingEmpty && !prioEmpty
+    );
 }
+
 
 
     /*** === Queue Rendering & Fetching === */
@@ -299,7 +307,7 @@ const fetchQueues = () => {
     bindActionWithConfirm('proceedBtn', "{{ route('users.proceedQueue') }}", "Proceed with the current queue?");
     bindActionWithConfirm('deferBtn', "{{ route('users.returnQueue') }}", "Mark the current serving client as returnee?");
 
-    updateButtonStates();
+    // updateButtonStates();
 });
 
 
