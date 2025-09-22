@@ -48,7 +48,7 @@
                <img src="{{ Vite::asset('resources/images/icons/pause-circle.png') }}" 
                      alt="Users" 
                      class="shrink-0 w-7 h-7 transition duration-75 group-hover:opacity-80">
-               <span class="flex-1 ms-3 whitespace-nowrap">Pending Queues</span>
+               <span class="flex-1 ms-3 whitespace-nowrap">Returnees</span>
             </a>
          </li>
       </ul>

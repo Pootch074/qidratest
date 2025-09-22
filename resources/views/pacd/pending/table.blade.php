@@ -9,9 +9,36 @@
 
     <div class="p-4 sm:ml-64">
 
+        <!-- Resume Transaction Modal -->
+<div id="resumeModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+        <h2 class="text-lg font-semibold mb-4">Resume Transaction</h2>
+        <p id="resumeStepText" class="text-sm text-gray-600 mb-4">
+            Are you sure you want to resume this transaction and generate a new queue number?
+        </p>
+
+        <div id="resumeInputWrapper" class="hidden">
+            <label for="resumeFullName" class="block text-sm font-medium mb-1">Full Name</label>
+            <input type="text" id="resumeFullName"
+                   class="w-full border border-gray-300 rounded px-3 py-2 mb-4"
+                   placeholder="Enter full name" />
+        </div>
+
+        <div class="flex justify-end space-x-2">
+            <button onclick="closeResumeModal()"
+                    class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+            <button id="confirmResumeBtn"
+                    class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Yes</button>
+            <button id="generateQueueBtn"
+                    class="hidden px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Generate Queue</button>
+        </div>
+    </div>
+</div>
+
+
     {{-- Transactions Table --}}
     <div class="bg-white rounded-lg p-4 shadow-lg h-[84vh] flex flex-col">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Pending Queues</h2>
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Returnees</h2>
         <div class="overflow-x-auto flex-1">
             <table class="min-w-full divide-y divide-gray-200 text-gray-700">
                 <thead class="bg-[#2e3192] text-white sticky top-0 z-10">
@@ -51,7 +78,7 @@
 
                             <td class="px-6 py-4 whitespace-nowrap">{{ $queue->section->section_name ?? 'N/A' }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
-<button onclick="resumeTransaction({{ $queue->id }})"
+<button onclick="resumeTransaction({{ $queue->id }}, {{ $queue->step_id ?? 'null' }})"
     class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 
            hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-green-300 
            dark:focus:ring-green-800 shadow-lg shadow-green-500/50 
@@ -59,12 +86,13 @@
            text-sm px-5 py-2.5 text-center me-2 mb-2">
     <i class="fas fa-play"></i> Resume Transaction
 </button>
+
                             </td>
                         </tr>
                     @empty
                         <tr>
                             <td colspan="5" class="px-6 py-4 text-center text-gray-500">
-                                No pending queues found for yesterday.
+                                No Returnees found for yesterday.
                             </td>
                         </tr>
                     @endforelse
@@ -84,21 +112,157 @@
 
 @section('scripts')
 <script>
-function resumeTransaction(id) {
-    fetch(`/transactions/${id}/resume`, {
+let selectedTransactionId = null;
+let selectedStepId = null;
+
+function resumeTransaction(id, stepId) {
+    selectedTransactionId = id;
+    selectedStepId = stepId;
+
+    // Show modal
+    document.getElementById("resumeModal").classList.remove("hidden");
+
+    // Reset to confirmation state
+    document.getElementById("resumeStepText").classList.remove("hidden");
+    document.getElementById("resumeInputWrapper").classList.add("hidden");
+    document.getElementById("confirmResumeBtn").classList.remove("hidden");
+    document.getElementById("generateQueueBtn").classList.add("hidden");
+}
+
+// Close modal
+function closeResumeModal() {
+    document.getElementById("resumeModal").classList.add("hidden");
+    document.getElementById("resumeFullName").value = "";
+}
+
+// Confirm step → show input box
+document.getElementById("confirmResumeBtn").addEventListener("click", () => {
+    document.getElementById("resumeStepText").classList.add("hidden");
+    document.getElementById("resumeInputWrapper").classList.remove("hidden");
+    document.getElementById("confirmResumeBtn").classList.add("hidden");
+    document.getElementById("generateQueueBtn").classList.remove("hidden");
+});
+
+// Generate queue
+document.getElementById("generateQueueBtn").addEventListener("click", () => {
+    const fullName = document.getElementById("resumeFullName").value.trim();
+    if (!fullName) {
+        alert("Full name is required!");
+        return;
+    }
+
+    fetch(`/transactions/${selectedTransactionId}/resume`, {
         method: "POST",
         headers: {
             "X-CSRF-TOKEN": "{{ csrf_token() }}",
             "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+            full_name: fullName,
+            step_id: selectedStepId,
+        }),
     })
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            alert("Transaction resumed!");
+            // Build enhanced print ticket layout
+            const ticketHtml = `
+                <!doctype html>
+                <html>
+                <head>
+                <meta charset="utf-8">
+                <title>Queue Ticket</title>
+                <style>
+                body {
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    font-family: Arial, Helvetica, sans-serif;
+                    margin:0;
+                    background:#fff;
+                }
+                .ticket {
+                    width:320px;
+                    padding:24px 18px;
+                    border-radius:12px;
+                    border:2px dashed #000;
+                    text-align:center;
+                }
+                .logo {
+                    font-size:20px;
+                    font-weight:700;
+                    margin-bottom:6px;
+                    color:#000;
+                }
+                .section {
+                    font-size:18px;
+                    font-weight:600;
+                    margin:0 0 8px 0;
+                    color:#2e3192;
+                }
+                .number {
+                    font-size:80px;
+                    margin:16px 0;
+                    font-weight:900;
+                    letter-spacing:3px;
+                }
+                .meta {
+                    font-size:15px;
+                    margin:4px 0;
+                    color:#333;
+                }
+                .small {
+                    font-size:12px;
+                    color:#555;
+                    margin-top:12px;
+                    display:block;
+                }
+                @media print {
+                    @page { margin:6mm; }
+                    body { background:#fff; }
+                    .ticket {
+                        border:none;
+                        width:100%;
+                        padding:0;
+                    }
+                }
+                </style>
+                </head>
+                <body>
+                <div class="ticket">
+                    <div class="logo">🏛️ DSWD Service Center</div>
+                    <div class="section">${data.section}</div>
+                    <div class="number">${data.queue_number}</div>
+                    <div class="meta">${data.client_type} Client</div>
+                    <div class="meta">${data.full_name}</div>
+                    <div class="meta">Step: ${data.step_number}</div>
+                    <small class="small">Issued: ${data.created_at}</small>
+                </div>
+                </body>
+                </html>
+            `;
+
+            // Open popup and print
+            const printWindow = window.open('', '', 'width=400,height=600');
+            printWindow.document.write(ticketHtml);
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => { printWindow.print(); }, 150);
+
+            closeResumeModal();
             location.reload();
+        } else {
+            alert(data.message || "Something went wrong");
         }
-    });
-}
+    })
+    .catch(err => console.error(err));
+});
 </script>
+
+
+
+
+
+
+
 @endsection

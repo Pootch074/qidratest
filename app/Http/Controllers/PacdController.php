@@ -178,21 +178,48 @@ class PacdController extends Controller
         return view('pacd.pending.table', compact('pendingQueues'));
     }
 
-    public function resumeTransaction($id)
-    {
-        // Force Manila timezone
-        $now = Carbon::now('Asia/Manila');
+public function resumeTransaction(Request $request, $id)
+{
+    $now = Carbon::now('Asia/Manila');
 
-        // Update the transaction
-        DB::table('transactions')
-            ->where('id', $id)
-            ->update([
-                'client_type' => 'returnee',
-                'updated_at' => $now
-            ]);
+    $oldTransaction = Transaction::findOrFail($id);
 
-        return response()->json(['success' => true, 'message' => 'Transaction resumed']);
-    }
+    // Get last queue for returnee (today only)
+    $today = Carbon::today('Asia/Manila')->toDateString();
+    $lastQueue = Transaction::where('client_type', 'returnee')
+        ->where('section_id', $oldTransaction->section_id)
+        ->whereDate('created_at', $today)
+        ->max('queue_number');
+
+    $newQueueNumber = $lastQueue ? $lastQueue + 1 : 1;
+
+    // Create a new transaction for returnee
+    $transaction = Transaction::create([
+        'full_name'   => $request->full_name,
+        'client_type' => 'returnee',
+        'queue_number'=> $newQueueNumber,
+        'queue_status'=> 'waiting',
+        'ticket_status'=> 'issued',
+        'step_id'     => $request->step_id,
+        'section_id'  => $oldTransaction->section_id,
+        'created_at'  => $now,
+        'updated_at'  => $now,
+    ]);
+
+    // Format queue number (T###)
+    $formattedQueue = 'T' . str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT);
+
+    return response()->json([
+        'success'       => true,
+        'queue_number'  => $formattedQueue,
+        'full_name'     => $transaction->full_name,
+        'section'       => $transaction->section->section_name ?? '',
+        'step_number'   => $transaction->step->step_number ?? '',
+        'created_at'    => $transaction->created_at->format('Y-m-d H:i:s'),
+    ]);
+}
+
+
 
     public function clientsTable()
     {
