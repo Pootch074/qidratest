@@ -4,16 +4,15 @@
 
 @section('content')
 <div class="w-full h-[84vh] p-4 bg-gray-200">
-    <div class="grid grid-cols-3 gap-2 h-full">
-
-        <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
+    <div class="grid grid-cols-10 gap-2 h-full">
+        <div class="col-span-3 flex flex-col bg-white rounded-md shadow overflow-hidden">
             <div class="bg-[#2e3192] text-white text-center font-bold text-2xl py-2">UPCOMING</div>
 
-            <div class="grid grid-cols-2 gap-4 p-2 bg-white rounded-b-lg border-2 border-[#2e3192] flex-1">
+            <div class="grid grid-cols-3 gap-4 p-2 bg-white rounded-b-lg border-2 border-[#2e3192] flex-1">
                 {{-- Regular --}}
                 <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
                     <div class="bg-[#2e3192] text-white text-center font-bold py-2">REGULAR</div>
-                    <div id="upcomingRegu" class="flex-1 bg-white p-2 overflow-y-auto max-h-[70vh]">
+                    <div id="upcomingRegu" class="flex-1 bg-white p-2 overflow-y-auto max-h-[68vh]">
 
                     </div>
                 </div>
@@ -21,47 +20,61 @@
                 {{-- Priority --}}
                 <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
                     <div class="bg-[#2e3192] text-white text-center font-bold py-2">PRIORITY</div>
-                    <div id="upcomingPrio" class="flex-1 bg-white p-2 overflow-y-auto max-h-[70vh]">
+                    <div id="upcomingPrio" class="flex-1 bg-white p-2 overflow-y-auto max-h-[68vh]">
+                    </div>
+                </div>
 
+                {{-- Returnee --}}
+                <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
+                    <div class="bg-[#2e3192] text-white text-center font-bold py-2">RETURNEE</div>
+                    <div id="upcomingReturnee" class="flex-1 bg-white p-2 overflow-y-auto max-h-[68vh]">
                     </div>
                 </div>
             </div>
         </div>
 
+        <div class="col-span-4 flex flex-col bg-white rounded-md shadow overflow-hidden">
+            <div class="bg-[#2e3192] text-white text-center font-bold text-2xl py-2">PENDING</div>
+
+            <div class="grid grid-cols-4 gap-4 p-2 bg-white rounded-b-lg border-2 border-[#2e3192] flex-1">
+                {{-- Regular --}}
                 <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
-                    <div class="bg-[#2e3192] text-white text-center font-bold text-2xl py-2">PENDING</div>
-
-                    <div class="grid grid-cols-3 gap-4 p-2 bg-white rounded-b-lg border-2 border-[#2e3192] flex-1">
-                        {{-- Regular --}}
-                        <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
-                            <div class="bg-[#2e3192] text-white text-center font-bold py-2">REGULAR</div>
-                            <div id="pendingRegu" class="flex-1 bg-white p-2 overflow-y-auto max-h-[70vh]">
-                                {{-- Fetched Regular Queues --}}
-                            </div>
-                        </div>
-
-                        {{-- Priority --}}
-                        <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
-                            <div class="bg-[#2e3192] text-white text-center font-bold py-2">PRIORITY</div>
-                            <div id="pendingPrio" class="flex-1 bg-white p-2 overflow-y-auto max-h-[70vh]">
-                                {{-- Fetched Priority Queues --}}
-                            </div>
-                        </div>
-
-                        {{-- Returnee --}}
-                        <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
-                            <div class="bg-[#2e3192] text-white text-center font-bold py-2">DEFERRED</div>
-                            <div id="deferred" class="flex-1 bg-white p-2 overflow-y-auto max-h-[70vh]">
-                                {{-- Fetched Priority Queues --}}
-                            </div>
-                        </div>
-
+                    <div class="bg-[#2e3192] text-white text-center font-bold py-2">REGULAR</div>
+                    <div id="pendingRegu" class="flex-1 bg-white p-2 overflow-y-auto max-h-[68vh]">
+                        {{-- Fetched Regular Queues --}}
                     </div>
                 </div>
 
+                {{-- Priority --}}
+                <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
+                    <div class="bg-[#2e3192] text-white text-center font-bold py-2">PRIORITY</div>
+                    <div id="pendingPrio" class="flex-1 bg-white p-2 overflow-y-auto max-h-[68vh]">
+                        {{-- Fetched Priority Queues --}}
+                    </div>
+                </div>
 
-        {{-- SERVING --}}
-        <div class="w-full flex flex-col h-full bg-white rounded-b-lg border-2 border-[#2e3192] shadow overflow-hidden">
+                {{-- Returnee --}}
+                <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
+                    <div class="bg-[#2e3192] text-white text-center font-bold py-2">RETURNEE</div>
+                    <div id="pendingReturnee" class="flex-1 bg-white p-2 overflow-y-auto max-h-[68vh]">
+                        {{-- Fetched Priority Queues --}}
+                    </div>
+                </div>
+
+                {{-- Deferred --}}
+                <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
+                    <div class="bg-[#2e3192] text-white text-center font-bold py-2">DEFERRED</div>
+                    <div id="deferred" class="flex-1 bg-white p-2 overflow-y-auto max-h-[68vh]">
+                        {{-- Fetched Priority Queues --}}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        {{-- SERVING --}} 
+        <div class="col-span-3 flex flex-col rounded-md h-full bg-white rounded-b-lg border-2 border-[#2e3192] shadow overflow-hidden">
             {{-- Step & Window --}}
             <div class="bg-[#2e3192] text-white text-center font-bold text-2xl py-2">
                 @if($stepNumber || $windowNumber)
@@ -96,9 +109,10 @@
                         shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 
                         font-medium rounded-lg text-sm py-2.5 text-center">Next Priority</button>
 
-                    <button id="deferBtn" class="queue-btn text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br 
-                        focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 
-                        font-medium rounded-lg text-sm px-5 py-2.5 text-center">DEFER</button>
+                    <button id="returneeBtn" class="queue-btn flex-1 text-white bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 hover:bg-gradient-to-br 
+                        focus:ring-1 focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 
+                        shadow-lg shadow-orange-500/50 dark:shadow-lg dark:shadow-orange-800/80 
+                        font-medium rounded-lg text-sm py-2.5 text-center">Next Returnee</button>
                 </div>
                 <div class="flex space-x-2 w-full">
                     <button id="skipBtn" class="queue-btn flex-1 text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br 
@@ -109,6 +123,9 @@
                         focus:ring-1 focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 
                         shadow-lg shadow-orange-500/50 dark:shadow-lg dark:shadow-orange-800/80 
                         font-medium rounded-lg text-sm py-2.5 text-center">Recall</button>
+                    <button id="deferBtn" class="queue-btn flex-1 text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br 
+                        focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 
+                        font-medium rounded-lg text-sm px-5 py-2.5 text-center">Defer</button>
                     <button id="proceedBtn" class="queue-btn flex-1 text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br 
                         focus:ring-1 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 
                         shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 
@@ -218,11 +235,12 @@ function updateButtonStates(data) {
     const servingEmpty = !data.servingQueue?.length;
     const reguEmpty = !data.upcomingRegu?.length;
     const prioEmpty = !data.upcomingPrio?.length;
+    const returneeEmpty = !data.upcomingReturnee?.length;
 
     // Serving-dependent buttons
-    setBtnState(document.getElementById('deferBtn'), !servingEmpty);
     setBtnState(document.getElementById('skipBtn'), !servingEmpty);
     setBtnState(document.getElementById('recallBtn'), !servingEmpty);
+    setBtnState(document.getElementById('deferBtn'), !servingEmpty);
     setBtnState(document.getElementById('proceedBtn'), !servingEmpty);
 
     // Upcoming-based buttons
@@ -235,6 +253,11 @@ function updateButtonStates(data) {
         document.getElementById('nextPriorityBtn'),
         servingEmpty && !prioEmpty
     );
+    setBtnState(
+        document.getElementById('returneeBtn'), 
+        servingEmpty && !returneeEmpty
+    );
+
 }
 
 
@@ -262,8 +285,10 @@ const fetchQueues = () => {
         .then(data => {
             renderQueue(data.upcomingRegu, '#upcomingRegu');
             renderQueue(data.upcomingPrio, '#upcomingPrio');
+            renderQueue(data.upcomingReturnee, '#upcomingReturnee');
             renderQueue(data.pendingRegu, '#pendingRegu');
             renderQueue(data.pendingPrio, '#pendingPrio');
+            renderQueue(data.pendingReturnee, '#pendingReturnee');
             renderQueue(data.deferred, '#deferred');
             renderQueue(data.servingQueue, '#servingQueue');
             updateButtonStates(data); // ✅ pass queues
@@ -302,10 +327,13 @@ const fetchQueues = () => {
 
     bindActionWithConfirm('nextRegularBtn', "{{ route('users.nextRegular') }}", "Proceed to the next Regular queue?");
     bindActionWithConfirm('nextPriorityBtn', "{{ route('users.nextPriority') }}", "Proceed to the next Priority queue?");
+    bindActionWithConfirm('returneeBtn', "{{ route('users.nextReturnee') }}", "Proceed to the next Returnee queue?");
+
+
     bindActionWithConfirm('skipBtn', "{{ route('users.skipQueue') }}", "Are you sure you want to skip this queue?");
     bindActionWithConfirm('recallBtn', "", "Are you sure you want to recall this queue?");
-    bindActionWithConfirm('proceedBtn', "{{ route('users.proceedQueue') }}", "Proceed with the current queue?");
     bindActionWithConfirm('deferBtn', "{{ route('users.returnQueue') }}", "Mark the current serving client as returnee?");
+    bindActionWithConfirm('proceedBtn', "{{ route('users.proceedQueue') }}", "Proceed with the current queue?");
 
     // updateButtonStates();
 });

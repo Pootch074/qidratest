@@ -44,8 +44,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('admin/users/store', [UsersController::class, 'store'])->name('admin.users.store');
     Route::delete('admin/users/{user}', [UsersController::class, 'destroy'])->name('admin.users.destroy');
     // Route::get('/queues/data', [UsersController::class, 'fetchQueues'])->name('queues.data');
+
     Route::post('/users/next-regular', [UsersController::class, 'nextRegular'])->name('users.nextRegular');
     Route::post('/users/next-priority', [UsersController::class, 'nextPriority'])->name('users.nextPriority');
+    Route::post('/users/next-returnee', [UsersController::class, 'nextReturnee'])->name('users.nextReturnee');
     Route::post('/queue/skip', [UsersController::class, 'skipQueue'])->name('users.skipQueue');
     Route::post('/queue/proceed', [UsersController::class, 'proceedQueue'])->name('users.proceedQueue');
 
@@ -74,8 +76,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('pacd/sections/cards', [PacdController::class, 'sectionsCards'])->name('pacd.sections.cards');
 
     Route::get('pacd/pending/table', [PacdController::class, 'pendingQueues'])->name('pacd.pending.table');
-    Route::post('/transactions/{id}/resume', [PacdController::class, 'resumeTransaction'])
-        ->name('transactions.resume');
+    Route::post('/transactions/{id}/resume', [PacdController::class, 'resumeTransaction'])->name('transactions.resume');
 
     Route::post('/queue/store', [TransactionsController::class, 'store'])->name('queue.store');
 

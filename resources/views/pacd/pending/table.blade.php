@@ -46,6 +46,7 @@
                         <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider rounded-tl-lg">Queue Number</th>
                         <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Full Name</th>
                         <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Step</th>
+                        <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Window</th>
                         <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Section</th>
                         <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider rounded-tr-lg">Action</th>
                     </tr>
@@ -69,24 +70,27 @@
                                             $prefix = strtoupper(substr($transaction->client_type, 0, 1));
                                     }
                                 @endphp
-                                {{ $prefix . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT) }}</td>
+                                {{ $prefix . str_pad($queue->queue_number, 3, '0', STR_PAD_LEFT) }}
+                            </td>
                             
                             <td class="px-6 py-4 whitespace-nowrap">{{ $queue->full_name }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 {{ $queue->step->step_number ?? 'N/A' }}
                             </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {{ $queue->window->window_number ?? 'N/A' }}
+                            </td>
 
                             <td class="px-6 py-4 whitespace-nowrap">{{ $queue->section->section_name ?? 'N/A' }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
-<button onclick="resumeTransaction({{ $queue->id }}, {{ $queue->step_id ?? 'null' }})"
-    class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 
-           hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-green-300 
-           dark:focus:ring-green-800 shadow-lg shadow-green-500/50 
-           dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg 
-           text-sm px-5 py-2.5 text-center me-2 mb-2">
-    <i class="fas fa-play"></i> Resume Transaction
-</button>
-
+                                <button onclick="resumeTransaction({{ $queue->id }}, {{ $queue->step_id ?? 'null' }})"
+                                    class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 
+                                        hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-green-300 
+                                        dark:focus:ring-green-800 shadow-lg shadow-green-500/50 
+                                        dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg 
+                                        text-sm px-5 py-2.5 text-center me-2 mb-2">
+                                    <i class="fas fa-play"></i> Resume Transaction
+                                </button>
                             </td>
                         </tr>
                     @empty

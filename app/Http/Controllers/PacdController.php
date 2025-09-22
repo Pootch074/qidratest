@@ -121,7 +121,7 @@ class PacdController extends Controller
     public function transactionsTable()
     {
         $user = Auth::user();
-        $today = Carbon::today('Asia/Manila'); 
+        $today = Carbon::today('Asia/Manila');
 
         if (is_null($user->section_id)) {
             // No assigned section → show all transactions except section_id = 15
@@ -171,53 +171,62 @@ class PacdController extends Controller
         $yesterday = Carbon::yesterday()->toDateString(); // now in Asia/Manila
         $sectionId = Auth::user()->section_id;
 
-        $pendingQueues = Transaction::where('queue_status', 'pending')
+        $pendingQueues = Transaction::where('queue_status', 'deferred')
             ->whereDate('updated_at', $yesterday)
             ->get();
 
         return view('pacd.pending.table', compact('pendingQueues'));
     }
 
-public function resumeTransaction(Request $request, $id)
-{
-    $now = Carbon::now('Asia/Manila');
+    public function resumeTransaction(Request $request, $id)
+    {
+        $now = Carbon::now('Asia/Manila');
 
-    $oldTransaction = Transaction::findOrFail($id);
+        // Find the old transaction
+        $oldTransaction = Transaction::findOrFail($id);
 
-    // Get last queue for returnee (today only)
-    $today = Carbon::today('Asia/Manila')->toDateString();
-    $lastQueue = Transaction::where('client_type', 'returnee')
-        ->where('section_id', $oldTransaction->section_id)
-        ->whereDate('created_at', $today)
-        ->max('queue_number');
+        // ✅ Mark old transaction as cancelled
+        $oldTransaction->update([
+            'ticket_status' => 'cancelled',
+            'updated_at'    => $now,
+        ]);
 
-    $newQueueNumber = $lastQueue ? $lastQueue + 1 : 1;
+        // Get last queue for returnee (today only)
+        $today = Carbon::today('Asia/Manila')->toDateString();
+        $lastQueue = Transaction::where('client_type', 'returnee')
+            ->where('section_id', $oldTransaction->section_id)
+            ->whereDate('created_at', $today)
+            ->max('queue_number');
 
-    // Create a new transaction for returnee
-    $transaction = Transaction::create([
-        'full_name'   => $request->full_name,
-        'client_type' => 'returnee',
-        'queue_number'=> $newQueueNumber,
-        'queue_status'=> 'waiting',
-        'ticket_status'=> 'issued',
-        'step_id'     => $request->step_id,
-        'section_id'  => $oldTransaction->section_id,
-        'created_at'  => $now,
-        'updated_at'  => $now,
-    ]);
+        $newQueueNumber = $lastQueue ? $lastQueue + 1 : 1;
 
-    // Format queue number (T###)
-    $formattedQueue = 'T' . str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT);
+        // Create a new transaction for returnee
+        $transaction = Transaction::create([
+            'full_name'    => $request->full_name,
+            'client_type'  => 'returnee',
+            'queue_number' => $newQueueNumber,
+            'queue_status' => 'waiting',
+            'ticket_status' => 'issued',
+            'step_id'      => $request->step_id,
+            'section_id'   => $oldTransaction->section_id,
+            'created_at'   => $now,
+            'updated_at'   => $now,
+        ]);
 
-    return response()->json([
-        'success'       => true,
-        'queue_number'  => $formattedQueue,
-        'full_name'     => $transaction->full_name,
-        'section'       => $transaction->section->section_name ?? '',
-        'step_number'   => $transaction->step->step_number ?? '',
-        'created_at'    => $transaction->created_at->format('Y-m-d H:i:s'),
-    ]);
-}
+        // Format queue number (T###)
+        $formattedQueue = 'T' . str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT);
+
+        return response()->json([
+            'success'      => true,
+            'queue_number' => $formattedQueue,
+            'full_name'    => $transaction->full_name,
+            'section'      => $transaction->section->section_name ?? '',
+            'step_number'  => $transaction->step->step_number ?? '',
+            'client_type'  => ucfirst($transaction->client_type), // for printing
+            'created_at'   => $transaction->created_at->format('Y-m-d H:i:s'),
+        ]);
+    }
+
 
 
 

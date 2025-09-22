@@ -391,7 +391,52 @@ class UsersController extends Controller
         if ($transaction) {
             return response()->json([
                 'status' => 'success',
-                'message' => "Serving PRIORITY client {$transaction->client_type}{$transaction->queue_number} at window {$user->window_id}",
+                // 'message' => "Serving PRIORITY client {$transaction->client_type}{$transaction->queue_number} at window {$user->window_id}",
+                'transaction' => $transaction
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'empty',
+            'message' => 'No priority clients waiting in the queue.'
+        ]);
+    }
+
+    public function nextReturnee()
+    {
+        $user = Auth::user();
+
+        if (!$user->step_id || !$user->section_id || !$user->window_id) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User is not assigned to a step, section, or window.'
+            ], 400);
+        }
+
+        $transaction = DB::transaction(function () use ($user) {
+            $record = Transaction::where('queue_status', 'waiting')
+                ->where('client_type', 'returnee')
+                ->where('step_id', $user->step_id)
+                ->where('section_id', $user->section_id)
+                ->whereDate('updated_at', Carbon::today())
+                ->lockForUpdate()
+                ->orderBy('created_at', 'asc')
+                ->first();
+
+            if ($record) {
+                $record->update([
+                    'queue_status' => 'serving',
+                    'window_id'    => $user->window_id,
+                ]);
+            }
+
+            return $record;
+        });
+
+        if ($transaction) {
+            return response()->json([
+                'status' => 'success',
+                // 'message' => "Serving RETURNEE client {$transaction->client_type}{$transaction->queue_number} at window {$user->window_id}",
                 'transaction' => $transaction
             ]);
         }
@@ -562,11 +607,21 @@ class UsersController extends Controller
                 'style_class'      => 'bg-[#ee1c25]',
             ]);
 
+        $returneeQueues = (clone $baseQuery)
+            ->where('queue_status', 'waiting')
+            ->where('client_type', 'returnee')
+            ->orderBy('queue_number', 'asc')
+            ->get()
+            ->map(fn($q) => [
+                'formatted_number' => 'T' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                'style_class'      => 'bg-[#f97316]',
+            ]);
+
         // 🔹 Pending
         $pendingRegular = (clone $baseQuery)
             ->where('queue_status', 'pending')
             ->where('client_type', 'regular')
-            ->orderBy('updated_at', 'asc')
+            ->orderBy('queue_number', 'asc')
             ->get()
             ->map(fn($q) => [
                 'formatted_number' => 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
@@ -576,30 +631,42 @@ class UsersController extends Controller
         $pendingPriority = (clone $baseQuery)
             ->where('queue_status', 'pending')
             ->where('client_type', 'priority')
-            ->orderBy('updated_at', 'asc')
+            ->orderBy('queue_number', 'asc')
             ->get()
             ->map(fn($q) => [
                 'formatted_number' => 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
                 'style_class'      => 'bg-[#ee1c25]',
             ]);
 
+        $pendingReturnee = (clone $baseQuery)
+            ->where('queue_status', 'pending')
+            ->where('client_type', 'returnee')
+            ->orderBy('queue_number', 'asc')
+            ->get()
+            ->map(fn($q) => [
+                'formatted_number' => 'T' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                'style_class'      => 'bg-[#f97316]',
+            ]);
+
         $deferred = (clone $baseQuery)
             ->where('queue_status', 'deferred')
             ->where('ticket_status', 'issued')
             ->where('window_id', $user->window_id)
-            ->orderBy('updated_at', 'asc')
+            ->orderBy('queue_number', 'asc')
             ->get()
             ->map(fn($q) => [
-                'formatted_number' => match (true) {
-                    $q->client_type === 'regular' => 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                    $q->client_type === 'priority' => 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                    default                       => str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                'formatted_number' => match ($q->client_type) {
+                    'regular'  => 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                    'priority' => 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                    'returnee' => 'T' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                    default    => 'X' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT), // fallback
                 },
-                'style_class' => match (true) {
-                    $q->client_type === 'regular' => 'bg-[#3f3f46]', // blue
-                    $q->client_type === 'priority' => 'bg-[#3f3f46]', // red
-                    default                       => 'bg-gray-400',
-                }
+                'style_class' => match ($q->client_type) {
+                    'regular'  => 'bg-gray-500',
+                    'priority' => 'bg-gray-500',
+                    'returnee' => 'bg-gray-500', // orange for returnee
+                    default    => 'bg-gray-500',
+                },
             ]);
 
         // Serving (only 1)
@@ -610,17 +677,28 @@ class UsersController extends Controller
             ->limit(1)
             ->get()
             ->map(fn($q) => [
-                'formatted_number' => ($q->client_type === 'regular'
-                    ? 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT)
-                    : 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT)),
-                'style_class'      => $q->client_type === 'regular' ? 'bg-[#2e3192]' : 'bg-[#ee1c25]',
+                'formatted_number' => match ($q->client_type) {
+                    'regular'  => 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                    'priority' => 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                    'returnee' => 'T' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                    default    => 'X' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT), // fallback
+                },
+                'style_class' => match ($q->client_type) {
+                    'regular'  => 'bg-[#2e3192]',
+                    'priority' => 'bg-[#ee1c25]',
+                    'returnee' => 'bg-[#f97316]', // orange for returnee
+                    default    => 'bg-gray-500',
+                },
             ]);
+
 
         return response()->json([
             'upcomingRegu' => $regularQueues,
             'upcomingPrio' => $priorityQueues,
+            'upcomingReturnee' => $returneeQueues,
             'pendingRegu'  => $pendingRegular,
             'pendingPrio'  => $pendingPriority,
+            'pendingReturnee'  => $pendingReturnee,
             'deferred'  => $deferred,
             'servingQueue' => $servingQueue,
         ]);
