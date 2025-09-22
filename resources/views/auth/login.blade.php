@@ -1,10 +1,7 @@
 @extends('layouts.auth')
 @section('content')
 
-<div id="auth-login" 
-     class="qidraBg flex min-h-screen items-center justify-center px-4 sm:px-6 lg:px-8"
-     style="background-image: url('{{ Vite::asset('resources/images/login-background.png') }}')">
-
+<div id="auth-login">
     <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 space-y-6">
         
         <!-- Header -->
