@@ -496,6 +496,38 @@ class UsersController extends Controller
         ]);
     }
 
+    public function recallQueue()
+    {
+        $user = Auth::user();
+        $today = Carbon::today();
+
+        // Find the currently serving transaction
+        $transaction = Transaction::where('queue_status', 'serving')
+            ->whereDate('created_at', $today)
+            ->whereDate('updated_at', $today)
+            ->where('ticket_status', 'issued')
+            ->where('section_id', $user->section_id)
+            ->where('step_id', $user->step_id)
+            ->where('window_id', $user->window_id)
+            ->first();
+
+        if (!$transaction) {
+            return response()->json([
+                'message' => 'No serving queue found for today.'
+            ], 404);
+        }
+
+        // Increment recall_count
+        $transaction->recall_count = $transaction->recall_count ? $transaction->recall_count + 1 : 1;
+        $transaction->save();
+
+        return response()->json([
+            'message' => 'Queue recalled successfully.',
+            'recall_count' => $transaction->recall_count,
+            'queue_id' => $transaction->id
+        ]);
+    }
+
     public function proceedQueue()
     {
         $user = Auth::user();

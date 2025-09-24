@@ -104,6 +104,7 @@ class DisplayController extends Controller
             'client_type'   => $tx->client_type,
             'step_number'   => $tx->step->step_number ?? null,
             'window_number' => $tx->window->window_number ?? null,
+            'recall_count'  => $tx->recall_count ?? 0, // new field
         ]);
     }
 }

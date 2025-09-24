@@ -331,7 +331,7 @@ const fetchQueues = () => {
 
 
     bindActionWithConfirm('skipBtn', "{{ route('users.skipQueue') }}", "Are you sure you want to skip this queue?");
-    bindActionWithConfirm('recallBtn', "", "Are you sure you want to recall this queue?");
+    bindActionWithConfirm('recallBtn', "{{ route('users.recallQueue') }}", "Are you sure you want to recall this queue?");
     bindActionWithConfirm('deferBtn', "{{ route('users.returnQueue') }}", "Mark the current serving client as returnee?");
     bindActionWithConfirm('proceedBtn', "{{ route('users.proceedQueue') }}", "Proceed with the current queue?");
 

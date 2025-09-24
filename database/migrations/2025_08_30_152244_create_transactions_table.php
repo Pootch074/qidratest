@@ -22,6 +22,7 @@ return new class extends Migration
             $table->foreign('step_id')->references('id')->on('steps')->onDelete('set null');
             $table->unsignedBigInteger('window_id')->nullable();
             $table->foreign('window_id')->references('id')->on('windows')->onDelete('set null');
+            $table->integer('recall_count')->nullable();
             $table->enum('ticket_status', ['issued', 'cancelled'])->nullable();
             $table->enum('queue_status', ['waiting', 'pending', 'deferred', 'serving', 'completed'])->default('waiting');
             $table->timestamps();

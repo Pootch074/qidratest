@@ -1,15 +1,22 @@
 document.addEventListener("DOMContentLoaded", () => {
-    let lastAnnouncedPerWindow = {};
-    let announcedTransactions = new Set();
+    let announcedTransactions = new Map();
+    let speechQueue = [];
+    let speaking = false;
 
     /** ---------------- Date & Time ---------------- **/
     function updateDateTime() {
         const now = new Date();
-        const optionsDate = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
+        const optionsDate = {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        };
         const dateEl = document.getElementById("current-date");
         const timeEl = document.getElementById("current-time");
 
-        if (dateEl) dateEl.textContent = now.toLocaleDateString(undefined, optionsDate);
+        if (dateEl)
+            dateEl.textContent = now.toLocaleDateString(undefined, optionsDate);
         if (timeEl) timeEl.textContent = now.toLocaleTimeString();
     }
     setInterval(updateDateTime, 1000);
@@ -67,29 +74,42 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     loadVoices();
 
-    function announce(formattedQueue, stepNumber, windowNumber, repeat = 2) {
+    function announce(formattedQueue, stepNumber, windowNumber, repeat) {
         const message = `Client number ${formattedQueue}, please proceed to step ${stepNumber} window ${windowNumber}.`;
-        for (let i = 0; i < repeat; i++) {
+        speechQueue.push({ message, repeat });
+        speakNext();
+    }
+
+    function speakNext() {
+        if (speaking || speechQueue.length === 0) return;
+
+        speaking = true;
+        const { message, repeat } = speechQueue.shift();
+        let count = 0;
+
+        const speakMessage = () => {
+            if (count >= repeat) {
+                speaking = false;
+                speakNext();
+                return;
+            }
+            count++;
             const utterance = new SpeechSynthesisUtterance(message);
             utterance.lang = "en-US";
             utterance.rate = 0.8;
             utterance.pitch = 1;
             utterance.volume = 1;
 
-            const setVoiceAndSpeak = () => {
-                utterance.voice =
-                    availableVoices.length > voiceIndex
-                        ? availableVoices[voiceIndex]
-                        : availableVoices[0];
-                window.speechSynthesis.speak(utterance);
-            };
+            utterance.voice =
+                availableVoices.length > voiceIndex
+                    ? availableVoices[voiceIndex]
+                    : availableVoices[0];
 
-            if (!availableVoices.length) {
-                window.speechSynthesis.onvoiceschanged = setVoiceAndSpeak;
-            } else {
-                setVoiceAndSpeak();
-            }
-        }
+            utterance.onend = speakMessage;
+            window.speechSynthesis.speak(utterance);
+        };
+
+        speakMessage();
     }
 
     /** ---------------- Fetch Steps ---------------- **/
@@ -110,15 +130,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 data.forEach((step) => {
                     const card = document.createElement("div");
-                    card.className = "rounded-lg shadow-md p-1 mb-3 flex flex-col bg-gray-200";
+                    card.className =
+                        "rounded-lg shadow-md p-1 mb-3 flex flex-col bg-gray-200";
 
                     const stepNameDisplay =
-                        step.step_name && step.step_name !== "None" ? step.step_name : "";
+                        step.step_name && step.step_name !== "None"
+                            ? step.step_name
+                            : "";
 
                     let html = `
                         <h3 class="text-3xl font-bold text-[#000000] mb-1 flex items-center justify-center space-x-2 bg-white rounded">
                             <span>STEP ${step.step_number}</span>
-                            ${stepNameDisplay ? `<span>${stepNameDisplay}</span>` : ""}
+                            ${
+                                stepNameDisplay
+                                    ? `<span>${stepNameDisplay}</span>`
+                                    : ""
+                            }
                         </h3>
                     `;
 
@@ -126,14 +153,19 @@ document.addEventListener("DOMContentLoaded", () => {
                         html += `<div class="grid grid-cols-2 gap-2">`;
 
                         step.windows.forEach((win) => {
-                            let firstTx = win.transactions?.length > 0 ? win.transactions[0] : null;
+                            let firstTx =
+                                win.transactions?.length > 0
+                                    ? win.transactions[0]
+                                    : null;
 
                             html += `
                                 <div class="rounded-lg text-[#FFFFFF] text-2xl font-semibold flex flex-col items-center justify-center w-full">
                                     <div class="flex items-center w-full h-full rounded-lg border-4 border-[#2e3192]">
                                         <span class="bg-[#2e3192] px-3 py-1 text-center w-1/5">
                                             <p class="text-lg font-semibold">Window</p>
-                                            <p class="text-4xl font-bold">${win.window_number}</p>
+                                            <p class="text-4xl font-bold">${
+                                                win.window_number
+                                            }</p>
                                         </span>
                                         ${
                                             firstTx
@@ -172,17 +204,40 @@ document.addEventListener("DOMContentLoaded", () => {
             .then((res) => res.json())
             .then((data) => {
                 if (!data || !data.id) return;
-                if (announcedTransactions.has(data.id)) return;
 
-                announcedTransactions.add(data.id);
+                const lastAnnounced = announcedTransactions.get(data.id) ?? {
+                    recall_count: null,
+                    spokenCount: 0,
+                };
+                let repeatTimes;
+
+                if (data.recall_count == null) {
+                    // Normal transaction → speak twice if not yet spoken twice
+                    repeatTimes = 2 - lastAnnounced.spokenCount;
+                    if (repeatTimes <= 0) return;
+                } else {
+                    // Recall transaction → speak once if recall_count changed
+                    if (lastAnnounced.recall_count === data.recall_count)
+                        return;
+                    repeatTimes = 1;
+                }
 
                 const formattedQueue =
                     data.client_type?.charAt(0).toUpperCase() +
                     String(data.queue_number).padStart(3, "0");
 
-                announce(formattedQueue, data.step_number, data.window_number);
+                announce(
+                    formattedQueue,
+                    data.step_number,
+                    data.window_number,
+                    repeatTimes
+                );
 
-                // Highlight removed
+                // Save/update the announcement state
+                announcedTransactions.set(data.id, {
+                    recall_count: data.recall_count,
+                    spokenCount: (lastAnnounced.spokenCount || 0) + repeatTimes,
+                });
             })
             .catch((err) => console.error("Error fetching transactions:", err));
     }
