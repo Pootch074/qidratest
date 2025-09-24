@@ -328,7 +328,7 @@ class UsersController extends Controller
                 ->where('section_id', $user->section_id)
                 ->whereDate('updated_at', Carbon::today())
                 ->lockForUpdate()
-                ->orderBy('created_at', 'asc')
+                ->orderBy('queue_number', 'asc')
                 ->first();
 
             if ($record) {
@@ -375,7 +375,7 @@ class UsersController extends Controller
                 ->where('section_id', $user->section_id)
                 ->whereDate('updated_at', Carbon::today())
                 ->lockForUpdate()
-                ->orderBy('created_at', 'asc')
+                ->orderBy('queue_number', 'asc')
                 ->first();
 
             if ($record) {
@@ -420,7 +420,7 @@ class UsersController extends Controller
                 ->where('section_id', $user->section_id)
                 ->whereDate('updated_at', Carbon::today())
                 ->lockForUpdate()
-                ->orderBy('created_at', 'asc')
+                ->orderBy('queue_number', 'asc')
                 ->first();
 
             if ($record) {
@@ -590,7 +590,7 @@ class UsersController extends Controller
         $regularQueues = (clone $baseQuery)
             ->where('queue_status', 'waiting')
             ->where('client_type', 'regular')
-            ->orderBy('created_at', 'asc')
+            ->orderBy('queue_number', 'asc')
             ->get()
             ->map(fn($q) => [
                 'formatted_number' => 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
@@ -600,7 +600,7 @@ class UsersController extends Controller
         $priorityQueues = (clone $baseQuery)
             ->where('queue_status', 'waiting')
             ->where('client_type', 'priority')
-            ->orderBy('created_at', 'asc')
+            ->orderBy('queue_number', 'asc')
             ->get()
             ->map(fn($q) => [
                 'formatted_number' => 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
