@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('steps', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('section_id')->nullable();
+            $table->foreign('section_id')->references('id')->on('sections')->onDelete('set null');
             $table->integer('step_number');
             $table->string('step_name')->nullable();
-            $table->unsignedBigInteger('section_id')->nullable();
-            $table->foreign('section_id')->references('id')->on('sections')->onDelete('set null'); // optional: if a window is deleted, set null
             $table->timestamps();
         });
     }

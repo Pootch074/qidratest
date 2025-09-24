@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('marquees', function (Blueprint $table) {
             $table->id();
-            $table->string('text');
             $table->unsignedBigInteger('section_id')->nullable();
             $table->foreign('section_id')->references('id')->on('sections')->onDelete('set null');
+            $table->string('text');
             $table->timestamps();
         });
     }

@@ -13,21 +13,16 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->string('full_name')->nullable();
-            $table->integer('queue_number')->nullable();
-
             $table->unsignedBigInteger('section_id')->nullable();
             $table->foreign('section_id')->references('id')->on('sections')->onDelete('set null');
-
+            $table->integer('queue_number')->nullable();
+            $table->string('full_name')->nullable();
+            $table->enum('client_type', ['priority', 'regular', 'deferred'])->nullable();
             $table->unsignedBigInteger('step_id')->nullable();
             $table->foreign('step_id')->references('id')->on('steps')->onDelete('set null');
-
             $table->unsignedBigInteger('window_id')->nullable();
             $table->foreign('window_id')->references('id')->on('windows')->onDelete('set null');
-
-            $table->enum('client_type', ['priority', 'regular', 'returnee'])->nullable();
             $table->enum('ticket_status', ['issued', 'cancelled'])->nullable();
-
             $table->enum('queue_status', ['waiting', 'pending', 'deferred', 'serving', 'completed'])->default('waiting');
             $table->timestamps();
         });

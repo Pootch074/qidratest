@@ -415,7 +415,7 @@ class UsersController extends Controller
 
         $transaction = DB::transaction(function () use ($user) {
             $record = Transaction::where('queue_status', 'waiting')
-                ->where('client_type', 'returnee')
+                ->where('client_type', 'deferred')
                 ->where('step_id', $user->step_id)
                 ->where('section_id', $user->section_id)
                 ->whereDate('updated_at', Carbon::today())
@@ -609,11 +609,11 @@ class UsersController extends Controller
 
         $returneeQueues = (clone $baseQuery)
             ->where('queue_status', 'waiting')
-            ->where('client_type', 'returnee')
+            ->where('client_type', 'deferred')
             ->orderBy('queue_number', 'asc')
             ->get()
             ->map(fn($q) => [
-                'formatted_number' => 'T' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                'formatted_number' => 'D' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
                 'style_class'      => 'bg-[#f97316]',
             ]);
 
@@ -658,13 +658,13 @@ class UsersController extends Controller
                 'formatted_number' => match ($q->client_type) {
                     'regular'  => 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
                     'priority' => 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                    'returnee' => 'T' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                    'deferred' => 'D' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
                     default    => 'X' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT), // fallback
                 },
                 'style_class' => match ($q->client_type) {
                     'regular'  => 'bg-gray-500',
                     'priority' => 'bg-gray-500',
-                    'returnee' => 'bg-gray-500', // orange for returnee
+                    'deferred' => 'bg-gray-500', // orange for returnee
                     default    => 'bg-gray-500',
                 },
             ]);
@@ -680,13 +680,13 @@ class UsersController extends Controller
                 'formatted_number' => match ($q->client_type) {
                     'regular'  => 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
                     'priority' => 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                    'returnee' => 'T' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                    'deferred' => 'D' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
                     default    => 'X' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT), // fallback
                 },
                 'style_class' => match ($q->client_type) {
                     'regular'  => 'bg-[#2e3192]',
                     'priority' => 'bg-[#ee1c25]',
-                    'returnee' => 'bg-[#f97316]', // orange for returnee
+                    'deferred' => 'bg-[#f97316]', // orange for returnee
                     default    => 'bg-gray-500',
                 },
             ]);

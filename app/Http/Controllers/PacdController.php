@@ -193,7 +193,7 @@ class PacdController extends Controller
 
         // Get last queue for returnee (today only)
         $today = Carbon::today('Asia/Manila')->toDateString();
-        $lastQueue = Transaction::where('client_type', 'returnee')
+        $lastQueue = Transaction::where('client_type', 'deferred')
             ->where('section_id', $oldTransaction->section_id)
             ->whereDate('created_at', $today)
             ->max('queue_number');
@@ -203,7 +203,7 @@ class PacdController extends Controller
         // Create a new transaction for returnee
         $transaction = Transaction::create([
             'full_name'    => $request->full_name,
-            'client_type'  => 'returnee',
+            'client_type'  => 'deferred',
             'queue_number' => $newQueueNumber,
             'queue_status' => 'waiting',
             'ticket_status' => 'issued',
@@ -214,7 +214,7 @@ class PacdController extends Controller
         ]);
 
         // Format queue number (T###)
-        $formattedQueue = 'T' . str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT);
+        $formattedQueue = 'D' . str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT);
 
         return response()->json([
             'success'      => true,

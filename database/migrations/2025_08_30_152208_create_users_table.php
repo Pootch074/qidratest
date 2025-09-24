@@ -13,23 +13,18 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('section_id')->nullable();
+            $table->foreign('section_id')->references('id')->on('sections')->onDelete('set null');
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email')->unique();
             $table->string('position')->nullable();
-
-            $table->unsignedBigInteger('section_id')->nullable();
-            $table->foreign('section_id')->references('id')->on('sections')->onDelete('set null');
-
             $table->tinyInteger('user_type')->nullable();
             $table->enum('assigned_category', ['regular', 'priority', 'both'])->nullable();
-
             $table->unsignedBigInteger('step_id')->nullable();
             $table->foreign('step_id')->references('id')->on('steps')->onDelete('set null');
-            
             $table->unsignedBigInteger('window_id')->nullable();
             $table->foreign('window_id')->references('id')->on('windows')->onDelete('set null');
-            
             $table->tinyInteger('status')->default(1);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

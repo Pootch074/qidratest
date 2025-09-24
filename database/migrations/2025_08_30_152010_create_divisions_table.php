@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('divisions', function (Blueprint $table) {
             $table->id();
-            $table->string('division_name');
             $table->unsignedBigInteger('office_id')->nullable();
-            $table->foreign('office_id')->references('id')->on('offices')->onDelete('set null'); // optional: if a window is deleted, set null
+            $table->foreign('office_id')->references('id')->on('offices')->onDelete('set null');
+            $table->string('division_name');
             $table->timestamps();
         });
     }

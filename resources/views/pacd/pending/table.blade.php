@@ -63,8 +63,8 @@
                                         case 'regular':
                                             $prefix = 'R';
                                             break;
-                                        case 'returnee':
-                                            $prefix = 'T'; // 👈 force returnee to use T
+                                        case 'deferred':
+                                            $prefix = 'D'; // 👈 force returnee to use T
                                             break;
                                         default:
                                             $prefix = strtoupper(substr($transaction->client_type, 0, 1));
