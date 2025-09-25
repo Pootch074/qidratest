@@ -2,12 +2,18 @@
 @section('content')
 
 <div id="auth-login">
-    <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 space-y-6">
+    <div class="w-full max-w-md bg-[#f6f6f6] rounded-2xl shadow-lg p-8 space-y-6">
         
         <!-- Header -->
         <div class="text-center flex flex-col items-center">
-            <h2 class="text-2xl font-bold text-gray-500">Welcome to</h2>
-            <img x-show="show" src="{{ Vite::asset('resources/images/qidra-logo.png') }}" class="w-50">
+            <h2 class="text-2xl font-bold text-gray-900">Welcome to</h2>
+
+            <div class="flex items-center mt-2">
+                <img x-show="show" src="{{ Vite::asset('resources/images/dswd-color.png') }}" class="w-30">
+                &nbsp;&nbsp;
+                <img x-show="show" src="{{ Vite::asset('resources/images/qidra-logo.png') }}" class="w-30">
+            </div>
+            
             <p class="mt-2 text-sm text-gray-500">
                 Sign in to your account
             </p>

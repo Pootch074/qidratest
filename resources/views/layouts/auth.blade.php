@@ -8,7 +8,7 @@
     @yield('header')
     @livewireStyles
   </head>
-  <body class="qidraBg bg-gray-200 flex min-h-screen items-center justify-center" style="background-image: url('{{ Vite::asset('resources/images/login-background.png') }}')">
+  <body class="qidraBg bg-gray-200 flex min-h-screen items-center justify-center" style="background-image: url('{{ Vite::asset('resources/images/login-background2.png') }}')">
 
     <div class="container-fluid">
         @yield('content')
