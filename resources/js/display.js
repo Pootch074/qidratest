@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const alertAudio = new Audio("/audio/alert1.mp3");
+    const alertAudio = new Audio(window.alertAudioUrl);
+
 
     let announcedTransactions = new Map();
     let speechQueue = [];
