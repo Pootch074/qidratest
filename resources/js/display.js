@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const alertAudio = new Audio("/audio/alert1.mp3");
+
     let announcedTransactions = new Map();
     let speechQueue = [];
     let speaking = false;
@@ -61,56 +63,77 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /** ---------------- Speech Announcement ---------------- **/
-    let voiceIndex = 2;
-    let availableVoices = [];
+let voiceIndex = 2;
+let availableVoices = [];
 
-    function loadVoices() {
-        availableVoices = window.speechSynthesis.getVoices();
-        if (!availableVoices.length) {
-            window.speechSynthesis.onvoiceschanged = () => {
-                availableVoices = window.speechSynthesis.getVoices();
-            };
-        }
+function loadVoices() {
+    availableVoices = window.speechSynthesis.getVoices();
+    if (!availableVoices.length) {
+        window.speechSynthesis.onvoiceschanged = () => {
+            availableVoices = window.speechSynthesis.getVoices();
+        };
     }
-    loadVoices();
+}
+loadVoices();
 
-    function announce(formattedQueue, stepNumber, windowNumber, repeat) {
-        const message = `Client number ${formattedQueue}, please proceed to step ${stepNumber} window ${windowNumber}.`;
-        speechQueue.push({ message, repeat });
-        speakNext();
-    }
+function announce(formattedQueue, stepNumber, windowNumber, repeat) {
+    const message = `Client number ${formattedQueue}, please proceed to step ${stepNumber} window ${windowNumber}.`;
+    speechQueue.push({ message, repeat });
+    speakNext();
+}
 
-    function speakNext() {
-        if (speaking || speechQueue.length === 0) return;
+function speakNext() {
+    if (speaking || speechQueue.length === 0) return;
 
-        speaking = true;
-        const { message, repeat } = speechQueue.shift();
-        let count = 0;
+    speaking = true;
+    const { message, repeat } = speechQueue.shift();
+    let count = 0;
 
-        const speakMessage = () => {
-            if (count >= repeat) {
-                speaking = false;
-                speakNext();
-                return;
-            }
-            count++;
-            const utterance = new SpeechSynthesisUtterance(message);
-            utterance.lang = "en-US";
-            utterance.rate = 0.8;
-            utterance.pitch = 1;
-            utterance.volume = 1;
+    const playAlertThenSpeak = () => {
+        // Play alert sound once per batch (reuse global)
+        alertAudio.currentTime = 0; // rewind if needed
 
-            utterance.voice =
-                availableVoices.length > voiceIndex
-                    ? availableVoices[voiceIndex]
-                    : availableVoices[0];
-
-            utterance.onend = speakMessage;
-            window.speechSynthesis.speak(utterance);
+        alertAudio.onended = () => {
+            // Start first speech after alert finishes
+            speakMessage();
         };
 
-        speakMessage();
-    }
+        alertAudio.play().catch(err => {
+            console.error("Failed to play alert:", err);
+            // Fallback: still start speech
+            speakMessage();
+        });
+    };
+
+    const speakMessage = () => {
+        if (count >= repeat) {
+            speaking = false;
+            speakNext(); // move to next in queue
+            return;
+        }
+
+        const utterance = new SpeechSynthesisUtterance(message);
+        utterance.lang = "en-US";
+        utterance.rate = 0.8;
+        utterance.pitch = 1;
+        utterance.volume = 1;
+
+        utterance.voice =
+            availableVoices.length > voiceIndex
+                ? availableVoices[voiceIndex]
+                : availableVoices[0];
+
+        utterance.onend = () => {
+            count++;
+            speakMessage(); // repeat speech without replaying alert
+        };
+
+        window.speechSynthesis.speak(utterance);
+    };
+
+    playAlertThenSpeak();
+}
+
 
     /** ---------------- Fetch Steps ---------------- **/
     function fetchSteps() {
