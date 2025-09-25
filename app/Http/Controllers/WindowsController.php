@@ -30,38 +30,33 @@ class WindowsController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        $request->validate([
-            'step_id' => 'required|exists:steps,id',
-            'window_number' => 'required|integer|min:1|max:10',
-        ]);
+    $request->validate([
+        'step_id' => 'required|exists:steps,id',
+    ]);
 
-        // Ensure step belongs to user's section
-        $step = Step::where('id', $request->step_id)
-            ->where('section_id', $user->section_id)
-            ->firstOrFail();
+    // ✅ Ensure the step belongs to the user's section
+    $step = Step::where('id', $request->step_id)
+        ->where('section_id', $user->section_id)
+        ->firstOrFail();
 
-        // Check if window number already exists for this step
-        $exists = Window::where('step_id', $step->id)
-            ->where('window_number', $request->window_number)
-            ->exists();
+    // ✅ Find the latest window number for this step
+    $latestWindow = Window::where('step_id', $step->id)
+        ->max('window_number');
 
-        if ($exists) {
-            return redirect()->back()
-                ->withErrors(['window_number' => 'This window number already exists for the selected step.'])
-                ->withInput();
-        }
+    $nextWindowNumber = $latestWindow ? $latestWindow + 1 : 1;
 
-        // Create the window
-        Window::create([
-            'step_id' => $step->id,
-            'window_number' => $request->window_number,
-        ]);
+    // ✅ Create the window with auto-incremented number
+    Window::create([
+        'step_id'       => $step->id,
+        'window_number' => $nextWindowNumber,
+    ]);
 
-        return redirect()->back()->with('success', 'Window created successfully!');
-    }
+    return redirect()->back()->with('success', "Window #{$nextWindowNumber} created successfully!");
+}
+
 
     public function destroy($id)
     {

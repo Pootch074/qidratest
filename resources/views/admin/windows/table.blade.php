@@ -25,11 +25,7 @@
                         </select>
                     </div>
 
-                    <div class="mb-4">
-                        <label for="window_number" class="block text-sm font-medium text-gray-700">Window Number</label>
-                        <input type="number" id="window_number" name="window_number" min="1" max="10"
-                            class="mt-1 block w-full border rounded-md p-2" required>
-                    </div>
+
 
                     <div class="flex justify-end space-x-3">
                         <button type="button" id="cancelAddUser" class="text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-gray-300 dark:focus:ring-gray-800 shadow-lg shadow-gray-500/50 dark:shadow-lg dark:shadow-gray-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Cancel</button>
@@ -53,7 +49,7 @@
                 <table class="min-w-full divide-y divide-gray-200 text-gray-700">
                     <thead class="bg-[#2e3192] text-white sticky top-0 z-10">
                         <tr>
-                            <th class="text-left px-6 py-3 font-semibold tracking-wide rounded-tl-lg">Step</th>
+                            <th class="text-left px-6 py-3 font-semibold tracking-wide rounded-tl-lg">Step Number</th>
                             <th class="text-left px-6 py-3 font-semibold tracking-wide">Window Number</th>
                             <th class="text-left px-6 py-3 font-semibold tracking-wide text-center rounded-tr-lg">Actions</th>
                         </tr>
