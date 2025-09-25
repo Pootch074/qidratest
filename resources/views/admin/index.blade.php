@@ -13,46 +13,49 @@
             {{-- Waiting Clients --}}
             <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
                 <p class="text-lg font-semibold text-gray-600">Waiting Clients</p>
-                <p class="text-2xl font-bold text-blue-600">{{ $waitingCount }}</p>
+                <p class="text-2xl font-bold text-blue-600 waitingCount">{{ $waitingCount }}</p>
             </div>
 
             {{-- Pending Clients --}}
             <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
                 <p class="text-lg font-semibold text-gray-600">Pending Clients</p>
-                <p class="text-2xl font-bold text-yellow-600">{{ $pendingCount }}</p>
+                <p class="text-2xl font-bold text-yellow-600 pendingCount">{{ $pendingCount }}</p>
             </div>
 
             {{-- Serving Clients --}}
             <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
                 <p class="text-lg font-semibold text-gray-600">Serving Clients</p>
-                <p class="text-2xl font-bold text-green-600">{{ $servingCount }}</p>
+                <p class="text-2xl font-bold text-green-600 servingCount">{{ $servingCount }}</p>
             </div>
 
-            {{-- Priority Clients (visible only if section_id == 15) --}}
-            @auth
-                @if (Auth::user()->section_id == 15)
-                    <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
-                        <p class="text-lg font-semibold text-gray-600">Priority Clients</p>
-                        <p class="text-2xl font-bold text-red-600">{{ $priorityCount }}</p>
-                    </div>
-                @endif
-            @endauth
+{{-- Priority Clients (visible only if section_id == 15) --}}
+@auth
+    @if (Auth::user()->section_id == 15)
+        <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
+            <p class="text-lg font-semibold text-gray-600">Priority Clients</p>
+            <p class="text-2xl font-bold text-red-600 priorityCount">{{ $priorityCount }}</p>
+        </div>
+    @endif
+@endauth
+
 
 
             {{-- Regular Clients --}}
             <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
                 <p class="text-lg font-semibold text-gray-600">Regular Clients</p>
-                <p class="text-2xl font-bold text-gray-800">{{ $regularCount }}</p>
+                <p class="text-2xl font-bold text-gray-800 regularCount">{{ $regularCount }}</p>
             </div>
 
             {{-- Completed Clients --}}
             <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
                 <p class="text-lg font-semibold text-gray-600">Completed Clients</p>
-                <p class="text-2xl font-bold text-gray-800">{{ $completedCount }}</p>
+                <p class="text-2xl font-bold text-gray-800 completedCount">{{ $completedCount }}</p>
             </div>
         </div>
-        {{-- Transactions table --}}
-        @include('admin.transactions.table') {{-- Table partial --}}
+        <div id="transactionsTableContainer">
+            @include('admin.transactions.table')
+        </div>
+
     </div>
 </div>
 @endsection
@@ -60,54 +63,34 @@
 @section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const modal = document.getElementById('addUserModal');
-    const openBtn = document.getElementById('openAddUserModal');
-    const closeBtn = document.getElementById('closeModal');
-    const addUserForm = document.getElementById('addUserForm');
 
-    if (openBtn && closeBtn && modal && addUserForm) {
-        openBtn.addEventListener('click', () => modal.classList.remove('hidden'));
-        closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
 
-        addUserForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-
-            fetch("{{ route('admin.users.store') }}", {
-                method: 'POST',
-                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                body: formData
-            })
+    // Function to fetch latest transactions
+    const fetchTransactions = () => {
+        fetch("{{ route('admin.transactions.realtime') }}")
             .then(res => res.json())
             .then(data => {
-                if (data.success) {
-                    const u = data.user;
-                    const row = `
-                        <tr id="userRow-${u.id}" class="bg-white border-b hover:bg-gray-50">
-                            <td class="px-6 py-4">${u.first_name}</td>
-                            <td class="px-6 py-4">${u.last_name}</td>
-                            <td class="px-6 py-4">${u.email}</td>
-                            <td class="px-6 py-4">${u.position || '-'}</td>
-                            <td class="px-6 py-4">${u.user_type}</td>
-                            <td class="px-6 py-4">${u.assigned_category || '-'}</td>
-                            <td class="px-6 py-4">${u.window_id || '-'}</td>
-                            <td class="px-6 py-4">${u.step_id || '-'}</td>
-                            <td class="px-6 py-4 space-x-2">
-                                <a href="#" class="font-medium text-green-600 hover:underline">Edit</a>
-                                <button onclick="deleteUser(${u.id})" class="font-medium text-red-600 hover:underline">Delete</button>
-                            </td>
-                        </tr>`;
+                // Update counts
+                document.querySelector('.waitingCount').textContent = data.counts.waitingCount;
+                document.querySelector('.pendingCount').textContent = data.counts.pendingCount;
+                document.querySelector('.servingCount').textContent = data.counts.servingCount;
+                @if(Auth::user()->section_id == 15)
+                    document.querySelector('.priorityCount').textContent = data.counts.priorityCount;
+                @endif
+                document.querySelector('.regularCount').textContent = data.counts.regularCount;
+                document.querySelector('.completedCount').textContent = data.counts.completedCount;
 
-                    document.querySelector('#usersTable tbody').insertAdjacentHTML('beforeend', row);
-                    modal.classList.add('hidden');
-                    this.reset();
-                } else {
-                    alert('Error: ' + data.message);
-                }
+                // Update transactions table
+                document.querySelector('#transactionsTableContainer').innerHTML = data.table;
             })
             .catch(err => console.error(err));
-        });
-    }
+    };
+
+    // Fetch immediately
+    fetchTransactions();
+
+    // Fetch every 5 seconds (5000 ms)
+    setInterval(fetchTransactions, 2000);
 });
 </script>
 @endsection

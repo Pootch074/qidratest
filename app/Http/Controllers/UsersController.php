@@ -114,63 +114,75 @@ class UsersController extends Controller
     }
 
     public function admin()
-    {
-        $user = Auth::user();
-        $sectionId = $user->section_id;
+{
+    $user = Auth::user();
+    $sectionId = $user->section_id;
 
-        // ✅ Transaction counts filtered by user's section
-        $waitingCount  = Transaction::where('queue_status', 'waiting')
-            ->where('section_id', $sectionId)
-            ->count();
-        $pendingCount  = Transaction::where('queue_status', 'pending')
-            ->where('section_id', $sectionId)
-            ->count();
-        $servingCount  = Transaction::where('queue_status', 'serving')
-            ->where('section_id', $sectionId)
-            ->count();
+    // ✅ Transaction counts filtered by user's section and only for today
+    $waitingCount  = Transaction::where('queue_status', 'waiting')
+        ->where('section_id', $sectionId)
+        ->whereDate('created_at', now())
+        ->count();
 
-        $priorityCount = Transaction::where('client_type', 'priority')
-            ->where('section_id', $sectionId)
-            ->count();
-        $regularCount  = Transaction::where('client_type', 'regular')
-            ->where('section_id', $sectionId)
-            ->count();
-        $completedCount  = Transaction::where('queue_status', 'completed')
-            ->where('section_id', $sectionId)
-            ->count();
+    $pendingCount  = Transaction::where('queue_status', 'pending')
+        ->where('section_id', $sectionId)
+        ->whereDate('created_at', now())
+        ->count();
 
-        // ✅ Users in the same section
-        $userColumns = [
-            'first_name'        => 'First Name',
-            'last_name'         => 'Last Name',
-            'email'             => 'Email',
-            'position'          => 'Position',
-            'user_type'         => 'User Type',
-            'assigned_category' => 'Category',
-            'window_id'         => 'Window ID',
-        ];
+    $servingCount  = Transaction::where('queue_status', 'serving')
+        ->where('section_id', $sectionId)
+        ->whereDate('created_at', now())
+        ->count();
 
-        $users = User::where('section_id', $sectionId)
-            ->latest()
-            ->get();
+    $priorityCount = Transaction::where('client_type', 'priority')
+        ->where('section_id', $sectionId)
+        ->whereDate('created_at', now())
+        ->count();
 
-        // ✅ Transactions filtered by section and ordered by latest queue_number
-        $transactions = Transaction::where('section_id', $sectionId)
-            ->orderBy('queue_number', 'desc')
-            ->get();
+    $regularCount  = Transaction::where('client_type', 'regular')
+        ->where('section_id', $sectionId)
+        ->whereDate('created_at', now())
+        ->count();
 
-        return view('admin.index', compact(
-            'transactions',
-            'users',
-            'userColumns',
-            'waitingCount',
-            'pendingCount',
-            'servingCount',
-            'priorityCount',
-            'regularCount',
-            'completedCount'
-        ));
-    }
+    $completedCount  = Transaction::where('queue_status', 'completed')
+        ->where('section_id', $sectionId)
+        ->whereDate('created_at', now())
+        ->count();
+
+    // ✅ Users in the same section
+    $userColumns = [
+        'first_name'        => 'First Name',
+        'last_name'         => 'Last Name',
+        'email'             => 'Email',
+        'position'          => 'Position',
+        'user_type'         => 'User Type',
+        'assigned_category' => 'Category',
+        'window_id'         => 'Window ID',
+    ];
+
+    $users = User::where('section_id', $sectionId)
+        ->latest()
+        ->get();
+
+    // ✅ Transactions filtered by section, only today, ordered by latest queue_number
+    $transactions = Transaction::where('section_id', $sectionId)
+        ->whereDate('created_at', now())
+        ->orderBy('queue_number', 'desc')
+        ->get();
+
+    return view('admin.index', compact(
+        'transactions',
+        'users',
+        'userColumns',
+        'waitingCount',
+        'pendingCount',
+        'servingCount',
+        'priorityCount',
+        'regularCount',
+        'completedCount'
+    ));
+}
+
 
     public function users()
     {

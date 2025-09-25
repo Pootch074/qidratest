@@ -4,30 +4,31 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Transaction;
+use Illuminate\Support\Facades\Auth;
 
 class TransactionsController extends Controller
 {
-    public function index()
-    {
-        $transactions = Transaction::latest()->get();
-        return view('admin.transactions.table', compact('transactions'));
-    }
-    public function show(Transaction $transaction)
-    {
-        return view('admin.transactions.show', compact('transaction'));
-    }
+    // public function index()
+    // {
+    //     $transactions = Transaction::latest()->get();
+    //     return view('admin.transactions.table', compact('transactions'));
+    // }
+    // public function show(Transaction $transaction)
+    // {
+    //     return view('admin.transactions.show', compact('transaction'));
+    // }
 
-    public function edit(Transaction $transaction)
-    {
-        return view('admin.transactions.edit', compact('transaction'));
-    }
+    // public function edit(Transaction $transaction)
+    // {
+    //     return view('admin.transactions.edit', compact('transaction'));
+    // }
 
-    public function destroy(Transaction $transaction)
-    {
-        $transaction->delete();
-        return redirect()->route('admin.transactions.index')
-            ->with('success', 'Transaction deleted successfully.');
-    }
+    // public function destroy(Transaction $transaction)
+    // {
+    //     $transaction->delete();
+    //     return redirect()->route('admin.transactions.index')
+    //         ->with('success', 'Transaction deleted successfully.');
+    // }
     public function store(Request $request)
     {
         $clientType = $request->input('client_type', 'regular'); // default: regular
@@ -60,4 +61,38 @@ class TransactionsController extends Controller
             'display_number' => $displayNumber,
         ]);
     }
+
+
+
+
+
+
+    public function realtimeTransactions()
+    {
+        $user = Auth::user();
+        $sectionId = $user->section_id;
+
+        $transactions = Transaction::where('section_id', $sectionId)
+            ->whereDate('created_at', now())
+            ->orderBy('queue_number', 'desc')
+            ->get();
+
+        $counts = [
+            'waitingCount'   => $transactions->where('queue_status', 'waiting')->count(),
+            'pendingCount'   => $transactions->where('queue_status', 'pending')->count(),
+            'servingCount'   => $transactions->where('queue_status', 'serving')->count(),
+            'priorityCount'  => $transactions->where('client_type', 'priority')->count(),
+            'regularCount'   => $transactions->where('client_type', 'regular')->count(),
+            'completedCount' => $transactions->where('queue_status', 'completed')->count(),
+        ];
+
+        // Return counts + table HTML as JSON
+        $tableHtml = view('admin.transactions.table', compact('transactions'))->render();
+
+        return response()->json([
+            'counts' => $counts,
+            'table'  => $tableHtml,
+        ]);
+    }
+
 }
