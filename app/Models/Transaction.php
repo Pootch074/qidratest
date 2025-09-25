@@ -16,6 +16,7 @@ class Transaction extends Model
         'step_id',
         'window_id',
         'client_type',
+        'recall_count',
         'ticket_status',
         'queue_status'
     ];

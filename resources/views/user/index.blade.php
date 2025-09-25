@@ -328,8 +328,6 @@ const fetchQueues = () => {
     bindActionWithConfirm('nextRegularBtn', "{{ route('users.nextRegular') }}", "Proceed to the next Regular queue?");
     bindActionWithConfirm('nextPriorityBtn', "{{ route('users.nextPriority') }}", "Proceed to the next Priority queue?");
     bindActionWithConfirm('returneeBtn', "{{ route('users.nextReturnee') }}", "Proceed to the next Returnee queue?");
-
-
     bindActionWithConfirm('skipBtn', "{{ route('users.skipQueue') }}", "Are you sure you want to skip this queue?");
     bindActionWithConfirm('recallBtn', "{{ route('users.recallQueue') }}", "Are you sure you want to recall this queue?");
     bindActionWithConfirm('deferBtn', "{{ route('users.returnQueue') }}", "Mark the current serving client as returnee?");

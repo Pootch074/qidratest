@@ -575,6 +575,7 @@ class UsersController extends Controller
                 // Move to the next step
                 $current->update([
                     'step_id'      => $nextStep->id,
+                    'recall_count' => null,
                     'queue_status' => 'waiting',
                     'window_id'    => null,
                 ]);
