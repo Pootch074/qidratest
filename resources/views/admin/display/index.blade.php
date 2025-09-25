@@ -59,6 +59,10 @@
         latestTransaction: "{{ url('/display/transactions/latest') }}"
     };
 </script>
+<script>
+    const alertAudio = new Audio("{{ asset('audio/alert1.mp3') }}");
+</script>
+
 
 @vite('resources/js/display.js')
 @endsection
