@@ -200,47 +200,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /** ---------------- Fetch Latest Transaction ---------------- **/
     function fetchLatestTransaction() {
-        fetch(window.appRoutes.latestTransaction)
-            .then((res) => res.json())
-            .then((data) => {
-                if (!data || !data.id) return;
+    fetch(window.appRoutes.latestTransaction)
+        .then((res) => res.json())
+        .then((data) => {
+            if (!data || !data.length) return; // check array
 
-                const lastAnnounced = announcedTransactions.get(data.id) ?? {
+            data.forEach((tx) => {
+                const lastAnnounced = announcedTransactions.get(tx.id) ?? {
                     recall_count: null,
                     spokenCount: 0,
                 };
                 let repeatTimes;
 
-                if (data.recall_count == null) {
+                if (tx.recall_count == null || tx.recall_count === 0) {
                     // Normal transaction → speak twice if not yet spoken twice
                     repeatTimes = 2 - lastAnnounced.spokenCount;
                     if (repeatTimes <= 0) return;
                 } else {
                     // Recall transaction → speak once if recall_count changed
-                    if (lastAnnounced.recall_count === data.recall_count)
-                        return;
+                    if (lastAnnounced.recall_count === tx.recall_count) return;
                     repeatTimes = 1;
                 }
 
                 const formattedQueue =
-                    data.client_type?.charAt(0).toUpperCase() +
-                    String(data.queue_number).padStart(3, "0");
+                    tx.client_type?.charAt(0).toUpperCase() +
+                    String(tx.queue_number).padStart(3, "0");
 
                 announce(
                     formattedQueue,
-                    data.step_number,
-                    data.window_number,
+                    tx.step_number,
+                    tx.window_number,
                     repeatTimes
                 );
 
-                // Save/update the announcement state
-                announcedTransactions.set(data.id, {
-                    recall_count: data.recall_count,
-                    spokenCount: (lastAnnounced.spokenCount || 0) + repeatTimes,
+                announcedTransactions.set(tx.id, {
+                    recall_count: tx.recall_count,
+                    spokenCount:
+                        (lastAnnounced.spokenCount || 0) + repeatTimes,
                 });
-            })
-            .catch((err) => console.error("Error fetching transactions:", err));
-    }
+            });
+        })
+        .catch((err) => console.error("Error fetching transactions:", err));
+}
+
 
     /** ---------------- Initial Load + Intervals ---------------- **/
     fetchSteps();
