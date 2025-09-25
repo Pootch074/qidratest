@@ -53,26 +53,26 @@
                 <table class="min-w-full divide-y divide-gray-200 text-gray-700">
                     <thead class="bg-[#2e3192] text-white sticky top-0 z-10">
                         <tr>
-                            <th class="px-6 py-3 font-semibold tracking-wide rounded-tl-lg">Step</th>
-                            <th class="px-6 py-3 font-semibold tracking-wide">Window Number</th>
-                            <th class="px-6 py-3 font-semibold tracking-wide text-center rounded-tr-lg">Actions</th>
+                            <th class="text-left px-6 py-3 font-semibold tracking-wide rounded-tl-lg">Step</th>
+                            <th class="text-left px-6 py-3 font-semibold tracking-wide">Window Number</th>
+                            <th class="text-left px-6 py-3 font-semibold tracking-wide text-center rounded-tr-lg">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200 overflow-y-auto">
                         @forelse($windows as $window)
                             <tr class="odd:bg-white even:bg-gray-200 hover:bg-indigo-50 transition duration-200" data-id="{{ $window->id }}">
                                 {{-- ✅ Step (read-only) --}}
-                                <td class="text-center px-6 py-3">
+                                <td class="text-left px-6 py-3">
                                     {{ $window->step->step_number ?? '—' }} - {{ $window->step->step_name ?? '—' }}
                                 </td>
 
                                 {{-- Window Number --}}
-                                <td class="text-center px-6 py-3 font-medium text-gray-700">
+                                <td class="text-left  px-6 py-3 font-medium text-gray-700">
                                     {{ $window->window_number }}
                                 </td>
 
                                 {{-- Delete Button --}}
-                                <td class="px-6 py-3 text-center">
+                                <td class="px-6 py-3 text-left ">
                                     @if($window->window_number == 1)
                                         <button class="bg-gray-400 text-white px-4 py-1.5 rounded-lg shadow-sm cursor-not-allowed" disabled>
                                             <i class="fas fa-ban"></i> Protected

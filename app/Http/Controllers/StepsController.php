@@ -21,27 +21,33 @@ class StepsController extends Controller
         return view('admin.steps.table', compact('steps'));
     }
 
-    public function store(Request $request)
+   public function store(Request $request)
 {
     $request->validate([
-        'step_number' => 'required|integer|min:1|max:10',
-        'step_name'   => 'required|string|max:255',
+        'step_name' => 'required|string|max:255',
     ]);
 
+    $latestStep = Step::where('section_id', Auth::user()->section_id)
+        ->max('step_number');
+
+    $nextStepNumber = $latestStep ? $latestStep + 1 : 1;
+
+    // ✅ Create the step and capture it
     $step = Step::create([
-        'step_number' => $request->step_number,
-        'step_name'   => $request->step_name,
-        'section_id'  => Auth::user()->section_id, // assuming steps are tied to sections
+        'section_id'   => Auth::user()->section_id,
+        'step_number'  => $nextStepNumber,
+        'step_name'    => $request->step_name,
     ]);
 
-    // ✅ Automatically create the first window
+    // ✅ Automatically create the first window for this step
     Window::create([
         'window_number' => 1,
         'step_id'       => $step->id,
     ]);
 
-    return redirect()->route('admin.steps')->with('success', 'Step created with default window.');
+    return redirect()->route('admin.steps')->with('success', 'Step and its first window added successfully.');
 }
+
 
     public function update(Request $request, $id)
     {

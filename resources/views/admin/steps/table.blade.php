@@ -15,56 +15,45 @@
                 </div>
 
                 <form id="addStepForm" method="POST" action="{{ route('steps.store') }}">
-                    @csrf
-                    <div class="mb-4">
-                        <label for="step_number" class="block text-sm font-medium text-gray-700">Step Number</label>
-                        <input type="number" id="step_number" name="step_number" 
-                            min="1" max="10"
-                            class="mt-1 block w-full border rounded-md p-2"
-                            required>
-                    </div>
+    @csrf
+    <div class="mb-4">
+        <label for="step_name" class="block text-sm font-medium text-gray-700">Step Name</label>
+        <select id="step_name" name="step_name" 
+                class="mt-1 block w-full border rounded-md p-2" required>
+            <option value="None">None</option>
+            <option value="AppealProcessing">Appeal / Complaint Processing</option>
+            <option value="Assessment">Assessment</option>
+            <option value="CaseConference">Case Conference</option>
+            <option value="CaseStudyPreparation">Case Study Preparation</option>
+            <option value="Counseling">Counseling</option>
+            <option value="DataUpdate">Data Update / Maintenance</option>
+            <option value="Documentation">Documentation</option>
+            <option value="Encode">Encoding</option>
+            <option value="EmergencyResponse">Emergency / Urgent Action</option>
+            <option value="EvaluationReport">Evaluation Report</option>
+            <option value="FollowUp">Follow-up / Monitoring</option>
+            <option value="HomeVisit">Home Visit</option>
+            <option value="InitialInterview">Initial Interview</option>
+            <option value="Orientation">Orientation / Briefing</option>
+            <option value="Payment">Payment</option>
+            <option value="Preassess">Pre-assessment</option>
+            <option value="Release">Release</option>
+            <option value="Referral">Referral to Other Agencies</option>
+            <option value="Reassessment">Re-assessment</option>
+            <option value="Validation">Validation</option>
+            <option value="Verification">Verification</option>
+            <option value="Approval">Approval</option>
+            <option value="ClientFeedback">Client Feedback / Survey</option>
+            <option value="Closure">Case Closure</option>
+        </select>
+    </div>
 
-                    <div class="mb-4">
-                        <label for="step_name" class="block text-sm font-medium text-gray-700">Step Name</label>
-                        <select id="step_name" name="step_name" 
-                                class="mt-1 block w-full border rounded-md p-2">
-                                <option value="None">None</option>
-                                <option value="AppealProcessing">Appeal / Complaint Processing</option>
-                                <option value="Assessment">Assessment</option>
-                                <option value="CaseConference">Case Conference</option>
-                                <option value="CaseStudyPreparation">Case Study Preparation</option>
-                                <option value="Counseling">Counseling</option>
-                                <option value="DataUpdate">Data Update / Maintenance</option>
-                                <option value="Documentation">Documentation</option>
-                                <option value="Encode">Encoding</option>
-                                <option value="EmergencyResponse">Emergency / Urgent Action</option>
-                                <option value="EvaluationReport">Evaluation Report</option>
-                                <option value="FollowUp">Follow-up / Monitoring</option>
-                                <option value="HomeVisit">Home Visit</option>
-                                <option value="InitialInterview">Initial Interview</option>
-                                <option value="Orientation">Orientation / Briefing</option>
-                                <option value="Payment">Payment</option>
-                                <option value="Preassess">Pre-assessment</option>
-                                <option value="Release">Release</option>
-                                <option value="Referral">Referral to Other Agencies</option>
-                                <option value="Reassessment">Re-assessment</option>
-                                <option value="Validation">Validation</option>
-                                <option value="Verification">Verification</option>
-                                <option value="Approval">Approval</option>
-                                <option value="ClientFeedback">Client Feedback / Survey</option>
-                                <option value="Closure">Case Closure</option>
-
-
-                            {{-- add more if needed --}}
-                        </select>
-                    </div>
-
-                    <div class="flex justify-end space-x-3">
+<div class="flex justify-end space-x-3">
                         <button type="button" id="cancelAddUser" class="text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-gray-300 dark:focus:ring-gray-800 shadow-lg shadow-gray-500/50 dark:shadow-lg dark:shadow-gray-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Cancel</button>
                         <button type="submit" class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Save Step</button>
                     </div>
-                    
-                </form>
+</form>
+
             </div>
         </div>
         {{-- Header & Add Step --}}
@@ -80,21 +69,21 @@
                 <table class="min-w-full divide-y divide-gray-200 text-gray-700">
                     <thead class="bg-[#2e3192] text-white sticky top-0 z-10">
                         <tr>
-                            <th class="px-6 py-3 font-semibold tracking-wide rounded-tl-lg">Step Number</th>
-                            <th class="px-6 py-3 font-semibold tracking-wide">Step Name</th>
-                            <th class="px-6 py-3 font-semibold tracking-wide text-center rounded-tr-lg">Actions</th>
+                            <th class="text-left px-6 py-3 font-semibold tracking-wide rounded-tl-lg">Step Number</th>
+                            <th class="text-left px-6 py-3 font-semibold tracking-wide">Step Name</th>
+                            <th class="text-left px-6 py-3 font-semibold tracking-wide rounded-tr-lg">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200 overflow-y-auto">
                         @forelse($steps as $step)
                             <tr class="odd:bg-white even:bg-gray-200 hover:bg-indigo-50 transition duration-200" data-id="{{ $step->id }}">
                                 {{-- Step Number --}}
-                                <td class="text-center px-6 py-3 font-medium text-gray-700">
+                                <td class="text-left px-6 py-3 font-medium text-gray-700">
                                     {{ $step->step_number }}
                                 </td>
 
                                 {{-- Editable Step Name --}}
-                                <td class="text-center px-6 py-3">
+                                <td class="text-left px-6 py-3">
                                     <span class="editable-step-name cursor-pointer text-gray-800 hover:text-blue-600"
                                         data-id="{{ $step->id }}">
                                         {{ $step->step_name }}
@@ -106,7 +95,7 @@
                                 </td>
 
                                 {{-- Delete Button --}}
-                                <td class="px-6 py-3 text-center">
+                                <td class="px-6 py-3 text-left">
                                     @if($step->step_number === 1)
                                         <button class="bg-gray-400 text-white px-4 py-1.5 rounded-lg shadow-sm cursor-not-allowed" disabled>
                                             <i class="fas fa-ban"></i> Protected
