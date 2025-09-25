@@ -78,7 +78,7 @@
             {{-- Step & Window --}}
             <div class="bg-[#2e3192] text-white text-center font-bold text-2xl py-2">
                 @if($stepNumber || $windowNumber)
-                    STEP {{ $stepNumber ?? '-' }} &nbsp;WINDOW {{ $windowNumber ?? '-' }}
+                    STEP {{ $stepNumber ?? '-' }}&nbsp;WINDOW {{ $windowNumber ?? '-' }}
                 @endif
             </div>
 
