@@ -29,7 +29,8 @@ class DisplayController extends Controller
                 ->leftJoin('windows', 'steps.id', '=', 'windows.step_id')
                 ->leftJoin('transactions', function ($join) {
                     $join->on('windows.id', '=', 'transactions.window_id')
-                        ->where('transactions.queue_status', '=', 'serving'); // <-- Only serving
+                        ->where('transactions.queue_status', '=', 'serving')
+                        ->whereDate('transactions.created_at', now());
                 })
                 ->where('steps.section_id', $user->section_id)
                 ->select(
@@ -88,23 +89,25 @@ class DisplayController extends Controller
 
     // App\Http\Controllers\DisplayController.php
     public function getLatestTransaction()
-    {
-        $tx = Transaction::with(['step', 'window'])
-            ->where('queue_status', 'serving')
-            ->latest('updated_at')
-            ->first();
+{
+    $tx = Transaction::with(['step', 'window'])
+        ->where('queue_status', 'serving')
+        ->whereDate('created_at', now()) // Only today's transactions
+        ->latest('updated_at')
+        ->first();
 
-        if (!$tx) {
-            return response()->json([]);
-        }
-
-        return response()->json([
-            'id'            => $tx->id,
-            'queue_number'  => $tx->queue_number,
-            'client_type'   => $tx->client_type,
-            'step_number'   => $tx->step->step_number ?? null,
-            'window_number' => $tx->window->window_number ?? null,
-            'recall_count'  => $tx->recall_count ?? 0, // new field
-        ]);
+    if (!$tx) {
+        return response()->json([]);
     }
+
+    return response()->json([
+        'id'            => $tx->id,
+        'queue_number'  => $tx->queue_number,
+        'client_type'   => $tx->client_type,
+        'step_number'   => $tx->step->step_number ?? null,
+        'window_number' => $tx->window->window_number ?? null,
+        'recall_count'  => $tx->recall_count ?? 0, // new field
+    ]);
+}
+
 }
