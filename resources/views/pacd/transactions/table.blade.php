@@ -17,7 +17,7 @@
                 <thead class="bg-[#2e3192] text-white sticky top-0 z-10">
                     <tr>
                         <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider rounded-tl-lg">Queue Number</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Full Name</th>
+                        {{-- <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Full Name</th> --}}
                         <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Client Type</th>
                         <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Step</th>
                         <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Section</th>
@@ -47,10 +47,7 @@
                                 {{ $prefix . str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT) }}
 
                             </td>
-                            <td class="px-6 py-4">{{ $transaction->full_name ?? '—' }}</td>
-
-
-                            {{-- Client Type Badge --}}
+                            {{-- <td class="px-6 py-4">{{ $transaction->full_name ?? '—' }}</td> --}}
                             <td class="px-6 py-4">
                                 @if (strtolower($transaction->client_type) === 'priority')
                                     <span class="px-2 py-1 rounded-full text-white text-xs bg-[#ee1c25]">
