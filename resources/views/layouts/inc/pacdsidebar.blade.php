@@ -19,29 +19,7 @@
                <img src="{{ Vite::asset('resources/images/icons/scan.png') }}" 
                      alt="Users" 
                      class="shrink-0 w-7 h-7 transition duration-75 group-hover:opacity-80">
-               <span class="ms-3">Scanned Clients</span>
-            </a>
-         </li>
-
-         <li>
-            <a href="{{ route('pacd.transactions.table') }}" 
-               class="flex items-center p-2 text-white rounded-lg group
-               {{ request()->routeIs('pacd.transactions.table') ? 'bg-[#F03D46]' : 'hover:bg-[#5057c9]' }}">
-               <img src="{{ Vite::asset('resources/images/icons/community.png') }}" 
-                     alt="Users" 
-                     class="shrink-0 w-7 h-7 transition duration-75 group-hover:opacity-80">
-               <span class="flex-1 ms-3 whitespace-nowrap">In Queue</span>
-            </a>
-         </li>
-
-         <li>
-            <a href="{{ route('pacd.sections.cards') }}" 
-               class="flex items-center p-2 text-white rounded-lg group
-               {{ request()->routeIs('pacd.sections.cards') ? 'bg-[#F03D46]' : 'hover:bg-[#5057c9]' }}">
-               <img src="{{ Vite::asset('resources/images/icons/ticket.png') }}" 
-                     alt="Users" 
-                     class="shrink-0 w-7 h-7 transition duration-75 group-hover:opacity-80">
-               <span class="flex-1 ms-3 whitespace-nowrap">Manual Ticket</span>
+               <span class="ms-3">Generate Ticket</span>
             </a>
          </li>
 
@@ -55,6 +33,41 @@
                <span class="flex-1 ms-3 whitespace-nowrap">Returnees</span>
             </a>
          </li>
+
+         {{-- <li>
+            <a href="{{ route('pacd') }}" 
+               class="flex items-center p-2 text-white rounded-lg group
+               {{ request()->routeIs('pacd') ? 'bg-[#F03D46]' : 'hover:bg-[#5057c9]' }}">
+               <img src="{{ Vite::asset('resources/images/icons/scan.png') }}" 
+                     alt="Users" 
+                     class="shrink-0 w-7 h-7 transition duration-75 group-hover:opacity-80">
+               <span class="ms-3">Scanned Clients</span>
+            </a>
+         </li> --}}
+
+         <li>
+            <a href="{{ route('pacd.transactions.table') }}" 
+               class="flex items-center p-2 text-white rounded-lg group
+               {{ request()->routeIs('pacd.transactions.table') ? 'bg-[#F03D46]' : 'hover:bg-[#5057c9]' }}">
+               <img src="{{ Vite::asset('resources/images/icons/community.png') }}" 
+                     alt="Users" 
+                     class="shrink-0 w-7 h-7 transition duration-75 group-hover:opacity-80">
+               <span class="flex-1 ms-3 whitespace-nowrap">In Queue</span>
+            </a>
+         </li>
+
+         {{-- <li>
+            <a href="{{ route('pacd.sections.cards') }}" 
+               class="flex items-center p-2 text-white rounded-lg group
+               {{ request()->routeIs('pacd.sections.cards') ? 'bg-[#F03D46]' : 'hover:bg-[#5057c9]' }}">
+               <img src="{{ Vite::asset('resources/images/icons/ticket.png') }}" 
+                     alt="Users" 
+                     class="shrink-0 w-7 h-7 transition duration-75 group-hover:opacity-80">
+               <span class="flex-1 ms-3 whitespace-nowrap">Manual Ticket</span>
+            </a>
+         </li> --}}
+
+         
       </ul>
    </div>
 </aside>
