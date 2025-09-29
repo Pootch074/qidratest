@@ -114,74 +114,74 @@ class UsersController extends Controller
     }
 
     public function admin()
-{
-    $user = Auth::user();
-    $sectionId = $user->section_id;
+    {
+        $user = Auth::user();
+        $sectionId = $user->section_id;
 
-    // ✅ Transaction counts filtered by user's section and only for today
-    $waitingCount  = Transaction::where('queue_status', 'waiting')
-        ->where('section_id', $sectionId)
-        ->whereDate('created_at', now())
-        ->count();
+        // ✅ Transaction counts filtered by user's section and only for today
+        $waitingCount  = Transaction::where('queue_status', 'waiting')
+            ->where('section_id', $sectionId)
+            ->whereDate('created_at', now())
+            ->count();
 
-    $pendingCount  = Transaction::where('queue_status', 'pending')
-        ->where('section_id', $sectionId)
-        ->whereDate('created_at', now())
-        ->count();
+        $pendingCount  = Transaction::where('queue_status', 'pending')
+            ->where('section_id', $sectionId)
+            ->whereDate('created_at', now())
+            ->count();
 
-    $servingCount  = Transaction::where('queue_status', 'serving')
-        ->where('section_id', $sectionId)
-        ->whereDate('created_at', now())
-        ->count();
+        $servingCount  = Transaction::where('queue_status', 'serving')
+            ->where('section_id', $sectionId)
+            ->whereDate('created_at', now())
+            ->count();
 
-    $priorityCount = Transaction::where('client_type', 'priority')
-        ->where('section_id', $sectionId)
-        ->whereDate('created_at', now())
-        ->count();
+        $priorityCount = Transaction::where('client_type', 'priority')
+            ->where('section_id', $sectionId)
+            ->whereDate('created_at', now())
+            ->count();
 
-    $regularCount  = Transaction::where('client_type', 'regular')
-        ->where('section_id', $sectionId)
-        ->whereDate('created_at', now())
-        ->count();
+        $regularCount  = Transaction::where('client_type', 'regular')
+            ->where('section_id', $sectionId)
+            ->whereDate('created_at', now())
+            ->count();
 
-    $completedCount  = Transaction::where('queue_status', 'completed')
-        ->where('section_id', $sectionId)
-        ->whereDate('created_at', now())
-        ->count();
+        $completedCount  = Transaction::where('queue_status', 'completed')
+            ->where('section_id', $sectionId)
+            ->whereDate('created_at', now())
+            ->count();
 
-    // ✅ Users in the same section
-    $userColumns = [
-        'first_name'        => 'First Name',
-        'last_name'         => 'Last Name',
-        'email'             => 'Email',
-        'position'          => 'Position',
-        'user_type'         => 'User Type',
-        'assigned_category' => 'Category',
-        'window_id'         => 'Window ID',
-    ];
+        // ✅ Users in the same section
+        $userColumns = [
+            'first_name'        => 'First Name',
+            'last_name'         => 'Last Name',
+            'email'             => 'Email',
+            'position'          => 'Position',
+            'user_type'         => 'User Type',
+            'assigned_category' => 'Category',
+            'window_id'         => 'Window ID',
+        ];
 
-    $users = User::where('section_id', $sectionId)
-        ->latest()
-        ->get();
+        $users = User::where('section_id', $sectionId)
+            ->latest()
+            ->get();
 
-    // ✅ Transactions filtered by section, only today, ordered by latest queue_number
-    $transactions = Transaction::where('section_id', $sectionId)
-        ->whereDate('created_at', now())
-        ->orderBy('queue_number', 'desc')
-        ->get();
+        // ✅ Transactions filtered by section, only today, ordered by latest queue_number
+        $transactions = Transaction::where('section_id', $sectionId)
+            ->whereDate('created_at', now())
+            ->orderBy('queue_number', 'desc')
+            ->get();
 
-    return view('admin.index', compact(
-        'transactions',
-        'users',
-        'userColumns',
-        'waitingCount',
-        'pendingCount',
-        'servingCount',
-        'priorityCount',
-        'regularCount',
-        'completedCount'
-    ));
-}
+        return view('admin.index', compact(
+            'transactions',
+            'users',
+            'userColumns',
+            'waitingCount',
+            'pendingCount',
+            'servingCount',
+            'priorityCount',
+            'regularCount',
+            'completedCount'
+        ));
+    }
 
 
     public function users()
@@ -230,6 +230,7 @@ class UsersController extends Controller
 
         $users = User::with(['step', 'window'])
             ->where('section_id', $sectionId)
+            ->where('user_type', '!=', 1) // ✅ exclude type 1
             ->latest()
             ->get();
 
@@ -249,6 +250,7 @@ class UsersController extends Controller
 
         return response()->json($formatted);
     }
+
 
 
     public function store(Request $request)
@@ -625,7 +627,6 @@ class UsersController extends Controller
     public function getQueues()
     {
         $user = Auth::user();
-
         // Base query (scoped to logged-in user's section/step/window)
         $baseQuery = Transaction::where('section_id', $user->section_id)
             ->where('step_id', $user->step_id)
@@ -670,7 +671,7 @@ class UsersController extends Controller
             ->get()
             ->map(fn($q) => [
                 'id'              => $q->id, // ✅ Add this
-                'formatted_number'=> 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                'formatted_number' => 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
                 'style_class'     => 'bg-[#2e3192]',
             ]);
 
@@ -681,7 +682,7 @@ class UsersController extends Controller
             ->get()
             ->map(fn($q) => [
                 'id'              => $q->id, // ✅ added
-                'formatted_number'=> 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                'formatted_number' => 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
                 'style_class'     => 'bg-[#ee1c25]',
             ]);
 
@@ -692,7 +693,7 @@ class UsersController extends Controller
             ->get()
             ->map(fn($q) => [
                 'id'              => $q->id, // ✅ Add this
-                'formatted_number'=> 'D' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                'formatted_number' => 'D' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
                 'style_class'     => 'bg-[#f97316]',
             ]);
 
@@ -732,9 +733,9 @@ class UsersController extends Controller
                     default    => 'X' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
                 },
                 'style_class' => match ($q->client_type) {
-                    'regular'  => 'bg-[#2e3192]',
+                    'regular'  => 'bg-[#2e3192] text-8xl h-full flex items-center justify-center',
                     'priority' => 'bg-[#ee1c25] text-8xl h-full flex items-center justify-center',
-                    'deferred' => 'bg-[#f97316]',
+                    'deferred' => 'bg-[#f97316] text-8xl h-full flex items-center justify-center',
                     default    => 'bg-gray-500',
                 },
             ]);
@@ -802,26 +803,28 @@ class UsersController extends Controller
         }
 
         // Find the next step
-$nextStep = Step::where('section_id', $sectionId)
-    ->where('step_number', '>', $transaction->step->step_number)
-    ->orderBy('step_number', 'asc')
-    ->first();
+        $nextStep = Step::where('section_id', $sectionId)
+            ->where('step_number', '>', $transaction->step->step_number)
+            ->orderBy('step_number', 'asc')
+            ->first();
 
 
         if ($nextStep) {
             // Move to next step
             $transaction->step_id = $nextStep->id;
             $transaction->queue_status = 'waiting';
+            $transaction->window_id = null;
+            $transaction->recall_count = null;
             $message = 'Transaction moved to the next step.';
         } else {
             // No more steps → completed
             $transaction->queue_status = 'completed';
+            $transaction->window_id = $user->window_id; // last handler
             $message = 'Transaction completed (no more steps).';
         }
 
-        // Always track which window handled it
-        $transaction->window_id = $user->window_id;
         $transaction->save();
+
 
         return response()->json(['success' => true, 'message' => $message]);
     }
@@ -840,6 +843,4 @@ $nextStep = Step::where('section_id', $sectionId)
     {
         return $this->updatePendingTransaction($request, 'deferred');
     }
-
-
 }

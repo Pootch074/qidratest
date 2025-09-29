@@ -154,24 +154,21 @@
                             </select>
                         </div>
                 
-@if(auth()->user()->section_id == 15)
-    <div id="assignCategoryWrapper">
-        <label class="block text-sm font-medium text-gray-600">Assign Category</label>
-        <select id="assignedCategorySelect" required
-                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="" disabled selected>-- Select Category --</option>
-            <option value="regular">Regular</option>
-            <option value="priority">Priority</option>
-            <option value="both">Both</option>
-        </select>
-    </div>
-@endif
+                        @if(auth()->user()->section_id == 15)
+                            <div id="assignCategoryWrapper">
+                                <label class="block text-sm font-medium text-gray-600">Assign Category</label>
+                                <select id="assignedCategorySelect" required
+                                        class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="" disabled selected>-- Select Category --</option>
+                                    <option value="regular">Regular</option>
+                                    <option value="priority">Priority</option>
+                                    <option value="both">Both</option>
+                                </select>
+                            </div>
+                        @endif
 
-{{-- Hidden field, no name by default --}}
-<input type="hidden" id="assignedCategoryHidden" name="assigned_category" value="both">
-
-
-
+                        {{-- Hidden field, no name by default --}}
+                        <input type="hidden" id="assignedCategoryHidden" name="assigned_category" value="both">
                     </div>
 
                     {{-- Password --}}

@@ -6,7 +6,7 @@
             <thead class="bg-[#2e3192] text-white sticky top-0 z-10">
                 <tr>
                     <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider rounded-tl-lg">Queue Number</th>
-                    <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Full Name</th>
+                    {{-- <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Full Name</th> --}}
                     <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Client Type</th>
                     <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Step</th>
                     <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Section</th>
@@ -19,7 +19,7 @@
                         <td class="px-6 py-4 font-semibold">
                             {{ strtoupper(substr($transaction->client_type, 0, 1)) . str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT) }}
                         </td>
-                        <td class="px-6 py-4">{{ $transaction->full_name ?? '—' }}</td>
+                        {{-- <td class="px-6 py-4">{{ $transaction->full_name ?? '—' }}</td> --}}
 
 
                         {{-- Client Type Badge --}}
