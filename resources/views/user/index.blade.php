@@ -71,32 +71,30 @@
 
 
         {{-- SERVING --}} 
-        <div class="col-span-3 flex flex-col rounded-md h-full bg-white rounded-b-lg border-2 border-[#2e3192] shadow overflow-hidden">
-            {{-- Step & Window --}}
-            <div class="bg-[#2e3192] text-white text-center font-bold text-2xl py-2">
-                @if($stepNumber || $windowNumber)
-                    STEP {{ $stepNumber ?? '-' }}&nbsp;WINDOW {{ $windowNumber ?? '-' }}
-                @endif
-            </div>
+    <div class="col-span-3 flex flex-col rounded-md bg-white rounded-b-lg border-2 border-[#2e3192] shadow overflow-hidden h-[80vh]">
+        <!-- Each child will auto get equal height -->
+        <div class="bg-[#2e3192] text-white text-center font-bold text-2xl py-2">
+            @if($stepNumber || $windowNumber)
+                STEP {{ $stepNumber ?? '-' }}&nbsp;WINDOW {{ $windowNumber ?? '-' }}
+            @endif
+        </div>
 
-            {{-- Office Info --}}
-            <div class="bg-white p-4 text-center font-bold text-lg space-y-1">
-                <p>{{ strtoupper($fieldOffice ?? '-') }}</p>
-                <p>{{ strtoupper($divisionName ?? '-') }}</p>
-                <p>{{ strtoupper($sectionName ?? '-') }}</p>
-            </div>
+        <div class="text-black text-center font-bold py-2">
+            <p>{{ strtoupper($fieldOffice ?? '-') }}</p>
+            <p>{{ strtoupper($divisionName ?? '-') }}</p>
+            <p>{{ strtoupper($sectionName ?? '-') }}</p>
+        </div>
 
-            {{-- Now Serving --}}
-            <div class="flex flex-col items-center bg-white flex-1 overflow-hidden">
-                <div class="w-full p-6 text-center text-4xl font-bold">Now Serving</div>
-                    <div id="servingQueue" class="w-full p-6 text-center text-7xl font-bold overflow-y-auto max-h-[70vh]">
-                    </div>
+        <div class="text-black text-center font-bold text-2xl py-2">
+            Now Serving
+        </div>
 
-            </div>
+        <div id="servingQueue" class="text-white text-center font-bold flex-1">
+        </div>
 
-            {{-- Actions --}}
-            <div class="flex flex-col bg-white p-4 space-y-3 flex-1">
-                <div class="flex space-x-2 w-full mb-5">
+        <div class="content-center text-white text-center font-bold flex-1 px-2">
+
+            <div class="flex space-x-2 w-full mb-5">
                     <button id="nextRegularBtn" class="queue-btn flex-1 text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br 
                         focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 
                         shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 
@@ -128,8 +126,11 @@
                         shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 
                         font-medium rounded-lg text-sm py-2.5 text-center">Proceed</button>
                 </div>
-            </div>
+
+                
         </div>
+    </div>
+
     </div>
 </div>
 
