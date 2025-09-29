@@ -23,26 +23,35 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
+            $user = User::find(Auth::id());
+
+            // ❌ Block if already logged in
+            if ($user->is_logged_in) {
+                Auth::logout();
+                return redirect()->back()->withErrors([
+                    'email' => 'You are already logged in from another session.'
+                ])->onlyInput('email');
+            }
+
+            // ✅ Mark user as logged in
+            $user->is_logged_in = true;
+            $user->save();
+
             $request->session()->regenerate();
 
-            // Get authenticated user with window + step
-            $user = User::with(['window.step'])->find(Auth::id());
-            // ✅ Load user with office/division/section chain
-            $user = User::with('window.step.section.division.office')->find(Auth::id());
-
+            // Load user relationships
+            $user = User::with(['window.step.section.division.office'])->find(Auth::id());
 
             $section  = optional(optional(optional($user->window)->step)->section);
             $division = optional($section->division);
             $office   = optional($division->office);
 
-            // Save window_number and step_number into session
+            // Store session info
             $request->session()->put('window_number', $user->window->window_number ?? null);
             $request->session()->put('step_number', $user->window->step->step_number ?? null);
-
-            // ✅ Store in session for later use in views
-            $request->session()->put('section_name',   $section->section_name ?? null);
-            $request->session()->put('division_name',  $division->division_name ?? null);
-            $request->session()->put('field_office',   $office->field_office ?? null);
+            $request->session()->put('section_name', $section->section_name ?? null);
+            $request->session()->put('division_name', $division->division_name ?? null);
+            $request->session()->put('field_office', $office->field_office ?? null);
 
             // Redirect based on user_type
             switch ($user->user_type) {
@@ -58,7 +67,6 @@ class LoginController extends Controller
                     return redirect()->route('user');
                 case 6:
                     return redirect()->route('display');
-                
                 default:
                     return redirect()->route('login');
             }
@@ -71,6 +79,13 @@ class LoginController extends Controller
 
     public function logout(Request $request): RedirectResponse
     {
+        $user = Auth::user();
+        if ($user) {
+            // ✅ Mark user as logged out
+            $user->is_logged_in = false;
+            $user->save();
+        }
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
