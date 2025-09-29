@@ -663,38 +663,38 @@ class UsersController extends Controller
             ]);
 
         // 🔹 Pending
-$pendingRegular = (clone $baseQuery)
-    ->where('queue_status', 'pending')
-    ->where('client_type', 'regular')
-    ->orderBy('queue_number', 'asc')
-    ->get()
-    ->map(fn($q) => [
-        'id'              => $q->id, // ✅ Add this
-        'formatted_number'=> 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-        'style_class'     => 'bg-[#2e3192]',
-    ]);
+        $pendingRegular = (clone $baseQuery)
+            ->where('queue_status', 'pending')
+            ->where('client_type', 'regular')
+            ->orderBy('queue_number', 'asc')
+            ->get()
+            ->map(fn($q) => [
+                'id'              => $q->id, // ✅ Add this
+                'formatted_number'=> 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                'style_class'     => 'bg-[#2e3192]',
+            ]);
 
-$pendingPriority = (clone $baseQuery)
-    ->where('queue_status', 'pending')
-    ->where('client_type', 'priority')
-    ->orderBy('queue_number', 'asc')
-    ->get()
-    ->map(fn($q) => [
-        'id'              => $q->id, // ✅ added
-        'formatted_number'=> 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-        'style_class'     => 'bg-[#ee1c25]',
-    ]);
+        $pendingPriority = (clone $baseQuery)
+            ->where('queue_status', 'pending')
+            ->where('client_type', 'priority')
+            ->orderBy('queue_number', 'asc')
+            ->get()
+            ->map(fn($q) => [
+                'id'              => $q->id, // ✅ added
+                'formatted_number'=> 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                'style_class'     => 'bg-[#ee1c25]',
+            ]);
 
-$pendingReturnee = (clone $baseQuery)
-    ->where('queue_status', 'pending')
-    ->where('client_type', 'deferred')
-    ->orderBy('queue_number', 'asc')
-    ->get()
-    ->map(fn($q) => [
-        'id'              => $q->id, // ✅ Add this
-        'formatted_number'=> 'D' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-        'style_class'     => 'bg-[#f97316]',
-    ]);
+        $pendingReturnee = (clone $baseQuery)
+            ->where('queue_status', 'pending')
+            ->where('client_type', 'deferred')
+            ->orderBy('queue_number', 'asc')
+            ->get()
+            ->map(fn($q) => [
+                'id'              => $q->id, // ✅ Add this
+                'formatted_number'=> 'D' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                'style_class'     => 'bg-[#f97316]',
+            ]);
 
         $deferred = (clone $baseQuery)
             ->where('queue_status', 'deferred')
@@ -729,12 +729,12 @@ $pendingReturnee = (clone $baseQuery)
                     'regular'  => 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
                     'priority' => 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
                     'deferred' => 'D' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                    default    => 'X' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT), // fallback
+                    default    => 'X' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
                 },
                 'style_class' => match ($q->client_type) {
                     'regular'  => 'bg-[#2e3192]',
-                    'priority' => 'bg-[#ee1c25]',
-                    'deferred' => 'bg-[#f97316]', // orange for returnee
+                    'priority' => 'bg-[#ee1c25] text-8xl h-full flex items-center justify-center',
+                    'deferred' => 'bg-[#f97316]',
                     default    => 'bg-gray-500',
                 },
             ]);
