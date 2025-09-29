@@ -213,6 +213,8 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             modal.classList.add('hidden');
             currentAction = null;
+            modalMessage.textContent = "Are you sure you want to perform this action?";
+            setBtnState(modalConfirmBtn, true);
         }, 150); // match transition
     };
 
@@ -308,6 +310,7 @@ const fetchQueues = () => {
         btn.addEventListener('click', () => {
             showModal(message, () => {
                 if (!routeName) return;
+                setBtnState(modalConfirmBtn, false);
                 fetch(routeName, {
                     method: 'POST',
                     headers: {
@@ -317,10 +320,15 @@ const fetchQueues = () => {
                 })
                 .then(res => res.json())
                 .then(data => {
-                    // alert(data.message);
+                    modalMessage.textContent = data.message || "Action completed.";
                     fetchQueues();
+                    setTimeout(hideModal, 1000);
                 })
-                .catch(err => console.error(err));
+                .catch(err => {
+                    console.error(err);
+                    modalMessage.textContent = "❌ Something went wrong. Please try again.";
+                    setBtnState(modalConfirmBtn, true);
+                });
             });
         });
     };
@@ -333,6 +341,7 @@ const fetchQueues = () => {
     bindActionWithConfirm('deferBtn', "{{ route('users.returnQueue') }}", "Mark the current serving client as returnee?");
     bindActionWithConfirm('proceedBtn', "{{ route('users.proceedQueue') }}", "Proceed with the current queue?");
 
+    bindActionWithConfirm('pendingRegu', "{{ route('queues.updatePendingRegu') }}", "Update pending Regular queue?");
     // updateButtonStates();
 });
 

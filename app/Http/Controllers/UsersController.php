@@ -782,4 +782,43 @@ class UsersController extends Controller
             'message' => 'Transaction marked as returnee.'
         ]);
     }
+
+    public function updatePendingRegu(Request $request)
+{
+    $user = Auth::user();
+    $sectionId = $user->section_id;
+
+    // Get the first pending transaction for this section
+    $transaction = Transaction::where('section_id', $sectionId)
+        ->where('queue_status', 'pending')
+        ->first();
+
+    if (!$transaction) {
+        return response()->json(['success' => false, 'message' => 'No pending transaction found.'], 404);
+    }
+
+    // Find the next step in this section
+    $nextStep = Step::where('section_id', $sectionId)
+        ->where('id', '>', $transaction->step_id)
+        ->orderBy('id', 'asc')
+        ->first();
+
+    if ($nextStep) {
+        // ✅ Move to next step
+        $transaction->step_id = $nextStep->id;
+        $transaction->queue_status = 'waiting';
+        $message = 'Transaction moved to the next step.';
+    } else {
+        // ✅ No next step → mark as completed
+        $transaction->queue_status = 'completed';
+        $message = 'Transaction completed (no more steps).';
+    }
+
+    // ✅ Always update with the current user's window_id
+    $transaction->window_id = $user->window_id;
+
+    $transaction->save();
+
+    return response()->json(['success' => true, 'message' => $message]);
+}
 }

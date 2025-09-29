@@ -117,4 +117,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/transactions/realtime', [TransactionsController::class, 'realtimeTransactions'])
     ->name('admin.transactions.realtime');
 
+    Route::post('/queues/pending/regu/update', [UsersController::class, 'updatePendingRegu'])
+    ->name('queues.updatePendingRegu');
+
 });
