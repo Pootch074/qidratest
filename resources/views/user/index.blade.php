@@ -49,7 +49,6 @@
                 <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
                     <div class="bg-[#2e3192] text-white text-center font-bold py-2">PRIORITY</div>
                     <div id="pendingPrio" class="flex-1 bg-white p-2 overflow-y-auto max-h-[68vh]">
-                        {{-- Fetched Priority Queues --}}
                     </div>
                 </div>
 
@@ -57,7 +56,6 @@
                 <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
                     <div class="bg-[#2e3192] text-white text-center font-bold py-2">RETURNEE</div>
                     <div id="pendingReturnee" class="flex-1 bg-white p-2 overflow-y-auto max-h-[68vh]">
-                        {{-- Fetched Priority Queues --}}
                     </div>
                 </div>
 
@@ -65,7 +63,6 @@
                 <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
                     <div class="bg-[#2e3192] text-white text-center font-bold py-2">DEFERRED</div>
                     <div id="deferred" class="flex-1 bg-white p-2 overflow-y-auto max-h-[68vh]">
-                        {{-- Fetched Priority Queues --}}
                     </div>
                 </div>
 
@@ -222,8 +219,8 @@ document.addEventListener('DOMContentLoaded', () => {
     modalCloseBtn.addEventListener('click', hideModal);
     modalConfirmBtn.addEventListener('click', () => {
         if (currentAction) currentAction();
-        hideModal();
     });
+
 
     /*** === Button State Management === */
     function setBtnState(btn, enabled) {
@@ -264,22 +261,24 @@ function updateButtonStates(data) {
 
 
 
-    /*** === Queue Rendering & Fetching === */
     const renderQueue = (list, containerId) => {
-        const container = document.querySelector(containerId);
-        if (!container) return;
+    const container = document.querySelector(containerId);
+    if (!container) return;
 
-        if (!list?.length) {
-            container.innerHTML = `<div class="text-gray-400 text-center py-4 text-sm">🚫Empty</div>`;
-            return;
-        }
+    if (!list?.length) {
+        container.innerHTML = `<div class="text-gray-400 text-center py-4 text-sm">🚫Empty</div>`;
+        return;
+    }
 
-        container.innerHTML = list.map(queue => `
-            <div class="${queue.style_class} text-white text-2xl p-2 my-1 rounded shadow text-center font-bold">
-                ${queue.formatted_number}
-            </div>
-        `).join('');
-    };
+container.innerHTML = list.map(queue => `
+    <div class="${queue.style_class} text-white text-2xl p-2 my-1 rounded shadow text-center font-bold cursor-pointer"
+         data-id="${queue.id}">
+        ${queue.formatted_number}
+    </div>
+`).join('');
+
+};
+
 
 const fetchQueues = () => {
     fetch("{{ route('queues.data') }}")
@@ -333,6 +332,48 @@ const fetchQueues = () => {
         });
     };
 
+    function bindPendingQueue(containerId, route, label) {
+    document.addEventListener('click', e => {
+        const target = e.target.closest(`${containerId} [data-id]`);
+        if (target) {
+            const id = target.getAttribute('data-id');
+
+            showModal(`Update pending ${label} queue?`, () => {
+                fetch(route, {
+                    method: 'POST',  // ✅ make sure it’s POST
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}', // ✅ CSRF protection
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id }) // ✅ send transaction id
+                })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error(`HTTP ${res.status}`);
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    modalMessage.textContent = data.message || "✅ Action completed.";
+                    fetchQueues(); // refresh queues
+                    setTimeout(hideModal, 1000);
+                })
+                .catch(err => {
+                    modalMessage.textContent = `❌ Something went wrong: ${err.message}`;
+                    setBtnState(modalConfirmBtn, true);
+                });
+            });
+        }
+    });
+}
+
+
+    // Use it for all three
+    bindPendingQueue('#pendingRegu', "{{ route('queues.updatePendingRegu') }}", "Regular");
+    bindPendingQueue('#pendingPrio', "{{ route('queues.updatePendingPrio') }}", "Priority");
+    bindPendingQueue('#pendingReturnee', "{{ route('queues.updatePendingReturnee') }}", "Returnee");
+
+
     bindActionWithConfirm('nextRegularBtn', "{{ route('users.nextRegular') }}", "Proceed to the next Regular queue?");
     bindActionWithConfirm('nextPriorityBtn', "{{ route('users.nextPriority') }}", "Proceed to the next Priority queue?");
     bindActionWithConfirm('returneeBtn', "{{ route('users.nextReturnee') }}", "Proceed to the next Returnee queue?");
@@ -341,9 +382,10 @@ const fetchQueues = () => {
     bindActionWithConfirm('deferBtn', "{{ route('users.returnQueue') }}", "Mark the current serving client as returnee?");
     bindActionWithConfirm('proceedBtn', "{{ route('users.proceedQueue') }}", "Proceed with the current queue?");
 
-    bindActionWithConfirm('pendingRegu', "{{ route('queues.updatePendingRegu') }}", "Update pending Regular queue?");
-    // updateButtonStates();
+    
 });
+
+
 
 
 

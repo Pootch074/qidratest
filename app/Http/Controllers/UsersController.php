@@ -663,35 +663,38 @@ class UsersController extends Controller
             ]);
 
         // 🔹 Pending
-        $pendingRegular = (clone $baseQuery)
-            ->where('queue_status', 'pending')
-            ->where('client_type', 'regular')
-            ->orderBy('queue_number', 'asc')
-            ->get()
-            ->map(fn($q) => [
-                'formatted_number' => 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                'style_class'      => 'bg-[#2e3192]',
-            ]);
+$pendingRegular = (clone $baseQuery)
+    ->where('queue_status', 'pending')
+    ->where('client_type', 'regular')
+    ->orderBy('queue_number', 'asc')
+    ->get()
+    ->map(fn($q) => [
+        'id'              => $q->id, // ✅ Add this
+        'formatted_number'=> 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+        'style_class'     => 'bg-[#2e3192]',
+    ]);
 
-        $pendingPriority = (clone $baseQuery)
-            ->where('queue_status', 'pending')
-            ->where('client_type', 'priority')
-            ->orderBy('queue_number', 'asc')
-            ->get()
-            ->map(fn($q) => [
-                'formatted_number' => 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                'style_class'      => 'bg-[#ee1c25]',
-            ]);
+$pendingPriority = (clone $baseQuery)
+    ->where('queue_status', 'pending')
+    ->where('client_type', 'priority')
+    ->orderBy('queue_number', 'asc')
+    ->get()
+    ->map(fn($q) => [
+        'id'              => $q->id, // ✅ added
+        'formatted_number'=> 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+        'style_class'     => 'bg-[#ee1c25]',
+    ]);
 
-        $pendingReturnee = (clone $baseQuery)
-            ->where('queue_status', 'pending')
-            ->where('client_type', 'returnee')
-            ->orderBy('queue_number', 'asc')
-            ->get()
-            ->map(fn($q) => [
-                'formatted_number' => 'T' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                'style_class'      => 'bg-[#f97316]',
-            ]);
+$pendingReturnee = (clone $baseQuery)
+    ->where('queue_status', 'pending')
+    ->where('client_type', 'deferred')
+    ->orderBy('queue_number', 'asc')
+    ->get()
+    ->map(fn($q) => [
+        'id'              => $q->id, // ✅ Add this
+        'formatted_number'=> 'D' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+        'style_class'     => 'bg-[#f97316]',
+    ]);
 
         $deferred = (clone $baseQuery)
             ->where('queue_status', 'deferred')
@@ -783,42 +786,60 @@ class UsersController extends Controller
         ]);
     }
 
+    private function updatePendingTransaction(Request $request, string $clientType)
+    {
+        $user = Auth::user();
+        $sectionId = $user->section_id;
+
+        $transaction = Transaction::where('id', $request->id)
+            ->where('section_id', $sectionId)
+            ->where('queue_status', 'pending')
+            ->where('client_type', $clientType)
+            ->first();
+
+        if (!$transaction) {
+            return response()->json(['success' => false, 'message' => 'Transaction not found.'], 404);
+        }
+
+        // Find the next step
+$nextStep = Step::where('section_id', $sectionId)
+    ->where('step_number', '>', $transaction->step->step_number)
+    ->orderBy('step_number', 'asc')
+    ->first();
+
+
+        if ($nextStep) {
+            // Move to next step
+            $transaction->step_id = $nextStep->id;
+            $transaction->queue_status = 'waiting';
+            $message = 'Transaction moved to the next step.';
+        } else {
+            // No more steps → completed
+            $transaction->queue_status = 'completed';
+            $message = 'Transaction completed (no more steps).';
+        }
+
+        // Always track which window handled it
+        $transaction->window_id = $user->window_id;
+        $transaction->save();
+
+        return response()->json(['success' => true, 'message' => $message]);
+    }
+
     public function updatePendingRegu(Request $request)
-{
-    $user = Auth::user();
-    $sectionId = $user->section_id;
-
-    // Get the first pending transaction for this section
-    $transaction = Transaction::where('section_id', $sectionId)
-        ->where('queue_status', 'pending')
-        ->first();
-
-    if (!$transaction) {
-        return response()->json(['success' => false, 'message' => 'No pending transaction found.'], 404);
+    {
+        return $this->updatePendingTransaction($request, 'regular');
     }
 
-    // Find the next step in this section
-    $nextStep = Step::where('section_id', $sectionId)
-        ->where('id', '>', $transaction->step_id)
-        ->orderBy('id', 'asc')
-        ->first();
-
-    if ($nextStep) {
-        // ✅ Move to next step
-        $transaction->step_id = $nextStep->id;
-        $transaction->queue_status = 'waiting';
-        $message = 'Transaction moved to the next step.';
-    } else {
-        // ✅ No next step → mark as completed
-        $transaction->queue_status = 'completed';
-        $message = 'Transaction completed (no more steps).';
+    public function updatePendingPrio(Request $request)
+    {
+        return $this->updatePendingTransaction($request, 'priority');
     }
 
-    // ✅ Always update with the current user's window_id
-    $transaction->window_id = $user->window_id;
+    public function updatePendingReturnee(Request $request)
+    {
+        return $this->updatePendingTransaction($request, 'deferred');
+    }
 
-    $transaction->save();
 
-    return response()->json(['success' => true, 'message' => $message]);
-}
 }

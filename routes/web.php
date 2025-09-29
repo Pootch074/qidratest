@@ -43,7 +43,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('admin/users/json', [UsersController::class, 'usersJson'])->name('admin.users.json');
     Route::post('admin/users/store', [UsersController::class, 'store'])->name('admin.users.store');
     Route::delete('admin/users/{user}', [UsersController::class, 'destroy'])->name('admin.users.destroy');
-    // Route::get('/queues/data', [UsersController::class, 'fetchQueues'])->name('queues.data');
 
     Route::post('/users/next-regular', [UsersController::class, 'nextRegular'])->name('users.nextRegular');
     Route::post('/users/next-priority', [UsersController::class, 'nextPriority'])->name('users.nextPriority');
@@ -119,5 +118,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/queues/pending/regu/update', [UsersController::class, 'updatePendingRegu'])
     ->name('queues.updatePendingRegu');
+
+    Route::post('/queues/pending/prio/update', [UsersController::class, 'updatePendingPrio'])
+    ->name('queues.updatePendingPrio');
+
+    Route::post('/queues/pending/returnee/update', [UsersController::class, 'updatePendingReturnee'])
+    ->name('queues.updatePendingReturnee');
 
 });
