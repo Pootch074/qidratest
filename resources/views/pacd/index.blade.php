@@ -4,9 +4,10 @@
 @endsection
 
 @section('content')
+@php $authUser = Auth::user(); @endphp
 <div class="w-full p-4 bg-gray-200" 
-     x-data="queueApp()">
-    @php $authUser = Auth::user(); @endphp
+     x-data="queueApp({{ $authUser->section_id }})">
+    
 
     <div class="p-4 sm:ml-64">
         {{-- Scanned ID Table --}}
@@ -89,12 +90,13 @@
 
 @section('scripts')
 <script>
-function queueApp() {
+function queueApp(userSectionId) {
     return {
-        showSections: true, // show by default
+        showSections: true,
         showModal: false,
         selectedSection: null,
         clientName: '',
+        userSectionId: userSectionId, // keep track of logged-in user’s section_id
 
         async generateQueue(sectionId, type) {
             try {
@@ -121,26 +123,32 @@ function queueApp() {
 
                 const ticketHtml = this.buildTicketHtml(data);
 
-                const iframe = document.createElement('iframe');
-                Object.assign(iframe.style, {
-                    position: 'fixed', right: '9999px', width: '0', height: '0', border: '0'
-                });
-                document.body.appendChild(iframe);
+                // Decide how many times to print
+                const copies = (this.userSectionId == 15) ? 2 : 1;
 
-                const doc = iframe.contentDocument || iframe.contentWindow.document;
-                doc.open(); doc.write(ticketHtml); doc.close();
+                for (let i = 0; i < copies; i++) {
+                    const iframe = document.createElement('iframe');
+                    Object.assign(iframe.style, {
+                        position: 'fixed', right: '9999px', width: '0', height: '0', border: '0'
+                    });
+                    document.body.appendChild(iframe);
 
-                iframe.onload = () => {
-                    const printWindow = iframe.contentWindow;
+                    const doc = iframe.contentDocument || iframe.contentWindow.document;
+                    doc.open(); doc.write(ticketHtml); doc.close();
 
-                    printWindow.onafterprint = () => {
-                        try { this.reset(); } catch {}
-                        try { document.body.removeChild(iframe); } catch {}
+                    iframe.onload = () => {
+                        const printWindow = iframe.contentWindow;
+
+                        printWindow.onafterprint = () => {
+                            try { document.body.removeChild(iframe); } catch {}
+                        };
+
+                        printWindow.focus();
+                        setTimeout(() => { printWindow.print(); }, 150);
                     };
+                }
 
-                    printWindow.focus();
-                    setTimeout(() => { printWindow.print(); }, 150);
-                };
+                this.reset();
 
             } catch (err) {
                 console.error('Request/print error:', err);
@@ -156,50 +164,25 @@ function queueApp() {
                         <meta charset="utf-8">
                         <title>Queue Ticket</title>
                         <style>
-                            @page {
-                                size: 58mm 70mm;
-                                margin: 0;
-                            }
+                            @page { size: 2in 2.5in; margin: 0; }
                             body {
-                                display:flex;
-                                align-items:center;
-                                justify-content:start;
-                                font-family:Arial,Helvetica,sans-serif;
-                                margin:0;
+                                margin: 0; padding: 0;
+                                width: 2in; height: 2in;
+                                font-family: Arial, Helvetica, sans-serif;
                             }
-
                             .ticket {
-                                width:320px;
-                                padding:26px;
-                                border-radius:12px;
-                                border:2px dashed #333;
-                                text-align:center;
+                                width: 2in; height: 2.5in;
+                                padding: 0.15in;
+                                border-radius: 0.1in;
+                                border: 0.02in dashed #333;
+                                text-align: center;
+                                box-sizing: border-box;
+                                overflow: hidden;
                             }
-                            .section {
-                                color:#2e3192;
-                                font-weight:700;
-                                font-size:18px;
-                                margin:0
-                            }
-                            .number {
-                                font-size:72px;
-                                margin:18px 0;
-                                font-weight:900;
-                                letter-spacing:2px
-                            }
-                            .meta {
-                                font-size:16px;
-                                margin:6px 0;
-                                color:#333
-                            }
-                            .small {
-                                font-size:12px;
-                                color:#666;
-                                margin-top:12px
-                            }
-                            
-                            
-                            .ticket{border:none;width:100%;padding:6mm;} }
+                            .section { color: #2e3192; font-weight: 700; font-size: 14pt; margin: 0; }
+                            .number { font-size: 36pt; margin: 0.1in 0; font-weight: 900; letter-spacing: 2px; }
+                            .meta { font-size: 10pt; margin: 0.05in 0; }
+                            .small { font-size: 8pt; font-weight: bold; margin-top: 0.1in; }
                         </style>
                     </head>
                     <body>
@@ -208,10 +191,11 @@ function queueApp() {
                             <div class="number">${this.escapeHtml(data.queue_number)}</div>
                             <div class="meta">${this.escapeHtml(data.client_type)} Client</div>
                             <div class="meta">${this.escapeHtml(data.client_name)}</div>
-                            <small class="small">Generated: ${this.escapeHtml(new Date().toLocaleString())}</small>
+                            <small class="small">${this.escapeHtml(new Date().toLocaleString())}</small>
                         </div>
                     </body>
-                </html>`.trim();
+                </html>
+            `.trim();
         },
 
         escapeHtml(str) {
@@ -229,3 +213,4 @@ function queueApp() {
 }
 </script>
 @endsection
+
