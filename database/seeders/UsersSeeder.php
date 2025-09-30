@@ -25,7 +25,7 @@ class UsersSeeder extends Seeder
                 'last_name' => 'Admin',
                 'email' => env('ADMIN_EMAIL', 'superadmin@admin.com'),
                 'position' => 'Super Admin',
-                'section_id' =>null,
+                'section_id' => null,
                 'user_type' => 0,
                 'assigned_category' => null,
                 'step_id' => null,
@@ -37,12 +37,12 @@ class UsersSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                'first_name' => 'CIS',
-                'last_name' => 'Admin',
-                'email' => env('ADMIN_EMAIL', 'cis@admin.com'),
-                'position' => 'Admin',
-                'section_id' => 15,
-                'user_type' => 1,
+                'first_name' => 'IDScan',
+                'last_name' => 'User',
+                'email' => 'idscan@dswd.gov.ph',
+                'position' => null,
+                'section_id' => null,
+                'user_type' => 2,
                 'assigned_category' => null,
                 'step_id' => null,
                 'window_id' => null,
@@ -52,6 +52,24 @@ class UsersSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
+            [
+                'first_name' => 'General',
+                'last_name' => 'PACD',
+                'email' => env('ADMIN_EMAIL', 'genpacd@dswd.gov.ph'),
+                'position' => 'SWAID',
+                'section_id' => null,
+                'user_type' => 3,
+                'assigned_category' => null,
+                'step_id' => null,
+                'window_id' => null,
+                'status' => 1,
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('password'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+
+            // ========== CBSS ACCOUNTS ==========
             [
                 'first_name' => 'CBSS',
                 'last_name' => 'Admin',
@@ -68,60 +86,12 @@ class UsersSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
-            [  
-                'first_name' => 'IDScan',
-                'last_name' => 'User',
-                'email' => 'idscan@gmail.com', 
-                'position' => null, 
-                'section_id' => null,
-                'user_type' => 2,
-                'assigned_category' => null,
-                'step_id' => null,
-                'window_id' => null,
-                'status' => 1,
-                'email_verified_at' => Carbon::now(),
-                'password' => Hash::make('password'),
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
 
-            [
-                'first_name' => 'General',
-                'last_name' => 'PACD',
-                'email' => env('ADMIN_EMAIL', 'genpacd@gmail.com'),
-                'position' => 'SWAID',
-                'section_id' => null,
-                'user_type' => 3,
-                'assigned_category' => null,
-                'step_id' => null,
-                'window_id' => null,
-                'status' => 1,
-                'email_verified_at' => Carbon::now(),
-                'password' => Hash::make('password'),
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'first_name' => 'CIS',
-                'last_name' => 'PACD',
-                'email' => env('ADMIN_EMAIL', 'cispacd@gmail.com'),
-                'position' => 'SWAID',
-                'section_id' => 15,
-                'user_type' => 3,
-                'assigned_category' => null,
-                'step_id' => null,
-                'window_id' => null,
-                'status' => 1,
-                'email_verified_at' => Carbon::now(),
-                'password' => Hash::make('password'),
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            
+            // CBSS USER
             [
                 'first_name' => 'CBSS',
                 'last_name' => 'User',
-                'email' => 'usercbss@gmail.com', // change as needed
+                'email' => 'usercbss@dswd.gov.ph', // change as needed
                 'position' => 'SWOII', // optional
                 'section_id' => 14,
                 'user_type' => 5,
@@ -135,7 +105,62 @@ class UsersSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
 
-            // CIS PREASSESSMENT USERS
+            // CBSS DISPLAY
+            [
+                'first_name' => 'CBSS',
+                'last_name' => 'Display',
+                'email' => 'displaycbss@dswd.gov.ph',
+                'position' => 'SWOII',
+                'section_id' => 14,
+                'user_type' => 6,
+                'assigned_category' => null,
+                'step_id' => null,
+                'window_id' => null,
+                'status' => 1,
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('password'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+
+            // ========== CIS ACCOUNTS ==========
+            // CIS ADMIN
+            [
+                'first_name' => 'CIS',
+                'last_name' => 'Admin',
+                'email' => env('ADMIN_EMAIL', 'cis@admin.com'),
+                'position' => 'Admin',
+                'section_id' => 15,
+                'user_type' => 1,
+                'assigned_category' => null,
+                'step_id' => null,
+                'window_id' => null,
+                'status' => 1,
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('password'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+
+            // CIS PACD
+            [
+                'first_name' => 'CIS',
+                'last_name' => 'PACD',
+                'email' => env('ADMIN_EMAIL', 'cispacd@dswd.gov.ph'),
+                'position' => 'SWAID',
+                'section_id' => 15,
+                'user_type' => 3,
+                'assigned_category' => null,
+                'step_id' => null,
+                'window_id' => null,
+                'status' => 1,
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('password'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+
+            // CIS PREASSESSMENT
             [
                 'first_name' => 'Preasssess',
                 'last_name' => 'Regular',
@@ -169,7 +194,7 @@ class UsersSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
 
-            // CIS ENCODER USERS
+            // CIS ENCODER
             [
                 'first_name' => 'Encoding',
                 'last_name' => 'Regular',
@@ -218,8 +243,8 @@ class UsersSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
-            
-            // CIS ASSESSMENT USERS
+
+            // CIS ASSESSMENT
             [
                 'first_name' => 'Assessment',
                 'last_name' => 'Window1',
@@ -269,7 +294,7 @@ class UsersSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
 
-            // CIS RELEASING USERS
+            // CIS RELEASING
             [
                 'first_name' => 'Releasing',
                 'last_name' => 'Window1',
@@ -319,12 +344,12 @@ class UsersSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
 
-            // CIS DISPLAY USERS
+            // CIS DISPLAY
             [
                 'first_name' => 'Display',
                 'last_name' => 'Regular',
-                'email' => 'cisdisplayregu@dswd.gov.ph', 
-                'position' => 'None', 
+                'email' => 'cisdisplayregu@dswd.gov.ph',
+                'position' => 'None',
                 'section_id' => 15,
                 'user_type' => 6,
                 'assigned_category' => 'regular',
@@ -339,8 +364,8 @@ class UsersSeeder extends Seeder
             [
                 'first_name' => 'Display',
                 'last_name' => 'Priority',
-                'email' => 'cisdisplayprio@dswd.gov.ph', 
-                'position' => 'None', 
+                'email' => 'cisdisplayprio@dswd.gov.ph',
+                'position' => 'None',
                 'section_id' => 15,
                 'user_type' => 6,
                 'assigned_category' => 'priority',
@@ -354,24 +379,8 @@ class UsersSeeder extends Seeder
             ],
 
 
-            // CBSS DISPLAY USERS
-            [
-                'first_name' => 'CBSS',
-                'last_name' => 'Display',
-                'email' => 'displaycbss@gmail.com', 
-                'position' => 'SWOII', 
-                'section_id' => 14,
-                'user_type' => 6,
-                'assigned_category' => null,
-                'step_id' => null,
-                'window_id' => null,
-                'status' => 1,
-                'email_verified_at' => Carbon::now(),
-                'password' => Hash::make('password'),
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            
+
+
         ];
 
         DB::table('users')->insert($users);
