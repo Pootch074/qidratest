@@ -219,7 +219,7 @@ class UsersSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             
-            // ASSESSMENT USERS
+            // CIS ASSESSMENT USERS
             [
                 'first_name' => 'Assessment',
                 'last_name' => 'Window1',
@@ -269,7 +269,7 @@ class UsersSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
 
-            // RELEASING USERS
+            // CIS RELEASING USERS
             [
                 'first_name' => 'Releasing',
                 'last_name' => 'Window1',
@@ -319,7 +319,42 @@ class UsersSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
 
-            // DISPLAY USERS
+            // CIS DISPLAY USERS
+            [
+                'first_name' => 'Display',
+                'last_name' => 'Regular',
+                'email' => 'cisdisplayregu@dswd.gov.ph', 
+                'position' => 'None', 
+                'section_id' => 15,
+                'user_type' => 6,
+                'assigned_category' => 'regular',
+                'step_id' => null,
+                'window_id' => null,
+                'status' => 1,
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('password'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'first_name' => 'Display',
+                'last_name' => 'Priority',
+                'email' => 'cisdisplayprio@dswd.gov.ph', 
+                'position' => 'None', 
+                'section_id' => 15,
+                'user_type' => 6,
+                'assigned_category' => 'priority',
+                'step_id' => null,
+                'window_id' => null,
+                'status' => 1,
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('password'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+
+
+            // CBSS DISPLAY USERS
             [
                 'first_name' => 'CBSS',
                 'last_name' => 'Display',
@@ -336,22 +371,7 @@ class UsersSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
-            [
-                'first_name' => 'CIS',
-                'last_name' => 'Display',
-                'email' => 'displaycis@gmail.com', 
-                'position' => 'SWOII', 
-                'section_id' => 15,
-                'user_type' => 6,
-                'assigned_category' => null,
-                'step_id' => null,
-                'window_id' => null,
-                'status' => 1,
-                'email_verified_at' => Carbon::now(),
-                'password' => Hash::make('password'),
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ]
+            
         ];
 
         DB::table('users')->insert($users);
