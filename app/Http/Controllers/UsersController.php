@@ -479,6 +479,7 @@ class UsersController extends Controller
             $current = Transaction::where('queue_status', 'serving')
                 ->where('section_id', $user->section_id)
                 ->where('step_id', $user->step_id)
+                ->where('client_type', $user->assigned_category)
                 ->where('window_id', $user->window_id)
                 ->whereDate('updated_at', Carbon::today())
                 ->lockForUpdate()
@@ -722,6 +723,7 @@ class UsersController extends Controller
         $servingQueue = (clone $baseQuery)
             ->where('queue_status', 'serving')
             ->where('window_id', $user->window_id)
+            ->where('client_type', $user->assigned_category) // filter by assigned category
             ->orderBy('updated_at', 'desc') // latest being served
             ->limit(1)
             ->get()
