@@ -8,89 +8,61 @@
         @php
             $userCategory = Auth::user()->assigned_category;
 
-            // Define blocks and whether they should be shown
-            $blocks = [
-                [
-                    'id' => 'upcomingRegu',
-                    'title' => 'REGULAR',
-                    'show' => in_array($userCategory, ['regular', 'both']),
-                ],
-                [
-                    'id' => 'upcomingPrio',
-                    'title' => 'PRIORITY',
-                    'show' => in_array($userCategory, ['priority', 'both']),
-                ],
-                [
-                    'id' => 'upcomingReturnee',
-                    'title' => 'RETURNEE',
-                    'show' => true,
-                ],
+            // UPCOMING blocks
+            $upcomingBlocks = [
+                ['id' => 'upcomingRegu',    'title' => 'REGULAR',   'show' => in_array($userCategory, ['regular','both'])],
+                ['id' => 'upcomingPrio',    'title' => 'PRIORITY',  'show' => in_array($userCategory, ['priority','both'])],
+                ['id' => 'upcomingReturnee','title' => 'RETURNEE',  'show' => true],
             ];
+            $visibleUpcoming = collect($upcomingBlocks)->where('show', true)->count();
 
-            // Count how many blocks are visible to set grid-cols dynamically
-            $visibleCount = collect($blocks)->where('show', true)->count();
-            $gridCols = "grid-cols-{$visibleCount}";
+            // PENDING blocks
+            $pendingBlocks = [
+                ['id' => 'pendingRegu',    'title' => 'REGULAR',  'show' => in_array($userCategory, ['regular','both'])],
+                ['id' => 'pendingPrio',    'title' => 'PRIORITY', 'show' => in_array($userCategory, ['priority','both'])],
+                ['id' => 'pendingReturnee','title' => 'RETURNEE', 'show' => true],
+                ['id' => 'deferred',       'title' => 'DEFERRED', 'show' => true],
+            ];
+            $visiblePending = collect($pendingBlocks)->where('show', true)->count();
+
+            // Map count -> Tailwind static classes (so Tailwind's purge/JIT picks them up)
+            $gridMap = [
+                1 => 'grid-cols-1',
+                2 => 'grid-cols-2',
+                3 => 'grid-cols-3',
+                4 => 'grid-cols-4',
+            ];
+            $upcomingGridClass = $gridMap[$visibleUpcoming] ?? 'grid-cols-1';
+            $pendingGridClass  = $gridMap[$visiblePending]  ?? 'grid-cols-1';
         @endphp
 
-        <div class="col-span-3 flex flex-col bg-white rounded-md shadow overflow-hidden">
+        {{-- UPCOMING --}}
+        <div class="col-span-3 flex flex-col bg-white rounded-md shadow overflow-hidden min-h-0">
             <div class="bg-[#2e3192] text-white text-center font-bold text-2xl py-2">UPCOMING</div>
 
-            <div class="grid {{ $gridCols }} gap-4 p-2 bg-white rounded-b-lg border-2 border-[#2e3192] flex-1">
-                @foreach($blocks as $block)
+            {{-- grid: make sure it has full width and can shrink in flex layout --}}
+            <div class="grid {{ $upcomingGridClass }} gap-4 p-2 bg-white rounded-b-lg border-2 border-[#2e3192] flex-1 w-full min-h-0">
+                @foreach($upcomingBlocks as $block)
                     @if($block['show'])
-                        <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
+                        <div class="flex flex-col bg-white rounded-md shadow overflow-hidden w-full min-h-0">
                             <div class="bg-[#2e3192] text-white text-center font-bold py-2">{{ $block['title'] }}</div>
-                            <div id="{{ $block['id'] }}" class="flex-1 bg-white p-2 overflow-y-auto max-h-[68vh]"></div>
+                            <div id="{{ $block['id'] }}" class="flex-1 bg-white p-2 overflow-y-auto max-h-[68vh] min-h-0"></div>
                         </div>
                     @endif
                 @endforeach
             </div>
         </div>
 
-
-
-
-        @php
-            $userCategory = Auth::user()->assigned_category;
-
-            // Define blocks and whether they should be shown
-            $blocksPending = [
-                [
-                    'id' => 'pendingRegu',
-                    'title' => 'REGULAR',
-                    'show' => in_array($userCategory, ['regular', 'both']),
-                ],
-                [
-                    'id' => 'pendingPrio',
-                    'title' => 'PRIORITY',
-                    'show' => in_array($userCategory, ['priority', 'both']),
-                ],
-                [
-                    'id' => 'pendingReturnee',
-                    'title' => 'RETURNEE',
-                    'show' => true,
-                ],
-                [
-                    'id' => 'deferred',
-                    'title' => 'DEFERRED',
-                    'show' => true,
-                ],
-            ];
-
-            // Count visible blocks for grid-cols
-            $visibleCountPending = collect($blocksPending)->where('show', true)->count();
-            $gridColsPending = "grid-cols-{$visibleCountPending}";
-        @endphp
-
-        <div class="col-span-4 flex flex-col bg-white rounded-md shadow overflow-hidden">
+        {{-- PENDING --}}
+        <div class="col-span-4 flex flex-col bg-white rounded-md shadow overflow-hidden min-h-0">
             <div class="bg-[#2e3192] text-white text-center font-bold text-2xl py-2">PENDING</div>
 
-            <div class="grid {{ $gridColsPending }} gap-4 p-2 bg-white rounded-b-lg border-2 border-[#2e3192] flex-1">
-                @foreach($blocksPending as $block)
+            <div class="grid {{ $pendingGridClass }} gap-4 p-2 bg-white w-full rounded-b-lg border-2 border-[#2e3192] flex-1 min-h-0">
+                @foreach($pendingBlocks as $block)
                     @if($block['show'])
-                        <div class="flex flex-col bg-white rounded-md shadow overflow-hidden">
+                        <div class="flex flex-col bg-white rounded-md shadow overflow-hidden w-full min-h-0">
                             <div class="bg-[#2e3192] text-white text-center font-bold py-2">{{ $block['title'] }}</div>
-                            <div id="{{ $block['id'] }}" class="flex-1 bg-white p-2 overflow-y-auto max-h-[68vh]"></div>
+                            <div id="{{ $block['id'] }}" class="flex-1 bg-white p-2 overflow-y-auto max-h-[68vh] min-h-0"></div>
                         </div>
                     @endif
                 @endforeach

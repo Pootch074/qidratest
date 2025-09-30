@@ -475,15 +475,20 @@ class UsersController extends Controller
         }
 
         $transaction = DB::transaction(function () use ($user) {
-            // Find the currently serving transaction
-            $current = Transaction::where('queue_status', 'serving')
+            // Build query for the currently serving transaction
+            $query = Transaction::where('queue_status', 'serving')
                 ->where('section_id', $user->section_id)
                 ->where('step_id', $user->step_id)
-                ->where('client_type', $user->assigned_category)
                 ->where('window_id', $user->window_id)
                 ->whereDate('updated_at', Carbon::today())
-                ->lockForUpdate()
-                ->first();
+                ->lockForUpdate();
+
+            // ✅ Apply client_type filter conditionally
+            if ($user->section_id == 15 && in_array($user->step->step_number, [1, 2])) {
+                $query->where('client_type', $user->assigned_category);
+            }
+
+            $current = $query->first();
 
             if (!$current) {
                 return null;
@@ -492,7 +497,7 @@ class UsersController extends Controller
             // Move it back to pending and clear window
             $current->update([
                 'queue_status' => 'pending',
-                'window_id' => null,
+                'window_id'    => null,
             ]);
 
             return $current;
@@ -511,20 +516,27 @@ class UsersController extends Controller
         ]);
     }
 
+
     public function recallQueue()
     {
         $user = Auth::user();
         $today = Carbon::today();
 
-        // Find the currently serving transaction
-        $transaction = Transaction::where('queue_status', 'serving')
+        // Start query for currently serving transaction
+        $query = Transaction::where('queue_status', 'serving')
             ->whereDate('created_at', $today)
             ->whereDate('updated_at', $today)
             ->where('ticket_status', 'issued')
             ->where('section_id', $user->section_id)
             ->where('step_id', $user->step_id)
-            ->where('window_id', $user->window_id)
-            ->first();
+            ->where('window_id', $user->window_id);
+
+        // ✅ Apply client_type filter only if section_id = 15 AND step_number is 1 or 2
+        if ($user->section_id == 15 && in_array($user->step->step_number, [1, 2])) {
+            $query->where('client_type', $user->assigned_category);
+        }
+
+        $transaction = $query->first();
 
         if (!$transaction) {
             return response()->json([
@@ -537,11 +549,13 @@ class UsersController extends Controller
         $transaction->save();
 
         return response()->json([
-            'message' => 'Queue recalled successfully.',
+            'message'      => 'Queue recalled successfully.',
             'recall_count' => $transaction->recall_count,
-            'queue_id' => $transaction->id
+            'queue_id'     => $transaction->id
         ]);
     }
+
+
 
     public function proceedQueue()
     {
@@ -555,14 +569,19 @@ class UsersController extends Controller
         }
 
         $transaction = DB::transaction(function () use ($user) {
-            // Find the currently serving transaction
-            $current = Transaction::where('queue_status', 'serving')
+            // Start query for currently serving transaction
+            $currentQuery = Transaction::where('queue_status', 'serving')
                 ->where('section_id', $user->section_id)
                 ->where('step_id', $user->step_id)
                 ->where('window_id', $user->window_id)
-                ->whereDate('updated_at', Carbon::today())
-                ->lockForUpdate()
-                ->first();
+                ->whereDate('updated_at', Carbon::today());
+
+            // ✅ Apply client_type filter only if section_id = 15 AND step_number is 1 or 2
+            if ($user->section_id == 15 && in_array($user->step->step_number, [1, 2])) {
+                $currentQuery->where('client_type', $user->assigned_category);
+            }
+
+            $current = $currentQuery->lockForUpdate()->first();
 
             if (!$current) {
                 return null;
@@ -607,6 +626,8 @@ class UsersController extends Controller
             'message' => 'No active serving queue to proceed.'
         ]);
     }
+
+
 
 
 
@@ -720,10 +741,16 @@ class UsersController extends Controller
             ]);
 
         // Serving (only 1)
-        $servingQueue = (clone $baseQuery)
+        $servingQuery = (clone $baseQuery)
             ->where('queue_status', 'serving')
-            ->where('window_id', $user->window_id)
-            ->where('client_type', $user->assigned_category) // filter by assigned category
+            ->where('window_id', $user->window_id);
+
+        // ✅ Apply client_type filter only if section_id = 15 AND step_number = 1 or 2
+        if ($user->section_id == 15 && in_array(optional($user->step)->step_number, [1, 2])) {
+            $servingQuery->where('client_type', $user->assigned_category);
+        }
+
+        $servingQueue = $servingQuery
             ->orderBy('updated_at', 'desc') // latest being served
             ->limit(1)
             ->get()
@@ -741,6 +768,7 @@ class UsersController extends Controller
                     default    => 'bg-gray-500',
                 },
             ]);
+
 
 
         return response()->json([
@@ -763,13 +791,20 @@ class UsersController extends Controller
         $user = Auth::user();
         $today = Carbon::today();
 
-        $transaction = Transaction::where('section_id', $user->section_id)
+        // Base query
+        $query = Transaction::where('section_id', $user->section_id)
             ->where('step_id', $user->step_id)
             ->where('window_id', $user->window_id)
             ->where('ticket_status', 'issued')
             ->where('queue_status', 'serving')
-            ->whereDate('updated_at', $today)
-            ->first();
+            ->whereDate('updated_at', $today);
+
+        // ✅ Apply client_type filter only when section_id = 15 and step_number = 1 or 2
+        if ($user->section_id == 15 && in_array($user->step->step_number, [1, 2])) {
+            $query->where('client_type', $user->assigned_category);
+        }
+
+        $transaction = $query->first();
 
         if (!$transaction) {
             return response()->json([
@@ -780,7 +815,7 @@ class UsersController extends Controller
 
         $transaction->update([
             'queue_status' => 'deferred',
-            'updated_at' => Carbon::now()
+            'updated_at'   => Carbon::now()
         ]);
 
         return response()->json([
@@ -788,6 +823,8 @@ class UsersController extends Controller
             'message' => 'Transaction marked as returnee.'
         ]);
     }
+
+
 
     private function updatePendingTransaction(Request $request, string $clientType)
     {
