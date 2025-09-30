@@ -231,7 +231,7 @@ class UsersController extends Controller
         $users = User::with(['step', 'window'])
             ->where('section_id', $sectionId)
             ->where('user_type', '!=', 1) // ✅ exclude type 1
-            ->latest()
+            ->orderBy('id', 'asc')
             ->get();
 
         $formatted = $users->map(function ($u) {
