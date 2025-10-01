@@ -131,21 +131,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ===============================
-    // Step → Assign Category Logic
-    // ===============================
-    const stepSelect2 = document.querySelector('select[name="step_id"]');
+// Step → Assign Category Logic
+// ===============================
+const stepSelect2 = document.querySelector('select[name="step_id"]');
 const categoryWrapper = document.getElementById('assignCategoryWrapper');
 const categorySelect = document.getElementById('assignedCategorySelect');
 const categoryHidden = document.getElementById('assignedCategoryHidden');
+const bothOption = categorySelect?.querySelector('option[value="both"]');
 
 function updateCategoryVisibility() {
     if (!stepSelect2 || !categoryWrapper || !categorySelect || !categoryHidden) return;
 
     const selectedText = stepSelect2.options[stepSelect2.selectedIndex]?.text || '';
-    const isStep3or4 = selectedText.startsWith('3') || selectedText.startsWith('4');
+    const stepNumber = parseInt(selectedText.split('-')[0]?.trim()) || null;
 
+    const isStep3or4 = stepNumber === 3 || stepNumber === 4;
+
+    // Hide dropdown entirely for step 3 or 4 → auto-assign "both"
     if (isStep3or4) {
-        // Hide dropdown, prevent validation
         categoryWrapper.style.display = 'none';
         categorySelect.removeAttribute('name');
         categorySelect.required = false;
@@ -162,6 +165,20 @@ function updateCategoryVisibility() {
 
         categoryHidden.removeAttribute('name');
     }
+
+    // ✅ Extra Rule: Hide "Both" option when step_number = 1 or 2
+    if (stepNumber === 1 || stepNumber === 2) {
+        if (bothOption) {
+            bothOption.style.display = "none";
+            if (categorySelect.value === "both") {
+                categorySelect.value = ""; // reset if user had picked "Both"
+            }
+        }
+    } else {
+        if (bothOption) {
+            bothOption.style.display = "block";
+        }
+    }
 }
 
 // Run only if wrapper exists
@@ -169,6 +186,7 @@ if (stepSelect2 && categoryWrapper) {
     updateCategoryVisibility();
     stepSelect2.addEventListener('change', updateCategoryVisibility);
 }
+
 
 });
 
