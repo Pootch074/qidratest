@@ -44,5 +44,11 @@
     @yield('scripts')
     @stack('scripts')
     @livewireScripts
+    <script>
+        window.appUser = {
+            assignedCategory: "{{ auth()->user()->assigned_category }}"
+        };
+    </script>
+
 </body>
 </html>
