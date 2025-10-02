@@ -37,5 +37,41 @@
     @yield('scripts')
     @stack('scripts')
     @livewireScripts
+    @auth
+<script>
+    (function () {
+        let logoutTimer;
+
+        // Reset inactivity timer
+        function resetTimer() {
+            clearTimeout(logoutTimer);
+            logoutTimer = setTimeout(autoLogout, 900000); // 1 minute
+        }
+
+        // Perform logout request
+        function autoLogout() {
+            fetch("{{ route('auto.logout') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({})
+            }).then(() => {
+                window.location.href = "/"; // redirect to home/login
+            });
+        }
+
+        // Listen for user activity
+        ["mousemove", "mousedown", "click", "keypress", "scroll", "touchstart"].forEach(evt => {
+            window.addEventListener(evt, resetTimer);
+        });
+
+        // Start timer on page load
+        resetTimer();
+    })();
+</script>
+@endauth
+
 </body>
 </html>

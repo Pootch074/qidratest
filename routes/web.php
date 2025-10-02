@@ -125,4 +125,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/queues/pending/returnee/update', [UsersController::class, 'updatePendingReturnee'])
     ->name('queues.updatePendingReturnee');
 
+
+    Route::post('/auto-logout', [LoginController::class, 'logout'])->name('auto.logout');
+
 });
