@@ -177,35 +177,35 @@ function speakNext() {
                         html += `<div class="grid grid-cols-2 gap-2">`;
 
                         step.windows.forEach((win) => {
-    let firstTx = win.transactions?.length > 0 ? win.transactions[0] : null;
+                            let firstTx = win.transactions?.length > 0 ? win.transactions[0] : null;
 
-    // ✅ Default background
-    let bgClass = "bg-[#2e3192]";
+                            // ✅ Default background
+                            let bgClass = "bg-[#2e3192]";
 
-    // ✅ Apply red background if step = 1 or 2 AND current user category = "priority"
-    if ((step.step_number === 1 || step.step_number === 2) 
-        && window.appUser.assignedCategory.toLowerCase() === "priority") {
-        bgClass = "bg-red-600"; // Tailwind red
-    }
+                            // ✅ Apply red background if step = 1 or 2 AND current user category = "priority"
+                            if ((step.step_number === 1 || step.step_number === 2) 
+                                && window.appUser.assignedCategory.toLowerCase() === "priority") {
+                                bgClass = "bg-red-600"; // Tailwind red
+                            }
 
-    html += `
-        <div class="rounded-lg text-[#FFFFFF] text-2xl font-semibold flex flex-col items-center justify-center w-full">
-            <div class="flex items-center w-full h-full rounded-lg border-4 border-[#2e3192]">
-                <span class="${bgClass} px-3 py-1 text-center w-1/5">
-                    <p class="text-lg font-semibold">Window</p>
-                    <p class="text-4xl font-bold">${win.window_number}</p>
-                </span>
-                ${
-                    firstTx
-                        ? `<span class="queue-number flex items-center justify-center bg-[#FFFFFF] text-[#000000] px-3 py-1 text-4xl font-bold text-center w-4/5 h-full rounded-r-lg" data-queue="${firstTx.queue_number}">
-                                ${firstTx.queue_number}
-                           </span>`
-                        : `<span class="flex items-center justify-center bg-[#FFFFFF] text-[#000000] px-3 py-1 text-sm text-center w-4/5 h-full rounded-r-lg">🚫</span>`
-                }
-            </div>
-        </div>
-    `;
-});
+                            html += `
+                                <div class="rounded-lg text-[#FFFFFF] text-2xl font-semibold flex flex-col items-center justify-center w-full">
+                                    <div class="flex items-center w-full h-full rounded-lg border-4 border-[#2e3192]">
+                                        <span class="${bgClass} px-3 py-1 text-center w-1/5">
+                                            <p class="text-lg font-semibold">Window</p>
+                                            <p class="text-4xl font-bold">${win.window_number}</p>
+                                        </span>
+                                        ${
+                                            firstTx
+                                                ? `<span class="queue-number flex items-center justify-center bg-[#FFFFFF] text-[#000000] px-3 py-1 text-4xl font-bold text-center w-4/5 h-full rounded-r-lg" data-queue="${firstTx.queue_number}">
+                                                        ${firstTx.queue_number}
+                                                </span>`
+                                                : `<span class="flex items-center justify-center bg-[#FFFFFF] text-[#000000] px-3 py-1 text-sm text-center w-4/5 h-full rounded-r-lg">🚫</span>`
+                                        }
+                                    </div>
+                                </div>
+                            `;
+                        });
 
 
 

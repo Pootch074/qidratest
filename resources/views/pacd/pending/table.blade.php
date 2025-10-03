@@ -140,16 +140,17 @@ function printTicket(data) {
 
 // 🔹 Generate queue (with print)
 document.getElementById("generateQueueBtn").addEventListener("click", () => {
-    fetch(`/transactions/${selectedTransactionId}/resume`, {
-        method: "POST",
-        headers: {
-            "X-CSRF-TOKEN": "{{ csrf_token() }}",
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            step_id: selectedStepId
-        }),
-    })
+fetch("{{ url('transactions') }}/" + selectedTransactionId + "/resume", {
+    method: "POST",
+    headers: {
+        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+        "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+        step_id: selectedStepId
+    }),
+})
+
     .then(res => res.json())
     .then(data => {
         if (data.success) {
