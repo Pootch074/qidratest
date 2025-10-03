@@ -131,35 +131,27 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const sectionId = "{{ Auth::user()->section_id }}";
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     // ✅ Modal Toggle
     const openBtn = document.getElementById('openAddUserModal');
     const closeBtn = document.getElementById('closeAddUserModal');
-    const closeBtnFooter = document.getElementById('closeAddUserModalBtn');
     const cancelBtn = document.getElementById('cancelAddUser');
     const modal = document.getElementById('addUserModal');
 
-    if (openBtn && modal) {
-        openBtn.addEventListener('click', () => modal.classList.remove('hidden'));
-    }
-    if (closeBtn && modal) {
-        closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
-    }
-    if (closeBtnFooter && modal) {
-        closeBtnFooter.addEventListener('click', () => modal.classList.add('hidden'));
-    }
+    if (openBtn && modal) openBtn.addEventListener('click', () => modal.classList.remove('hidden'));
+    if (closeBtn && modal) closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
     if (cancelBtn && modal) cancelBtn.addEventListener('click', () => modal.classList.add('hidden'));
 
-    // ✅ Step number uniqueness check
+    // ✅ Step number uniqueness check (only if step_number input exists)
     const stepInput = document.getElementById('step_number');
-    const saveBtn = document.querySelector('form button[type="submit"]');
+    const saveBtn = document.querySelector('#addStepForm button[type="submit"]');
 
     if (stepInput && saveBtn) {
         stepInput.addEventListener('input', () => {
             const stepNumber = stepInput.value;
             if (!stepNumber) return;
 
-            // ✅ Use dynamic base URL
             fetch(`${window.appBaseUrl}/steps/check/${sectionId}/${stepNumber}`)
                 .then(res => {
                     if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
@@ -179,23 +171,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-
     // ✅ Inline edit for step names
-    const editableSpans = document.querySelectorAll('.editable-step-name');
-    const textInputs = document.querySelectorAll('td input[type="text"]');
-
-    editableSpans.forEach(span => {
+    document.querySelectorAll('.editable-step-name').forEach(span => {
         span.addEventListener('click', () => {
             const input = span.nextElementSibling;
             if (!input) return;
-
             span.classList.add('hidden');
             input.classList.remove('hidden');
             input.focus();
         });
     });
 
-    textInputs.forEach(input => {
+    document.querySelectorAll('td input[type="text"]').forEach(input => {
         input.addEventListener('blur', () => {
             const id = input.dataset.id;
             const newValue = input.value.trim();
@@ -207,13 +194,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            fetch(`/steps/${id}`, {
-                method: 'PUT',
+            fetch(`${window.appBaseUrl}/steps/${id}`, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    'X-CSRF-TOKEN': csrfToken
                 },
-                body: JSON.stringify({ step_name: newValue })
+                body: JSON.stringify({ step_name: newValue, _method: 'PUT' })
             })
             .then(res => res.json())
             .then(data => {
@@ -243,9 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ✅ Delete step
-    const deleteButtons = document.querySelectorAll('.delete-step');
-
-    deleteButtons.forEach(button => {
+    document.querySelectorAll('.delete-step').forEach(button => {
         button.addEventListener('click', () => {
             const id = button.dataset.id;
             if (!confirm("Are you sure you want to delete this step?")) return;
@@ -254,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    'X-CSRF-TOKEN': csrfToken
                 }
             })
             .then(res => {
