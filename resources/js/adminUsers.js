@@ -195,7 +195,6 @@ if (stepSelect2 && categoryWrapper) {
 // ===============================
 function deleteUser(userId) {
     if (!confirm('Are you sure you want to delete this user?')) return;
-
     fetch(`${window.appBaseUrl}/admin/users/${userId}`, {
         method: 'DELETE',
         headers: {

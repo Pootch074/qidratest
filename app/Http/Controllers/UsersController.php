@@ -313,14 +313,15 @@ class UsersController extends Controller
 
 
     public function destroy(User $user)
-    {
-        try {
-            $user->delete();
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
+{
+    try {
+        $user->forceDelete(); // ⚡️ this will run DELETE FROM users WHERE id=?
+        return response()->json(['success' => true]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => $e->getMessage()]);
     }
+}
+
 
     public function nextRegular()
     {
