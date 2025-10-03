@@ -254,61 +254,80 @@ class UsersController extends Controller
 
 
     public function store(Request $request)
-    {
-        $authUser = Auth::user();
-        $sectionId = $authUser->section_id;
+{
+    $authUser = Auth::user();
+    $sectionId = $authUser->section_id;
 
-        // 🟢 Validation
-        $validated = $request->validate([
-            'first_name'        => 'required|string|max:255',
-            'last_name'         => 'required|string|max:255',
-            'email'             => 'required|email|unique:users,email',
-            'position'          => 'required|string|max:255',
-            // 👇 allow "both" only if section_id == 15
-            'assigned_category' => $sectionId == 15
-                ? 'required|string|in:regular,priority,both'
-                : 'nullable|string',
-            'step_id'           => 'required|exists:steps,id',
-            'window_id'         => 'required|exists:windows,id',
-            'password'          => 'required|string|min:6',
-        ]);
+    // 🟢 Validation rules
+    $rules = [
+        'first_name' => 'required|string|max:255|regex:/^[A-Za-z]+$/',
+        'last_name'  => 'required|string|max:255|regex:/^[A-Za-z]+$/',
+        'email'      => 'required|email|unique:users,email',
+        'position'   => 'required|string|max:255',
+        // 👇 allow "both" only if section_id == 15
+        'assigned_category' => $sectionId == 15
+            ? 'required|string|in:regular,priority,both'
+            : 'nullable|string',
+        'step_id'    => 'required|exists:steps,id',
+        'window_id'  => 'required|exists:windows,id',
+        'password'   => [
+            'required',
+            'string',
+            'min:12',                 // ✅ at least 12 chars
+            'regex:/[a-z]/',          // ✅ at least 1 lowercase
+            'regex:/[A-Z]/',          // ✅ at least 1 uppercase
+            'regex:/[0-9]/',          // ✅ at least 1 number
+            'regex:/[@$!%*?&]/',      // ✅ at least 1 special char
+        ],
+    ];
 
-        // 🛡️ Force defaults
-        $validated['user_type'] = 5; // always TYPE_USER
+    // 🟡 Custom error messages
+    $messages = [
+        'first_name.regex' => 'First name may only contain letters (A–Z).',
+        'last_name.regex'  => 'Last name may only contain letters (A–Z).',
+        'password.min'     => 'Password must be at least 12 characters long.',
+        'password.regex'   => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@ $ ! % * ? &).',
+    ];
 
-        if ($sectionId != 15) {
-            // 🔒 override regardless of input
-            $validated['assigned_category'] = 'both';
-        }
+    $validated = $request->validate($rules, $messages);
 
-        $user = User::create([
-            'first_name'        => $validated['first_name'],
-            'last_name'         => $validated['last_name'],
-            'email'             => $validated['email'],
-            'position'          => $validated['position'],
-            'user_type'         => $validated['user_type'],
-            'assigned_category' => $validated['assigned_category'],
-            'step_id'           => $validated['step_id'],
-            'window_id'         => $validated['window_id'] ?? null,
-            'section_id'        => $sectionId,
-            'password'          => bcrypt($validated['password']),
-        ]);
+    // 🛡️ Force defaults
+    $validated['user_type'] = 5; // always TYPE_USER
 
-        return response()->json([
-            'success' => true,
-            'user' => [
-                'id'               => $user->id,
-                'first_name'       => $user->first_name,
-                'last_name'        => $user->last_name,
-                'email'            => $user->email,
-                'position'         => $user->position,
-                'user_type_name'   => $user->getUserTypeName(),
-                'assigned_category' => $user->assigned_category,
-                'window_number'    => $user->window->window_number ?? null,
-                'step_number'      => $user->step->step_number ?? null,
-            ],
-        ]);
+    if ($sectionId != 15) {
+        // 🔒 override regardless of input
+        $validated['assigned_category'] = 'both';
     }
+
+    $user = User::create([
+        'first_name'        => $validated['first_name'],
+        'last_name'         => $validated['last_name'],
+        'email'             => $validated['email'],
+        'position'          => $validated['position'],
+        'user_type'         => $validated['user_type'],
+        'assigned_category' => $validated['assigned_category'],
+        'step_id'           => $validated['step_id'],
+        'window_id'         => $validated['window_id'] ?? null,
+        'section_id'        => $sectionId,
+        'password'          => bcrypt($validated['password']),
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'user' => [
+            'id'               => $user->id,
+            'first_name'       => $user->first_name,
+            'last_name'        => $user->last_name,
+            'email'            => $user->email,
+            'position'         => $user->position,
+            'user_type_name'   => $user->getUserTypeName(),
+            'assigned_category'=> $user->assigned_category,
+            'window_number'    => $user->window->window_number ?? null,
+            'step_number'      => $user->step->step_number ?? null,
+        ],
+    ]);
+}
+
 
 
 

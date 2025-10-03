@@ -27,50 +27,62 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add User Form
     // ===============================
     form?.addEventListener('submit', async (e) => {
-        e.preventDefault();
+    e.preventDefault();
 
-        const data = {
-            first_name: form.first_name.value,
-            last_name: form.last_name.value,
-            email: form.email.value,
-            position: form.position.value,
-            assigned_category: form.assigned_category.value,
-            step_id: form.step_id.value,
-            window_id: form.window_id.value,
-            password: form.password.value
-        };
+    const nameRegex = /^[A-Za-z]+$/; // Only alphabets
 
-        try {
-            const res = await fetch(window.appBaseUrl + "/admin/users/store", {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
+    if (!nameRegex.test(form.first_name.value)) {
+        alert("First name must contain only letters (A–Z, a–z).");
+        return;
+    }
 
-            const json = await res.json();
+    if (!nameRegex.test(form.last_name.value)) {
+        alert("Last name must contain only letters (A–Z, a–z).");
+        return;
+    }
 
-            if (!res.ok || !json.success) {
-                let msg = json.message || 'Unknown error';
-                if (json.errors) {
-                    msg += '\n' + Object.values(json.errors).flat().join('\n');
-                }
-                alert(msg);
-                return;
+    const data = {
+        first_name: form.first_name.value,
+        last_name: form.last_name.value,
+        email: form.email.value,
+        position: form.position.value,
+        assigned_category: form.assigned_category.value,
+        step_id: form.step_id.value,
+        window_id: form.window_id.value,
+        password: form.password.value
+    };
+
+    try {
+        const res = await fetch(window.appBaseUrl + "/admin/users/store", {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        const json = await res.json();
+
+        if (!res.ok || !json.success) {
+            let msg = json.message || 'Unknown error';
+            if (json.errors) {
+                msg += '\n' + Object.values(json.errors).flat().join('\n');
             }
-
-            // ✅ Instead of manually appending row → re-fetch the users list
-            fetchUsers();
-            closeModal();
-
-        } catch (err) {
-            console.error('Add user failed:', err);
-            alert('Add user failed. Check console for details.');
+            alert(msg);
+            return;
         }
-    });
+
+        fetchUsers();
+        closeModal();
+
+    } catch (err) {
+        console.error('Add user failed:', err);
+        alert('Add user failed. Check console for details.');
+    }
+});
+
 
 
     // ===============================
