@@ -20,19 +20,14 @@
     <div class="flex items-center justify-between px-4 py-2 bg-[#2e3192] shadow">
         @include('layouts.inc.header')
     </div>
-    
-    
 
     <div class="flex flex-1">
             @yield('content')
     </div>
 
-
     <div class="w-full h-[8vh] bg-[#2e3192] shadow">
         @include('layouts.inc.footer')
     </div>
-
-
 
     @yield('scripts')
     @stack('scripts')

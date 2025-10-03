@@ -80,36 +80,40 @@ loadVoices();
 function announce(formattedQueue, stepNumber, windowNumber, repeat) {
     const message = `Client number ${formattedQueue}, please proceed to step ${stepNumber} window ${windowNumber}.`;
     speechQueue.push({ message, repeat });
-    speakNext();
+
+    // ✅ Always trigger the speech processor
+    if (!speaking) {
+        speakNext();
+    }
 }
 
 function speakNext() {
-    if (speaking || speechQueue.length === 0) return;
+    if (speechQueue.length === 0) {
+        speaking = false;
+        return;
+    }
 
     speaking = true;
     const { message, repeat } = speechQueue.shift();
     let count = 0;
 
     const playAlertThenSpeak = () => {
-        // Play alert sound once per batch (reuse global)
-        alertAudio.currentTime = 0; // rewind if needed
+        alertAudio.currentTime = 0;
 
         alertAudio.onended = () => {
-            // Start first speech after alert finishes
             speakMessage();
         };
 
         alertAudio.play().catch(err => {
             console.error("Failed to play alert:", err);
-            // Fallback: still start speech
             speakMessage();
         });
     };
 
     const speakMessage = () => {
         if (count >= repeat) {
-            speaking = false;
-            speakNext(); // move to next in queue
+            // ✅ Move on to next message in queue
+            speakNext();
             return;
         }
 
@@ -118,7 +122,6 @@ function speakNext() {
         utterance.rate = 0.8;
         utterance.pitch = 1;
         utterance.volume = 1;
-
         utterance.voice =
             availableVoices.length > voiceIndex
                 ? availableVoices[voiceIndex]
@@ -126,7 +129,13 @@ function speakNext() {
 
         utterance.onend = () => {
             count++;
-            speakMessage(); // repeat speech without replaying alert
+            if (count < repeat) {
+                // repeat same message
+                speakMessage();
+            } else {
+                // ✅ finished repeats, move to next queue
+                speakNext();
+            }
         };
 
         window.speechSynthesis.speak(utterance);
@@ -134,6 +143,7 @@ function speakNext() {
 
     playAlertThenSpeak();
 }
+
 
 
     /** ---------------- Fetch Steps ---------------- **/
