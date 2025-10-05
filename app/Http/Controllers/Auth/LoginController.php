@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use App\Models\User;
 
 class LoginController extends Controller
@@ -23,23 +24,28 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
-            $user = User::find(Auth::id());
-
-            // ❌ Block if already logged in
-            if ($user->is_logged_in) {
-                Auth::logout();
-                return redirect()->back()->withErrors([
-                    'email' => 'You are already logged in from another session.'
-                ])->onlyInput('email');
-            }
-
-            // ✅ Mark user as logged in
-            $user->is_logged_in = true;
-            $user->save();
-
+            // ✅ Regenerate session for security after successful login
             $request->session()->regenerate();
 
-            // Load user relationships
+            $user = User::find(Auth::id());
+
+            // 🧩 If user has an active session elsewhere, destroy it
+            if ($user->is_logged_in && $user->session_id && $user->session_id !== session()->getId()) {
+                try {
+                    // Destroy the old session if it exists
+                    \Session::getHandler()->destroy($user->session_id);
+                } catch (\Exception $e) {
+                    // (optional) log the error
+                    \Log::warning("Failed to destroy old session for user {$user->id}: {$e->getMessage()}");
+                }
+            }
+
+            // ✅ Mark user as logged in with new session
+            $user->is_logged_in = true;
+            $user->session_id = session()->getId();
+            $user->save();
+
+            // Load relationships for context
             $user = User::with(['window.step.section.division.office'])->find(Auth::id());
 
             $section  = optional(optional(optional($user->window)->step)->section);
@@ -53,7 +59,7 @@ class LoginController extends Controller
             $request->session()->put('division_name', $division->division_name ?? null);
             $request->session()->put('field_office', $office->field_office ?? null);
 
-            // Redirect based on user_type
+            // 🚀 Redirect user by role
             switch ($user->user_type) {
                 case 0:
                     return redirect()->route('superadmin');
@@ -77,12 +83,14 @@ class LoginController extends Controller
         ])->onlyInput('email');
     }
 
+
     public function logout(Request $request): RedirectResponse
     {
         $user = Auth::user();
+
         if ($user) {
-            // ✅ Mark user as logged out
             $user->is_logged_in = false;
+            $user->session_id = null;
             $user->save();
         }
 

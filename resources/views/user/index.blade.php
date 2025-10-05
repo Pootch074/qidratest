@@ -295,8 +295,21 @@ container.innerHTML = list.map(queue => `
 
 const fetchQueues = () => {
     fetch("{{ route('queues.data') }}")
-        .then(res => res.json())
+        .then(res => {
+            const contentType = res.headers.get('content-type') || '';
+
+            // 🚨 If we got HTML (login page), redirect immediately
+            if (!contentType.includes('application/json')) {
+                console.warn("Session expired — redirecting to login.");
+                window.location.href = "{{ route('login') }}";
+                return null;
+            }
+
+            return res.json();
+        })
         .then(data => {
+            if (!data) return; // no data means we redirected
+
             renderQueue(data.upcomingRegu, '#upcomingRegu');
             renderQueue(data.upcomingPrio, '#upcomingPrio');
             renderQueue(data.upcomingReturnee, '#upcomingReturnee');
@@ -305,10 +318,11 @@ const fetchQueues = () => {
             renderQueue(data.pendingReturnee, '#pendingReturnee');
             renderQueue(data.deferred, '#deferred');
             renderQueue(data.servingQueue, '#servingQueue');
-            updateButtonStates(data); // ✅ pass queues
+            updateButtonStates(data);
         })
-        .catch(err => console.error(err));
+        .catch(err => console.error('Fetch error:', err));
 };
+
 
 
     fetchQueues();
@@ -397,15 +411,6 @@ const fetchQueues = () => {
 
     
 });
-
-
-
-
-
-
-
-
-
 
 </script>
 
