@@ -1,11 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const alertAudio = new Audio(window.alertAudioUrl);
 
-
-    let announcedTransactions = new Map();
-    let speechQueue = [];
-    let speaking = false;
-
     /** ---------------- Date & Time ---------------- **/
     function updateDateTime() {
         const now = new Date();
@@ -64,87 +59,96 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /** ---------------- Speech Announcement ---------------- **/
-let voiceIndex = 2;
-let availableVoices = [];
+    let voiceIndex = 2;
+    let availableVoices = [];
+    let announcedTransactions = new Map();
+    let speechQueue = [];
+    let speaking = false;
 
-function loadVoices() {
-    availableVoices = window.speechSynthesis.getVoices();
-    if (!availableVoices.length) {
-        window.speechSynthesis.onvoiceschanged = () => {
+    /** ✅ Load voices properly (fix for Chrome delay) **/
+    function loadVoices() {
+        function setVoices() {
             availableVoices = window.speechSynthesis.getVoices();
-        };
+            if (availableVoices.length) {
+                console.log("✅ Voices loaded:", availableVoices.length);
+            }
+        }
+
+        window.speechSynthesis.onvoiceschanged = setVoices;
+        setVoices();
     }
-}
-loadVoices();
+    loadVoices();
 
-function announce(formattedQueue, stepNumber, windowNumber, repeat) {
-    const message = `Client number ${formattedQueue}, please proceed to step ${stepNumber} window ${windowNumber}.`;
-    speechQueue.push({ message, repeat });
+    /** ✅ Add message to speech queue **/
+    function announce(formattedQueue, stepNumber, windowNumber, repeat) {
+        const message = `Client number ${formattedQueue}, please proceed to step ${stepNumber}, window ${windowNumber}.`;
+        speechQueue.push({ message, repeat });
 
-    // ✅ Always trigger the speech processor
-    if (!speaking) {
-        speakNext();
-    }
-}
-
-function speakNext() {
-    if (speechQueue.length === 0) {
-        speaking = false;
-        return;
-    }
-
-    speaking = true;
-    const { message, repeat } = speechQueue.shift();
-    let count = 0;
-
-    const playAlertThenSpeak = () => {
-        alertAudio.currentTime = 0;
-
-        alertAudio.onended = () => {
-            speakMessage();
-        };
-
-        alertAudio.play().catch(err => {
-            console.error("Failed to play alert:", err);
-            speakMessage();
-        });
-    };
-
-    const speakMessage = () => {
-        if (count >= repeat) {
-            // ✅ Move on to next message in queue
+        if (!speaking) {
             speakNext();
+        }
+    }
+
+    /** ✅ Sequential speech processor **/
+    function speakNext() {
+        if (speechQueue.length === 0) {
+            speaking = false;
             return;
         }
 
-        const utterance = new SpeechSynthesisUtterance(message);
-        utterance.lang = "en-US";
-        utterance.rate = 0.8;
-        utterance.pitch = 1;
-        utterance.volume = 1;
-        utterance.voice =
-            availableVoices.length > voiceIndex
-                ? availableVoices[voiceIndex]
-                : availableVoices[0];
+        speaking = true;
+        const { message, repeat } = speechQueue.shift();
+        let count = 0;
 
-        utterance.onend = () => {
-            count++;
-            if (count < repeat) {
-                // repeat same message
-                speakMessage();
-            } else {
-                // ✅ finished repeats, move to next queue
-                speakNext();
-            }
+        const playAlertThenSpeak = () => {
+            alertAudio.currentTime = 0;
+
+            alertAudio.onended = () => {
+                setTimeout(speakMessage, 400); // small delay to stabilize playback
+            };
+
+            alertAudio.play().catch((err) => {
+                console.error("Failed to play alert:", err);
+                setTimeout(speakMessage, 400);
+            });
         };
 
-        window.speechSynthesis.speak(utterance);
-    };
+        const speakMessage = () => {
+            if (count >= repeat) {
+                speakNext();
+                return;
+            }
 
-    playAlertThenSpeak();
-}
+            const utterance = new SpeechSynthesisUtterance(message);
+            utterance.lang = "en-US";
+            utterance.rate = 0.85;
+            utterance.pitch = 1;
+            utterance.volume = 1;
 
+            // Use selected voice if available
+            utterance.voice =
+                availableVoices.length > voiceIndex
+                    ? availableVoices[voiceIndex]
+                    : availableVoices[0] || null;
 
+            utterance.onend = () => {
+                count++;
+                if (count < repeat) {
+                    setTimeout(speakMessage, 300);
+                } else {
+                    speakNext();
+                }
+            };
+
+            // ✅ Prevent speechSynthesis from getting stuck
+            window.speechSynthesis.cancel();
+
+            // ✅ Actually speak
+            window.speechSynthesis.speak(utterance);
+        };
+
+        playAlertThenSpeak();
+    }
 
     /** ---------------- Fetch Steps ---------------- **/
     function fetchSteps() {
@@ -187,14 +191,21 @@ function speakNext() {
                         html += `<div class="grid grid-cols-2 gap-2">`;
 
                         step.windows.forEach((win) => {
-                            let firstTx = win.transactions?.length > 0 ? win.transactions[0] : null;
+                            let firstTx =
+                                win.transactions?.length > 0
+                                    ? win.transactions[0]
+                                    : null;
 
                             // ✅ Default background
                             let bgClass = "bg-[#2e3192]";
 
                             // ✅ Apply red background if step = 1 or 2 AND current user category = "priority"
-                            if ((step.step_number === 1 || step.step_number === 2) 
-                                && window.appUser.assignedCategory.toLowerCase() === "priority") {
+                            if (
+                                (step.step_number === 1 ||
+                                    step.step_number === 2) &&
+                                window.appUser.assignedCategory.toLowerCase() ===
+                                    "priority"
+                            ) {
                                 bgClass = "bg-red-600"; // Tailwind red
                             }
 
@@ -203,7 +214,9 @@ function speakNext() {
                                     <div class="flex items-center w-full h-full rounded-lg border-4 border-[#2e3192]">
                                         <span class="${bgClass} px-3 py-1 text-center w-1/5">
                                             <p class="text-lg font-semibold">Window</p>
-                                            <p class="text-4xl font-bold">${win.window_number}</p>
+                                            <p class="text-4xl font-bold">${
+                                                win.window_number
+                                            }</p>
                                         </span>
                                         ${
                                             firstTx
@@ -216,8 +229,6 @@ function speakNext() {
                                 </div>
                             `;
                         });
-
-
 
                         html += `</div>`;
                     } else {
@@ -240,49 +251,51 @@ function speakNext() {
 
     /** ---------------- Fetch Latest Transaction ---------------- **/
     function fetchLatestTransaction() {
-    fetch(window.appRoutes.latestTransaction)
-        .then((res) => res.json())
-        .then((data) => {
-            if (!data || !data.length) return; // check array
+        fetch(window.appRoutes.latestTransaction)
+            .then((res) => res.json())
+            .then((data) => {
+                if (!data || !data.length) return; // check array
 
-            data.forEach((tx) => {
-                const lastAnnounced = announcedTransactions.get(tx.id) ?? {
-                    recall_count: null,
-                    spokenCount: 0,
-                };
-                let repeatTimes;
+                data.forEach((tx) => {
+                    const key = `${tx.id}-${tx.step_number}`;
+                    const lastAnnounced = announcedTransactions.get(key) ?? {
+                        recall_count: null,
+                        spokenCount: 0,
+                    };
 
-                if (tx.recall_count == null || tx.recall_count === 0) {
-                    // Normal transaction → speak twice if not yet spoken twice
-                    repeatTimes = 2 - lastAnnounced.spokenCount;
-                    if (repeatTimes <= 0) return;
-                } else {
-                    // Recall transaction → speak once if recall_count changed
-                    if (lastAnnounced.recall_count === tx.recall_count) return;
-                    repeatTimes = 1;
-                }
+                    let repeatTimes;
 
-                const formattedQueue =
-                    tx.client_type?.charAt(0).toUpperCase() +
-                    String(tx.queue_number).padStart(3, "0");
+                    if (tx.recall_count == null || tx.recall_count === 0) {
+                        // Normal transaction → speak twice if not yet spoken twice
+                        repeatTimes = 2 - lastAnnounced.spokenCount;
+                        if (repeatTimes <= 0) return;
+                    } else {
+                        // Recall transaction → speak once if recall_count changed
+                        if (lastAnnounced.recall_count === tx.recall_count)
+                            return;
+                        repeatTimes = 1;
+                    }
 
-                announce(
-                    formattedQueue,
-                    tx.step_number,
-                    tx.window_number,
-                    repeatTimes
-                );
+                    const formattedQueue =
+                        tx.client_type?.charAt(0).toUpperCase() +
+                        String(tx.queue_number).padStart(3, "0");
 
-                announcedTransactions.set(tx.id, {
-                    recall_count: tx.recall_count,
-                    spokenCount:
-                        (lastAnnounced.spokenCount || 0) + repeatTimes,
+                    announce(
+                        formattedQueue,
+                        tx.step_number,
+                        tx.window_number,
+                        repeatTimes
+                    );
+
+                    announcedTransactions.set(key, {
+                        recall_count: tx.recall_count,
+                        spokenCount:
+                            (lastAnnounced.spokenCount || 0) + repeatTimes,
+                    });
                 });
-            });
-        })
-        .catch((err) => console.error("Error fetching transactions:", err));
-}
-
+            })
+            .catch((err) => console.error("Error fetching transactions:", err));
+    }
 
     /** ---------------- Initial Load + Intervals ---------------- **/
     fetchSteps();
