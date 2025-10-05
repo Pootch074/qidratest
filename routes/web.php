@@ -4,14 +4,31 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\UsersController;
 use App\Http\Middleware\CheckUserType;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TransactionsController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\TransactionsController;
 use App\Http\Controllers\PacdController;
 use App\Http\Controllers\StepsController;
 use App\Http\Controllers\WindowsController;
 use App\Http\Controllers\DisplayController;
 use App\Http\Controllers\IdscanController;
 use App\Http\Controllers\SuperAdminController;
+
+Route::get('/session/check', function () {
+    $user = Auth::user();
+
+    if (!$user) {
+        return response()->json(['active' => false]);
+    }
+
+    // Compare session_id in DB with the current session
+    if ($user->session_id !== session()->getId()) {
+        Auth::logout();
+        session()->invalidate();
+        return response()->json(['active' => false]);
+    }
+
+    return response()->json(['active' => true]);
+})->name('session.check');
 
 // Routes that require authentication
 Route::middleware(['auth'])->group(function () {

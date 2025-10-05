@@ -212,5 +212,29 @@ function queueApp(userSectionId) {
     };
 }
 </script>
+<script>
+// 🔄 Check session validity every 10 seconds
+setInterval(async () => {
+    try {
+        const res = await fetch("{{ route('session.check') }}", {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        });
+
+        if (!res.ok) return; // network or server issue
+        const data = await res.json();
+
+        if (!data.active) {
+            alert("You have been logged out because your account was accessed from another device.");
+            window.location.href = "{{ route('login') }}";
+        }
+    } catch (err) {
+        console.warn('Session check failed:', err);
+    }
+}, 5000); // every 10 seconds
+</script>
+
 @endsection
 
