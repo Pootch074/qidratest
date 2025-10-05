@@ -10,9 +10,6 @@
     @yield('header')
     @livewireStyles
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <!-- insert here the content of the @section('header') -->
-    @yield('header') 
 </head>
 
 <body class="min-h-screen flex flex-col">
@@ -32,41 +29,73 @@
     @yield('scripts')
     @stack('scripts')
     @livewireScripts
+    
+
     @auth
 <script>
-    (function () {
-        let logoutTimer;
+(function () {
+    const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const autoLogoutUrl = "{{ route('auto.logout') }}";
+    const sessionCheckUrl = "{{ route('session.check') }}";
+    const loginUrl = "{{ route('login') }}";
 
-        // Reset inactivity timer
-        function resetTimer() {
-            clearTimeout(logoutTimer);
-            logoutTimer = setTimeout(autoLogout, 900000); // 1 minute
-        }
+    /** ---------------- Inactivity Logout (15 minutes) ---------------- **/
+    let logoutTimer;
+    function resetTimer() {
+        clearTimeout(logoutTimer);
+        logoutTimer = setTimeout(autoLogoutFetch, 900000); // 15 minutes
+    }
+    function autoLogoutFetch() {
+        fetch(autoLogoutUrl, {
+            method: "POST",
+            headers: { "X-CSRF-TOKEN": csrf, "Content-Type": "application/json" },
+            body: JSON.stringify({})
+        }).finally(() => window.location.replace(loginUrl));
+    }
+    ["mousemove","mousedown","click","keypress","scroll","touchstart"].forEach(evt => window.addEventListener(evt, resetTimer));
+    resetTimer();
 
-        // Perform logout request
-        function autoLogout() {
-            fetch("{{ route('auto.logout') }}", {
-                method: "POST",
-                headers: {
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({})
-            }).then(() => {
-                window.location.href = "/"; // redirect to home/login
-            });
-        }
+    /** ---------------- Instant Logout on Back Button ---------------- **/
+    history.pushState(null, "", location.href);
+    window.addEventListener("popstate", function () {
+        // Push state again immediately to prevent going back
+        history.pushState(null, "", location.href);
 
-        // Listen for user activity
-        ["mousemove", "mousedown", "click", "keypress", "scroll", "touchstart"].forEach(evt => {
-            window.addEventListener(evt, resetTimer);
+        // Immediately redirect (no delay or page flicker)
+        fetch(autoLogoutUrl, {
+            method: "POST",
+            headers: { "X-CSRF-TOKEN": csrf, "Content-Type": "application/json" },
+            body: JSON.stringify({})
         });
 
-        // Start timer on page load
-        resetTimer();
-    })();
+        // Force instant redirect to login
+        window.location.replace(loginUrl);
+    });
+
+    /** ---------------- Auto Logout on Tab/Window Close ---------------- **/
+    window.addEventListener("beforeunload", function () {
+        try {
+            const fd = new FormData();
+            fd.append('_token', csrf);
+            navigator.sendBeacon(autoLogoutUrl, fd);
+        } catch (e) {}
+    });
+
+    /** ---------------- Session Check (Handles Forward Cache) ---------------- **/
+    function checkSession() {
+        fetch(sessionCheckUrl, { method: "GET", credentials: "same-origin" })
+            .then(res => res.json())
+            .then(data => { if (!data.active) window.location.replace(loginUrl); })
+            .catch(() => window.location.replace(loginUrl));
+    }
+    window.addEventListener("pageshow", checkSession);
+    window.addEventListener("load", checkSession);
+})();
 </script>
 @endauth
+
+
+
 
 </body>
 </html>

@@ -227,7 +227,7 @@ setInterval(async () => {
         const data = await res.json();
 
         if (!data.active) {
-            alert("You have been logged out because your account was accessed from another device.");
+            // alert("You have been logged out because your account was accessed from another device.");
             window.location.href = "{{ route('login') }}";
         }
     } catch (err) {
