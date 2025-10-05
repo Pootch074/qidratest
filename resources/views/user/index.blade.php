@@ -294,21 +294,33 @@ container.innerHTML = list.map(queue => `
 
 
 const fetchQueues = () => {
-    fetch("{{ route('queues.data') }}")
-        .then(res => {
-            const contentType = res.headers.get('content-type') || '';
+    fetch("{{ route('queues.data') }}", {
+        headers: { 'Accept': 'application/json' }
+    })
+    .then(async res => {
+        const text = await res.text();
 
-            // 🚨 If we got HTML (login page), redirect immediately
-            if (!contentType.includes('application/json')) {
-                console.warn("Session expired — redirecting to login.");
-                window.location.href = "{{ route('login') }}";
-                return null;
+        if (!res.ok) {
+            // 🛑 Handle 401 Unauthenticated (session expired or replaced)
+            if (res.status === 401) {
+                try {
+                    const data = JSON.parse(text);
+                    if (data.redirect) {
+                        console.warn("Session expired — redirecting...");
+                        window.location.href = data.redirect;
+                        return;
+                    }
+                } catch {
+                    window.location.href = "{{ route('login') }}";
+                    return;
+                }
             }
+            console.error("Fetch failed:", res.status);
+            return;
+        }
 
-            return res.json();
-        })
-        .then(data => {
-            if (!data) return; // no data means we redirected
+        try {
+            const data = JSON.parse(text);
 
             renderQueue(data.upcomingRegu, '#upcomingRegu');
             renderQueue(data.upcomingPrio, '#upcomingPrio');
@@ -319,9 +331,14 @@ const fetchQueues = () => {
             renderQueue(data.deferred, '#deferred');
             renderQueue(data.servingQueue, '#servingQueue');
             updateButtonStates(data);
-        })
-        .catch(err => console.error('Fetch error:', err));
+
+        } catch (e) {
+            console.error("Invalid JSON:", e);
+        }
+    })
+    .catch(err => console.error("FetchQueues error:", err));
 };
+
 
 
 
@@ -412,6 +429,29 @@ const fetchQueues = () => {
     
 });
 
+</script>
+<script>
+// 🔄 Check session validity every 10 seconds
+setInterval(async () => {
+    try {
+        const res = await fetch("{{ route('session.check') }}", {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        });
+
+        if (!res.ok) return; // network or server issue
+        const data = await res.json();
+
+        if (!data.active) {
+            alert("You have been logged out because your account was accessed from another device.");
+            window.location.href = "{{ route('login') }}";
+        }
+    } catch (err) {
+        console.warn('Session check failed:', err);
+    }
+}, 5000); // every 10 seconds
 </script>
 
 

@@ -669,6 +669,14 @@ class UsersController extends Controller
 
     public function getQueues()
     {
+        // 🛑 If user is not authenticated, return JSON error
+        if (!Auth::check()) {
+            return response()->json([
+                'error' => 'Unauthenticated',
+                'redirect' => route('login'),
+            ], 401);
+        }
+
         $user = Auth::user();
         // Base query (scoped to logged-in user's section/step/window)
         $baseQuery = Transaction::where('section_id', $user->section_id)
