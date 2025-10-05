@@ -2,6 +2,15 @@
 @section('content')
 
 <div id="auth-login">
+    @if(session('forced_logout'))
+<div id="logout-toast" class="fixed top-5 right-5 bg-red-600 text-white px-4 py-3 rounded-lg shadow-lg z-50">
+    You have been logged out because your account was accessed from another device.
+</div>
+<script>
+    setTimeout(() => document.getElementById('logout-toast').remove(), 4000);
+</script>
+@endif
+
     <div class="w-full max-w-md bg-[#f6f6f6] rounded-2xl shadow-lg p-8 space-y-6">
         
         <!-- Header -->
