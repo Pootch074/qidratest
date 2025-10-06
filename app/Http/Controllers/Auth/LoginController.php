@@ -85,21 +85,26 @@ class LoginController extends Controller
 
 
     public function logout(Request $request)
-    {
-        // Clear session_id on user record so session.check fails
-        $user = Auth::user();
-        if ($user) {
-            $user->session_id = null;
-            $user->save();
-        }
+{
+    $user = Auth::user();
+    if ($user) {
+        $user->session_id = null;
+        $user->is_logged_in = false; // optional cleanup
+        $user->save();
+    }
 
-        Auth::logout();
+    Auth::logout();
 
-        // Invalidate Laravel session & regenerate token
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
 
-        // Return JSON so fetch/sendBeacon are fine
+    // 🧠 Detect if request came from AJAX / fetch() / sendBeacon
+    if ($request->expectsJson()) {
         return response()->json(['message' => 'Logged out']);
     }
+
+    // 👇 If it's a normal browser logout, redirect to login page
+    return redirect()->route('login');
+}
+
 }
