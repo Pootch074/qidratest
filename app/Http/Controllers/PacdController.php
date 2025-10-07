@@ -172,7 +172,7 @@ class PacdController extends Controller
         $sectionId = Auth::user()->section_id;
 
         $pendingQueues = Transaction::where('queue_status', 'deferred')
-            ->whereDate('updated_at', $yesterday)
+            ->whereDate('created_at', $yesterday)
             ->get();
 
         return view('pacd.pending.table', compact('pendingQueues'));
