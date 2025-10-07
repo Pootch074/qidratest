@@ -580,74 +580,75 @@ class UsersController extends Controller
 
 
     public function proceedQueue()
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        if (!$user->step_id || !$user->section_id || !$user->window_id) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'User is not assigned to a step, section, or window.'
-            ], 400);
+    if (!$user->step_id || !$user->section_id || !$user->window_id) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'User is not assigned to a step, section, or window.'
+        ], 400);
+    }
+
+    $transaction = DB::transaction(function () use ($user) {
+        // Start query for currently serving transaction
+        $currentQuery = Transaction::where('queue_status', 'serving')
+            ->where('section_id', $user->section_id)
+            ->where('step_id', $user->step_id)
+            ->where('window_id', $user->window_id)
+            ->whereDate('updated_at', Carbon::today());
+
+        // ✅ Include deferred clients for regular/priority users
+        if ($user->section_id == 15 && in_array($user->step->step_number, [1, 2])) {
+            $currentQuery->whereIn('client_type', [$user->assigned_category, 'deferred']);
         }
 
-        $transaction = DB::transaction(function () use ($user) {
-            // Start query for currently serving transaction
-            $currentQuery = Transaction::where('queue_status', 'serving')
-                ->where('section_id', $user->section_id)
-                ->where('step_id', $user->step_id)
-                ->where('window_id', $user->window_id)
-                ->whereDate('updated_at', Carbon::today());
+        $current = $currentQuery->lockForUpdate()->first();
 
-            // ✅ Apply client_type filter only if section_id = 15 AND step_number is 1 or 2
-            if ($user->section_id == 15 && in_array($user->step->step_number, [1, 2])) {
-                $currentQuery->where('client_type', $user->assigned_category);
-            }
+        if (!$current) {
+            return null;
+        }
 
-            $current = $currentQuery->lockForUpdate()->first();
+        // Find the next step in the same section
+        $nextStep = Step::where('section_id', $user->section_id)
+            ->where('step_number', '>', $user->step->step_number)
+            ->orderBy('step_number', 'asc')
+            ->first();
 
-            if (!$current) {
-                return null;
-            }
-
-            // Find the next step in the same section
-            $nextStep = Step::where('section_id', $user->section_id)
-                ->where('step_number', '>', $user->step->step_number)
-                ->orderBy('step_number', 'asc')
-                ->first();
-
-            if ($nextStep) {
-                // Move to the next step
-                $current->update([
-                    'step_id'      => $nextStep->id,
-                    'recall_count' => null,
-                    'queue_status' => 'waiting',
-                    'window_id'    => null,
-                ]);
-            } else {
-                // ✅ No next step -> mark as completed
-                $current->update([
-                    'queue_status' => 'completed',
-                    'window_id'    => null,
-                ]);
-            }
-
-            return $current;
-        });
-
-        if ($transaction) {
-            return response()->json([
-                'status'  => 'success',
-                'message' => $transaction->queue_status === 'completed'
-                    ? 'Queue has been completed.'
-                    : 'Queue successfully proceeded to the next step.',
+        if ($nextStep) {
+            // Move to the next step
+            $current->update([
+                'step_id'      => $nextStep->id,
+                'recall_count' => null,
+                'queue_status' => 'waiting',
+                'window_id'    => null,
+            ]);
+        } else {
+            // ✅ No next step -> mark as completed
+            $current->update([
+                'queue_status' => 'completed',
+                'window_id'    => null,
             ]);
         }
 
+        return $current;
+    });
+
+    if ($transaction) {
         return response()->json([
-            'status' => 'empty',
-            'message' => 'No active serving queue to proceed.'
+            'status'  => 'success',
+            'message' => $transaction->queue_status === 'completed'
+                ? 'Queue has been completed.'
+                : 'Queue successfully proceeded to the next step.',
         ]);
     }
+
+    return response()->json([
+        'status' => 'empty',
+        'message' => 'No active serving queue to proceed.'
+    ]);
+}
+
 
 
 
@@ -709,7 +710,7 @@ class UsersController extends Controller
             ->where('client_type', 'deferred')
             ->where('ticket_status', 'issued')
             ->where('queue_status', 'waiting')
-            ->where('window_id', $user->window_id)
+            // ->where('window_id', $user->window_id)
             ->orderBy('queue_number', 'asc')
             ->get()
             ->map(fn($q) => [
@@ -779,8 +780,8 @@ class UsersController extends Controller
 
         // ✅ Apply client_type filter only if section_id = 15 AND step_number = 1 or 2
         if ($user->section_id == 15 && in_array(optional($user->step)->step_number, [1, 2])) {
-            $servingQuery->where('client_type', $user->assigned_category);
-        }
+    $servingQuery->whereIn('client_type', [$user->assigned_category, 'deferred']);
+}
 
         $servingQueue = $servingQuery
             ->orderBy('updated_at', 'desc') // latest being served
