@@ -59,7 +59,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap">{{ $queue->window->window_number ?? 'N/A' }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">{{ $queue->section->section_name ?? 'N/A' }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <button onclick="resumeTransaction({{ $queue->id }}, {{ $queue->step_id ?? 'null' }})"
+                                    <button onclick="resumeTransaction({{ $queue->id }})"
                                         class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 
                                                hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-green-300 
                                                dark:focus:ring-green-800 shadow-lg shadow-green-500/50 
@@ -87,11 +87,9 @@
 @section('scripts')
 <script>
 let selectedTransactionId = null;
-let selectedStepId = null;
 
 function resumeTransaction(id, stepId) {
     selectedTransactionId = id;
-    selectedStepId = stepId;
     document.getElementById("resumeModal").classList.remove("hidden");
 }
 
@@ -146,9 +144,7 @@ fetch("{{ url('transactions') }}/" + selectedTransactionId + "/resume", {
         "X-CSRF-TOKEN": "{{ csrf_token() }}",
         "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-        step_id: selectedStepId
-    }),
+    body: JSON.stringify({}),
 })
 
     .then(res => res.json())
