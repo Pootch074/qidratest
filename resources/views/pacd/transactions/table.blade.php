@@ -36,8 +36,8 @@
                                         case 'regular':
                                             $prefix = 'R';
                                             break;
-                                        case 'returnee':
-                                            $prefix = 'T'; // 👈 force returnee to use T
+                                        case 'deferred':
+                                            $prefix = 'D';
                                             break;
                                         default:
                                             $prefix = strtoupper(substr($transaction->client_type, 0, 1));
@@ -57,7 +57,7 @@
                                     <span class="px-2 py-1 rounded-full text-white text-xs bg-[#2e3192]">
                                         Regular
                                     </span>
-                                @elseif (strtolower($transaction->client_type) === 'returnee')
+                                @elseif (strtolower($transaction->client_type) === 'deferred')
                                     <span class="px-2 py-1 rounded-full text-black text-xs bg-[#fef200]">
                                         Returnee
                                     </span>
