@@ -705,8 +705,10 @@ class UsersController extends Controller
             ]);
 
         $returneeQueues = (clone $baseQuery)
-            ->where('queue_status', 'waiting')
             ->where('client_type', 'deferred')
+            ->where('ticket_status', 'issued')
+            ->where('queue_status', 'waiting')
+            ->where('window_id', $user->window_id)
             ->orderBy('queue_number', 'asc')
             ->get()
             ->map(fn($q) => [
