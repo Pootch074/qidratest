@@ -453,6 +453,7 @@ class UsersController extends Controller
                 ->where('client_type', 'deferred')
                 ->where('step_id', $user->step_id)
                 ->where('section_id', $user->section_id)
+                ->where('window_id', $user->window_id)
                 ->whereDate('updated_at', Carbon::today())
                 ->lockForUpdate()
                 ->orderBy('queue_number', 'asc')
