@@ -14,7 +14,6 @@ class DisplayController extends Controller
         return view('admin.display.index');
     }
 
-    // queue numbers are organized per window
     public function getStepsBySectionId()
     {
         try {
@@ -30,24 +29,24 @@ class DisplayController extends Controller
             $steps = DB::table('steps')
                 ->leftJoin('windows', 'steps.id', '=', 'windows.step_id')
                 ->leftJoin('transactions', function ($join) use ($user, $applyCategoryFilter) {
-                    // base ON conditions
                     $join->on('windows.id', '=', 'transactions.window_id')
                         ->where('transactions.queue_status', '=', 'serving')
                         ->whereDate('transactions.created_at', now());
 
                     if ($applyCategoryFilter) {
-                        // For section 15: join transactions if EITHER
-                        //  - step_number IN (1,2) AND client_type = assigned_category
-                        //  - OR step_number NOT IN (1,2) (no client_type restriction)
                         $join->where(function ($q) use ($user) {
                             $q->where(function ($q2) use ($user) {
                                 $q2->whereIn('steps.step_number', [1, 2])
-                                    ->where('transactions.client_type', '=', $user->assigned_category);
-                            })->orWhereNotIn('steps.step_number', [1, 2]);
+                                    ->where(function ($sub) use ($user) {
+                                        $sub->where('transactions.client_type', $user->assigned_category)
+                                            ->orWhere('transactions.client_type', 'deferred');
+                                    });
+                            })
+                                ->orWhereNotIn('steps.step_number', [1, 2]);
                         });
                     }
                 })
-                ->where('steps.section_id', $user->section_id) // always restrict to user's section
+                ->where('steps.section_id', $user->section_id)
                 ->select(
                     'steps.id as step_id',
                     'steps.step_number',
@@ -99,11 +98,6 @@ class DisplayController extends Controller
     }
 
 
-
-
-
-
-    // App\Http\Controllers\DisplayController.php
     public function getLatestTransaction()
     {
         $user = Auth::user();
@@ -112,7 +106,6 @@ class DisplayController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        // Base query: only serving + today's transactions and must belong to user's section
         $query = Transaction::with(['step', 'window'])
             ->where('queue_status', 'serving')
             ->whereDate('created_at', now())
@@ -120,16 +113,15 @@ class DisplayController extends Controller
                 $q->where('section_id', $user->section_id);
             });
 
-        // Only apply the conditional client_type rule when user is in section 15
         if ($user->section_id === 15) {
             $query->where(function ($q) use ($user) {
-                // Either:
-                //  - transaction is in step 1 or 2 AND client_type matches assigned_category
-                //  - OR transaction is in any other step (no client_type restriction)
                 $q->where(function ($q2) use ($user) {
                     $q2->whereHas('step', function ($s) {
                         $s->whereIn('step_number', [1, 2]);
-                    })->where('client_type', $user->assigned_category);
+                    })->where(function ($sub) use ($user) {
+                        $sub->where('client_type', $user->assigned_category)
+                            ->orWhere('client_type', 'deferred');
+                    });
                 })->orWhereHas('step', function ($s) {
                     $s->whereNotIn('step_number', [1, 2]);
                 });

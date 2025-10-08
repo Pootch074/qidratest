@@ -507,8 +507,9 @@ class UsersController extends Controller
 
             // ✅ Apply client_type filter conditionally
             if ($user->section_id == 15 && in_array($user->step->step_number, [1, 2])) {
-                $query->where('client_type', $user->assigned_category);
+                $query->whereIn('client_type', [$user->assigned_category, 'deferred']);
             }
+
 
             $current = $query->first();
 
@@ -555,8 +556,9 @@ class UsersController extends Controller
 
         // ✅ Apply client_type filter only if section_id = 15 AND step_number is 1 or 2
         if ($user->section_id == 15 && in_array($user->step->step_number, [1, 2])) {
-            $query->where('client_type', $user->assigned_category);
+            $query->whereIn('client_type', [$user->assigned_category, 'deferred']);
         }
+
 
         $transaction = $query->first();
 
@@ -580,74 +582,74 @@ class UsersController extends Controller
 
 
     public function proceedQueue()
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    if (!$user->step_id || !$user->section_id || !$user->window_id) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'User is not assigned to a step, section, or window.'
-        ], 400);
-    }
-
-    $transaction = DB::transaction(function () use ($user) {
-        // Start query for currently serving transaction
-        $currentQuery = Transaction::where('queue_status', 'serving')
-            ->where('section_id', $user->section_id)
-            ->where('step_id', $user->step_id)
-            ->where('window_id', $user->window_id)
-            ->whereDate('updated_at', Carbon::today());
-
-        // ✅ Include deferred clients for regular/priority users
-        if ($user->section_id == 15 && in_array($user->step->step_number, [1, 2])) {
-            $currentQuery->whereIn('client_type', [$user->assigned_category, 'deferred']);
+        if (!$user->step_id || !$user->section_id || !$user->window_id) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User is not assigned to a step, section, or window.'
+            ], 400);
         }
 
-        $current = $currentQuery->lockForUpdate()->first();
+        $transaction = DB::transaction(function () use ($user) {
+            // Start query for currently serving transaction
+            $currentQuery = Transaction::where('queue_status', 'serving')
+                ->where('section_id', $user->section_id)
+                ->where('step_id', $user->step_id)
+                ->where('window_id', $user->window_id)
+                ->whereDate('updated_at', Carbon::today());
 
-        if (!$current) {
-            return null;
-        }
+            // ✅ Include deferred clients for regular/priority users
+            if ($user->section_id == 15 && in_array($user->step->step_number, [1, 2])) {
+                $currentQuery->whereIn('client_type', [$user->assigned_category, 'deferred']);
+            }
 
-        // Find the next step in the same section
-        $nextStep = Step::where('section_id', $user->section_id)
-            ->where('step_number', '>', $user->step->step_number)
-            ->orderBy('step_number', 'asc')
-            ->first();
+            $current = $currentQuery->lockForUpdate()->first();
 
-        if ($nextStep) {
-            // Move to the next step
-            $current->update([
-                'step_id'      => $nextStep->id,
-                'recall_count' => null,
-                'queue_status' => 'waiting',
-                'window_id'    => null,
+            if (!$current) {
+                return null;
+            }
+
+            // Find the next step in the same section
+            $nextStep = Step::where('section_id', $user->section_id)
+                ->where('step_number', '>', $user->step->step_number)
+                ->orderBy('step_number', 'asc')
+                ->first();
+
+            if ($nextStep) {
+                // Move to the next step
+                $current->update([
+                    'step_id'      => $nextStep->id,
+                    'recall_count' => null,
+                    'queue_status' => 'waiting',
+                    'window_id'    => null,
+                ]);
+            } else {
+                // ✅ No next step -> mark as completed
+                $current->update([
+                    'queue_status' => 'completed',
+                    'window_id'    => null,
+                ]);
+            }
+
+            return $current;
+        });
+
+        if ($transaction) {
+            return response()->json([
+                'status'  => 'success',
+                'message' => $transaction->queue_status === 'completed'
+                    ? 'Queue has been completed.'
+                    : 'Queue successfully proceeded to the next step.',
             ]);
-        } else {
-            // ✅ No next step -> mark as completed
-            $current->update([
-                'queue_status' => 'completed',
-                'window_id'    => null,
-            ]);
         }
 
-        return $current;
-    });
-
-    if ($transaction) {
         return response()->json([
-            'status'  => 'success',
-            'message' => $transaction->queue_status === 'completed'
-                ? 'Queue has been completed.'
-                : 'Queue successfully proceeded to the next step.',
+            'status' => 'empty',
+            'message' => 'No active serving queue to proceed.'
         ]);
     }
-
-    return response()->json([
-        'status' => 'empty',
-        'message' => 'No active serving queue to proceed.'
-    ]);
-}
 
 
 
@@ -780,8 +782,8 @@ class UsersController extends Controller
 
         // ✅ Apply client_type filter only if section_id = 15 AND step_number = 1 or 2
         if ($user->section_id == 15 && in_array(optional($user->step)->step_number, [1, 2])) {
-    $servingQuery->whereIn('client_type', [$user->assigned_category, 'deferred']);
-}
+            $servingQuery->whereIn('client_type', [$user->assigned_category, 'deferred']);
+        }
 
         $servingQueue = $servingQuery
             ->orderBy('updated_at', 'desc') // latest being served
