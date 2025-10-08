@@ -1,4 +1,4 @@
-<div x-data="{ open: false }" class="flex items-center justify-between w-full px-4">
+<div x-data="{ open: false }" class="flex items-center justify-between w-full px-4 bg-red-400">
     <img class="h-15 w-auto mt-3" src="{{ Vite::asset('resources/images/dswd-white.png') }}" alt="Logo">
 
     <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
