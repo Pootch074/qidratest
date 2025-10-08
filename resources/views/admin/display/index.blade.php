@@ -18,7 +18,7 @@
     </div>
 
     <div class="md:w-5/12 w-full bg-gray-800 text-white flex flex-col justify-start h-full">
-        <div class="w-full h-[8vh]">
+        <div class="w-full h-[8vh] bg-[#2e3192]">
             <div x-data="{ open: false }" class="flex items-center justify-between w-full px-4">
                 <img class="h-15 w-auto mt-3" src="{{ Vite::asset('resources/images/dswd-white.png') }}" alt="Logo">
 
