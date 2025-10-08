@@ -144,4 +144,20 @@ Route::middleware(['auth'])->group(function () {
 
 
     Route::post('/auto-logout', [LoginController::class, 'logout'])->name('auto.logout');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    Route::get('/display/current-serving', [App\Http\Controllers\DisplayController::class, 'getCurrentServing']);
 });

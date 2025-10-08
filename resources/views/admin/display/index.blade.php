@@ -77,10 +77,11 @@
         </div>
 
 
-
-        <div class="bg-red-200 h-[60vh]">
-            <h1>flassssssssssssh</h1>
+        {{-- Flash new serving queue --}}
+        <div id="flashServingQueue" class="flex items-center justify-center h-[60vh] bg-gray-900 text-white text-[12rem] font-extrabold rounded-lg relative overflow-hidden">
+            <span id="servingNumber" class="hidden"></span>
         </div>
+
 
 
         <div class="w-full flex flex-col items-center space-y-4 bg-red-300 h-[8vh]">

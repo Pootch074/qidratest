@@ -18,6 +18,22 @@
     }
 }
 
+@keyframes flashHighlight {
+    0%,
+    100% {
+        background-color: #2e3192;
+        color: #ffffff;
+    }
+    50% {
+        background-color: #fbbf24;
+        color: #000000;
+    } /* yellow flash */
+}
+
+.flash-active {
+    animation: flashHighlight 1s ease-in-out infinite;
+}
+
 .qidraBg {
     background-size: cover;
     background-position: center center; /* 👈 keep it centered */

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Transaction;
+use Carbon\Carbon;
 
 class DisplayController extends Controller
 {
@@ -144,5 +145,27 @@ class DisplayController extends Controller
                 'recall_count'  => $tx->recall_count ?? 0,
             ];
         }));
+    }
+
+
+
+
+    public function getCurrentServing()
+    {
+        $user = Auth::user();
+        $today = Carbon::today('Asia/Manila')->toDateString();
+
+        $records = DB::table('transactions')
+            ->where('section_id', $user->section_id)
+            ->whereNull('recall_count')
+            ->where('ticket_status', 'issued')
+            ->where('queue_status', 'serving')
+            ->whereDate('created_at', $today)
+            ->whereDate('updated_at', $today)
+            ->orderBy('updated_at', 'desc')
+            // ->orderBy('id', 'asc')
+            ->get();
+
+        return response()->json($records);
     }
 }

@@ -302,4 +302,81 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchLatestTransaction();
     setInterval(fetchSteps, 1000);
     setInterval(fetchLatestTransaction, 1000);
+
+    /** ---------------- Current Serving Queue Popup (Sequential by Timestamp) ---------------- **/
+    const flashContainer = document.getElementById("flashServingQueue");
+    const servingNumberEl = document.getElementById("servingNumber");
+    let lastDisplayedIds = new Set();
+    let displayQueue = [];
+    let displaying = false;
+
+    function fetchCurrentServing() {
+        fetch("/display/current-serving")
+            .then((res) => res.json())
+            .then((data) => {
+                if (!Array.isArray(data) || data.length === 0) return;
+
+                // ✅ Find records updated most recently (latest updated_at timestamp)
+                const latestTime = data[0]?.updated_at;
+                if (!latestTime) return;
+
+                // ✅ Filter all records sharing that exact timestamp
+                const sameTimeRecords = data.filter(
+                    (tx) => tx.updated_at === latestTime
+                );
+
+                // ✅ Sort them in ascending order of id or queue_number
+                sameTimeRecords.sort((a, b) => a.queue_number - b.queue_number);
+
+                // ✅ Add only new IDs to display queue
+                sameTimeRecords.forEach((tx) => {
+                    if (!lastDisplayedIds.has(tx.id)) {
+                        displayQueue.push(tx);
+                        lastDisplayedIds.add(tx.id);
+                    }
+                });
+
+                // Start display loop if not already running
+                if (!displaying && displayQueue.length > 0) {
+                    displayNextServing();
+                }
+            })
+            .catch((err) =>
+                console.error("Error fetching current serving:", err)
+            );
+    }
+
+    function displayNextServing() {
+        if (displayQueue.length === 0) {
+            displaying = false;
+            return;
+        }
+
+        displaying = true;
+        const tx = displayQueue.shift();
+
+        const formattedQueue =
+            tx.client_type?.charAt(0).toUpperCase() +
+            String(tx.queue_number).padStart(3, "0");
+
+        if (servingNumberEl) {
+            servingNumberEl.textContent = formattedQueue;
+            servingNumberEl.classList.remove("hidden");
+        }
+
+        // Flash only (no sound)
+        if (flashContainer) {
+            flashContainer.classList.add("flash-active");
+
+            // Show for 6 seconds, then move to next
+            setTimeout(() => {
+                flashContainer.classList.remove("flash-active");
+                servingNumberEl.classList.add("hidden");
+                setTimeout(displayNextServing, 1000); // small gap before next
+            }, 6000);
+        }
+    }
+
+    // Poll for updates every 3 seconds
+    setInterval(fetchCurrentServing, 3000);
 });
