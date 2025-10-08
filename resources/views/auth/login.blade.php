@@ -20,7 +20,7 @@
             <div class="flex items-center mt-2">
                 <img x-show="show" src="{{ Vite::asset('resources/images/dswd-color.png') }}" class="w-30">
                 &nbsp;&nbsp;
-                <img x-show="show" src="{{ Vite::asset('resources/images/qidra-logo.png') }}" class="w-30">
+                <img x-show="show" src="{{ Vite::asset('resources/images/qidra-logo3.png') }}" class="w-30">
             </div>
             
             <p class="mt-2 text-sm text-gray-500">

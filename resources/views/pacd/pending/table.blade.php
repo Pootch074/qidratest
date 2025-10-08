@@ -71,8 +71,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-                                    No Returnees found for yesterday.
+                                <td colspan="6" class="px-6 py-4 text-center text-gray-500 font-medium">
+                                    🚫 No Returnees found for yesterday.
                                 </td>
                             </tr>
                         @endforelse
