@@ -209,7 +209,7 @@ class PacdController extends Controller
             'queue_status' => 'waiting',
             'ticket_status' => 'issued',
             'step_id'   => $oldTransaction->step_id,
-            'window_id'    => $oldTransaction->window_id,
+            'window_id'    => null,
             'section_id'   => $oldTransaction->section_id,
             'created_at'   => $now,
             'updated_at'   => $now,

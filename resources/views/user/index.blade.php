@@ -6,26 +6,36 @@
 <div class="w-full h-[84vh] p-4 bg-gray-200">
     <div class="grid grid-cols-10 gap-2 h-full">
         @php
-            $userCategory = Auth::user()->assigned_category;
+            $user = Auth::user();
+            $userCategory = $user->assigned_category;
+            $sectionId = $user->section_id ?? null;
+            $stepNumber = $stepNumber ?? null; // make sure this variable is passed from controller
+
+            // Determine if Returnee should be shown (for both Upcoming and Pending)
+            $showReturnee = true;
+            if ($sectionId == 15 && in_array($stepNumber, [1, 2])) {
+                // Hide Returnee on steps 1 & 2 for section 15
+                $showReturnee = false;
+            }
 
             // UPCOMING blocks
             $upcomingBlocks = [
-                ['id' => 'upcomingRegu',    'title' => 'REGULAR',   'show' => in_array($userCategory, ['regular','both'])],
-                ['id' => 'upcomingPrio',    'title' => 'PRIORITY',  'show' => in_array($userCategory, ['priority','both'])],
-                ['id' => 'upcomingReturnee','title' => 'RETURNEE',  'show' => true],
+                ['id' => 'upcomingRegu',     'title' => 'REGULAR',   'show' => in_array($userCategory, ['regular','both'])],
+                ['id' => 'upcomingPrio',     'title' => 'PRIORITY',  'show' => in_array($userCategory, ['priority','both'])],
+                ['id' => 'upcomingReturnee', 'title' => 'RETURNEE',  'show' => $showReturnee],
             ];
             $visibleUpcoming = collect($upcomingBlocks)->where('show', true)->count();
 
             // PENDING blocks
             $pendingBlocks = [
-                ['id' => 'pendingRegu',    'title' => 'REGULAR',  'show' => in_array($userCategory, ['regular','both'])],
-                ['id' => 'pendingPrio',    'title' => 'PRIORITY', 'show' => in_array($userCategory, ['priority','both'])],
-                ['id' => 'pendingReturnee','title' => 'RETURNEE', 'show' => true],
-                ['id' => 'deferred',       'title' => 'DEFERRED', 'show' => true],
+                ['id' => 'pendingRegu',     'title' => 'REGULAR',  'show' => in_array($userCategory, ['regular','both'])],
+                ['id' => 'pendingPrio',     'title' => 'PRIORITY', 'show' => in_array($userCategory, ['priority','both'])],
+                ['id' => 'pendingReturnee', 'title' => 'RETURNEE', 'show' => $showReturnee],
+                ['id' => 'deferred',        'title' => 'DEFERRED', 'show' => true],
             ];
             $visiblePending = collect($pendingBlocks)->where('show', true)->count();
 
-            // Map count -> Tailwind static classes (so Tailwind's purge/JIT picks them up)
+            // Grid classes for dynamic columns
             $gridMap = [
                 1 => 'grid-cols-1',
                 2 => 'grid-cols-2',
@@ -35,6 +45,8 @@
             $upcomingGridClass = $gridMap[$visibleUpcoming] ?? 'grid-cols-1';
             $pendingGridClass  = $gridMap[$visiblePending]  ?? 'grid-cols-1';
         @endphp
+
+
 
         {{-- UPCOMING --}}
         <div class="col-span-3 flex flex-col bg-white rounded-md shadow overflow-hidden min-h-0">
@@ -115,11 +127,16 @@
                             font-medium rounded-lg text-sm py-5 text-center">Next Priority</button>
                     @endif
 
-                    {{-- Next Returnee Button (always visible) --}}
-                    <button id="returneeBtn" class="queue-btn flex-1 text-white bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 hover:bg-gradient-to-br 
-                        focus:ring-1 focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 
-                        shadow-lg shadow-orange-500/50 dark:shadow-lg dark:shadow-orange-800/80 
-                        font-medium rounded-lg text-sm py-5 text-center">Next Returnee</button>
+                    {{-- Next Returnee Button (hidden for section 15 in steps 1 & 2) --}}
+@if($showReturnee)
+    <button id="returneeBtn" class="queue-btn flex-1 text-white bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 hover:bg-gradient-to-br 
+        focus:ring-1 focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 
+        shadow-lg shadow-orange-500/50 dark:shadow-lg dark:shadow-orange-800/80 
+        font-medium rounded-lg text-sm py-5 text-center">
+        Next Returnee
+    </button>
+@endif
+
                 </div>
 
                 <div class="flex space-x-2 w-full">

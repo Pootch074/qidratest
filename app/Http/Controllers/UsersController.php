@@ -453,7 +453,7 @@ class UsersController extends Controller
                 ->where('client_type', 'deferred')
                 ->where('step_id', $user->step_id)
                 ->where('section_id', $user->section_id)
-                ->where('window_id', $user->window_id)
+                // ->where('window_id', $user->window_id)
                 ->whereDate('updated_at', Carbon::today())
                 ->lockForUpdate()
                 ->orderBy('queue_number', 'asc')
@@ -683,7 +683,7 @@ class UsersController extends Controller
         // Base query (scoped to logged-in user's section/step/window)
         $baseQuery = Transaction::where('section_id', $user->section_id)
             ->where('step_id', $user->step_id)
-            ->whereDate('updated_at', Carbon::today());
+            ->whereDate('created_at', Carbon::today());
 
         // Upcoming (waiting)
         $regularQueues = (clone $baseQuery)
