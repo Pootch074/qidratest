@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             : "";
 
                     let html = `
-                        <h3 class="text-3xl font-bold text-[#000000] mb-1 flex items-center justify-center space-x-2 bg-white rounded">
+                        <h3 class="text-4xl font-bold text-[#000000] mb-1 py-3 flex items-center justify-center space-x-2 bg-white rounded">
                             <span>STEP ${step.step_number}</span>
                             ${
                                 stepNameDisplay
@@ -188,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     `;
 
                     if (step.windows.length > 0) {
-                        html += `<div class="grid grid-cols-2 gap-2">`;
+                        html += `<div class="grid grid-cols-2 gap-2 ">`;
 
                         step.windows.forEach((win) => {
                             let firstTx =
@@ -212,15 +212,15 @@ document.addEventListener("DOMContentLoaded", () => {
                             html += `
                                 <div class="rounded-lg text-[#FFFFFF] text-2xl font-semibold flex flex-col items-center justify-center w-full">
                                     <div class="flex items-center w-full h-full rounded-lg border-4 border-[#2e3192]">
-                                        <span class="${bgClass} px-3 py-1 text-center w-1/5">
-                                            <p class="text-lg font-semibold">Window</p>
-                                            <p class="text-4xl font-bold">${
+                                        <span class="${bgClass} py-1 text-center w-1/5">
+                                            <p class="text-xl font-semibold">Window</p>
+                                            <p class="text-5xl font-bold">${
                                                 win.window_number
                                             }</p>
                                         </span>
                                         ${
                                             firstTx
-                                                ? `<span class="queue-number flex items-center justify-center bg-[#FFFFFF] text-[#000000] px-3 py-1 text-4xl font-bold text-center w-4/5 h-full rounded-r-lg" data-queue="${firstTx.queue_number}">
+                                                ? `<span class="queue-number flex items-center justify-center bg-[#FFFFFF] text-[#000000] px-3 py-1 text-6xl font-bold text-center w-4/5 h-full rounded-r-lg" data-queue="${firstTx.queue_number}">
                                                         ${firstTx.queue_number}
                                                 </span>`
                                                 : `<span class="flex items-center justify-center bg-[#FFFFFF] text-[#000000] px-3 py-1 text-sm text-center w-4/5 h-full rounded-r-lg">🚫</span>`
