@@ -128,14 +128,14 @@
                     @endif
 
                     {{-- Next Returnee Button (hidden for section 15 in steps 1 & 2) --}}
-@if($showReturnee)
-    <button id="returneeBtn" class="queue-btn flex-1 text-white bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 hover:bg-gradient-to-br 
-        focus:ring-1 focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 
-        shadow-lg shadow-orange-500/50 dark:shadow-lg dark:shadow-orange-800/80 
-        font-medium rounded-lg text-sm py-5 text-center">
-        Next Returnee
-    </button>
-@endif
+                    @if($showReturnee)
+                        <button id="returneeBtn" class="queue-btn flex-1 text-white bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 hover:bg-gradient-to-br 
+                            focus:ring-1 focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 
+                            shadow-lg shadow-orange-500/50 dark:shadow-lg dark:shadow-orange-800/80 
+                            font-medium rounded-lg text-sm py-5 text-center">
+                            Next Returnee
+                        </button>
+                    @endif
 
                 </div>
 
@@ -209,6 +209,30 @@
 @section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    const sectionId = {{ $sectionId ?? 'null' }};
+    const stepNumber = {{ $stepNumber ?? 'null' }};
+
+        /*** === Restrict Buttons if Section 15 & Step 4 === ***/
+    if (sectionId === 15 && stepNumber === 4) {
+        const restrictedBtns = [
+            '#nextRegularBtn',
+            '#nextPriorityBtn',
+            '#returneeBtn',
+            // '#skipBtn',
+            '#recallBtn',
+            // '#deferBtn',
+            // '#proceedBtn'
+        ];
+
+        restrictedBtns.forEach(selector => {
+            const btn = document.querySelector(selector);
+            if (btn) {
+                btn.style.display = 'none';
+
+            }
+        });
+    }
+
 
     // Elements
     const servingQueueEl = document.getElementById('servingQueue');
