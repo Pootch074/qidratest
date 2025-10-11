@@ -917,4 +917,21 @@ class UsersController extends Controller
     {
         return $this->updatePendingTransaction($request, 'deferred');
     }
+
+
+
+
+
+
+
+
+    public function serveAgain(Request $request)
+    {
+        $queue = Transaction::findOrFail($request->id);
+        $queue->window_id = $request->window_id;
+        $queue->queue_status = $request->queue_status;
+        $queue->save();
+
+        return response()->json(['message' => 'Client set to serving again.']);
+    }
 }
