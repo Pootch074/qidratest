@@ -945,4 +945,18 @@ class UsersController extends Controller
             'recall_count' => $queue->recall_count,
         ]);
     }
+
+
+    public function updateStatus(Request $request)
+    {
+        $queue = Transaction::findOrFail($request->id);
+        $queue->window_id = $request->window_id;
+        $queue->queue_status = $request->queue_status;
+        $queue->save();
+
+        return response()->json([
+            'message' => 'Queue status updated successfully.',
+            'queue' => $queue
+        ]);
+    }
 }

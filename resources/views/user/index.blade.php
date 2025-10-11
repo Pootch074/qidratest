@@ -218,10 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
             '#nextRegularBtn',
             '#nextPriorityBtn',
             '#returneeBtn',
-            // '#skipBtn',
-            '#recallBtn',
-            // '#deferBtn',
-            // '#proceedBtn'
+            '#recallBtn'
         ];
 
         restrictedBtns.forEach(selector => {
