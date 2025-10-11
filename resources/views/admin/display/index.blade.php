@@ -66,7 +66,7 @@
         <div class="flex w-full h-[24vh]">
             <div class="flex flex-col justify-center items-center p-4 flex-1 text-center">
                 <p id="current-date" class="text-1xl md:text-2xl font-bold mb-2"></p>
-                <p id="current-time" class="text-2xl md:text-6xl font-bold"></p>
+                <p id="current-time" class="text-2xl md:text-5xl font-bold"></p>
             </div>
             <div class="flex flex-col flex-1 justify-center">
                 <video id="customVideo" class="w-full rounded-lg shadow-lg" autoplay muted loop>
