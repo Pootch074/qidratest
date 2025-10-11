@@ -925,13 +925,24 @@ class UsersController extends Controller
 
 
 
+
+
     public function serveAgain(Request $request)
     {
         $queue = Transaction::findOrFail($request->id);
+
+        // ✅ Set the window and status
         $queue->window_id = $request->window_id;
         $queue->queue_status = $request->queue_status;
+
+        // ✅ Increment recall_count
+        $queue->recall_count = ($queue->recall_count ?? 0) + 1;
+
         $queue->save();
 
-        return response()->json(['message' => 'Client set to serving again.']);
+        return response()->json([
+            'message' => 'Client set to serving again.',
+            'recall_count' => $queue->recall_count,
+        ]);
     }
 }
