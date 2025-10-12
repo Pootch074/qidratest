@@ -150,6 +150,4 @@ Route::middleware(['auth'])->group(function () {
 
 
     Route::post('/queues/serve-again', [UsersController::class, 'serveAgain'])->name('queues.serveAgain');
-
-    Route::post('/queues/update-status', [UsersController::class, 'updateStatus'])->name('queues.updateStatus');
 });
