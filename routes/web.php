@@ -127,12 +127,18 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/users/returnQueue', [UsersController::class, 'returnQueue'])->name('users.returnQueue');
 
-
-
-
     Route::get('/admin/transactions/realtime', [TransactionsController::class, 'realtimeTransactions'])
         ->name('admin.transactions.realtime');
 
+    // =================================== UPCOMING ===================================
+    Route::post('/queues/upcoming/regu/update', [UsersController::class, 'updateUpcomingRegu'])
+        ->name('queues.updateUpcomingRegu');
+    Route::post('/queues/upcoming/prio/update', [UsersController::class, 'updateUpcomingPrio'])
+        ->name('queues.updateUpcomingPrio');
+    Route::post('/queues/upcoming/returnee/update', [UsersController::class, 'updateUpcomingReturnee'])
+        ->name('queues.updateUpcomingReturnee');
+
+    // =================================== PENDING ===================================
     Route::post('/queues/pending/regu/update', [UsersController::class, 'updatePendingRegu'])
         ->name('queues.updatePendingRegu');
 
@@ -141,6 +147,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/queues/pending/returnee/update', [UsersController::class, 'updatePendingReturnee'])
         ->name('queues.updatePendingReturnee');
+
 
 
     Route::post('/auto-logout', [LoginController::class, 'logout'])->name('auto.logout');

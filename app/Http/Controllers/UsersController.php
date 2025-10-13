@@ -921,6 +921,68 @@ class UsersController extends Controller
 
 
 
+    // =========================== UPCOMING ===========================
+    private function updateUpcomingTransaction(Request $request, string $clientType)
+    {
+        $user = Auth::user();
+        $sectionId = $user->section_id;
+
+        $transaction = Transaction::where('id', $request->id)
+            ->where('section_id', $sectionId)
+            ->where('queue_status', 'waiting')
+            ->where('client_type', $clientType)
+            ->first();
+
+        if (!$transaction) {
+            return response()->json(['success' => false, 'message' => 'Transaction not found.'], 404);
+        }
+
+        // Find the next step
+        $nextStep = Step::where('section_id', $sectionId)
+            ->where('step_number', '>', $transaction->step->step_number)
+            ->orderBy('step_number', 'asc')
+            ->first();
+
+
+        if ($nextStep) {
+            // Move to next step
+            $transaction->step_id = $nextStep->id;
+            $transaction->queue_status = 'waiting';
+            $transaction->window_id = null;
+            $transaction->recall_count = null;
+            $message = 'Transaction moved to the next step.';
+        } else {
+            // No more steps → completed
+            $transaction->queue_status = 'completed';
+            $transaction->window_id = $user->window_id; // last handler
+            $message = 'Transaction completed (no more steps).';
+        }
+
+        $transaction->save();
+
+
+        return response()->json(['success' => true, 'message' => $message]);
+    }
+
+    public function updateUpcomingRegu(Request $request)
+    {
+        return $this->updateUpcomingTransaction($request, 'regular');
+    }
+
+    public function updateUpcomingPrio(Request $request)
+    {
+        return $this->updateUpcomingTransaction($request, 'priority');
+    }
+
+    public function updateUpcomingReturnee(Request $request)
+    {
+        return $this->updateUpcomingTransaction($request, 'deferred');
+    }
+    // =========================== UPCOMING ===========================
+
+
+
+
 
 
 

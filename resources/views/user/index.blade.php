@@ -529,13 +529,121 @@ const fetchQueues = () => {
         }
     });
 }
-
-
-
-    // Use it for all three
     bindPendingQueue('#pendingRegu', "{{ route('queues.updatePendingRegu') }}", "Regular");
     bindPendingQueue('#pendingPrio', "{{ route('queues.updatePendingPrio') }}", "Priority");
     bindPendingQueue('#pendingReturnee', "{{ route('queues.updatePendingReturnee') }}", "Returnee");
+
+
+
+    
+    function bindUpcomingQueue(containerId, route, label) {
+    document.addEventListener('click', e => {
+        const target = e.target.closest(`${containerId} [data-id]`);
+        if (target) {
+            const id = target.getAttribute('data-id');
+
+            // 🔹 Change modal title
+            modalMessage.textContent = "Serve again or proceed client to next step?";
+
+            // 🔹 Replace modal action buttons
+            const buttonContainer = modalMessage.parentElement;
+
+            // Remove existing buttons if already customized before
+            buttonContainer.querySelectorAll('.custom-modal-btn').forEach(btn => btn.remove());
+
+            // Hide the default Confirm button
+            modalConfirmBtn.classList.add('hidden');
+            modalCancelBtn.classList.add('hidden');
+
+            // 🟢 Create "Serve" button
+            const serveBtn = document.createElement('button');
+            serveBtn.textContent = "Serve";
+            serveBtn.className = `
+                custom-modal-btn text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 
+                hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 
+                font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2
+            `;
+
+            // 🟢 Create "Proceed" button
+            const proceedBtn = document.createElement('button');
+            proceedBtn.textContent = "Proceed";
+            proceedBtn.className = `
+                custom-modal-btn text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 
+                hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-green-300 
+                font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2
+            `;
+
+            // 🔹 Serve Logic
+            serveBtn.addEventListener('click', () => {
+                setBtnState(serveBtn, false);
+                fetch("{{ route('queues.serveAgain') }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        window_id: {{ Auth::user()->window_id }},
+                        queue_status: 'serving'
+                    })
+                })
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    return res.json();
+                })
+                .then(() => {
+                    fetchQueues();
+                    setTimeout(hideModal, 1000);
+                })
+                .catch(err => {
+                    modalMessage.textContent = `❌ Something went wrong: ${err.message}`;
+                    setBtnState(serveBtn, true);
+                });
+            });
+
+            // 🔹 Proceed Logic (same as old Confirm)
+            proceedBtn.addEventListener('click', () => {
+                setBtnState(proceedBtn, false);
+                fetch(route, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id })
+                })
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    return res.json();
+                })
+                .then(() => {
+                    fetchQueues();
+                    setTimeout(hideModal, 1000);
+                })
+                .catch(err => {
+                    modalMessage.textContent = `❌ Something went wrong: ${err.message}`;
+                    setBtnState(proceedBtn, true);
+                });
+            });
+
+            // Append buttons dynamically
+            buttonContainer.appendChild(serveBtn);
+            buttonContainer.appendChild(proceedBtn);
+
+            // Show the modal
+            modal.classList.remove('hidden');
+            const modalContent = modal.querySelector('div.relative.bg-gray-200');
+            modalContent.classList.remove('opacity-0', 'scale-95');
+            modalContent.classList.add('opacity-100', 'scale-100');
+        }
+    });
+}
+    bindUpcomingQueue('#upcomingRegu', "{{ route('queues.updateUpcomingRegu') }}", "Regular");
+    bindUpcomingQueue('#upcomingPrio', "{{ route('queues.updateUpcomingPrio') }}", "Priority");
+    bindUpcomingQueue('#upcomingReturnee', "{{ route('queues.updateUpcomingReturnee') }}", "Returnee");
+
+
 
 
     bindActionWithConfirm('nextRegularBtn', "{{ route('users.nextRegular') }}", "Proceed to the next Regular queue?");
