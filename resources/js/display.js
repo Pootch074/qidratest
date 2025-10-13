@@ -152,35 +152,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /** ---------------- Fetch Steps ---------------- **/
     /** ---------------- Fetch Steps ---------------- **/
-function fetchSteps() {
-    fetch(window.appRoutes.steps)
-        .then((response) => response.json())
-        .then((data) => {
-            const container = document.getElementById("stepsContainer");
-            const noSteps = document.getElementById("noSteps");
-            if (!container || !noSteps) return;
+    function fetchSteps() {
+        fetch(window.appRoutes.steps)
+            .then((response) => response.json())
+            .then((data) => {
+                const container = document.getElementById("stepsContainer");
+                const noSteps = document.getElementById("noSteps");
+                if (!container || !noSteps) return;
 
-            container.innerHTML = "";
-            if (!data || !data.length) {
-                noSteps.classList.remove("hidden");
-                return;
-            }
-            noSteps.classList.add("hidden");
+                container.innerHTML = "";
+                if (!data || !data.length) {
+                    noSteps.classList.remove("hidden");
+                    return;
+                }
+                noSteps.classList.add("hidden");
 
-            data.forEach((step) => {
-                // 🧠 Skip (don’t render) step 4 entirely
-                if (step.step_number === 4) return;
+                data.forEach((step) => {
+                    // 🧠 Skip (don’t render) step 4 entirely
+                    if (step.step_number === 4) return;
 
-                const card = document.createElement("div");
-                card.className =
-                    "rounded-lg shadow-md p-1 mb-3 flex flex-col bg-gray-200";
+                    const card = document.createElement("div");
+                    card.className =
+                        "rounded-lg shadow-md p-1 mb-3 flex flex-col bg-gray-200";
 
-                const stepNameDisplay =
-                    step.step_name && step.step_name !== "None"
-                        ? step.step_name
-                        : "";
+                    const stepNameDisplay =
+                        step.step_name && step.step_name !== "None"
+                            ? step.step_name
+                            : "";
 
-                let html = `
+                    let html = `
                     <h3 class="text-4xl font-bold text-[#000000] mb-1 py-3 flex items-center justify-center space-x-2 bg-white rounded">
                         <span>STEP ${step.step_number}</span>
                         ${
@@ -191,34 +191,36 @@ function fetchSteps() {
                     </h3>
                 `;
 
-                if (step.windows.length > 0) {
-                    html += `<div class="grid grid-cols-2 gap-2 ">`;
+                    if (step.windows.length > 0) {
+                        html += `<div class="grid grid-cols-2 gap-2 ">`;
 
-                    step.windows.forEach((win) => {
-                        let firstTx =
-                            win.transactions?.length > 0
-                                ? win.transactions[0]
-                                : null;
+                        step.windows.forEach((win) => {
+                            let firstTx =
+                                win.transactions?.length > 0
+                                    ? win.transactions[0]
+                                    : null;
 
-                        // ✅ Default background
-                        let bgClass = "bg-[#2e3192]";
+                            // ✅ Default background
+                            let bgClass = "bg-[#2e3192]";
 
-                        // ✅ Apply red background if step = 1 or 2 AND current user category = "priority"
-                        if (
-                            (step.step_number === 1 ||
-                                step.step_number === 2) &&
-                            window.appUser.assignedCategory.toLowerCase() ===
-                                "priority"
-                        ) {
-                            bgClass = "bg-red-600"; // Tailwind red
-                        }
+                            // ✅ Apply red background if step = 1 or 2 AND current user category = "priority"
+                            if (
+                                (step.step_number === 1 ||
+                                    step.step_number === 2) &&
+                                window.appUser.assignedCategory.toLowerCase() ===
+                                    "priority"
+                            ) {
+                                bgClass = "bg-red-600"; // Tailwind red
+                            }
 
-                        html += `
+                            html += `
                             <div class="rounded-lg text-[#FFFFFF] text-2xl font-semibold flex flex-col items-center justify-center w-full">
                                 <div class="flex items-center w-full h-full rounded-lg border-4 border-[#2e3192]">
                                     <span class="${bgClass} py-1 text-center w-1/5">
                                         <p class="text-xl font-semibold">Window</p>
-                                        <p class="text-5xl font-bold">${win.window_number}</p>
+                                        <p class="text-5xl font-bold">${
+                                            win.window_number
+                                        }</p>
                                     </span>
                                     ${
                                         firstTx
@@ -230,27 +232,26 @@ function fetchSteps() {
                                 </div>
                             </div>
                         `;
-                    });
+                        });
 
-                    html += `</div>`;
-                } else {
-                    html += `<p class="text-gray-400 italic text-sm">No windows assigned</p>`;
+                        html += `</div>`;
+                    } else {
+                        html += `<p class="text-gray-400 italic text-sm">No windows assigned</p>`;
+                    }
+
+                    card.innerHTML = html;
+                    container.appendChild(card);
+                });
+            })
+            .catch((err) => {
+                console.error("Error fetching steps:", err);
+                const noSteps = document.getElementById("noSteps");
+                if (noSteps) {
+                    noSteps.textContent = "Error loading steps.";
+                    noSteps.classList.remove("hidden");
                 }
-
-                card.innerHTML = html;
-                container.appendChild(card);
             });
-        })
-        .catch((err) => {
-            console.error("Error fetching steps:", err);
-            const noSteps = document.getElementById("noSteps");
-            if (noSteps) {
-                noSteps.textContent = "Error loading steps.";
-                noSteps.classList.remove("hidden");
-            }
-        });
-}
-
+    }
 
     /** ---------------- Fetch Latest Transaction ---------------- **/
     function fetchLatestTransaction() {
@@ -283,12 +284,15 @@ function fetchSteps() {
                         tx.client_type?.charAt(0).toUpperCase() +
                         String(tx.queue_number).padStart(3, "0");
 
-                    announce(
-                        formattedQueue,
-                        tx.step_number,
-                        tx.window_number,
-                        repeatTimes
-                    );
+                    // 🧠 Prevent speech synthesis when step_number = 4
+                    if (tx.step_number !== 4) {
+                        announce(
+                            formattedQueue,
+                            tx.step_number,
+                            tx.window_number,
+                            repeatTimes
+                        );
+                    }
 
                     announcedTransactions.set(key, {
                         recall_count: tx.recall_count,
@@ -361,6 +365,12 @@ function fetchSteps() {
         const formattedQueue =
             tx.client_type?.charAt(0).toUpperCase() +
             String(tx.queue_number).padStart(3, "0");
+
+        // 🧠 Skip both speech + display if step_number = 4
+        if (tx.step_number == 4) {
+            setTimeout(displayNextServing, 1000); // skip to next
+            return;
+        }
 
         if (servingNumberEl) {
             servingNumberEl.textContent = formattedQueue;

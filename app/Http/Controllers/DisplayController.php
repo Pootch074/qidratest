@@ -160,10 +160,13 @@ class DisplayController extends Controller
             ->whereNull('recall_count')
             ->where('ticket_status', 'issued')
             ->where('queue_status', 'serving')
+            ->whereIn('step_id', function ($query) {
+                $query->select('id')->from('steps')->where('step_number', '!=', 4);
+            })
+
             ->whereDate('created_at', $today)
             ->whereDate('updated_at', $today)
             ->orderBy('updated_at', 'desc')
-            // ->orderBy('id', 'asc')
             ->get();
 
         return response()->json($records);
