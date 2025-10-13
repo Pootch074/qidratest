@@ -145,6 +145,12 @@ class WindowsSeeder extends Seeder
                 'updated_at' => Carbon::now()
             ],
             [
+                'window_number' => 4,
+                'step_id' => 17,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ],
+            [
                 'window_number' => 1,
                 'step_id' => 18,
                 'created_at' => Carbon::now(),

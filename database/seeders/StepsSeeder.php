@@ -148,9 +148,6 @@ class StepsSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ],
-
-
-
             [
                 'step_number' => 1,
                 'step_name' => 'None',
