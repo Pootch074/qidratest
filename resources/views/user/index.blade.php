@@ -1,7 +1,5 @@
 @extends('layouts.main')
-
 @section('title', 'Encode')
-
 @section('content')
 <div class="w-full h-[84vh] p-4 bg-gray-200">
     <div class="grid grid-cols-10 gap-2 h-full">
@@ -530,119 +528,51 @@ const fetchQueues = () => {
 
 
 
-// ====================================== HERE ======================================    
-function bindUpcomingQueue(containerId, route, label) {
+
+
+    // 🟢 Bind Upcoming Queues for click -> update transactions table
+function bindUpcomingQueue(containerId) {
     document.addEventListener('click', e => {
         const target = e.target.closest(`${containerId} [data-id]`);
-        if (!target) return;
+        if (target) {
+            const id = target.getAttribute('data-id');
 
-        // 🔒 Only allow clicking if stepNumber == 4
-        if (stepNumber !== 4) {
-            console.log(`⛔ Click blocked on ${label} - stepNumber is not 4`);
-            return;
+            showModal("Start serving this queue?", () => {
+    setBtnState(modalConfirmBtn, false);
+    console.log("Sending to updateUpcoming:", { id });
+    fetch("{{ route('queues.updateUpcoming') }}", {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({ id: Number(id) }) // convert to integer
+    })
+    .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+    })
+    .then(data => {
+        console.log("Response:", data);
+        fetchQueues();
+        setTimeout(hideModal, 1000); // ✅ hide modal smoothly
+    })
+    .catch(err => {
+        console.error("Fetch error:", err);
+        modalMessage.textContent = "❌ Something went wrong. Please try again.";
+        setBtnState(modalConfirmBtn, true);
+    });
+});
+
         }
-
-        const id = target.getAttribute('data-id');
-        modalMessage.textContent = "Serve again or proceed client to next step?";
-        const buttonContainer = modalMessage.parentElement;
-
-        // Remove existing custom buttons if present
-        buttonContainer.querySelectorAll('.custom-modal-btn').forEach(btn => btn.remove());
-
-        // Hide default buttons
-        modalConfirmBtn.classList.add('hidden');
-        modalCancelBtn.classList.add('hidden');
-
-        // 🟢 Serve button
-        const serveBtn = document.createElement('button');
-        serveBtn.textContent = "Serve";
-        serveBtn.className = `
-            custom-modal-btn text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 
-            hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 
-            font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2
-        `;
-
-        // 🟢 Proceed button
-        const proceedBtn = document.createElement('button');
-        proceedBtn.textContent = "Proceed";
-        proceedBtn.className = `
-            custom-modal-btn text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 
-            hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-green-300 
-            font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2
-        `;
-
-        // 🔹 Serve Logic
-        serveBtn.addEventListener('click', () => {
-            setBtnState(serveBtn, false);
-            fetch("{{ route('queues.serveAgain') }}", {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    id: id,
-                    window_id: {{ Auth::user()->window_id }},
-                    queue_status: 'serving'
-                })
-            })
-            .then(res => {
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                return res.json();
-            })
-            .then(() => {
-                fetchQueues();
-                setTimeout(hideModal, 1000);
-            })
-            .catch(err => {
-                modalMessage.textContent = `❌ Something went wrong: ${err.message}`;
-                setBtnState(serveBtn, true);
-            });
-        });
-
-        // 🔹 Proceed Logic
-        proceedBtn.addEventListener('click', () => {
-            setBtnState(proceedBtn, false);
-            fetch(route, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ id })
-            })
-            .then(res => {
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                return res.json();
-            })
-            .then(() => {
-                fetchQueues();
-                setTimeout(hideModal, 1000);
-            })
-            .catch(err => {
-                modalMessage.textContent = `❌ Something went wrong: ${err.message}`;
-                setBtnState(proceedBtn, true);
-            });
-        });
-
-        // Append buttons and show modal
-        buttonContainer.appendChild(serveBtn);
-        buttonContainer.appendChild(proceedBtn);
-
-        modal.classList.remove('hidden');
-        const modalContent = modal.querySelector('div.relative.bg-gray-200');
-        modalContent.classList.remove('opacity-0', 'scale-95');
-        modalContent.classList.add('opacity-100', 'scale-100');
     });
 }
 
-// ====================================== HERE ======================================    
-
-    bindUpcomingQueue('#upcomingRegu', "{{ route('queues.updateUpcomingRegu') }}", "Regular");
-    bindUpcomingQueue('#upcomingPrio', "{{ route('queues.updateUpcomingPrio') }}", "Priority");
-    bindUpcomingQueue('#upcomingReturnee', "{{ route('queues.updateUpcomingReturnee') }}", "Returnee");
-
-
+// Bind all visible upcoming queues
+bindUpcomingQueue('#upcomingRegu');
+bindUpcomingQueue('#upcomingPrio');
+bindUpcomingQueue('#upcomingReturnee');
 
 
     bindActionWithConfirm('nextRegularBtn', "{{ route('users.nextRegular') }}", "Proceed to the next Regular queue?");

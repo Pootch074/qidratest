@@ -10,15 +10,15 @@ class Transaction extends Model
     use HasFactory;
 
     protected $fillable = [
-        'full_name',
-        'queue_number',
         'section_id',
+        'queue_number',
+        'full_name',
+        'client_type',
         'step_id',
         'window_id',
-        'client_type',
         'recall_count',
         'ticket_status',
-        'queue_status'
+        'queue_status',
     ];
 
     // In Transaction.php (Model)

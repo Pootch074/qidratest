@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Section;
-use App\Models\Division;
 use App\Models\Step;
 use App\Models\Window;
 use App\Models\Transaction;
@@ -687,13 +685,13 @@ class UsersController extends Controller
             ->where('step_id', $user->step_id)
             ->whereDate('created_at', Carbon::today());
 
-        // Upcoming (waiting)
         $regularQueues = (clone $baseQuery)
             ->where('queue_status', 'waiting')
             ->where('client_type', 'regular')
             ->orderBy('queue_number', 'asc')
             ->get()
             ->map(fn($q) => [
+                'id'              => $q->id, // ✅ add this
                 'formatted_number' => 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
                 'style_class'      => 'bg-[#2e3192]',
             ]);
@@ -704,6 +702,7 @@ class UsersController extends Controller
             ->orderBy('queue_number', 'asc')
             ->get()
             ->map(fn($q) => [
+                'id'              => $q->id, // ✅ add this
                 'formatted_number' => 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
                 'style_class'      => 'bg-[#ee1c25]',
             ]);
@@ -712,13 +711,14 @@ class UsersController extends Controller
             ->where('client_type', 'deferred')
             ->where('ticket_status', 'issued')
             ->where('queue_status', 'waiting')
-            // ->where('window_id', $user->window_id)
             ->orderBy('queue_number', 'asc')
             ->get()
             ->map(fn($q) => [
+                'id'              => $q->id, // ✅ add this
                 'formatted_number' => 'D' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
                 'style_class'      => 'bg-[#f97316]',
             ]);
+
 
         // 🔹 Pending
         $pendingRegular = (clone $baseQuery)
@@ -918,77 +918,6 @@ class UsersController extends Controller
         return $this->updatePendingTransaction($request, 'deferred');
     }
 
-
-
-
-    // =========================== UPCOMING ===========================
-    private function updateUpcomingTransaction(Request $request, string $clientType)
-    {
-        $user = Auth::user();
-        $sectionId = $user->section_id;
-
-        $transaction = Transaction::where('id', $request->id)
-            ->where('section_id', $sectionId)
-            ->where('queue_status', 'waiting')
-            ->where('client_type', $clientType)
-            ->first();
-
-        if (!$transaction) {
-            return response()->json(['success' => false, 'message' => 'Transaction not found.'], 404);
-        }
-
-        // Find the next step
-        $nextStep = Step::where('section_id', $sectionId)
-            ->where('step_number', '>', $transaction->step->step_number)
-            ->orderBy('step_number', 'asc')
-            ->first();
-
-
-        if ($nextStep) {
-            // Move to next step
-            $transaction->step_id = $nextStep->id;
-            $transaction->queue_status = 'waiting';
-            $transaction->window_id = null;
-            $transaction->recall_count = null;
-            $message = 'Transaction moved to the next step.';
-        } else {
-            // No more steps → completed
-            $transaction->queue_status = 'completed';
-            $transaction->window_id = $user->window_id; // last handler
-            $message = 'Transaction completed (no more steps).';
-        }
-
-        $transaction->save();
-
-
-        return response()->json(['success' => true, 'message' => $message]);
-    }
-
-    public function updateUpcomingRegu(Request $request)
-    {
-        return $this->updateUpcomingTransaction($request, 'regular');
-    }
-
-    public function updateUpcomingPrio(Request $request)
-    {
-        return $this->updateUpcomingTransaction($request, 'priority');
-    }
-
-    public function updateUpcomingReturnee(Request $request)
-    {
-        return $this->updateUpcomingTransaction($request, 'deferred');
-    }
-    // =========================== UPCOMING ===========================
-
-
-
-
-
-
-
-
-
-
     public function serveAgain(Request $request)
     {
         $queue = Transaction::findOrFail($request->id);
@@ -1006,5 +935,42 @@ class UsersController extends Controller
             'message' => 'Client set to serving again.',
             'recall_count' => $queue->recall_count,
         ]);
+    }
+
+
+
+
+
+
+
+
+
+    public function updateUpcoming(Request $request)
+    {
+        try {
+            $request->validate([
+                'id' => 'required|integer'
+            ]);
+
+            $user = Auth::user();
+            if (!$user) {
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
+
+            $transaction = \App\Models\Transaction::find($request->id);
+            if (!$transaction) {
+                return response()->json(['message' => 'Queue not found'], 404);
+            }
+
+            $transaction->update([
+                'window_id'    => $user->window_id,
+                'queue_status' => 'serving',
+            ]);
+
+            return response()->json(['message' => 'Queue updated successfully'], 200);
+        } catch (\Throwable $e) {
+            \Log::error('updateUpcoming error: ' . $e->getMessage());
+            return response()->json(['message' => 'Server error: ' . $e->getMessage()], 500);
+        }
     }
 }

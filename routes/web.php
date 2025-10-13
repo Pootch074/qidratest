@@ -106,24 +106,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pacd/scanned_id/table', [PacdController::class, 'clientsTable'])
         ->name('pacd.scanned_id.table');
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     Route::get('/queues/data', [UsersController::class, 'getQueues'])->name('queues.data');
-
 
     Route::post('/users/returnQueue', [UsersController::class, 'returnQueue'])->name('users.returnQueue');
 
@@ -148,13 +131,15 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/queues/pending/returnee/update', [UsersController::class, 'updatePendingReturnee'])
         ->name('queues.updatePendingReturnee');
 
-
-
     Route::post('/auto-logout', [LoginController::class, 'logout'])->name('auto.logout');
 
-    Route::get('/display/current-serving', [App\Http\Controllers\DisplayController::class, 'getCurrentServing']);
-
-
+    Route::get('/display/current-serving', [DisplayController::class, 'getCurrentServing']);
 
     Route::post('/queues/serve-again', [UsersController::class, 'serveAgain'])->name('queues.serveAgain');
+
+
+
+
+    Route::post('/queues/updateUpcoming', [UsersController::class, 'updateUpcoming'])
+        ->name('queues.updateUpcoming');
 });
