@@ -43,7 +43,7 @@
     let logoutTimer;
     function resetTimer() {
         clearTimeout(logoutTimer);
-        logoutTimer = setTimeout(autoLogoutFetch, 900000); // 15 minutes
+        logoutTimer = setTimeout(autoLogoutFetch, 1800000); // 30 minutes
     }
     function autoLogoutFetch() {
         fetch(autoLogoutUrl, {
