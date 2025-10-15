@@ -210,8 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const restrictedBtns = [
             '#nextRegularBtn',
             '#nextPriorityBtn',
-            '#returneeBtn',
-            '#recallBtn'
+            '#returneeBtn'
         ];
 
         restrictedBtns.forEach(selector => {
