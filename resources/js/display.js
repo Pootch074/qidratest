@@ -171,6 +171,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     // 🧠 Skip (don’t render) step 4 entirely
                     if (step.step_number === 4) return;
 
+                    // 🧠 Skip Step 3 if user is 'regular'
+                    if (
+                        step.step_number === 3 &&
+                        window.appUser.assignedCategory.toLowerCase() ===
+                            "regular"
+                    ) {
+                        return;
+                    }
+
                     const card = document.createElement("div");
                     card.className =
                         "rounded-lg shadow-md p-1 mb-3 flex flex-col bg-gray-200";
@@ -284,8 +293,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         tx.client_type?.charAt(0).toUpperCase() +
                         String(tx.queue_number).padStart(3, "0");
 
-                    // 🧠 Prevent speech synthesis when step_number = 4
-                    if (tx.step_number !== 4) {
+                    // 🧠 Prevent speech synthesis when step_number = 4 or user is regular at step 3
+                    if (
+                        tx.step_number !== 4 &&
+                        !(
+                            window.appUser.assignedCategory.toLowerCase() ===
+                                "regular" && tx.step_number === 3
+                        )
+                    ) {
                         announce(
                             formattedQueue,
                             tx.step_number,
