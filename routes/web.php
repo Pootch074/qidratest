@@ -130,16 +130,17 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/queues/pending/returnee/update', [UsersController::class, 'updatePendingReturnee'])
         ->name('queues.updatePendingReturnee');
-
-    Route::post('/auto-logout', [LoginController::class, 'logout'])->name('auto.logout');
-
-    Route::get('/display/current-serving', [DisplayController::class, 'getCurrentServing']);
-
-    Route::post('/queues/serve-again', [UsersController::class, 'serveAgain'])->name('queues.serveAgain');
-
-
-
-
     Route::post('/queues/updateUpcoming', [UsersController::class, 'updateUpcoming'])
         ->name('queues.updateUpcoming');
+
+    Route::post('/auto-logout', [LoginController::class, 'logout'])->name('auto.logout');
+    Route::post('/queues/serve-again', [UsersController::class, 'serveAgain'])->name('queues.serveAgain');
+
+    // Route::get('/display/current-serving', [DisplayController::class, 'getCurrentServing']);
+
+
+
+
+
+
 });

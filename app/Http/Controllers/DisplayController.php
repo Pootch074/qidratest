@@ -150,25 +150,25 @@ class DisplayController extends Controller
 
 
 
-    public function getCurrentServing()
-    {
-        $user = Auth::user();
-        $today = Carbon::today('Asia/Manila')->toDateString();
+    // public function getCurrentServing()
+    // {
+    //     $user = Auth::user();
+    //     $today = Carbon::today('Asia/Manila')->toDateString();
 
-        $records = DB::table('transactions')
-            ->where('section_id', $user->section_id)
-            ->whereNull('recall_count')
-            ->where('ticket_status', 'issued')
-            ->where('queue_status', 'serving')
-            ->whereIn('step_id', function ($query) {
-                $query->select('id')->from('steps')->where('step_number', '!=', 4);
-            })
+    //     $records = DB::table('transactions')
+    //         ->where('section_id', $user->section_id)
+    //         ->whereNull('recall_count')
+    //         ->where('ticket_status', 'issued')
+    //         ->where('queue_status', 'serving')
+    //         ->whereIn('step_id', function ($query) {
+    //             $query->select('id')->from('steps')->where('step_number', '!=', 4);
+    //         })
 
-            ->whereDate('created_at', $today)
-            ->whereDate('updated_at', $today)
-            ->orderBy('updated_at', 'desc')
-            ->get();
+    //         ->whereDate('created_at', $today)
+    //         ->whereDate('updated_at', $today)
+    //         ->orderBy('updated_at', 'desc')
+    //         ->get();
 
-        return response()->json($records);
-    }
+    //     return response()->json($records);
+    // }
 }
