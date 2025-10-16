@@ -61,7 +61,7 @@
 @endsection
 
 @section('scripts')
-<script>
+{{-- <script>
 document.addEventListener('DOMContentLoaded', () => {
 
 
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fetch every 5 seconds (5000 ms)
     setInterval(fetchTransactions, 2000);
 });
-</script>
+</script> --}}
 @endsection
 
 
