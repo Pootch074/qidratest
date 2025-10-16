@@ -135,12 +135,4 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/auto-logout', [LoginController::class, 'logout'])->name('auto.logout');
     Route::post('/queues/serve-again', [UsersController::class, 'serveAgain'])->name('queues.serveAgain');
-
-    // Route::get('/display/current-serving', [DisplayController::class, 'getCurrentServing']);
-
-
-
-
-
-
 });
