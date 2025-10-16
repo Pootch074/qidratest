@@ -46,22 +46,22 @@
 
 
 
-        {{-- UPCOMING --}}
-        <div class="col-span-3 flex flex-col bg-white rounded-md shadow overflow-hidden min-h-0">
-            <div class="bg-[#2e3192] text-white text-center font-bold text-2xl py-2">UPCOMING</div>
+{{-- UPCOMING --}}
+<div class="col-span-3 flex flex-col bg-white rounded-md shadow overflow-hidden min-h-0">
+    <div class="bg-[#2e3192] text-white text-center font-bold text-2xl py-2">UPCOMING</div>
 
-            {{-- grid: make sure it has full width and can shrink in flex layout --}}
-            <div class="grid {{ $upcomingGridClass }} gap-4 p-2 bg-white rounded-b-lg border-2 border-[#2e3192] flex-1 w-full min-h-0">
-                @foreach($upcomingBlocks as $block)
-                    @if($block['show'])
-                        <div class="flex flex-col bg-white rounded-md shadow overflow-hidden w-full min-h-0">
-                            <div class="bg-[#2e3192] text-white text-center font-bold py-2">{{ $block['title'] }}</div>
-                            <div id="{{ $block['id'] }}" class="flex-1 bg-white p-2 overflow-y-auto max-h-[68vh] min-h-0"></div>
-                        </div>
-                    @endif
-                @endforeach
-            </div>
-        </div>
+    <div class="grid {{ $upcomingGridClass }} gap-4 p-2 bg-white rounded-b-lg border-2 border-[#2e3192] flex-1 w-full min-h-0">
+        @foreach($upcomingBlocks as $block)
+            @if($block['show'])
+                <div class="flex flex-col bg-white rounded-md shadow overflow-hidden w-full min-h-0">
+                    <div class="bg-[#2e3192] text-white text-center font-bold py-2">{{ $block['title'] }}</div>
+                    <div id="{{ $block['id'] }}" class="flex-1 bg-white p-2 overflow-y-auto max-h-[68vh] min-h-0"></div>
+                </div>
+            @endif
+        @endforeach
+    </div>
+</div>
+
 
         {{-- PENDING --}}
         <div class="col-span-4 flex flex-col bg-white rounded-md shadow overflow-hidden min-h-0">
@@ -299,21 +299,25 @@ function updateButtonStates(data) {
     setBtnState(document.getElementById('proceedBtn'), !servingEmpty);
 
     // Upcoming-based buttons
-    // ✅ Disabled if (list empty) OR (something is already serving)
-    setBtnState(
-        document.getElementById('nextRegularBtn'),
-        servingEmpty && !reguEmpty
-    );
-    setBtnState(
-        document.getElementById('nextPriorityBtn'),
-        servingEmpty && !prioEmpty
-    );
-    setBtnState(
-        document.getElementById('returneeBtn'), 
-        servingEmpty && !returneeEmpty
-    );
+    setBtnState(document.getElementById('nextRegularBtn'), servingEmpty && !reguEmpty);
+    setBtnState(document.getElementById('nextPriorityBtn'), servingEmpty && !prioEmpty);
+    setBtnState(document.getElementById('returneeBtn'), servingEmpty && !returneeEmpty);
 
+    // 🟡 Disable each Upcoming queue container when servingQueue is active
+    const upcomingIds = ['upcomingRegu', 'upcomingPrio', 'upcomingReturnee', 'pendingRegu', 'pendingPrio', 'pendingReturnee'];
+    upcomingIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            if (servingEmpty) {
+                el.classList.remove('queue-disabled');
+            } else {
+                el.classList.add('queue-disabled');
+            }
+        }
+    });
 }
+
+
 
 
 
@@ -622,6 +626,28 @@ setInterval(async () => {
 #confirmModal:not(.hidden) > div {
     @apply opacity-100 scale-100;
 }
+
+.queue-disabled {
+        pointer-events: none;
+        opacity: 0.5;
+        filter: grayscale(50%);
+        position: relative;
+    }
+
+    /* Optional subtle overlay (visual cue) */
+    .queue-disabled::after {
+        /* content: "Disabled while serving"; */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(255, 255, 255, 0.8);
+        color: #444;
+        font-weight: bold;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+    }
 </style>
 @endsection
 

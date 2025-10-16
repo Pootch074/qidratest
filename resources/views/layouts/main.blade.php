@@ -31,7 +31,7 @@
     @livewireScripts
     
 
-    @auth
+   @auth
 <script>
 (function () {
     const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -39,60 +39,98 @@
     const sessionCheckUrl = "{{ route('session.check') }}";
     const loginUrl = "{{ route('login') }}";
 
-    /** ---------------- Inactivity Logout (15 minutes) ---------------- **/
+    /** ---------------- Inactivity Logout (30 minutes) ---------------- **/
     let logoutTimer;
     function resetTimer() {
         clearTimeout(logoutTimer);
         logoutTimer = setTimeout(autoLogoutFetch, 1800000); // 30 minutes
     }
+
     function autoLogoutFetch() {
         fetch(autoLogoutUrl, {
             method: "POST",
-            headers: { "X-CSRF-TOKEN": csrf, "Content-Type": "application/json" },
+            headers: {
+                "X-CSRF-TOKEN": csrf,
+                "Content-Type": "application/json"
+            },
             body: JSON.stringify({})
         }).finally(() => window.location.replace(loginUrl));
     }
-    ["mousemove","mousedown","click","keypress","scroll","touchstart"].forEach(evt => window.addEventListener(evt, resetTimer));
+
+    ["mousemove", "mousedown", "click", "keypress", "scroll", "touchstart"].forEach(evt =>
+        window.addEventListener(evt, resetTimer)
+    );
     resetTimer();
+
 
     /** ---------------- Instant Logout on Back Button ---------------- **/
     history.pushState(null, "", location.href);
     window.addEventListener("popstate", function () {
-        // Push state again immediately to prevent going back
+        // Prevent back navigation
         history.pushState(null, "", location.href);
 
-        // Immediately redirect (no delay or page flicker)
+        // Logout immediately
         fetch(autoLogoutUrl, {
             method: "POST",
-            headers: { "X-CSRF-TOKEN": csrf, "Content-Type": "application/json" },
+            headers: {
+                "X-CSRF-TOKEN": csrf,
+                "Content-Type": "application/json"
+            },
             body: JSON.stringify({})
         });
 
-        // Force instant redirect to login
+        // Redirect to login
         window.location.replace(loginUrl);
     });
 
-    /** ---------------- Auto Logout on Tab/Window Close ---------------- **/
-    window.addEventListener("beforeunload", function () {
+
+    /** ---------------- Auto Logout on Tab/Window Close (Never on Reload) ---------------- **/
+    let isReloading = false;
+
+    // Detect reload explicitly
+    window.addEventListener("beforeunload", function (event) {
         try {
-            const fd = new FormData();
-            fd.append('_token', csrf);
-            navigator.sendBeacon(autoLogoutUrl, fd);
+            // ✅ STEP 1: Mark that user may be reloading
+            sessionStorage.setItem("isReloading", "true");
+
+            // ✅ STEP 2: Wait for confirmation on next load
+            setTimeout(() => sessionStorage.removeItem("isReloading"), 5000);
+
+            // ✅ STEP 3: If it's not a reload, send logout signal
+            if (!isReloading) {
+                const fd = new FormData();
+                fd.append('_token', csrf);
+                navigator.sendBeacon(autoLogoutUrl, fd);
+            }
         } catch (e) {}
     });
 
-    /** ---------------- Session Check (Handles Forward Cache) ---------------- **/
+    // Detect actual reload after page loads again
+    window.addEventListener("load", function () {
+        if (sessionStorage.getItem("isReloading")) {
+            isReloading = true; // ✅ confirmed reload
+            sessionStorage.removeItem("isReloading");
+        }
+    });
+
+
+    /** ---------------- Session Check (Handles Forward Cache / Back Button) ---------------- **/
     function checkSession() {
         fetch(sessionCheckUrl, { method: "GET", credentials: "same-origin" })
             .then(res => res.json())
-            .then(data => { if (!data.active) window.location.replace(loginUrl); })
+            .then(data => {
+                if (!data.active) window.location.replace(loginUrl);
+            })
             .catch(() => window.location.replace(loginUrl));
     }
+
     window.addEventListener("pageshow", checkSession);
     window.addEventListener("load", checkSession);
 })();
 </script>
 @endauth
+
+
 
 
 
