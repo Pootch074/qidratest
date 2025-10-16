@@ -80,10 +80,7 @@
         </div>
 
 
-        {{-- Flash new serving queue --}}
-        <div id="flashServingQueue" class="flex items-center justify-center h-[60vh] bg-gray-900 text-white text-[12rem] font-extrabold rounded-lg relative overflow-hidden">
-            <span id="servingNumber" class="hidden"></span>
-        </div>
+        
 
 
 
