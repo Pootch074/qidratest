@@ -83,6 +83,7 @@ class TransactionsController extends Controller
             'servingCount'   => $transactions->where('queue_status', 'serving')->count(),
             'priorityCount'  => $transactions->where('client_type', 'priority')->count(),
             'regularCount'   => $transactions->where('client_type', 'regular')->count(),
+            'returneeCount'   => $transactions->where('client_type', 'deferred')->count(),
             'completedCount' => $transactions->where('queue_status', 'completed')->count(),
         ];
 

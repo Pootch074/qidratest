@@ -8,7 +8,7 @@
 
     <div class="p-4 sm:ml-64">
         {{-- Dashboard cards --}}
-        <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="grid grid-cols-4 gap-4 mb-6">
 
             {{-- Waiting Clients --}}
             <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
@@ -42,6 +42,12 @@
             <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
                 <p class="text-lg font-semibold text-gray-600">Regular Clients</p>
                 <p class="text-2xl font-bold text-gray-800 regularCount">{{ $regularCount }}</p>
+            </div>
+
+            {{-- Returnee Clients --}}
+            <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
+                <p class="text-lg font-semibold text-gray-600">Returnee Clients</p>
+                <p class="text-2xl font-bold text-gray-800 returneeCount">{{ $returneeCount }}</p>
             </div>
 
             {{-- Completed Clients --}}

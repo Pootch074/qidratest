@@ -142,6 +142,11 @@ class UsersController extends Controller
             ->whereDate('created_at', now())
             ->count();
 
+        $returneeCount  = Transaction::where('client_type', 'deferred')
+            ->where('section_id', $sectionId)
+            ->whereDate('created_at', now())
+            ->count();
+
         $completedCount  = Transaction::where('queue_status', 'completed')
             ->where('section_id', $sectionId)
             ->whereDate('created_at', now())
@@ -177,6 +182,7 @@ class UsersController extends Controller
             'servingCount',
             'priorityCount',
             'regularCount',
+            'returneeCount',
             'completedCount'
         ));
     }
