@@ -130,6 +130,7 @@ class PacdController extends Controller
                 ->where('queue_number', '>', 0) // ✅ Exclude queue_number = 0
                 ->whereDate('created_at', $today)
                 ->whereDate('updated_at', $today) // ✅ Only today's transactions
+                ->orderBy('queue_number', 'desc') // ✅ Order by queue_number descending
                 ->latest()
                 ->get();
         } else {
@@ -139,6 +140,7 @@ class PacdController extends Controller
                 ->where('queue_number', '>', 0) // ✅ Exclude queue_number = 0
                 ->whereDate('created_at', $today)
                 ->whereDate('updated_at', $today) // ✅ Only today's transactions
+                ->orderBy('queue_number', 'desc') // ✅ Order by queue_number descending
                 ->latest()
                 ->get();
         }

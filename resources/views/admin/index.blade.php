@@ -28,17 +28,15 @@
                 <p class="text-2xl font-bold text-green-600 servingCount">{{ $servingCount }}</p>
             </div>
 
-{{-- Priority Clients (visible only if section_id == 15) --}}
-@auth
-    @if (Auth::user()->section_id == 15)
-        <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
-            <p class="text-lg font-semibold text-gray-600">Priority Clients</p>
-            <p class="text-2xl font-bold text-red-600 priorityCount">{{ $priorityCount }}</p>
-        </div>
-    @endif
-@endauth
-
-
+            {{-- Priority Clients (visible only if section_id == 15) --}}
+            @auth
+                @if (Auth::user()->section_id == 15)
+                    <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
+                        <p class="text-lg font-semibold text-gray-600">Priority Clients</p>
+                        <p class="text-2xl font-bold text-red-600 priorityCount">{{ $priorityCount }}</p>
+                    </div>
+                @endif
+            @endauth
 
             {{-- Regular Clients --}}
             <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
