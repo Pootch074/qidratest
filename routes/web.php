@@ -49,11 +49,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/queue/skip', [UsersController::class, 'skipQueue'])->name('users.skipQueue');
     Route::post('/queue/proceed', [UsersController::class, 'proceedQueue'])->name('users.proceedQueue');
 
-
-
-
-
-
     Route::get('admin/steps', [StepsController::class, 'steps'])->name('admin.steps');
     Route::post('admin/steps', [StepsController::class, 'store'])->name('steps.store');
     Route::put('/steps/{id}', [StepsController::class, 'update'])->name('steps.update');
@@ -72,35 +67,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('pacd/transactions/table', [PacdController::class, 'transactionsTable'])->name('pacd.transactions.table');
     Route::get('pacd/sections/cards', [PacdController::class, 'sectionsCards'])->name('pacd.sections.cards');
 
-
     Route::post('/queue/store', [TransactionsController::class, 'store'])->name('queue.store');
 
     Route::post('superadmin/store', [SuperAdminController::class, 'store'])->name('superadmin.store');
 
     Route::get('idscan', [IdscanController::class, 'index'])->name('idscan');
+    Route::post('/save-name', [IdscanController::class, 'saveName'])->name('save.name');
     Route::post('/upload-image', [IdscanController::class, 'uploadImage'])->name('upload.image');
-    Route::get('/windows/by-step/{step}', [UsersController::class, 'getWindowsByStep'])
-        ->name('windows.byStep');
 
+    Route::get('/windows/by-step/{step}', [UsersController::class, 'getWindowsByStep'])->name('windows.byStep');
 
     Route::get('/pacd/scanned_id/table', [PacdController::class, 'clientsTable'])
         ->name('pacd.scanned_id.table');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     Route::get('/queues/data', [UsersController::class, 'getQueues'])->name('queues.data');
 });
