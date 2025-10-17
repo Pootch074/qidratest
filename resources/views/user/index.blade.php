@@ -29,7 +29,7 @@
                 ['id' => 'pendingRegu',     'title' => 'REGULAR',  'show' => in_array($userCategory, ['regular','both'])],
                 ['id' => 'pendingPrio',     'title' => 'PRIORITY', 'show' => in_array($userCategory, ['priority','both'])],
                 ['id' => 'pendingReturnee', 'title' => 'RETURNEE', 'show' => $showReturnee],
-                ['id' => 'deferred',        'title' => 'DEFERRED', 'show' => true],
+                ['id' => 'deferred',        'title' => 'DEFERRED', 'show' => $showReturnee],
             ];
             $visiblePending = collect($pendingBlocks)->where('show', true)->count();
 
@@ -204,6 +204,22 @@
 document.addEventListener('DOMContentLoaded', () => {
     const sectionId = {{ $sectionId ?? 'null' }};
     const stepNumber = {{ $stepNumber ?? 'null' }};
+
+    /*** === Disable Defer Button if Section 15 & Step 1 or 2 === ***/
+if (sectionId === 15 && (stepNumber === 1 || stepNumber === 2)) {
+    const restrictedDefer = [
+            '#deferBtn'
+        ];
+
+        restrictedDefer.forEach(selector => {
+            const btn = document.querySelector(selector);
+            if (btn) {
+                btn.style.display = 'none';
+
+            }
+        });
+}
+
 
         /*** === Restrict Buttons if Section 15 & Step 4 === ***/
     if (sectionId === 15 && stepNumber === 4) {
