@@ -979,4 +979,42 @@ class UsersController extends Controller
             return response()->json(['message' => 'Server error: ' . $e->getMessage()], 500);
         }
     }
+
+
+    public function updateUpcomingPreassessRegu(Request $request)
+    {
+        $user = Auth::user();
+        $sectionId = $user->section_id;
+
+        $transaction = Transaction::where('id', $request->id)
+            ->where('section_id', $sectionId)
+            ->where('queue_status', 'waiting')
+            ->where('client_type', $user->assigned_category) // you already have the user
+            ->first();
+
+        if (!$transaction) {
+            return response()->json(['success' => false, 'message' => 'Transaction not found.'], 404);
+        }
+
+        $nextStep = Step::where('section_id', $sectionId)
+            ->where('step_number', '>', $transaction->step->step_number)
+            ->orderBy('step_number', 'asc')
+            ->first();
+
+        if ($nextStep) {
+            $transaction->step_id = $nextStep->id;
+            $transaction->queue_status = 'waiting';
+            $transaction->window_id = null;
+            $transaction->recall_count = null;
+            $message = 'Transaction moved to the next step.';
+        } else {
+            $transaction->queue_status = 'completed';
+            $transaction->window_id = $user->window_id;
+            $message = 'Transaction completed (no more steps).';
+        }
+
+        $transaction->save();
+
+        return response()->json(['success' => true, 'message' => $message]);
+    }
 }

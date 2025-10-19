@@ -114,8 +114,13 @@ Route::middleware(['auth'])->group(function () {
         ->name('admin.transactions.realtime');
 
     // =================================== UPCOMING ===================================
-    Route::post('/queues/upcoming/regu/update', [UsersController::class, 'updateUpcomingRegu'])
-        ->name('queues.updateUpcomingRegu');
+    Route::post('/queues/upcoming/preassess/regu/update', [UsersController::class, 'updateUpcomingPreassessRegu'])
+        ->name('queues.updateUpcomingPreassessRegu');
+
+
+
+
+
     Route::post('/queues/upcoming/prio/update', [UsersController::class, 'updateUpcomingPrio'])
         ->name('queues.updateUpcomingPrio');
     Route::post('/queues/upcoming/returnee/update', [UsersController::class, 'updateUpcomingReturnee'])

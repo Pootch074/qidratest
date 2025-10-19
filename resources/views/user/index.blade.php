@@ -551,44 +551,131 @@ const fetchQueues = () => {
 
 
 
-    // 🟢 Bind Upcoming Queues for click -> update transactions table
+// 🟢 Bind Upcoming Queues for click -> update transactions table
 function bindUpcomingQueue(containerId) {
     document.addEventListener('click', e => {
         const target = e.target.closest(`${containerId} [data-id]`);
-        if (target) {
-            const id = target.getAttribute('data-id');
+        if (!target) return;
 
+        const id = target.getAttribute('data-id');
+
+        // 🧠 Condition: step_number = 1 AND assigned_category = 'regular'
+        const stepNumber = {{ $stepNumber ?? 'null' }};
+        const assignedCategory = "{{ strtolower(Auth::user()->assigned_category) }}";
+
+        if (stepNumber === 1) {
+            // 👉 Use the SAME modal behavior as pending queues
+            modalMessage.textContent = "Serve again or proceed client to next step?";
+            const buttonContainer = modalMessage.parentElement;
+
+            // Remove any existing custom buttons
+            buttonContainer.querySelectorAll('.custom-modal-btn').forEach(btn => btn.remove());
+
+            // Hide the default confirm/cancel buttons
+            modalConfirmBtn.classList.add('hidden');
+            modalCancelBtn.classList.add('hidden');
+
+            // 🟦 Serve button
+            const serveBtn = document.createElement('button');
+            serveBtn.textContent = "Serve";
+            serveBtn.className = `
+                custom-modal-btn text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 
+                hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 
+                font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2
+            `;
+
+            // 🟩 Proceed button
+            const proceedBtn = document.createElement('button');
+            proceedBtn.textContent = "Proceed";
+            proceedBtn.className = `
+                custom-modal-btn text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 
+                hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-green-300 
+                font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2
+            `;
+
+            // 🔹 Serve Logic (like pending serveAgain)
+            serveBtn.addEventListener('click', () => {
+                setBtnState(serveBtn, false);
+                fetch("{{ route('queues.serveAgain') }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        window_id: {{ Auth::user()->window_id }},
+                        queue_status: 'serving'
+                    })
+                })
+                .then(res => res.json())
+                .then(() => {
+                    fetchQueues();
+                    setTimeout(hideModal, 1000);
+                })
+                .catch(err => {
+                    modalMessage.textContent = `❌ Something went wrong: ${err.message}`;
+                    setBtnState(serveBtn, true);
+                });
+            });
+
+            // 🔹 Proceed Logic (like pending proceed)
+            proceedBtn.addEventListener('click', () => {
+                setBtnState(proceedBtn, false);
+                fetch("{{ route('queues.updateUpcomingPreassessRegu') }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id })
+                })
+                .then(res => res.json())
+                .then(() => {
+                    fetchQueues();
+                    setTimeout(hideModal, 1000);
+                })
+                .catch(err => {
+                    modalMessage.textContent = `❌ Something went wrong: ${err.message}`;
+                    setBtnState(proceedBtn, true);
+                });
+            });
+
+            // Append and show
+            buttonContainer.appendChild(serveBtn);
+            buttonContainer.appendChild(proceedBtn);
+            modal.classList.remove('hidden');
+            const modalContent = modal.querySelector('div.relative.bg-gray-200');
+            modalContent.classList.remove('opacity-0', 'scale-95');
+            modalContent.classList.add('opacity-100', 'scale-100');
+        } else {
+            // 🟢 Default Upcoming Modal (unchanged)
             showModal("Start serving this queue?", () => {
-    setBtnState(modalConfirmBtn, false);
-    console.log("Sending to updateUpcoming:", { id });
-    fetch("{{ route('queues.updateUpcoming') }}", {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({ id: Number(id) }) // convert to integer
-    })
-    .then(res => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-    })
-    .then(data => {
-        console.log("Response:", data);
-        fetchQueues();
-        setTimeout(hideModal, 1000); // ✅ hide modal smoothly
-    })
-    .catch(err => {
-        console.error("Fetch error:", err);
-        modalMessage.textContent = "❌ Something went wrong. Please try again.";
-        setBtnState(modalConfirmBtn, true);
-    });
-});
-
+                setBtnState(modalConfirmBtn, false);
+                fetch("{{ route('queues.updateUpcoming') }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ id: Number(id) })
+                })
+                .then(res => res.json())
+                .then(() => {
+                    fetchQueues();
+                    setTimeout(hideModal, 1000);
+                })
+                .catch(err => {
+                    console.error("Fetch error:", err);
+                    modalMessage.textContent = "❌ Something went wrong. Please try again.";
+                    setBtnState(modalConfirmBtn, true);
+                });
+            });
         }
     });
 }
+
 
 // Bind all visible upcoming queues
 bindUpcomingQueue('#upcomingRegu');
