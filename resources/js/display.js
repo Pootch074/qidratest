@@ -131,17 +131,58 @@ document.addEventListener("DOMContentLoaded", () => {
                     ? availableVoices[voiceIndex]
                     : availableVoices[0] || null;
 
+            // ✅ Prevent speechSynthesis from getting stuck
+            window.speechSynthesis.cancel();
+
+            console.log(
+                `🔊 Speaking message: "${message}" (Repeat #${
+                    count + 1
+                }/${repeat})`
+            );
+
+            // 🧩 Extract queue number, step, and window using regex
+            const match = message.match(
+                /Client number (\w\d+), please proceed to step (\d+), window (\d+)/
+            );
+
+            // Declare outside to avoid scope issues
+            const flashDiv = document.getElementById("flashServingQueue");
+
+            if (match && flashDiv) {
+                const [, queueNumber, stepNumber, windowNumber] = match;
+                flashDiv.innerHTML = `
+            <div id="flashContent" class="flex flex-col items-center justify-center w-full h-full opacity-100 transition-opacity duration-1000">
+                <span class="text-[15rem] font-extrabold leading-none">${queueNumber}</span>
+                <span class="text-[4rem] font-bold mt-4">STEP ${stepNumber} WINDOW ${windowNumber}</span>
+            </div>
+        `;
+                flashDiv.classList.add("animate-flash");
+                setTimeout(
+                    () => flashDiv.classList.remove("animate-flash"),
+                    1500
+                );
+            }
+
+            // ✅ Always fade out when speech ends
             utterance.onend = () => {
                 count++;
+                const flashContent = document.getElementById("flashContent");
+                if (flashContent && flashDiv) {
+                    // 1️⃣ Start fade-out after speech ends
+                    flashContent.style.opacity = "0";
+                    // 2️⃣ Wait 2 seconds, then clear the display
+                    setTimeout(() => {
+                        flashDiv.innerHTML = "";
+                    }, 2000);
+                }
+
+                // Continue the speaking sequence
                 if (count < repeat) {
                     setTimeout(speakMessage, 300);
                 } else {
                     speakNext();
                 }
             };
-
-            // ✅ Prevent speechSynthesis from getting stuck
-            window.speechSynthesis.cancel();
 
             // ✅ Actually speak
             window.speechSynthesis.speak(utterance);

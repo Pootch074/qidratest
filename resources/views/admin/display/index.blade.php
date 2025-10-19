@@ -120,6 +120,24 @@
     window.alertAudioUrl = "{{ asset('audio/alert1.mp3') }}";
 </script>
 
+<style>
+    @keyframes flash {
+   0%   { background-color: #ee1c25; }  /* red */
+  25%  { background-color: #fef200; }  /* yellow */
+  50%  { background-color: #ee1c25; }  /* red */
+  75%  { background-color: #fef200; }  /* yellow */
+  100% { background-color: #ee1c25; }  /* red */
+}
+.animate-flash {
+  animation: flash 1.5s infinite;
+}
+
+#flashServingQueue {
+  transition: background-color 0.3s ease;
+}
+
+</style>
+
 
 
 @vite('resources/js/display.js')
