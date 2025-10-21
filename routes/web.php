@@ -1,22 +1,22 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\UsersController;
-use App\Http\Middleware\CheckUserType;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\TransactionsController;
-use App\Http\Controllers\PacdController;
-use App\Http\Controllers\StepsController;
-use App\Http\Controllers\WindowsController;
 use App\Http\Controllers\DisplayController;
 use App\Http\Controllers\IdscanController;
+use App\Http\Controllers\PacdController;
+use App\Http\Controllers\StepsController;
 use App\Http\Controllers\SuperAdminController;
+use App\Http\Controllers\TransactionsController;
+use App\Http\Controllers\UsersController;
+use App\Http\Controllers\WindowsController;
+use App\Http\Middleware\CheckUserType;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/session/check', function () {
     $user = Auth::user();
 
-    if (!$user) {
+    if (! $user) {
         return response()->json(['active' => false]);
     }
 
@@ -24,6 +24,7 @@ Route::get('/session/check', function () {
     if ($user->session_id !== session()->getId()) {
         Auth::logout();
         session()->invalidate();
+
         return response()->json(['active' => false]);
     }
 
@@ -46,7 +47,7 @@ Route::get('/auth/login', [LoginController::class, 'login'])->name('login');
 Route::post('/auth/login', [LoginController::class, 'authenticate'])->name('authenticate');
 
 // Routes for different user types
-Route::middleware(['auth', CheckUserType::class . ':0,1,2,3,5,6'])->group(function () {
+Route::middleware(['auth', CheckUserType::class.':0,1,2,3,5,6'])->group(function () {
     Route::get('superadmin', [SuperAdminController::class, 'index'])->name('superadmin');
     Route::get('admin', [UsersController::class, 'admin'])->name('admin');
     Route::get('idscan', [IdscanController::class, 'index'])->name('idscan');
@@ -67,11 +68,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/queue/skip', [UsersController::class, 'skipQueue'])->name('users.skipQueue');
     Route::post('/queue/recall', [UsersController::class, 'recallQueue'])->name('users.recallQueue');
     Route::post('/queue/proceed', [UsersController::class, 'proceedQueue'])->name('users.proceedQueue');
-
-
-
-
-
 
     Route::get('admin/steps', [StepsController::class, 'steps'])->name('admin.steps');
     Route::post('admin/steps', [StepsController::class, 'store'])->name('steps.store');
@@ -102,7 +98,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/windows/by-step/{step}', [UsersController::class, 'getWindowsByStep'])
         ->name('windows.byStep');
 
-
     Route::get('/pacd/scanned_id/table', [PacdController::class, 'clientsTable'])
         ->name('pacd.scanned_id.table');
 
@@ -116,10 +111,6 @@ Route::middleware(['auth'])->group(function () {
     // =================================== UPCOMING ===================================
     Route::post('/queues/upcoming/preassess/regu/update', [UsersController::class, 'updateUpcomingPreassessRegu'])
         ->name('queues.updateUpcomingPreassessRegu');
-
-
-
-
 
     Route::post('/queues/upcoming/prio/update', [UsersController::class, 'updateUpcomingPrio'])
         ->name('queues.updateUpcomingPrio');

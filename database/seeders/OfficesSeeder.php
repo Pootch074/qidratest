@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class OfficesSeeder extends Seeder
 {
@@ -21,7 +20,7 @@ class OfficesSeeder extends Seeder
         $offices = [
             'field_office' => 'DSWD FO XI',
             'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now()
+            'updated_at' => Carbon::now(),
         ];
         DB::table('offices')->insert($offices);
     }

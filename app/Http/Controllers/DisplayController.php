@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Models\Transaction;
-use Carbon\Carbon;
 
 class DisplayController extends Controller
 {
@@ -20,7 +18,7 @@ class DisplayController extends Controller
         try {
             $user = Auth::user();
 
-            if (!$user) {
+            if (! $user) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
 
@@ -66,25 +64,27 @@ class DisplayController extends Controller
                 ->map(function ($group) {
                     return [
                         'step_number' => $group->first()->step_number,
-                        'step_name'   => $group->first()->step_name,
-                        'windows'     => $group->groupBy('window_id')->map(function ($wins) {
-                            if (!$wins->first()->window_id) return null;
+                        'step_name' => $group->first()->step_name,
+                        'windows' => $group->groupBy('window_id')->map(function ($wins) {
+                            if (! $wins->first()->window_id) {
+                                return null;
+                            }
 
                             return [
-                                'window_id'     => $wins->first()->window_id,
+                                'window_id' => $wins->first()->window_id,
                                 'window_number' => $wins->first()->window_number,
-                                'transactions'  => $wins->filter(fn($t) => $t->tx_id !== null)->map(function ($t) {
+                                'transactions' => $wins->filter(fn ($t) => $t->tx_id !== null)->map(function ($t) {
                                     $prefix = strtoupper(substr($t->client_type, 0, 1));
-                                    $formatted = $prefix . str_pad($t->queue_number, 3, '0', STR_PAD_LEFT);
+                                    $formatted = $prefix.str_pad($t->queue_number, 3, '0', STR_PAD_LEFT);
 
                                     return [
-                                        'id'           => $t->tx_id,
+                                        'id' => $t->tx_id,
                                         'queue_number' => $formatted,
-                                        'client_type'  => $t->client_type,
+                                        'client_type' => $t->client_type,
                                     ];
-                                })->values()
+                                })->values(),
                             ];
-                        })->filter(fn($w) => $w !== null)->values()
+                        })->filter(fn ($w) => $w !== null)->values(),
                     ];
                 })
                 ->values();
@@ -98,12 +98,11 @@ class DisplayController extends Controller
         }
     }
 
-
     public function getLatestTransaction()
     {
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -137,12 +136,12 @@ class DisplayController extends Controller
 
         return response()->json($txs->map(function ($tx) {
             return [
-                'id'            => $tx->id,
-                'queue_number'  => $tx->queue_number,
-                'client_type'   => $tx->client_type,
-                'step_number'   => $tx->step->step_number ?? null,
+                'id' => $tx->id,
+                'queue_number' => $tx->queue_number,
+                'client_type' => $tx->client_type,
+                'step_number' => $tx->step->step_number ?? null,
                 'window_number' => $tx->window->window_number ?? null,
-                'recall_count'  => $tx->recall_count ?? 0,
+                'recall_count' => $tx->recall_count ?? 0,
             ];
         }));
     }

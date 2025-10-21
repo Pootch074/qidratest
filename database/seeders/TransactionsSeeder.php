@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class TransactionsSeeder extends Seeder
 {
@@ -415,12 +414,6 @@ class TransactionsSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
 
-
-
-
-
-
-
             [
                 'queue_number' => 1,
                 'client_type' => 'priority',
@@ -552,13 +545,6 @@ class TransactionsSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
 
-
-
-
-
-
-
-
             // CIS clients queues
             [
                 'queue_number' => 1,
@@ -571,13 +557,7 @@ class TransactionsSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
 
-
-
-
-
         ];
-
-
 
         DB::table('transactions')->insert($transactions);
     }

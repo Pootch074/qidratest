@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\User;
 use App\Models\Section;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class SuperAdminController extends Controller
@@ -18,8 +18,8 @@ class SuperAdminController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('first_name', 'like', "%{$search}%")
-                ->orWhere('last_name', 'like', "%{$search}%")
-                ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
@@ -34,7 +34,6 @@ class SuperAdminController extends Controller
         return view('superadmin.index', compact('admins', 'sections'));
     }
 
-
     /**
      * Store a new admin user (user_type = 1).
      */
@@ -42,21 +41,21 @@ class SuperAdminController extends Controller
     {
         $validated = $request->validate([
             'first_name' => 'required|string|max:255',
-            'last_name'  => 'required|string|max:255',
-            'email'      => 'required|email|unique:users,email',
-            'password'   => 'required|string|min:8|confirmed',
-            'position'   => 'nullable|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+            'position' => 'nullable|string|max:255',
             'section_id' => 'required|exists:sections,id',
         ]);
 
         User::create([
             'first_name' => $validated['first_name'],
-            'last_name'  => $validated['last_name'],
-            'email'      => $validated['email'],
-            'password'   => Hash::make($validated['password']),
-            'position'   => $validated['position'] ?? null,
+            'last_name' => $validated['last_name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'position' => $validated['position'] ?? null,
             'section_id' => $validated['section_id'],
-            'user_type'  => User::TYPE_ADMIN, // constant for clarity
+            'user_type' => User::TYPE_ADMIN, // constant for clarity
         ]);
 
         return redirect()->route('superadmin.index')->with('success', 'Admin user added successfully.');

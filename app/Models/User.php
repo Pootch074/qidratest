@@ -12,15 +12,19 @@ class User extends Authenticatable
     use HasFactory, Notifiable, SoftDeletes;
 
     const TYPE_SUPERADMIN = 0;
+
     const TYPE_ADMIN = 1;
+
     const TYPE_IDSCAN = 2;
+
     const TYPE_PACD = 3;
 
     const TYPE_USER = 5;
+
     const TYPE_DISPLAY = 6;
 
-
     const STATUS_INACTIVE = 0;
+
     const STATUS_ACTIVE = 1;
 
     /**
@@ -40,7 +44,6 @@ class User extends Authenticatable
         'window_id',
         'password',
     ];
-
 
     /**
      * The attributes that should be hidden for serialization.
@@ -71,16 +74,15 @@ class User extends Authenticatable
         ];
     }
 
-
     public static function getUserTypes(): array
     {
         return [
-            self::TYPE_SUPERADMIN      => 'Super Admin',
-            self::TYPE_ADMIN      => 'Admin',
-            self::TYPE_USER    => 'User',
-            self::TYPE_PACD    => 'PACD',
-            self::TYPE_DISPLAY    => 'Display',
-            self::TYPE_IDSCAN    => 'Idscan',
+            self::TYPE_SUPERADMIN => 'Super Admin',
+            self::TYPE_ADMIN => 'Admin',
+            self::TYPE_USER => 'User',
+            self::TYPE_PACD => 'PACD',
+            self::TYPE_DISPLAY => 'Display',
+            self::TYPE_IDSCAN => 'Idscan',
         ];
     }
 
@@ -122,37 +124,41 @@ class User extends Authenticatable
         return $query->where('user_type', self::TYPE_SUPERADMIN);
     }
 
-
     public function scopeActive($query)
     {
         return $query->where('status', self::STATUS_ACTIVE);
     }
+
     public function user($query)
     {
         return $query->where('user_type', self::TYPE_USER);
     }
+
     public function pacd($query)
     {
         return $query->where('user_type', self::TYPE_PACD);
     }
+
     public function display($query)
     {
         return $query->where('user_type', self::TYPE_DISPLAY);
     }
+
     public function idscan($query)
     {
         return $query->where('user_type', self::TYPE_IDSCAN);
     }
 
-
     public function window()
     {
         return $this->belongsTo(Window::class);
     }
+
     public function step()
     {
         return $this->belongsTo(Step::class);
     }
+
     public function section()
     {
         return $this->belongsTo(Section::class);

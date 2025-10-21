@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Step;
-use App\Models\Window;
 use App\Models\Transaction;
+use App\Models\User;
+use App\Models\Window;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
-
-
 
 class UsersController extends Controller
 {
@@ -23,10 +21,11 @@ class UsersController extends Controller
         $formatQueues = function ($queues) {
             return $queues->map(function ($q) {
                 $q->formatted_number = strtoupper(substr($q->client_type, 0, 1))
-                    . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT);
+                    .str_pad($q->queue_number, 3, '0', STR_PAD_LEFT);
                 $q->style_class = strtolower($q->client_type) === 'priority'
                     ? 'bg-red-600'
                     : 'bg-[#150e60]';
+
                 return $q;
             })->values();
         };
@@ -67,19 +66,18 @@ class UsersController extends Controller
         ];
     }
 
-
     public function user()
     {
         $user = Auth::user();
-        logger()->info('Logged-in user step_id: ' . $user->step_id);
+        logger()->info('Logged-in user step_id: '.$user->step_id);
 
         $queues = $this->getQueuesForUser($user);
 
-        $stepNumber   = optional($user->step)->step_number;
+        $stepNumber = optional($user->step)->step_number;
         $windowNumber = optional($user->window)->window_number;
-        $fieldOffice  = optional($user->section?->division?->office)->field_office;
+        $fieldOffice = optional($user->section?->division?->office)->field_office;
         $divisionName = optional($user->section?->division)->division_name;
-        $sectionName  = optional($user->section)->section_name;
+        $sectionName = optional($user->section)->section_name;
 
         return view('user.index', array_merge($queues, compact(
             'stepNumber',
@@ -99,15 +97,15 @@ class UsersController extends Controller
         $queues = $this->getQueuesForUser($user);
 
         $userInfo = [
-            'stepNumber'   => optional($user->step)->step_number ?? 'N/A',
+            'stepNumber' => optional($user->step)->step_number ?? 'N/A',
             'windowNumber' => optional($user->window)->window_number ?? 'N/A',
-            'sectionName'  => optional($user->section)->section_name ?? 'N/A',
+            'sectionName' => optional($user->section)->section_name ?? 'N/A',
             'divisionName' => optional($user->section?->division)->division_name ?? 'N/A',
-            'fieldOffice'  => optional($user->section?->division?->office)->field_office ?? 'N/A',
+            'fieldOffice' => optional($user->section?->division?->office)->field_office ?? 'N/A',
         ];
 
         return response()->json(array_merge($queues, [
-            'userInfo' => $userInfo
+            'userInfo' => $userInfo,
         ]));
     }
 
@@ -117,17 +115,17 @@ class UsersController extends Controller
         $sectionId = $user->section_id;
 
         // ✅ Transaction counts filtered by user's section and only for today
-        $waitingCount  = Transaction::where('queue_status', 'waiting')
+        $waitingCount = Transaction::where('queue_status', 'waiting')
             ->where('section_id', $sectionId)
             ->whereDate('created_at', now())
             ->count();
 
-        $pendingCount  = Transaction::where('queue_status', 'pending')
+        $pendingCount = Transaction::where('queue_status', 'pending')
             ->where('section_id', $sectionId)
             ->whereDate('created_at', now())
             ->count();
 
-        $servingCount  = Transaction::where('queue_status', 'serving')
+        $servingCount = Transaction::where('queue_status', 'serving')
             ->where('section_id', $sectionId)
             ->whereDate('created_at', now())
             ->count();
@@ -137,30 +135,30 @@ class UsersController extends Controller
             ->whereDate('created_at', now())
             ->count();
 
-        $regularCount  = Transaction::where('client_type', 'regular')
+        $regularCount = Transaction::where('client_type', 'regular')
             ->where('section_id', $sectionId)
             ->whereDate('created_at', now())
             ->count();
 
-        $returneeCount  = Transaction::where('client_type', 'deferred')
+        $returneeCount = Transaction::where('client_type', 'deferred')
             ->where('section_id', $sectionId)
             ->whereDate('created_at', now())
             ->count();
 
-        $completedCount  = Transaction::where('queue_status', 'completed')
+        $completedCount = Transaction::where('queue_status', 'completed')
             ->where('section_id', $sectionId)
             ->whereDate('created_at', now())
             ->count();
 
         // ✅ Users in the same section
         $userColumns = [
-            'first_name'        => 'First Name',
-            'last_name'         => 'Last Name',
-            'email'             => 'Email',
-            'position'          => 'Position',
-            'user_type'         => 'User Type',
+            'first_name' => 'First Name',
+            'last_name' => 'Last Name',
+            'email' => 'Email',
+            'position' => 'Position',
+            'user_type' => 'User Type',
             'assigned_category' => 'Category',
-            'window_id'         => 'Window ID',
+            'window_id' => 'Window ID',
         ];
 
         $users = User::where('section_id', $sectionId)
@@ -187,7 +185,6 @@ class UsersController extends Controller
         ));
     }
 
-
     public function users()
     {
         $authUser = Auth::user();
@@ -200,11 +197,11 @@ class UsersController extends Controller
             ->get();
 
         $userColumns = [
-            'first_name'        => 'First Name',
-            'last_name'         => 'Last Name',
-            'email'             => 'Email',
-            'position'          => 'Position',
-            'user_type'         => 'User Type',
+            'first_name' => 'First Name',
+            'last_name' => 'Last Name',
+            'email' => 'Email',
+            'position' => 'Position',
+            'user_type' => 'User Type',
             'assigned_category' => 'Category',
         ];
 
@@ -255,8 +252,6 @@ class UsersController extends Controller
         return response()->json($formatted);
     }
 
-
-
     public function store(Request $request)
     {
         $authUser = Auth::user();
@@ -265,16 +260,16 @@ class UsersController extends Controller
         // 🟢 Validation rules
         $rules = [
             'first_name' => 'required|string|max:255|regex:/^[A-Za-z\s\'-]+$/',
-            'last_name'  => 'required|string|max:255|regex:/^[A-Za-z\s\'-]+$/',
-            'email'      => 'required|email|unique:users,email',
-            'position'   => 'required|string|max:255',
+            'last_name' => 'required|string|max:255|regex:/^[A-Za-z\s\'-]+$/',
+            'email' => 'required|email|unique:users,email',
+            'position' => 'required|string|max:255',
             // 👇 allow "both" only if section_id == 15
             'assigned_category' => $sectionId == 15
                 ? 'required|string|in:regular,priority,both'
                 : 'nullable|string',
-            'step_id'    => 'required|exists:steps,id',
-            'window_id'  => 'required|exists:windows,id',
-            'password'   => [
+            'step_id' => 'required|exists:steps,id',
+            'window_id' => 'required|exists:windows,id',
+            'password' => [
                 'required',
                 'string',
                 'min:12',                 // ✅ at least 12 chars
@@ -288,11 +283,10 @@ class UsersController extends Controller
         // 🟡 Custom error messages
         $messages = [
             'first_name.regex' => 'First name may only contain letters, spaces, apostrophes, or hyphens.',
-            'last_name.regex'  => 'Last name may only contain letters, spaces, apostrophes, or hyphens.',
-            'password.min'     => 'Password must be at least 12 characters long.',
-            'password.regex'   => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@ $ ! % * ? &).',
+            'last_name.regex' => 'Last name may only contain letters, spaces, apostrophes, or hyphens.',
+            'password.min' => 'Password must be at least 12 characters long.',
+            'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@ $ ! % * ? &).',
         ];
-
 
         $validated = $request->validate($rules, $messages);
 
@@ -305,57 +299,54 @@ class UsersController extends Controller
         }
 
         $user = User::create([
-            'first_name'        => $validated['first_name'],
-            'last_name'         => $validated['last_name'],
-            'email'             => $validated['email'],
-            'position'          => $validated['position'],
-            'user_type'         => $validated['user_type'],
+            'first_name' => $validated['first_name'],
+            'last_name' => $validated['last_name'],
+            'email' => $validated['email'],
+            'position' => $validated['position'],
+            'user_type' => $validated['user_type'],
             'assigned_category' => $validated['assigned_category'],
-            'step_id'           => $validated['step_id'],
-            'window_id'         => $validated['window_id'] ?? null,
-            'section_id'        => $sectionId,
-            'password'          => bcrypt($validated['password']),
+            'step_id' => $validated['step_id'],
+            'window_id' => $validated['window_id'] ?? null,
+            'section_id' => $sectionId,
+            'password' => bcrypt($validated['password']),
         ]);
 
         return response()->json([
             'success' => true,
             'user' => [
-                'id'               => $user->id,
-                'first_name'       => $user->first_name,
-                'last_name'        => $user->last_name,
-                'email'            => $user->email,
-                'position'         => $user->position,
-                'user_type_name'   => $user->getUserTypeName(),
+                'id' => $user->id,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'email' => $user->email,
+                'position' => $user->position,
+                'user_type_name' => $user->getUserTypeName(),
                 'assigned_category' => $user->assigned_category,
-                'window_number'    => $user->window->window_number ?? null,
-                'step_number'      => $user->step->step_number ?? null,
+                'window_number' => $user->window->window_number ?? null,
+                'step_number' => $user->step->step_number ?? null,
             ],
         ]);
     }
-
-
-
 
     public function destroy(User $user)
     {
         try {
             $user->forceDelete(); // ⚡️ this will run DELETE FROM users WHERE id=?
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
-
     public function nextRegular()
     {
         $user = Auth::user();
 
         // Validate required fields exist
-        if (!$user->step_id || !$user->section_id || !$user->window_id) {
+        if (! $user->step_id || ! $user->section_id || ! $user->window_id) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'User is not assigned to a step, section, or window.'
+                'message' => 'User is not assigned to a step, section, or window.',
             ], 400);
         }
 
@@ -373,7 +364,7 @@ class UsersController extends Controller
             if ($record) {
                 $record->update([
                     'queue_status' => 'serving',
-                    'window_id'    => $user->window_id, // ✅ assign current cashier's window
+                    'window_id' => $user->window_id, // ✅ assign current cashier's window
                 ]);
             }
 
@@ -384,26 +375,24 @@ class UsersController extends Controller
             return response()->json([
                 'status' => 'success',
                 // 'message' => "Serving client {$transaction->client_type}{$transaction->queue_number} at window {$user->window_id}",
-                'transaction' => $transaction
+                'transaction' => $transaction,
             ]);
         }
 
         return response()->json([
             'status' => 'empty',
-            'message' => 'No regular clients waiting in the queue.'
+            'message' => 'No regular clients waiting in the queue.',
         ]);
     }
-
-
 
     public function nextPriority()
     {
         $user = Auth::user();
 
-        if (!$user->step_id || !$user->section_id || !$user->window_id) {
+        if (! $user->step_id || ! $user->section_id || ! $user->window_id) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'User is not assigned to a step, section, or window.'
+                'message' => 'User is not assigned to a step, section, or window.',
             ], 400);
         }
 
@@ -420,7 +409,7 @@ class UsersController extends Controller
             if ($record) {
                 $record->update([
                     'queue_status' => 'serving',
-                    'window_id'    => $user->window_id,
+                    'window_id' => $user->window_id,
                 ]);
             }
 
@@ -431,13 +420,13 @@ class UsersController extends Controller
             return response()->json([
                 'status' => 'success',
                 // 'message' => "Serving PRIORITY client {$transaction->client_type}{$transaction->queue_number} at window {$user->window_id}",
-                'transaction' => $transaction
+                'transaction' => $transaction,
             ]);
         }
 
         return response()->json([
             'status' => 'empty',
-            'message' => 'No priority clients waiting in the queue.'
+            'message' => 'No priority clients waiting in the queue.',
         ]);
     }
 
@@ -445,10 +434,10 @@ class UsersController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user->step_id || !$user->section_id || !$user->window_id) {
+        if (! $user->step_id || ! $user->section_id || ! $user->window_id) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'User is not assigned to a step, section, or window.'
+                'message' => 'User is not assigned to a step, section, or window.',
             ], 400);
         }
 
@@ -466,7 +455,7 @@ class UsersController extends Controller
             if ($record) {
                 $record->update([
                     'queue_status' => 'serving',
-                    'window_id'    => $user->window_id,
+                    'window_id' => $user->window_id,
                 ]);
             }
 
@@ -477,26 +466,24 @@ class UsersController extends Controller
             return response()->json([
                 'status' => 'success',
                 // 'message' => "Serving RETURNEE client {$transaction->client_type}{$transaction->queue_number} at window {$user->window_id}",
-                'transaction' => $transaction
+                'transaction' => $transaction,
             ]);
         }
 
         return response()->json([
             'status' => 'empty',
-            'message' => 'No priority clients waiting in the queue.'
+            'message' => 'No priority clients waiting in the queue.',
         ]);
     }
-
-
 
     public function skipQueue()
     {
         $user = Auth::user();
 
-        if (!$user->step_id || !$user->section_id || !$user->window_id) {
+        if (! $user->step_id || ! $user->section_id || ! $user->window_id) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'User is not assigned to a step, section, or window.'
+                'message' => 'User is not assigned to a step, section, or window.',
             ], 400);
         }
 
@@ -514,17 +501,16 @@ class UsersController extends Controller
                 $query->whereIn('client_type', [$user->assigned_category, 'deferred']);
             }
 
-
             $current = $query->first();
 
-            if (!$current) {
+            if (! $current) {
                 return null;
             }
 
             // Move it back to pending and clear window
             $current->update([
                 'queue_status' => 'pending',
-                'window_id'    => null,
+                'window_id' => null,
             ]);
 
             return $current;
@@ -533,16 +519,15 @@ class UsersController extends Controller
         if ($transaction) {
             return response()->json([
                 'status' => 'success',
-                'message' => "Queue {$transaction->client_type}{$transaction->queue_number} has been skipped."
+                'message' => "Queue {$transaction->client_type}{$transaction->queue_number} has been skipped.",
             ]);
         }
 
         return response()->json([
             'status' => 'empty',
-            'message' => 'No active serving queue to skip.'
+            'message' => 'No active serving queue to skip.',
         ]);
     }
-
 
     public function recallQueue()
     {
@@ -563,12 +548,11 @@ class UsersController extends Controller
             $query->whereIn('client_type', [$user->assigned_category, 'deferred']);
         }
 
-
         $transaction = $query->first();
 
-        if (!$transaction) {
+        if (! $transaction) {
             return response()->json([
-                'message' => 'No serving queue found for today.'
+                'message' => 'No serving queue found for today.',
             ], 404);
         }
 
@@ -577,22 +561,20 @@ class UsersController extends Controller
         $transaction->save();
 
         return response()->json([
-            'message'      => 'Queue recalled successfully.',
+            'message' => 'Queue recalled successfully.',
             'recall_count' => $transaction->recall_count,
-            'queue_id'     => $transaction->id
+            'queue_id' => $transaction->id,
         ]);
     }
-
-
 
     public function proceedQueue()
     {
         $user = Auth::user();
 
-        if (!$user->step_id || !$user->section_id || !$user->window_id) {
+        if (! $user->step_id || ! $user->section_id || ! $user->window_id) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'User is not assigned to a step, section, or window.'
+                'message' => 'User is not assigned to a step, section, or window.',
             ], 400);
         }
 
@@ -611,7 +593,7 @@ class UsersController extends Controller
 
             $current = $currentQuery->lockForUpdate()->first();
 
-            if (!$current) {
+            if (! $current) {
                 return null;
             }
 
@@ -624,16 +606,16 @@ class UsersController extends Controller
             if ($nextStep) {
                 // Move to the next step
                 $current->update([
-                    'step_id'      => $nextStep->id,
+                    'step_id' => $nextStep->id,
                     'recall_count' => null,
                     'queue_status' => 'waiting',
-                    'window_id'    => null,
+                    'window_id' => null,
                 ]);
             } else {
                 // ✅ No next step -> mark as completed
                 $current->update([
                     'queue_status' => 'completed',
-                    'window_id'    => null,
+                    'window_id' => null,
                 ]);
             }
 
@@ -642,7 +624,7 @@ class UsersController extends Controller
 
         if ($transaction) {
             return response()->json([
-                'status'  => 'success',
+                'status' => 'success',
                 'message' => $transaction->queue_status === 'completed'
                     ? 'Queue has been completed.'
                     : 'Queue successfully proceeded to the next step.',
@@ -651,14 +633,9 @@ class UsersController extends Controller
 
         return response()->json([
             'status' => 'empty',
-            'message' => 'No active serving queue to proceed.'
+            'message' => 'No active serving queue to proceed.',
         ]);
     }
-
-
-
-
-
 
     public function getWindowsByStep($stepId)
     {
@@ -674,11 +651,10 @@ class UsersController extends Controller
         return response()->json($windows);
     }
 
-
     public function getQueues()
     {
         // 🛑 If user is not authenticated, return JSON error
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return response()->json([
                 'error' => 'Unauthenticated',
                 'redirect' => route('login'),
@@ -696,10 +672,10 @@ class UsersController extends Controller
             ->where('client_type', 'regular')
             ->orderBy('queue_number', 'asc')
             ->get()
-            ->map(fn($q) => [
-                'id'              => $q->id, // ✅ add this
-                'formatted_number' => 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                'style_class'      => 'bg-[#2e3192]',
+            ->map(fn ($q) => [
+                'id' => $q->id, // ✅ add this
+                'formatted_number' => 'R'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                'style_class' => 'bg-[#2e3192]',
             ]);
 
         $priorityQueues = (clone $baseQuery)
@@ -707,10 +683,10 @@ class UsersController extends Controller
             ->where('client_type', 'priority')
             ->orderBy('queue_number', 'asc')
             ->get()
-            ->map(fn($q) => [
-                'id'              => $q->id, // ✅ add this
-                'formatted_number' => 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                'style_class'      => 'bg-[#ee1c25]',
+            ->map(fn ($q) => [
+                'id' => $q->id, // ✅ add this
+                'formatted_number' => 'P'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                'style_class' => 'bg-[#ee1c25]',
             ]);
 
         $returneeQueues = (clone $baseQuery)
@@ -719,12 +695,11 @@ class UsersController extends Controller
             ->where('queue_status', 'waiting')
             ->orderBy('queue_number', 'asc')
             ->get()
-            ->map(fn($q) => [
-                'id'              => $q->id, // ✅ add this
-                'formatted_number' => 'D' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                'style_class'      => 'bg-[#f97316]',
+            ->map(fn ($q) => [
+                'id' => $q->id, // ✅ add this
+                'formatted_number' => 'D'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                'style_class' => 'bg-[#f97316]',
             ]);
-
 
         // 🔹 Pending
         $pendingRegular = (clone $baseQuery)
@@ -732,10 +707,10 @@ class UsersController extends Controller
             ->where('client_type', 'regular')
             ->orderBy('queue_number', 'asc')
             ->get()
-            ->map(fn($q) => [
-                'id'              => $q->id, // ✅ Add this
-                'formatted_number' => 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                'style_class'     => 'bg-[#2e3192]',
+            ->map(fn ($q) => [
+                'id' => $q->id, // ✅ Add this
+                'formatted_number' => 'R'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                'style_class' => 'bg-[#2e3192]',
             ]);
 
         $pendingPriority = (clone $baseQuery)
@@ -743,10 +718,10 @@ class UsersController extends Controller
             ->where('client_type', 'priority')
             ->orderBy('queue_number', 'asc')
             ->get()
-            ->map(fn($q) => [
-                'id'              => $q->id, // ✅ added
-                'formatted_number' => 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                'style_class'     => 'bg-[#ee1c25]',
+            ->map(fn ($q) => [
+                'id' => $q->id, // ✅ added
+                'formatted_number' => 'P'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                'style_class' => 'bg-[#ee1c25]',
             ]);
 
         $pendingReturnee = (clone $baseQuery)
@@ -754,10 +729,10 @@ class UsersController extends Controller
             ->where('client_type', 'deferred')
             ->orderBy('queue_number', 'asc')
             ->get()
-            ->map(fn($q) => [
-                'id'              => $q->id, // ✅ Add this
-                'formatted_number' => 'D' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                'style_class'     => 'bg-[#f97316]',
+            ->map(fn ($q) => [
+                'id' => $q->id, // ✅ Add this
+                'formatted_number' => 'D'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                'style_class' => 'bg-[#f97316]',
             ]);
 
         $deferred = (clone $baseQuery)
@@ -766,18 +741,18 @@ class UsersController extends Controller
             ->where('window_id', $user->window_id)
             ->orderBy('queue_number', 'asc')
             ->get()
-            ->map(fn($q) => [
+            ->map(fn ($q) => [
                 'formatted_number' => match ($q->client_type) {
-                    'regular'  => 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                    'priority' => 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                    'deferred' => 'D' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                    default    => 'X' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT), // fallback
+                    'regular' => 'R'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                    'priority' => 'P'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                    'deferred' => 'D'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                    default => 'X'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT), // fallback
                 },
                 'style_class' => match ($q->client_type) {
-                    'regular'  => 'bg-gray-500',
+                    'regular' => 'bg-gray-500',
                     'priority' => 'bg-gray-500',
                     'deferred' => 'bg-gray-500', // orange for returnee
-                    default    => 'bg-gray-500',
+                    default => 'bg-gray-500',
                 },
             ]);
 
@@ -795,37 +770,32 @@ class UsersController extends Controller
             ->orderBy('updated_at', 'desc') // latest being served
             ->limit(1)
             ->get()
-            ->map(fn($q) => [
+            ->map(fn ($q) => [
                 'formatted_number' => match ($q->client_type) {
-                    'regular'  => 'R' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                    'priority' => 'P' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                    'deferred' => 'D' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                    default    => 'X' . str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                    'regular' => 'R'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                    'priority' => 'P'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                    'deferred' => 'D'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                    default => 'X'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
                 },
                 'style_class' => match ($q->client_type) {
-                    'regular'  => 'bg-[#2e3192] text-8xl h-full flex items-center justify-center',
+                    'regular' => 'bg-[#2e3192] text-8xl h-full flex items-center justify-center',
                     'priority' => 'bg-[#ee1c25] text-8xl h-full flex items-center justify-center',
                     'deferred' => 'bg-[#f97316] text-8xl h-full flex items-center justify-center',
-                    default    => 'bg-gray-500',
+                    default => 'bg-gray-500',
                 },
             ]);
-
-
 
         return response()->json([
             'upcomingRegu' => $regularQueues,
             'upcomingPrio' => $priorityQueues,
             'upcomingReturnee' => $returneeQueues,
-            'pendingRegu'  => $pendingRegular,
-            'pendingPrio'  => $pendingPriority,
-            'pendingReturnee'  => $pendingReturnee,
-            'deferred'  => $deferred,
+            'pendingRegu' => $pendingRegular,
+            'pendingPrio' => $pendingPriority,
+            'pendingReturnee' => $pendingReturnee,
+            'deferred' => $deferred,
             'servingQueue' => $servingQueue,
         ]);
     }
-
-
-
 
     public function returnQueue()
     {
@@ -847,25 +817,23 @@ class UsersController extends Controller
 
         $transaction = $query->first();
 
-        if (!$transaction) {
+        if (! $transaction) {
             return response()->json([
                 'success' => false,
-                'message' => 'No active serving transaction found.'
+                'message' => 'No active serving transaction found.',
             ]);
         }
 
         $transaction->update([
             'queue_status' => 'deferred',
-            'updated_at'   => Carbon::now()
+            'updated_at' => Carbon::now(),
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Transaction marked as returnee.'
+            'message' => 'Transaction marked as returnee.',
         ]);
     }
-
-
 
     private function updatePendingTransaction(Request $request, string $clientType)
     {
@@ -878,7 +846,7 @@ class UsersController extends Controller
             ->where('client_type', $clientType)
             ->first();
 
-        if (!$transaction) {
+        if (! $transaction) {
             return response()->json(['success' => false, 'message' => 'Transaction not found.'], 404);
         }
 
@@ -887,7 +855,6 @@ class UsersController extends Controller
             ->where('step_number', '>', $transaction->step->step_number)
             ->orderBy('step_number', 'asc')
             ->first();
-
 
         if ($nextStep) {
             // Move to next step
@@ -904,7 +871,6 @@ class UsersController extends Controller
         }
 
         $transaction->save();
-
 
         return response()->json(['success' => true, 'message' => $message]);
     }
@@ -943,43 +909,35 @@ class UsersController extends Controller
         ]);
     }
 
-
-
-
-
-
-
-
-
     public function updateUpcoming(Request $request)
     {
         try {
             $request->validate([
-                'id' => 'required|integer'
+                'id' => 'required|integer',
             ]);
 
             $user = Auth::user();
-            if (!$user) {
+            if (! $user) {
                 return response()->json(['message' => 'Unauthorized'], 401);
             }
 
             $transaction = \App\Models\Transaction::find($request->id);
-            if (!$transaction) {
+            if (! $transaction) {
                 return response()->json(['message' => 'Queue not found'], 404);
             }
 
             $transaction->update([
-                'window_id'    => $user->window_id,
+                'window_id' => $user->window_id,
                 'queue_status' => 'serving',
             ]);
 
             return response()->json(['message' => 'Queue updated successfully'], 200);
         } catch (\Throwable $e) {
-            \Log::error('updateUpcoming error: ' . $e->getMessage());
-            return response()->json(['message' => 'Server error: ' . $e->getMessage()], 500);
+            \Log::error('updateUpcoming error: '.$e->getMessage());
+
+            return response()->json(['message' => 'Server error: '.$e->getMessage()], 500);
         }
     }
-
 
     public function updateUpcomingPreassessRegu(Request $request)
     {
@@ -992,7 +950,7 @@ class UsersController extends Controller
             ->where('client_type', $user->assigned_category) // you already have the user
             ->first();
 
-        if (!$transaction) {
+        if (! $transaction) {
             return response()->json(['success' => false, 'message' => 'Transaction not found.'], 404);
         }
 

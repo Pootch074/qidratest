@@ -2,22 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Section;
-use App\Models\User;
 use App\Models\Step;
-use App\Models\Window;
 use App\Models\Transaction;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PacdController extends Controller
 {
     public function index()
     {
         $user = Auth::user();
-
 
         $clients = Transaction::where('ticket_status', null)
             ->orderBy('id')
@@ -43,7 +40,7 @@ class PacdController extends Controller
     public function generateQueue(Request $request, Section $section)
     {
         $clientType = $request->input('client_type', 'regular');
-        $clientId   = $request->input('client_id');
+        $clientId = $request->input('client_id');
         $clientName = $request->input('manual_client_name');
 
         if ($clientId) {
@@ -54,7 +51,7 @@ class PacdController extends Controller
         } else {
             // 📝 Manual flow → create new record
             $client = new Transaction([
-                'full_name'    => $clientName,
+                'full_name' => $clientName,
                 'ticket_status' => null,
             ]);
         }
@@ -77,10 +74,10 @@ class PacdController extends Controller
         // Fill and save
         $client->fill([
             'queue_number' => $newQueueNumber,
-            'client_type'  => $clientType,
-            'step_id'      => $firstStep?->id,
-            'window_id'    => null,
-            'section_id'   => $section->id,
+            'client_type' => $clientType,
+            'step_id' => $firstStep?->id,
+            'window_id' => null,
+            'section_id' => $section->id,
             'queue_status' => 'waiting',
             'ticket_status' => 'issued',
         ]);
@@ -102,15 +99,15 @@ class PacdController extends Controller
                 $prefix = strtoupper(substr($clientType, 0, 1));
         }
 
-        $formattedQueue = $prefix . str_pad($client->queue_number, 3, '0', STR_PAD_LEFT);
+        $formattedQueue = $prefix.str_pad($client->queue_number, 3, '0', STR_PAD_LEFT);
 
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
-                'success'      => true,
+                'success' => true,
                 'queue_number' => $formattedQueue,
-                'client_type'  => ucfirst($clientType),
-                'client_name'  => $client->full_name,
-                'section'      => $section->section_name,
+                'client_type' => ucfirst($clientType),
+                'client_name' => $client->full_name,
+                'section' => $section->section_name,
             ]);
         }
 
@@ -148,7 +145,6 @@ class PacdController extends Controller
         return view('pacd.transactions.table', compact('transactions'));
     }
 
-
     public function sectionsCards()
     {
         $user = Auth::user();
@@ -165,6 +161,7 @@ class PacdController extends Controller
                 ->orderBy('section_name')
                 ->get(['id', 'section_name']);
         }
+
         return view('pacd.sections.cards', compact('sections'));
     }
 
@@ -191,7 +188,7 @@ class PacdController extends Controller
         // ✅ Mark old transaction as cancelled
         $oldTransaction->update([
             'ticket_status' => 'cancelled',
-            'updated_at'    => $now,
+            'updated_at' => $now,
         ]);
 
         // Get last queue for returnee (today only)
@@ -205,34 +202,31 @@ class PacdController extends Controller
 
         // Create a new transaction for returnee
         $transaction = Transaction::create([
-            'full_name'    => $request->full_name,
-            'client_type'  => 'deferred',
+            'full_name' => $request->full_name,
+            'client_type' => 'deferred',
             'queue_number' => $newQueueNumber,
             'queue_status' => 'waiting',
             'ticket_status' => 'issued',
-            'step_id'   => $oldTransaction->step_id,
-            'window_id'    => null,
-            'section_id'   => $oldTransaction->section_id,
-            'created_at'   => $now,
-            'updated_at'   => $now,
+            'step_id' => $oldTransaction->step_id,
+            'window_id' => null,
+            'section_id' => $oldTransaction->section_id,
+            'created_at' => $now,
+            'updated_at' => $now,
         ]);
 
         // Format queue number (T###)
-        $formattedQueue = 'D' . str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT);
+        $formattedQueue = 'D'.str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT);
 
         return response()->json([
-            'success'      => true,
+            'success' => true,
             'queue_number' => $formattedQueue,
-            'full_name'    => $transaction->full_name,
-            'section'      => $transaction->section->section_name ?? '',
-            'step_number'  => $transaction->step->step_number ?? '',
-            'client_type'  => ucfirst($transaction->client_type), // for printing
-            'created_at'   => $transaction->created_at->format('Y-m-d H:i:s'),
+            'full_name' => $transaction->full_name,
+            'section' => $transaction->section->section_name ?? '',
+            'step_number' => $transaction->step->step_number ?? '',
+            'client_type' => ucfirst($transaction->client_type), // for printing
+            'created_at' => $transaction->created_at->format('Y-m-d H:i:s'),
         ]);
     }
-
-
-
 
     public function clientsTable()
     {

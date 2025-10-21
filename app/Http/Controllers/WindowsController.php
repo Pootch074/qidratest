@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Window;
 use App\Models\Step;
+use App\Models\Window;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class WindowsController extends Controller
@@ -30,33 +30,32 @@ class WindowsController extends Controller
     }
 
     public function store(Request $request)
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    $request->validate([
-        'step_id' => 'required|exists:steps,id',
-    ]);
+        $request->validate([
+            'step_id' => 'required|exists:steps,id',
+        ]);
 
-    // ✅ Ensure the step belongs to the user's section
-    $step = Step::where('id', $request->step_id)
-        ->where('section_id', $user->section_id)
-        ->firstOrFail();
+        // ✅ Ensure the step belongs to the user's section
+        $step = Step::where('id', $request->step_id)
+            ->where('section_id', $user->section_id)
+            ->firstOrFail();
 
-    // ✅ Find the latest window number for this step
-    $latestWindow = Window::where('step_id', $step->id)
-        ->max('window_number');
+        // ✅ Find the latest window number for this step
+        $latestWindow = Window::where('step_id', $step->id)
+            ->max('window_number');
 
-    $nextWindowNumber = $latestWindow ? $latestWindow + 1 : 1;
+        $nextWindowNumber = $latestWindow ? $latestWindow + 1 : 1;
 
-    // ✅ Create the window with auto-incremented number
-    Window::create([
-        'step_id'       => $step->id,
-        'window_number' => $nextWindowNumber,
-    ]);
+        // ✅ Create the window with auto-incremented number
+        Window::create([
+            'step_id' => $step->id,
+            'window_number' => $nextWindowNumber,
+        ]);
 
-    return redirect()->back()->with('success', "Window #{$nextWindowNumber} created successfully!");
-}
-
+        return redirect()->back()->with('success', "Window #{$nextWindowNumber} created successfully!");
+    }
 
     public function destroy($id)
     {
@@ -73,14 +72,14 @@ class WindowsController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Window deleted successfully.'
+            'message' => 'Window deleted successfully.',
         ]);
     }
 
     public function check($stepId, $windowNumber)
     {
         // Defensive: validate inputs
-        if (!is_numeric($windowNumber) || $windowNumber < 1 || $windowNumber > 10) {
+        if (! is_numeric($windowNumber) || $windowNumber < 1 || $windowNumber > 10) {
             return response()->json(['exists' => false]);
         }
 
@@ -96,7 +95,7 @@ class WindowsController extends Controller
     {
         return response()->json([
             'success' => false,
-            'message' => 'Updating windows or steps is not allowed.'
+            'message' => 'Updating windows or steps is not allowed.',
         ], 405);
     }
 }

@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
-use App\Models\User;
 
 class LoginController extends Controller
 {
@@ -30,7 +30,7 @@ class LoginController extends Controller
 
             if ($user->is_logged_in && $user->session_id && $user->session_id !== session()->getId()) {
                 try {
-                    \Session::getHandler()->destroy($user->session_id);
+                    Session::getHandler()->destroy($user->session_id);
                 } catch (\Exception $e) {
                     \Log::warning("Failed to destroy old session for user {$user->id}: {$e->getMessage()}");
                 }
@@ -42,9 +42,9 @@ class LoginController extends Controller
 
             $user = User::with(['window.step.section.division.office'])->find(Auth::id());
 
-            $section  = optional(optional(optional($user->window)->step)->section);
+            $section = optional(optional(optional($user->window)->step)->section);
             $division = optional($section->division);
-            $office   = optional($division->office);
+            $office = optional($division->office);
 
             $request->session()->put('window_number', $user->window->window_number ?? null);
             $request->session()->put('step_number', $user->window->step->step_number ?? null);
@@ -75,26 +75,24 @@ class LoginController extends Controller
         ])->onlyInput('email');
     }
 
-
     public function logout(Request $request)
-{
-    $user = Auth::user();
-    if ($user) {
-        $user->session_id = null;
-        $user->is_logged_in = false; 
-        $user->save();
+    {
+        $user = Auth::user();
+        if ($user) {
+            $user->session_id = null;
+            $user->is_logged_in = false;
+            $user->save();
+        }
+
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Logged out']);
+        }
+
+        return redirect()->route('login');
     }
-
-    Auth::logout();
-
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-
-    if ($request->expectsJson()) {
-        return response()->json(['message' => 'Logged out']);
-    }
-
-    return redirect()->route('login');
-}
-
 }

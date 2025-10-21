@@ -10,10 +10,10 @@ class Section extends Model
     {
         return $this->belongsTo(Division::class, 'division_id');
     }
+
     // app/Models/Section.php
     public function users()
     {
         return $this->hasMany(User::class, 'section_id');
     }
-
 }

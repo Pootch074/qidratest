@@ -7,16 +7,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-
 class CheckUserType
 {
     /**
      * Handle an incoming request.
      *
-     * @param Request $request
-     * @param Closure $next
-     * @param mixed ...$types One or more allowed user_type values
-     * @return Response
+     * @param  mixed  ...$types  One or more allowed user_type values
      */
     public function handle(Request $request, Closure $next, ...$types): Response
     {

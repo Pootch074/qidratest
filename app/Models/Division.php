@@ -10,5 +10,4 @@ class Division extends Model
     {
         return $this->belongsTo(\App\Models\Office::class, 'office_id');
     }
-
 }
