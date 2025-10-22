@@ -7,9 +7,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 class UsersController extends Controller
 {
@@ -106,16 +104,8 @@ class UsersController extends Controller
 
     public function delete($id)
     {
-        $user = User::find($id);
-
-        if (! $user) {
-            return response()->json(['message' => 'User not found'], 404);
-        }
-
+        $user = User::findOrFail($id);
         $user->delete();
-
         return response()->json(['message' => 'User deleted successfully']);
     }
-
-
 }
