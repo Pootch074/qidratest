@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,26 +23,34 @@ class Transaction extends Model
         'queue_status',
     ];
 
-    // In Transaction.php (Model)
     public function section()
     {
         return $this->belongsTo(Section::class);
     }
 
-    // Add accessor for formatted_number
+    public function step()
+    {
+        return $this->belongsTo(Step::class);
+    }
+
+    public function window()
+    {
+        return $this->belongsTo(Window::class);
+    }
+
     public function getFormattedNumberAttribute()
     {
         $map = [
             'priority' => 'P',
             'regular' => 'R',
-            'returnee' => 'T', // e.g. T001 for Returnee
+            'returnee' => 'T',
         ];
+
         $prefix = $map[strtolower($this->client_type)] ?? 'R';
 
         return $prefix.str_pad($this->queue_number, 3, '0', STR_PAD_LEFT);
     }
 
-    // Add accessor for client styling
     public function getStyleClassAttribute()
     {
         $styleMap = [
@@ -54,14 +64,53 @@ class Transaction extends Model
         return $styleMap[strtolower($this->client_type)] ?? 'bg-gray-300 text-black';
     }
 
-    public function step()
+    public function scopeToday(Builder $query)
     {
-        return $this->belongsTo(Step::class);
+        return $query->whereDate('created_at', Carbon::today('Asia/Manila'));
     }
 
-    // Relationship to Window
-    public function window()
+    public function scopeYesterday(Builder $query)
     {
-        return $this->belongsTo(Window::class);
+        return $query->whereDate('created_at', Carbon::yesterday('Asia/Manila'));
+    }
+
+    public function scopeForSection(Builder $query, $sectionId)
+    {
+        return $query->where('section_id', $sectionId);
+    }
+
+    public function scopeExcludeSections(Builder $query, $sectionIds)
+    {
+        return $query->whereNotIn('section_id', $sectionIds);
+    }
+
+    public function scopeDeferred(Builder $query)
+    {
+        return $query->where('queue_status', 'deferred');
+    }
+
+    public function scopeWaiting(Builder $query)
+    {
+        return $query->where('queue_status', 'waiting');
+    }
+
+    public function scopeIssued(Builder $query)
+    {
+        return $query->where('ticket_status', 'issued');
+    }
+
+    public function scopeWithoutTicket(Builder $query)
+    {
+        return $query->whereNull('ticket_status');
+    }
+
+    public function scopeWithQueueNumber(Builder $query)
+    {
+        return $query->where('queue_number', '>', 0);
+    }
+
+    public function scopeOfClientType(Builder $query, $clientType)
+    {
+        return $query->where('client_type', $clientType);
     }
 }
