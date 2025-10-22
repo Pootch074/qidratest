@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -33,28 +35,15 @@ class UsersController extends Controller
         }));
     }
 
-    public function post(Request $request)
+    public function post(StoreUserRequest $request)
     {
-        try {
-            $validate = $request->validate([
-                'first_name' => 'required|string',
-                'last_name' => 'required|string',
-                'email' => 'required|email|unique:users,email',
-                'password' => 'required|string|min:6',
-                'position' => 'nullable|string',
-                'user_type' => 'required|integer|in:0,1,2,3,4',
-                'assigned_category' => 'nullable|in:regular,priority',
-                'window_id' => 'nullable|integer',
-            ]);
-        } catch (ValidationException $e) {
-            return response()->json(['errors' => $e->errors()], 422);
-        }
+        $validated = $request->validated();
 
-        $validate['password'] = Hash::make($request->password);
-        $validate['status'] = 1;
-        $validate['created_at'] = $validate['updated_at'] = Carbon::now();
+        $validated['password'] = Hash::make($validated['password']);
+        $validated['status'] = 1;
+        $validated['created_at'] = $validated['updated_at'] = Carbon::now();
 
-        $user = User::create($validate);
+        $user = User::create($validated);
 
         return response()->json([
             'message' => 'User added successfully!',
@@ -76,7 +65,7 @@ class UsersController extends Controller
         ], 201);
     }
 
-    public function put($id, Request $request)
+    public function put($id, UpdateUserRequest $request)
     {
         $user = User::find($id);
 
@@ -84,21 +73,7 @@ class UsersController extends Controller
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        try {
-            $validatedData = $request->validate([
-                'first_name' => 'required|string',
-                'last_name' => 'required|string',
-                'email' => "required|email|unique:users,email,{$id}",
-                'password' => 'nullable|string|min:6',
-                'position' => 'nullable|string',
-                'user_type' => 'required|integer|in:0,1,2,3,4',
-                'assigned_category' => 'nullable|in:regular,priority',
-                'window_id' => 'nullable|integer',
-            ]);
-        } catch (ValidationException $e) {
-            return response()->json(['errors' => $e->errors()], 422);
-        }
-
+        $validatedData = $request->validated();
         $validatedData['updated_at'] = Carbon::now();
 
         if (! $request->filled('password')) {
@@ -142,46 +117,5 @@ class UsersController extends Controller
         return response()->json(['message' => 'User deleted successfully']);
     }
 
-    public function register(Request $request)
-    {
-        try {
-            $validatedData = $request->validate([
-                'first_name' => 'required|string',
-                'last_name' => 'required|string',
-                'email' => 'required|email|unique:users,email',
-                'password' => 'required|string|min:6',
-                'position' => 'nullable|string',
-                'user_type' => 'required|integer|in:0,1,2,3,4',
-                'assigned_category' => 'nullable|in:regular,priority',
-                'window_id' => 'nullable|integer',
-            ]);
-        } catch (ValidationException $e) {
-            return response()->json(['errors' => $e->errors()], 422);
-        }
 
-        $validatedData['password'] = Hash::make($request->password);
-        $validatedData['status'] = 1;
-        $validatedData['created_at'] = $validatedData['updated_at'] = Carbon::now();
-
-        $user = User::create($validatedData);
-
-        return response()->json([
-            'message' => 'User registered successfully!',
-            'user' => [
-                'id' => $user->id,
-                'email' => $user->email,
-                'name' => $user->first_name.' '.$user->last_name,
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
-                'user_type' => $user->getUserType($user->user_type),
-                'user_type_id' => $user->user_type,
-                'position' => $user->position,
-                'assigned_category' => $user->assigned_category,
-                'window_id' => $user->window_id,
-                'status' => $user->getStatus($user->status),
-                'created_at' => $user->created_at,
-                'updated_at' => $user->updated_at,
-            ],
-        ], 201);
-    }
 }
