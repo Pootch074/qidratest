@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+
+use App\Http\Requests\StoreStepRequest;
+use App\Http\Requests\UpdateStepRequest;
 use App\Models\Step;
 use App\Models\Window;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class StepsController extends Controller
 {
@@ -13,7 +17,6 @@ class StepsController extends Controller
     {
         $sectionId = Auth::user()->section_id;
 
-        // Get steps for the current user's section
         $steps = Step::where('section_id', $sectionId)
             ->orderBy('step_number', 'asc')
             ->get();
@@ -21,55 +24,62 @@ class StepsController extends Controller
         return view('admin.steps.table', compact('steps'));
     }
 
-    public function store(Request $request)
+    public function store(StoreStepRequest $request)
     {
-        $request->validate([
-            'step_name' => 'required|string|max:255',
-        ]);
+        $user = Auth::user();
 
-        $latestStep = Step::where('section_id', Auth::user()->section_id)
-            ->max('step_number');
+        $step = DB::transaction(function () use ($user, $request) {
+            $latestStep = Step::where('section_id', $user->section_id)
+                ->lockForUpdate() // ensures no duplicate step numbers
+                ->max('step_number');
 
-        $nextStepNumber = $latestStep ? $latestStep + 1 : 1;
+            $nextStepNumber = $latestStep ? $latestStep + 1 : 1;
 
-        // ✅ Create the step and capture it
-        $step = Step::create([
-            'section_id' => Auth::user()->section_id,
-            'step_number' => $nextStepNumber,
-            'step_name' => $request->step_name,
-        ]);
+            // Create the step
+            $step = Step::create([
+                'section_id'  => $user->section_id,
+                'step_number' => $nextStepNumber,
+                'step_name'   => $request->step_name,
+            ]);
 
-        // ✅ Automatically create the first window for this step
-        Window::create([
-            'window_number' => 1,
-            'step_id' => $step->id,
-        ]);
+            // Create its first window
+            Window::create([
+                'window_number' => 1,
+                'step_id'       => $step->id,
+            ]);
 
-        return redirect()->route('admin.steps')->with('success', 'Step and its first window added successfully.');
+            return $step;
+        });
+
+        return redirect()
+            ->route('admin.steps')
+            ->with('success', "Step '{$step->step_name}' and its first window added successfully.");
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateStepRequest $request, $id)
     {
-        $request->validate([
-            'step_name' => 'required|string|max:255',
-        ]);
-
-        $step = Step::findOrFail($id);
-        $step->step_name = $request->step_name;
-        $step->save();
+        DB::transaction(function () use ($request, $id) {
+            $step = Step::findOrFail($id);
+            $step->update(['step_name' => $request->step_name]);
+        });
 
         return response()->json(['success' => true]);
     }
 
-    // app/Http/Controllers/StepController.php
     public function destroy($id)
     {
         try {
-            $step = Step::findOrFail($id);
-            $step->delete();
+            DB::transaction(function () use ($id) {
+                $step = Step::findOrFail($id);
+
+                // Delete all associated windows first (if cascading not enabled)
+                $step->windows()->delete();
+
+                $step->delete();
+            });
 
             return response()->json(['success' => true]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to delete step.',
