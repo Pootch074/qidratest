@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Models\Section;
+use App\Models\Step;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -22,26 +24,28 @@ class DisplayController extends Controller
     {
         try {
             $user = Auth::user();
+            $frontDeskSectionId = Section::where('section_name', 'CRISIS INTERVENTION SECTION')->value('id');
+            $initialStepIds = Step::whereIn('step_number', [1, 2])->pluck('id')->toArray();
 
-            $applyCategoryFilter = $user->section_id === 15;
+            $applyCategoryFilter = $user->section_id === $frontDeskSectionId;
 
             $steps = DB::table('steps')
                 ->leftJoin('windows', 'steps.id', '=', 'windows.step_id')
-                ->leftJoin('transactions', function ($join) use ($user, $applyCategoryFilter) {
+                ->leftJoin('transactions', function ($join) use ($user, $applyCategoryFilter, $initialStepIds) {
                     $join->on('windows.id', '=', 'transactions.window_id')
                         ->where('transactions.queue_status', '=', 'serving')
                         ->whereDate('transactions.created_at', now());
 
                     if ($applyCategoryFilter) {
-                        $join->where(function ($q) use ($user) {
-                            $q->where(function ($q2) use ($user) {
-                                $q2->whereIn('steps.step_number', [1, 2])
+                        $join->where(function ($q) use ($user, $initialStepIds) {
+                            $q->where(function ($q2) use ($user, $initialStepIds) {
+                                $q2->whereIn('steps.id', $initialStepIds)
                                     ->where(function ($sub) use ($user) {
                                         $sub->where('transactions.client_type', $user->assigned_category)
                                             ->orWhere('transactions.client_type', 'deferred');
                                     });
                             })
-                                ->orWhereNotIn('steps.step_number', [1, 2]);
+                            ->orWhereNotIn('steps.id', $initialStepIds);
                         });
                     }
                 })
@@ -110,6 +114,9 @@ class DisplayController extends Controller
     {
         $user = Auth::user();
 
+        $frontDeskSectionId = Section::where('section_name', 'CRISIS INTERVENTION SECTION')->value('id');
+        $initialStepIds = Step::whereIn('step_number', [1, 2])->pluck('id')->toArray();
+
         $query = Transaction::with(['step', 'window'])
             ->where('queue_status', 'serving')
             ->whereDate('created_at', now())
@@ -117,17 +124,17 @@ class DisplayController extends Controller
                 $q->where('section_id', $user->section_id);
             });
 
-        if ($user->section_id === 15) {
-            $query->where(function ($q) use ($user) {
-                $q->where(function ($q2) use ($user) {
-                    $q2->whereHas('step', function ($s) {
-                        $s->whereIn('step_number', [1, 2]);
+        if ($user->section_id === $frontDeskSectionId) {
+            $query->where(function ($q) use ($user, $initialStepIds) {
+                $q->where(function ($q2) use ($user, $initialStepIds) {
+                    $q2->whereHas('step', function ($s) use ($initialStepIds) {
+                        $s->whereIn('id', $initialStepIds);
                     })->where(function ($sub) use ($user) {
                         $sub->where('client_type', $user->assigned_category)
                             ->orWhere('client_type', 'deferred');
                     });
-                })->orWhereHas('step', function ($s) {
-                    $s->whereNotIn('step_number', [1, 2]);
+                })->orWhereHas('step', function ($s) use ($initialStepIds) {
+                    $s->whereNotIn('id', $initialStepIds);
                 });
             });
         }
