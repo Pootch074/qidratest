@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class PacdController extends Controller
 {
@@ -52,56 +53,64 @@ class PacdController extends Controller
 
     public function generateQueue(Request $request, Section $section)
     {
-        $clientType = $request->input('client_type', 'regular');
-        $clientId   = $request->input('client_id');
-        $clientName = $request->input('manual_client_name');
+        $now = Carbon::now('Asia/Manila');
 
-        // Existing scanned client or new one
-        $client = $clientId
-            ? Transaction::withoutTicket()->findOrFail($clientId)
-            : new Transaction(['full_name' => $clientName, 'ticket_status' => null]);
+        $transaction = DB::transaction(function () use ($request, $section, $now) {
+            $clientType = $request->input('client_type', 'regular');
+            $clientId = $request->input('client_id');
+            $clientName = $request->input('manual_client_name');
 
-        // Compute new queue number
-        $today = Carbon::today('Asia/Manila');
-        $lastQueue = Transaction::forSection($section->id)
-            ->ofClientType($clientType)
-            ->today()
-            ->max('queue_number');
+            // Existing scanned client or new one
+            $client = $clientId
+                ? Transaction::withoutTicket()->findOrFail($clientId)
+                : new Transaction(['full_name' => $clientName, 'ticket_status' => null]);
 
-        $newQueueNumber = $lastQueue ? $lastQueue + 1 : 1;
+            // Compute new queue number safely
+            $lastQueue = Transaction::forSection($section->id)
+                ->ofClientType($clientType)
+                ->today()
+                ->lockForUpdate()
+                ->max('queue_number');
 
-        // Get first step dynamically
-        $firstStep = Step::where('section_id', $section->id)
-            ->where('step_number', 1)
-            ->first();
+            $newQueueNumber = $lastQueue ? $lastQueue + 1 : 1;
 
-        // Save client queue
-        $client->fill([
-            'queue_number'  => $newQueueNumber,
-            'client_type'   => $clientType,
-            'step_id'       => $firstStep?->id,
-            'window_id'     => null,
-            'section_id'    => $section->id,
-            'queue_status'  => 'waiting',
-            'ticket_status' => 'issued',
-        ])->save();
+            // Get first step dynamically
+            $firstStep = Step::where('section_id', $section->id)
+                ->where('step_number', 1)
+                ->first();
 
-        $prefixMap = ['priority' => 'P', 'regular' => 'R', 'returnee' => 'T', 'deferred' => 'D'];
-        $prefix = $prefixMap[$clientType] ?? strtoupper(substr($clientType, 0, 1));
-        $formattedQueue = $prefix . str_pad($client->queue_number, 3, '0', STR_PAD_LEFT);
+            // Save client queue
+            $client->fill([
+                'queue_number' => $newQueueNumber,
+                'client_type' => $clientType,
+                'step_id' => $firstStep?->id,
+                'window_id' => null,
+                'section_id' => $section->id,
+                'queue_status' => 'waiting',
+                'ticket_status' => 'issued',
+                'updated_at' => $now,
+            ])->save();
 
-        if ($request->expectsJson() || $request->ajax()) {
+            return $client;
+        });
+
+        // Compute formatted queue number
+        $prefixMap = ['priority' => 'P', 'regular' => 'R', 'deferred' => 'D'];
+        $prefix = $prefixMap[$transaction->client_type] ?? strtoupper(substr($transaction->client_type, 0, 1));
+        $formattedQueue = $prefix.str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT);
+
+        if (request()->expectsJson() || request()->ajax()) {
             return response()->json([
-                'success'       => true,
-                'queue_number'  => $formattedQueue,
-                'client_type'   => ucfirst($clientType),
-                'client_name'   => $client->full_name,
-                'section'       => $section->section_name,
+                'success' => true,
+                'queue_number' => $formattedQueue,
+                'client_type' => ucfirst($transaction->client_type),
+                'client_name' => $transaction->full_name,
+                'section' => $transaction->section->section_name,
             ]);
         }
 
         return redirect()->back()
-            ->with('success', "Queue #{$formattedQueue} created for {$section->section_name} (Client: {$client->full_name})");
+            ->with('success', "Queue #{$formattedQueue} created for {$transaction->section->section_name} (Client: {$transaction->full_name})");
     }
 
     public function transactionsTable()
@@ -134,8 +143,7 @@ class PacdController extends Controller
         return view('pacd.sections.cards', compact('sections'));
     }
 
-
-     public function pendingQueues()
+    public function pendingQueues()
     {
         $pendingQueues = Transaction::deferred()
             ->issued()
@@ -148,54 +156,60 @@ class PacdController extends Controller
     public function resumeTransaction(Request $request, $id)
     {
         $now = Carbon::now('Asia/Manila');
-        $oldTransaction = Transaction::findOrFail($id);
 
-        $oldTransaction->update([
-            'ticket_status' => 'cancelled',
-            'updated_at'    => $now,
-        ]);
+        $transaction = DB::transaction(function () use ($request, $id, $now) {
+            $oldTransaction = Transaction::findOrFail($id);
 
-        $today = Carbon::today('Asia/Manila')->toDateString();
+            // Cancel the old ticket
+            $oldTransaction->update([
+                'ticket_status' => 'cancelled',
+                'updated_at' => $now,
+            ]);
 
-        $lastQueue = Transaction::ofClientType('deferred')
-            ->forSection($oldTransaction->section_id)
-            ->today()
-            ->max('queue_number');
+            // Generate next deferred queue number for this section
+            $lastQueue = Transaction::ofClientType('deferred')
+                ->forSection($oldTransaction->section_id)
+                ->today()
+                ->lockForUpdate()
+                ->max('queue_number');
 
-        $newQueueNumber = $lastQueue ? $lastQueue + 1 : 1;
+            $newQueueNumber = $lastQueue ? $lastQueue + 1 : 1;
 
-        $transaction = Transaction::create([
-            'full_name'     => $request->full_name,
-            'client_type'   => 'deferred',
-            'queue_number'  => $newQueueNumber,
-            'queue_status'  => 'waiting',
-            'ticket_status' => 'issued',
-            'step_id'       => $oldTransaction->step_id,
-            'window_id'     => null,
-            'section_id'    => $oldTransaction->section_id,
-            'created_at'    => $now,
-            'updated_at'    => $now,
-        ]);
+            // Create the new deferred transaction
+            $newTransaction = Transaction::create([
+                'full_name' => $request->full_name,
+                'client_type' => 'deferred',
+                'queue_number' => $newQueueNumber,
+                'queue_status' => 'waiting',
+                'ticket_status' => 'issued',
+                'step_id' => $oldTransaction->step_id,
+                'window_id' => null,
+                'section_id' => $oldTransaction->section_id,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
 
-        $formattedQueue = 'D' . str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT);
+            return $newTransaction;
+        });
+
+        // Everything committed successfully
+        $formattedQueue = 'D'.str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT);
 
         return response()->json([
-            'success'       => true,
-            'queue_number'  => $formattedQueue,
-            'full_name'     => $transaction->full_name,
-            'section'       => $transaction->section->section_name ?? '',
-            'step_number'   => $transaction->step->step_number ?? '',
-            'client_type'   => ucfirst($transaction->client_type),
-            'created_at'    => $transaction->created_at->format('Y-m-d H:i:s'),
+            'success' => true,
+            'queue_number' => $formattedQueue,
+            'full_name' => $transaction->full_name,
+            'section' => $transaction->section->section_name ?? '',
+            'step_number' => $transaction->step->step_number ?? '',
+            'client_type' => ucfirst($transaction->client_type),
+            'created_at' => $transaction->created_at->format('Y-m-d H:i:s'),
         ]);
     }
 
     public function clientsTable()
     {
         $user = Auth::user();
-
         $query = Transaction::withoutTicket()->orderBy('id');
-
         $query = is_null($user->section_id)
             ? $query->whereNull('section_id')
             : $query->forSection($user->section_id);
