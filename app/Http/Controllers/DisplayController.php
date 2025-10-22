@@ -62,27 +62,34 @@ class DisplayController extends Controller
                 ->get()
                 ->groupBy('step_id')
                 ->map(function ($group) {
+                    $firstStep = $group->first();
+
                     return [
-                        'step_number' => $group->first()->step_number,
-                        'step_name' => $group->first()->step_name,
+                        'step_number' => $firstStep->step_number,
+                        'step_name' => $firstStep->step_name,
                         'windows' => $group->groupBy('window_id')->map(function ($wins) {
-                            if (! $wins->first()->window_id) {
+                            $firstWindow = $wins->first();
+
+                            if (! $firstWindow->window_id) {
                                 return null;
                             }
 
                             return [
-                                'window_id' => $wins->first()->window_id,
-                                'window_number' => $wins->first()->window_number,
-                                'transactions' => $wins->filter(fn ($t) => $t->tx_id !== null)->map(function ($t) {
-                                    $prefix = strtoupper(substr($t->client_type, 0, 1));
-                                    $formatted = $prefix.str_pad($t->queue_number, 3, '0', STR_PAD_LEFT);
+                                'window_id' => $firstWindow->window_id,
+                                'window_number' => $firstWindow->window_number,
+                                'transactions' => $wins
+                                    ->filter(fn ($t) => $t->tx_id !== null)
+                                    ->map(function ($t) {
+                                        $prefix = strtoupper(substr($t->client_type, 0, 1));
+                                        $formatted = $prefix.str_pad($t->queue_number, 3, '0', STR_PAD_LEFT);
 
-                                    return [
-                                        'id' => $t->tx_id,
-                                        'queue_number' => $formatted,
-                                        'client_type' => $t->client_type,
-                                    ];
-                                })->values(),
+                                        return [
+                                            'id' => $t->tx_id,
+                                            'queue_number' => $formatted,
+                                            'client_type' => $t->client_type,
+                                        ];
+                                    })
+                                    ->values(),
                             ];
                         })->filter(fn ($w) => $w !== null)->values(),
                     ];
@@ -90,6 +97,7 @@ class DisplayController extends Controller
                 ->values();
 
             return response()->json($steps);
+
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Server Error',
