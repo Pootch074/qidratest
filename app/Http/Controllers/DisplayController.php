@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\DB;
 
 class DisplayController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
         return view('admin.display.index');
@@ -18,11 +23,6 @@ class DisplayController extends Controller
         try {
             $user = Auth::user();
 
-            if (! $user) {
-                return response()->json(['error' => 'Unauthorized'], 401);
-            }
-
-            // apply category filtering only when user is in section 15
             $applyCategoryFilter = $user->section_id === 15;
 
             $steps = DB::table('steps')
@@ -101,10 +101,6 @@ class DisplayController extends Controller
     public function getLatestTransaction()
     {
         $user = Auth::user();
-
-        if (! $user) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
 
         $query = Transaction::with(['step', 'window'])
             ->where('queue_status', 'serving')
