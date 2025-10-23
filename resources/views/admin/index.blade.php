@@ -64,39 +64,6 @@
 </div>
 @endsection
 
-@section('scripts')
-{{-- <script>
-document.addEventListener('DOMContentLoaded', () => {
 
-
-    // Function to fetch latest transactions
-    const fetchTransactions = () => {
-        fetch("{{ route('admin.transactions.realtime') }}")
-            .then(res => res.json())
-            .then(data => {
-                // Update counts
-                document.querySelector('.waitingCount').textContent = data.counts.waitingCount;
-                document.querySelector('.pendingCount').textContent = data.counts.pendingCount;
-                document.querySelector('.servingCount').textContent = data.counts.servingCount;
-                @if(Auth::user()->section_id == 15)
-                    document.querySelector('.priorityCount').textContent = data.counts.priorityCount;
-                @endif
-                document.querySelector('.regularCount').textContent = data.counts.regularCount;
-                document.querySelector('.completedCount').textContent = data.counts.completedCount;
-
-                // Update transactions table
-                document.querySelector('#transactionsTableContainer').innerHTML = data.table;
-            })
-            .catch(err => console.error(err));
-    };
-
-    // Fetch immediately
-    fetchTransactions();
-
-    // Fetch every 5 seconds (5000 ms)
-    setInterval(fetchTransactions, 2000);
-});
-</script> --}}
-@endsection
 
 

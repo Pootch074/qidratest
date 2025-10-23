@@ -105,9 +105,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/users/returnQueue', [UsersController::class, 'returnQueue'])->name('users.returnQueue');
 
-    Route::get('/admin/transactions/realtime', [TransactionsController::class, 'realtimeTransactions'])
-        ->name('admin.transactions.realtime');
-
     // =================================== UPCOMING ===================================
     Route::post('/queues/upcoming/preassess/regu/update', [UsersController::class, 'updateUpcomingPreassessRegu'])
         ->name('queues.updateUpcomingPreassessRegu');

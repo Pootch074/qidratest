@@ -29,39 +29,41 @@
                         <tr class="odd:bg-white even:bg-gray-200 hover:bg-indigo-50 transition duration-200">
                             <td class="px-6 py-4 font-semibold">
                                 @php
-                                    switch (strtolower($transaction->client_type)) {
-                                        case 'priority':
-                                            $prefix = 'P';
-                                            break;
-                                        case 'regular':
-                                            $prefix = 'R';
-                                            break;
-                                        case 'deferred':
-                                            $prefix = 'D';
-                                            break;
-                                        default:
-                                            $prefix = strtoupper(substr($transaction->client_type, 0, 1));
-                                    }
-                                @endphp
+    switch (strtolower($transaction->client_type->value)) {
+        case 'priority':
+            $prefix = 'P';
+            break;
+        case 'regular':
+            $prefix = 'R';
+            break;
+        case 'deferred':
+            $prefix = 'D';
+            break;
+        default:
+            $prefix = strtoupper(substr($transaction->client_type->value, 0, 1));
+    }
+@endphp
+
 
                                 {{ $prefix . str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT) }}
 
                             </td>
                             {{-- <td class="px-6 py-4">{{ $transaction->full_name ?? '—' }}</td> --}}
                             <td class="px-6 py-4">
-                                @if (strtolower($transaction->client_type) === 'priority')
-                                    <span class="px-2 py-1 rounded-full text-white text-xs bg-[#ee1c25]">
-                                        Priority
-                                    </span>
-                                @elseif (strtolower($transaction->client_type) === 'regular')
-                                    <span class="px-2 py-1 rounded-full text-white text-xs bg-[#2e3192]">
-                                        Regular
-                                    </span>
-                                @elseif (strtolower($transaction->client_type) === 'deferred')
-                                    <span class="px-2 py-1 rounded-full text-black text-xs bg-[#fef200]">
-                                        Returnee
-                                    </span>
-                                @endif
+                                @if (strtolower($transaction->client_type->value) === 'priority')
+    <span class="px-2 py-1 rounded-full text-white text-xs bg-[#ee1c25]">
+        Priority
+    </span>
+@elseif (strtolower($transaction->client_type->value) === 'regular')
+    <span class="px-2 py-1 rounded-full text-white text-xs bg-[#2e3192]">
+        Regular
+    </span>
+@elseif (strtolower($transaction->client_type->value) === 'deferred')
+    <span class="px-2 py-1 rounded-full text-black text-xs bg-[#fef200]">
+        Returnee
+    </span>
+@endif
+
                             </td>
 
 
@@ -71,16 +73,23 @@
                             {{-- Status Badge --}}
                             <td class="px-6 py-4">
                                 @php
-                                    $statusColors = [
-                                        'waiting' => 'bg-yellow-400 text-yellow-900',
-                                        'pending' => 'bg-orange-400 text-orange-900',
-                                        'serving' => 'bg-green-500 text-white',
-                                    ];
-                                    $statusClass = $statusColors[strtolower($transaction->queue_status)] ?? 'bg-gray-300 text-gray-700';
-                                @endphp
-                                <span class="px-2 py-1 rounded-full text-xs font-semibold {{ $statusClass }}">
-                                    {{ ucfirst($transaction->queue_status) }}
-                                </span>
+    $statusColors = [
+        'waiting' => 'bg-yellow-400 text-yellow-900',
+        'pending' => 'bg-orange-400 text-orange-900',
+        'serving' => 'bg-green-500 text-white',
+    ];
+
+    $queueStatusValue = $transaction->queue_status instanceof \App\Enums\QueueStatus
+        ? strtolower($transaction->queue_status->value)
+        : strtolower($transaction->queue_status);
+
+    $statusClass = $statusColors[$queueStatusValue] ?? 'bg-gray-300 text-gray-700';
+@endphp
+
+<span class="px-2 py-1 rounded-full text-xs font-semibold {{ $statusClass }}">
+    {{ ucfirst($queueStatusValue) }}
+</span>
+
                             </td>
                         </tr>
                     @empty

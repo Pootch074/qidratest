@@ -94,16 +94,16 @@ class PacdController extends Controller
             return $client;
         });
 
-        // Compute formatted queue number
         $prefixMap = ['priority' => 'P', 'regular' => 'R', 'deferred' => 'D'];
-        $prefix = $prefixMap[$transaction->client_type] ?? strtoupper(substr($transaction->client_type, 0, 1));
+        $clientTypeValue = $transaction->client_type->value;
+        $prefix = $prefixMap[$clientTypeValue] ?? strtoupper(substr($clientTypeValue, 0, 1));
         $formattedQueue = $prefix.str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT);
 
         if (request()->expectsJson() || request()->ajax()) {
             return response()->json([
                 'success' => true,
                 'queue_number' => $formattedQueue,
-                'client_type' => ucfirst($transaction->client_type),
+                'client_type' => ucfirst($transaction->client_type->value),
                 'client_name' => $transaction->full_name,
                 'section' => $transaction->section->section_name,
             ]);
@@ -201,7 +201,7 @@ class PacdController extends Controller
             'full_name' => $transaction->full_name,
             'section' => $transaction->section->section_name ?? '',
             'step_number' => $transaction->step->step_number ?? '',
-            'client_type' => ucfirst($transaction->client_type),
+            'client_type' => ucfirst($transaction->client_type->value),
             'created_at' => $transaction->created_at->format('Y-m-d H:i:s'),
         ]);
     }

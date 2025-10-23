@@ -6,6 +6,8 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Enums\ClientType;
+use App\Enums\QueueStatus;  
 
 class Transaction extends Model
 {
@@ -21,6 +23,11 @@ class Transaction extends Model
         'recall_count',
         'ticket_status',
         'queue_status',
+    ];
+
+    protected $casts = [
+        'client_type' => ClientType::class,
+        'queue_status' => QueueStatus::class,
     ];
 
     public function section()
@@ -46,9 +53,13 @@ class Transaction extends Model
             'returnee' => 'T',
         ];
 
-        $prefix = $map[strtolower($this->client_type)] ?? 'R';
+        $clientTypeValue = $this->client_type instanceof ClientType
+            ? strtolower($this->client_type->value)
+            : strtolower($this->client_type);
 
-        return $prefix.str_pad($this->queue_number, 3, '0', STR_PAD_LEFT);
+        $prefix = $map[$clientTypeValue] ?? 'R';
+
+        return $prefix . str_pad($this->queue_number, 3, '0', STR_PAD_LEFT);
     }
 
     public function getStyleClassAttribute()
@@ -61,7 +72,11 @@ class Transaction extends Model
             'guest' => 'bg-green-500 text-white',
         ];
 
-        return $styleMap[strtolower($this->client_type)] ?? 'bg-gray-300 text-black';
+        $clientTypeValue = $this->client_type instanceof ClientType
+            ? strtolower($this->client_type->value)
+            : strtolower($this->client_type);
+
+        return $styleMap[$clientTypeValue] ?? 'bg-gray-300 text-black';
     }
 
     public function scopeToday(Builder $query)
@@ -109,8 +124,10 @@ class Transaction extends Model
         return $query->where('queue_number', '>', 0);
     }
 
-    public function scopeOfClientType(Builder $query, $clientType)
+    public function scopeOfClientType($query, $type)
     {
-        return $query->where('client_type', $clientType);
+        $value = $type instanceof ClientType ? $type->value : strtolower($type);
+        return $query->where('client_type', $value);
     }
+
 }
