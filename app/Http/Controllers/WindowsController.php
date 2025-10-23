@@ -6,6 +6,7 @@ use App\Models\Step;
 use App\Models\Window;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\StoreWindowRequest;
 
 class WindowsController extends Controller
 {
@@ -29,33 +30,26 @@ class WindowsController extends Controller
         return view('admin.windows.table', compact('steps', 'windows'));
     }
 
-    public function store(Request $request)
-    {
-        $user = Auth::user();
+    public function store(StoreWindowRequest $request)
+{
+    $user = Auth::user();
 
-        $request->validate([
-            'step_id' => 'required|exists:steps,id',
-        ]);
+    $step = Step::where('id', $request->step_id)
+        ->where('section_id', $user->section_id)
+        ->firstOrFail();
 
-        // ✅ Ensure the step belongs to the user's section
-        $step = Step::where('id', $request->step_id)
-            ->where('section_id', $user->section_id)
-            ->firstOrFail();
+    $latestWindow = Window::where('step_id', $step->id)
+        ->max('window_number');
 
-        // ✅ Find the latest window number for this step
-        $latestWindow = Window::where('step_id', $step->id)
-            ->max('window_number');
+    $nextWindowNumber = $latestWindow ? $latestWindow + 1 : 1;
 
-        $nextWindowNumber = $latestWindow ? $latestWindow + 1 : 1;
+    Window::create([
+        'step_id' => $step->id,
+        'window_number' => $nextWindowNumber,
+    ]);
 
-        // ✅ Create the window with auto-incremented number
-        Window::create([
-            'step_id' => $step->id,
-            'window_number' => $nextWindowNumber,
-        ]);
-
-        return redirect()->back()->with('success', "Window #{$nextWindowNumber} created successfully!");
-    }
+    return redirect()->back()->with('success', "Window #{$nextWindowNumber} created successfully!");
+}
 
     public function destroy($id)
     {
