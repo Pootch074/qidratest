@@ -16,6 +16,5 @@ class DatabaseSeeder extends Seeder
         $this->call(StepsSeeder::class);
         $this->call(WindowsSeeder::class);
         $this->call(UsersSeeder::class);
-        // $this->call(TransactionsSeeder::class);
     }
 }
