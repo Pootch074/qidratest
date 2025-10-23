@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\Office;
 
 class DivisionsSeeder extends Seeder
 {
@@ -17,69 +18,32 @@ class DivisionsSeeder extends Seeder
         DB::table('divisions')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        $divisions = [
+        // ✅ Dynamically fetch the office ID for “DSWD FO XI”
+        $officeId = Office::where('field_office', 'DSWD FO XI')->value('id');
 
-            [
-                'division_name' => 'Disaster Response Management Division',
-                'office_id' => 1,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'division_name' => 'GENERAL ADMINISTRATIVE SUPPORT SERVICES DIVISION',
-                'office_id' => 1,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'division_name' => 'Financial Management Division',
-                'office_id' => 1,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'division_name' => 'Human Resource Management and Development Division',
-                'office_id' => 1,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'division_name' => 'Inovasions Division',
-                'office_id' => 1,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'division_name' => 'Office of the Regional Director',
-                'office_id' => 1,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'division_name' => 'Pantawid Pamilyang Pilipino Program Management Division',
-                'office_id' => 1,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'division_name' => 'Policy and Plans Division',
-                'office_id' => 1,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'division_name' => 'Promotive Services Division',
-                'office_id' => 1,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'division_name' => 'Protective Services Division',
-                'office_id' => 1,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
+        // Defensive check — prevents seeding if the office doesn’t exist
+        if (! $officeId) {
+            $this->command->error('❌ Office "DSWD FO XI" not found. Please seed the offices table first.');
+            return;
+        }
+
+        $now = Carbon::now();
+
+        $divisions = [
+            ['division_name' => 'Disaster Response Management Division', 'office_id' => $officeId, 'created_at' => $now, 'updated_at' => $now],
+            ['division_name' => 'GENERAL ADMINISTRATIVE SUPPORT SERVICES DIVISION', 'office_id' => $officeId, 'created_at' => $now, 'updated_at' => $now],
+            ['division_name' => 'Financial Management Division', 'office_id' => $officeId, 'created_at' => $now, 'updated_at' => $now],
+            ['division_name' => 'Human Resource Management and Development Division', 'office_id' => $officeId, 'created_at' => $now, 'updated_at' => $now],
+            ['division_name' => 'Inovasions Division', 'office_id' => $officeId, 'created_at' => $now, 'updated_at' => $now],
+            ['division_name' => 'Office of the Regional Director', 'office_id' => $officeId, 'created_at' => $now, 'updated_at' => $now],
+            ['division_name' => 'Pantawid Pamilyang Pilipino Program Management Division', 'office_id' => $officeId, 'created_at' => $now, 'updated_at' => $now],
+            ['division_name' => 'Policy and Plans Division', 'office_id' => $officeId, 'created_at' => $now, 'updated_at' => $now],
+            ['division_name' => 'Promotive Services Division', 'office_id' => $officeId, 'created_at' => $now, 'updated_at' => $now],
+            ['division_name' => 'Protective Services Division', 'office_id' => $officeId, 'created_at' => $now, 'updated_at' => $now],
         ];
+
         DB::table('divisions')->insert($divisions);
+
+        $this->command->info('✅ Divisions seeded successfully for office: DSWD FO XI');
     }
 }
