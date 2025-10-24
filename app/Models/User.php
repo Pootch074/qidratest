@@ -6,25 +6,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, SoftDeletes;
 
     const TYPE_SUPERADMIN = 0;
-
     const TYPE_ADMIN = 1;
-
     const TYPE_IDSCAN = 2;
-
     const TYPE_PACD = 3;
-
     const TYPE_USER = 5;
-
     const TYPE_DISPLAY = 6;
-
     const STATUS_INACTIVE = 0;
-
     const STATUS_ACTIVE = 1;
 
     /**
@@ -74,6 +68,31 @@ class User extends Authenticatable
         ];
     }
 
+    protected static function booted()
+{
+    static::creating(function ($user) {
+        if (empty($user->password)) {
+            $user->password = 'password'; // Will be hashed by the mutator
+        }
+    });
+}
+
+
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = Hash::make($value);
+    }
+
+    public function setEmailVerifiedAtAttribute($value)
+    {
+        $this->attributes['email_verified_at'] = $value ?? now();
+    }
+
+    public function setStatusAttribute($value)
+    {
+        $this->attributes['status'] = $value ?? 1;
+    }
+
     public static function getUserTypes(): array
     {
         return [
@@ -104,15 +123,11 @@ class User extends Authenticatable
         ];
     }
 
-    public function getStatus($i)
-    {
-        switch ($i) {
-            case self::STATUS_INACTIVE:
-                return 'Inactive';
-            case self::STATUS_ACTIVE:
-                return 'Active';
-        }
-    }
+    public function getStatus(int $i): string
+{
+    return self::getStatuses()[$i] ?? 'Unknown';
+}
+
 
     public function scopeAdmins($query)
     {
@@ -129,22 +144,22 @@ class User extends Authenticatable
         return $query->where('status', self::STATUS_ACTIVE);
     }
 
-    public function user($query)
+    public function scopeUsers($query)
     {
         return $query->where('user_type', self::TYPE_USER);
     }
 
-    public function pacd($query)
+    public function scopePacds($query)
     {
         return $query->where('user_type', self::TYPE_PACD);
     }
 
-    public function display($query)
+    public function scopeDisplays($query)
     {
         return $query->where('user_type', self::TYPE_DISPLAY);
     }
 
-    public function idscan($query)
+    public function scopeIdscans($query)
     {
         return $query->where('user_type', self::TYPE_IDSCAN);
     }
