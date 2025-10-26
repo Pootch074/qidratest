@@ -4,17 +4,21 @@
 <div class="w-full h-[84vh] p-4 bg-gray-200">
     <div class="grid grid-cols-10 gap-2 h-full">
         @php
+            use App\Libraries\Sections;
+            use App\Libraries\Steps;
+
             $user = Auth::user();
             $userCategory = $user->assigned_category;
             $sectionId = $user->section_id ?? null;
-            $stepNumber = $stepNumber ?? null; // make sure this variable is passed from controller
+            $stepNumber = $stepNumber ?? null;
 
-            // Determine if Returnee should be shown (for both Upcoming and Pending)
+            $crisisSectionId = Sections::CRISIS_INTERVENTION_SECTION();
+
             $showReturnee = true;
-            if ($sectionId == 15 && in_array($stepNumber, [1, 2])) {
-                // Hide Returnee on steps 1 & 2 for section 15
-                $showReturnee = false;
-            }
+                if ($sectionId == $crisisSectionId && 
+                    in_array($stepNumber, [Steps::PRE_ASSESSMENT(), Steps::ENCODING()])) {
+                    $showReturnee = false;
+                }
 
             // UPCOMING blocks
             $upcomingBlocks = [
@@ -204,25 +208,30 @@
 document.addEventListener('DOMContentLoaded', () => {
     const sectionId = {{ $sectionId ?? 'null' }};
     const stepNumber = {{ $stepNumber ?? 'null' }};
+    const stepPreassess = {{ Steps::PRE_ASSESSMENT() }};
+    const stepEncoding = {{ Steps::ENCODING() }};
+    const stepRelease = {{ Steps::RELEASE() }};
+    const crisisSectionId = {{ $crisisSectionId ?? 'null' }};
 
-    /*** === Disable Defer Button if Section 15 & Step 1 or 2 === ***/
-if (sectionId === 15 && (stepNumber === 1 || stepNumber === 2)) {
-    const restrictedDefer = [
-            '#deferBtn'
-        ];
-
-        restrictedDefer.forEach(selector => {
-            const btn = document.querySelector(selector);
-            if (btn) {
-                btn.style.display = 'none';
-
-            }
-        });
-}
+    if (sectionId === crisisSectionId && (stepNumber === stepPreassess || stepNumber === stepEncoding)) {
 
 
-        /*** === Restrict Buttons if Section 15 & Step 4 === ***/
-    if (sectionId === 15 && stepNumber === 4) {
+        const restrictedDefer = [
+                '#deferBtn'
+            ];
+
+            restrictedDefer.forEach(selector => {
+                const btn = document.querySelector(selector);
+                if (btn) {
+                    btn.style.display = 'none';
+
+                }
+            });
+    }
+
+
+    if (sectionId === crisisSectionId && stepNumber === stepRelease) {
+
         const restrictedBtns = [
             '#nextRegularBtn',
             '#nextPriorityBtn',
