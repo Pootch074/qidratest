@@ -43,9 +43,18 @@ class SuperAdminController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                // Must include uppercase, lowercase, number, and special character
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/',
+            ],
             'position' => 'nullable|string|max:255',
             'section_id' => 'required|exists:sections,id',
+        ], [
+            'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
         ]);
 
         User::create([
@@ -55,7 +64,7 @@ class SuperAdminController extends Controller
             'password' => Hash::make($validated['password']),
             'position' => $validated['position'] ?? null,
             'section_id' => $validated['section_id'],
-            'user_type' => User::TYPE_ADMIN, // constant for clarity
+            'user_type' => User::TYPE_ADMIN,
         ]);
 
         return redirect()->route('superadmin.index')->with('success', 'Admin user added successfully.');
