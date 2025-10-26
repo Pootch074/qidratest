@@ -75,8 +75,10 @@
                                 <option value="" disabled selected>-- Select Window --</option>
                             </select>
                         </div>
-                
-                        @if(auth()->user()->section_id == 15)
+                        @php
+                            use App\Libraries\Sections;
+                        @endphp
+                        @if(auth()->user()->section_id == Sections::CRISIS_INTERVENTION_SECTION())
                             <div id="assignCategoryWrapper">
                                 <label class="block text-sm font-medium text-gray-600">Assign Category</label>
                                 <select id="assignedCategorySelect" required
