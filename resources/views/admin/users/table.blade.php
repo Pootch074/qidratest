@@ -13,7 +13,6 @@
                     <h3 class="text-2xl font-semibold text-gray-800">Add New User</h3>
                     <button id="closeAddUserModal" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">&times;</button>
                 </div>
-
                 <form id="addUserForm" class="space-y-5">
                     @csrf
                     {{-- First & Last Name --}}

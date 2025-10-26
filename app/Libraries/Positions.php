@@ -83,12 +83,7 @@ class Positions
             'Training Specialist II',
             'Training Specialist III',
             'Training Specialist IV',
-            'Utility Worker',
-            'Utility Worker II',
             'Validator',
-            'Director II',
-            'Director III',
-            'Director IV',
         ];
     }
 }
