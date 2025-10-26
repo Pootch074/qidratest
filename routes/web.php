@@ -13,6 +13,12 @@ use App\Http\Middleware\CheckUserType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| Session Checking Route
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/session/check', function () {
     $user = Auth::user();
 
@@ -20,34 +26,41 @@ Route::get('/session/check', function () {
         return response()->json(['active' => false]);
     }
 
-    // Compare session_id in DB with the current session
     if ($user->session_id !== session()->getId()) {
         Auth::logout();
         session()->invalidate();
-
         return response()->json(['active' => false]);
     }
 
     return response()->json(['active' => true]);
 })->name('session.check');
 
-// Routes that require authentication
-Route::middleware(['auth'])->group(function () {
-    Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
-});
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+*/
+Route::get('/', fn() => Auth::check() ? redirect()->intended() : redirect(route('login')));
 
-// Public Routes
-Route::get('/', function () {
-    return Auth::check() ? redirect()->intended()
-        : redirect(route('login'));
-});
-
-// Authentication Routes
 Route::get('/auth/login', [LoginController::class, 'login'])->name('login');
 Route::post('/auth/login', [LoginController::class, 'authenticate'])->name('authenticate');
 
-// Routes for different user types
-Route::middleware(['auth', CheckUserType::class.':0,1,2,3,5,6'])->group(function () {
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes (Generic)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth'])->group(function () {
+    Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::post('/auto-logout', [LoginController::class, 'logout'])->name('auto.logout');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes by User Type
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', CheckUserType::class . ':0,1,2,3,5,6'])->group(function () {
     Route::get('superadmin', [SuperAdminController::class, 'index'])->name('superadmin');
     Route::get('admin', [UsersController::class, 'admin'])->name('admin');
     Route::get('idscan', [IdscanController::class, 'index'])->name('idscan');
@@ -56,76 +69,83 @@ Route::middleware(['auth', CheckUserType::class.':0,1,2,3,5,6'])->group(function
     Route::get('display', [DisplayController::class, 'index'])->name('display');
 });
 
+/*
+|--------------------------------------------------------------------------
+| Admin Routes
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth'])->group(function () {
-    Route::get('admin/users', [UsersController::class, 'users'])->name('admin.users');
-    Route::get('admin/users/json', [UsersController::class, 'usersJson'])->name('admin.users.json');
-    Route::post('admin/users/store', [UsersController::class, 'store'])->name('admin.users.store');
-    Route::delete('admin/users/{user}', [UsersController::class, 'destroy'])->name('admin.users.destroy');
+    // === Users Management ===
+    Route::prefix('admin/users')->group(function () {
+        Route::get('/', [UsersController::class, 'users'])->name('admin.users');
+        Route::get('/json', [UsersController::class, 'usersJson'])->name('admin.users.json');
+        Route::post('/store', [UsersController::class, 'store'])->name('admin.users.store');
+        Route::delete('/{user}', [UsersController::class, 'destroy'])->name('admin.users.destroy');
+    });
 
-    Route::post('/users/next-regular', [UsersController::class, 'nextRegular'])->name('users.nextRegular');
-    Route::post('/users/next-priority', [UsersController::class, 'nextPriority'])->name('users.nextPriority');
-    Route::post('/users/next-returnee', [UsersController::class, 'nextReturnee'])->name('users.nextReturnee');
-    Route::post('/queue/skip', [UsersController::class, 'skipQueue'])->name('users.skipQueue');
-    Route::post('/queue/recall', [UsersController::class, 'recallQueue'])->name('users.recallQueue');
-    Route::post('/queue/proceed', [UsersController::class, 'proceedQueue'])->name('users.proceedQueue');
-
-    Route::get('admin/steps', [StepsController::class, 'steps'])->name('admin.steps');
-    Route::post('admin/steps', [StepsController::class, 'store'])->name('steps.store');
+    // === Steps Management ===
+    Route::prefix('admin/steps')->group(function () {
+        Route::get('/', [StepsController::class, 'steps'])->name('admin.steps');
+        Route::post('/', [StepsController::class, 'store'])->name('steps.store');
+    });
     Route::put('/steps/{id}', [StepsController::class, 'update'])->name('steps.update');
     Route::delete('/steps/{id}', [StepsController::class, 'destroy'])->name('steps.destroy');
     Route::get('/steps/check/{sectionId}/{stepNumber}', [StepsController::class, 'check']);
 
-    Route::get('admin/windows', [WindowsController::class, 'index'])->name('admin.windows');
-    Route::post('admin/windows', [WindowsController::class, 'store'])->name('windows.store');
-    Route::delete('admin/windows/{id}', [WindowsController::class, 'destroy'])->name('windows.destroy');
+    // === Windows Management ===
+    Route::prefix('admin/windows')->group(function () {
+        Route::get('/', [WindowsController::class, 'index'])->name('admin.windows');
+        Route::post('/', [WindowsController::class, 'store'])->name('windows.store');
+        Route::delete('/{id}', [WindowsController::class, 'destroy'])->name('windows.destroy');
+    });
     Route::get('/windows/check/{stepId}/{windowNumber}', [WindowsController::class, 'check'])->name('windows.check');
 
+    // === Display Routes ===
     Route::get('/steps', [DisplayController::class, 'getStepsBySectionId'])->name('steps');
     Route::get('/display/transactions/latest', [DisplayController::class, 'getLatestTransaction']);
 
-    Route::post('/pacd/generate/{section}', [PacdController::class, 'generateQueue'])->name('pacd.generate');
-    Route::get('pacd/transactions/table', [PacdController::class, 'transactionsTable'])->name('pacd.transactions.table');
-
-    Route::get('pacd/sections/cards', [PacdController::class, 'sectionsCards'])->name('pacd.sections.cards');
-
-    Route::get('pacd/pending/table', [PacdController::class, 'pendingQueues'])->name('pacd.pending.table');
+    // === PACD Routes ===
+    Route::prefix('pacd')->group(function () {
+        Route::post('/generate/{section}', [PacdController::class, 'generateQueue'])->name('pacd.generate');
+        Route::get('/transactions/table', [PacdController::class, 'transactionsTable'])->name('pacd.transactions.table');
+        Route::get('/sections/cards', [PacdController::class, 'sectionsCards'])->name('pacd.sections.cards');
+        Route::get('/pending/table', [PacdController::class, 'pendingQueues'])->name('pacd.pending.table');
+        Route::get('/scanned_id/table', [PacdController::class, 'clientsTable'])->name('pacd.scanned_id.table');
+    });
     Route::post('/transactions/{id}/resume', [PacdController::class, 'resumeTransaction'])->name('transactions.resume');
 
+    // === Queue Operations ===
     Route::post('/queue/store', [TransactionsController::class, 'store'])->name('queue.store');
+    Route::post('/queue/skip', [UsersController::class, 'skipQueue'])->name('users.skipQueue');
+    Route::post('/queue/recall', [UsersController::class, 'recallQueue'])->name('users.recallQueue');
+    Route::post('/queue/proceed', [UsersController::class, 'proceedQueue'])->name('users.proceedQueue');
 
-    Route::post('superadmin/store', [SuperAdminController::class, 'store'])->name('superadmin.store');
-
-    Route::get('/windows/by-step/{step}', [UsersController::class, 'getWindowsByStep'])
-        ->name('windows.byStep');
-
-    Route::get('/pacd/scanned_id/table', [PacdController::class, 'clientsTable'])
-        ->name('pacd.scanned_id.table');
-
-    Route::get('/queues/data', [UsersController::class, 'getQueues'])->name('queues.data');
-
+    // === User Actions ===
+    Route::post('/users/next-regular', [UsersController::class, 'nextRegular'])->name('users.nextRegular');
+    Route::post('/users/next-priority', [UsersController::class, 'nextPriority'])->name('users.nextPriority');
+    Route::post('/users/next-returnee', [UsersController::class, 'nextReturnee'])->name('users.nextReturnee');
     Route::post('/users/returnQueue', [UsersController::class, 'returnQueue'])->name('users.returnQueue');
 
-    // =================================== UPCOMING ===================================
-    Route::post('/queues/upcoming/preassess/regu/update', [UsersController::class, 'updateUpcomingPreassessRegu'])
-        ->name('queues.updateUpcomingPreassessRegu');
-
-    Route::post('/queues/upcoming/prio/update', [UsersController::class, 'updateUpcomingPrio'])
-        ->name('queues.updateUpcomingPrio');
-    Route::post('/queues/upcoming/returnee/update', [UsersController::class, 'updateUpcomingReturnee'])
-        ->name('queues.updateUpcomingReturnee');
-
-    // =================================== PENDING ===================================
-    Route::post('/queues/pending/regu/update', [UsersController::class, 'updatePendingRegu'])
-        ->name('queues.updatePendingRegu');
-
-    Route::post('/queues/pending/prio/update', [UsersController::class, 'updatePendingPrio'])
-        ->name('queues.updatePendingPrio');
-
-    Route::post('/queues/pending/returnee/update', [UsersController::class, 'updatePendingReturnee'])
-        ->name('queues.updatePendingReturnee');
-    Route::post('/queues/updateUpcoming', [UsersController::class, 'updateUpcoming'])
-        ->name('queues.updateUpcoming');
-
-    Route::post('/auto-logout', [LoginController::class, 'logout'])->name('auto.logout');
+    // === Queues Data ===
+    Route::get('/queues/data', [UsersController::class, 'getQueues'])->name('queues.data');
+    Route::get('/windows/by-step/{step}', [UsersController::class, 'getWindowsByStep'])->name('windows.byStep');
     Route::post('/queues/serve-again', [UsersController::class, 'serveAgain'])->name('queues.serveAgain');
+
+    // === Upcoming Queues ===
+    Route::prefix('queues/upcoming')->group(function () {
+        Route::post('/preassess/regu/update', [UsersController::class, 'updateUpcomingPreassessRegu'])->name('queues.updateUpcomingPreassessRegu');
+        Route::post('/prio/update', [UsersController::class, 'updateUpcomingPrio'])->name('queues.updateUpcomingPrio');
+        Route::post('/returnee/update', [UsersController::class, 'updateUpcomingReturnee'])->name('queues.updateUpcomingReturnee');
+        Route::post('/updateUpcoming', [UsersController::class, 'updateUpcoming'])->name('queues.updateUpcoming');
+    });
+
+    // === Pending Queues ===
+    Route::prefix('queues/pending')->group(function () {
+        Route::post('/regu/update', [UsersController::class, 'updatePendingRegu'])->name('queues.updatePendingRegu');
+        Route::post('/prio/update', [UsersController::class, 'updatePendingPrio'])->name('queues.updatePendingPrio');
+        Route::post('/returnee/update', [UsersController::class, 'updatePendingReturnee'])->name('queues.updatePendingReturnee');
+    });
+
+    // === SuperAdmin Actions ===
+    Route::post('superadmin/store', [SuperAdminController::class, 'store'])->name('superadmin.store');
 });
