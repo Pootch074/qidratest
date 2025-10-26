@@ -15,23 +15,20 @@ class UpdateUserRequest extends FormRequest
 
     public function rules(): array
     {
-        $id = $this->route('id'); // Capture the {id} from the route
-
         return [
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
-            'email' => [
-                'required',
-                'email',
-                Rule::unique('users', 'email')->ignore($id),
-            ],
-            'password' => 'nullable|string|min:6',
-            'position' => 'nullable|string',
-            'user_type' => 'required|integer|in:0,1,2,3,4',
-            'assigned_category' => 'nullable|in:regular,priority',
-            'window_id' => 'nullable|integer',
+            'id' => 'required|exists:users,id',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => "required|email|unique:users,email,{$this->id}",
+            'password' => 'nullable|string|min:8',
+            'user_type' => 'required|integer',
+            'position' => 'nullable|string|max:255',
+            'assigned_category' => 'nullable|string|max:255',
+            'window_id' => 'nullable|integer|exists:windows,id',
+            'status' => 'nullable|integer|in:0,1',
         ];
     }
+
 
     public function messages(): array
     {
