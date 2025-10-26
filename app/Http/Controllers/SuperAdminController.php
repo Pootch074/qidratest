@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreSuperAdminRequest;
 use App\Models\Section;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -37,25 +38,9 @@ class SuperAdminController extends Controller
     /**
      * Store a new admin user (user_type = 1).
      */
-    public function store(Request $request)
+    public function store(StoreSuperAdminRequest $request)
     {
-        $validated = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => [
-                'required',
-                'string',
-                'min:8',
-                'confirmed',
-                // Must include uppercase, lowercase, number, and special character
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/',
-            ],
-            'position' => 'nullable|string|max:255',
-            'section_id' => 'required|exists:sections,id',
-        ], [
-            'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
-        ]);
+        $validated = $request->validated();
 
         User::create([
             'first_name' => $validated['first_name'],
