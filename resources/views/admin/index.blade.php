@@ -28,9 +28,13 @@
                 <p class="text-2xl font-bold text-green-600 servingCount">{{ $servingCount }}</p>
             </div>
 
-            {{-- Priority Clients (visible only if section_id == 15) --}}
+            {{-- Priority Clients (visible only for Crisis Intervention Section) --}}
+            @php
+                use App\Libraries\Sections;
+            @endphp
+
             @auth
-                @if (Auth::user()->section_id == 15)
+                @if (Auth::user()->section_id == Sections::CRISIS_INTERVENTION_SECTION())
                     <div class="flex flex-col items-center justify-center h-24 rounded-lg bg-white shadow">
                         <p class="text-lg font-semibold text-gray-600">Priority Clients</p>
                         <p class="text-2xl font-bold text-red-600 priorityCount">{{ $priorityCount }}</p>
@@ -56,6 +60,7 @@
                 <p class="text-2xl font-bold text-gray-800 completedCount">{{ $completedCount }}</p>
             </div>
         </div>
+
         <div id="transactionsTableContainer">
             @include('admin.transactions.table')
         </div>
@@ -63,7 +68,3 @@
     </div>
 </div>
 @endsection
-
-
-
-
