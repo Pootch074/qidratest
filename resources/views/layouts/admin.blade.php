@@ -15,6 +15,10 @@
     
     <script>
         window.appBaseUrl = "{{ url('') }}";
+        window.routes = {
+            deleteWindow: "{{ route('windows.destroy', ['id' => ':id']) }}",
+            checkWindow: "{{ route('windows.check', ['stepId' => ':step', 'windowNumber' => ':window']) }}"
+        };
     </script>
 </head>
 

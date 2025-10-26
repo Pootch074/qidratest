@@ -116,13 +116,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const id = button.dataset.id;
             if (!confirm("Are you sure you want to delete this window?")) return;
 
-            fetch(`${window.appBaseUrl}/admin/windows/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
+    fetch(window.routes.deleteWindow.replace(':id', id), {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+
             .then(res => {
                 if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
                 return res.json();
@@ -152,11 +153,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const stepId = document.getElementById('step_id')?.value;
             if (!windowNumber || !stepId) return;
 
-            fetch(`${window.appBaseUrl}/windows/check/${stepId}/${windowNumber}`)
-                .then(res => {
-                    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-                    return res.json();
-                })
+            fetch(
+                    window.routes.checkWindow
+                        .replace(':step', stepId)
+                        .replace(':window', windowNumber)
+                )
+                .then(res => res.json())
                 .then(data => {
                     if (data.exists) {
                         windowInput.setCustomValidity("Window number already exists for this step.");
