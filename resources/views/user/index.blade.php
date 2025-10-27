@@ -84,7 +84,6 @@
 
         {{-- SERVING --}} 
         <div class="col-span-3 flex flex-col rounded-md bg-white rounded-b-lg border-2 border-[#2e3192] shadow overflow-hidden h-[80vh]">
-            <!-- Each child will auto get equal height -->
             <div class="bg-[#2e3192] text-white text-center font-bold text-2xl py-2">
                 @if($stepNumber || $windowNumber)
                     STEP {{ $stepNumber ?? '-' }}&nbsp;WINDOW {{ $windowNumber ?? '-' }}
@@ -194,12 +193,7 @@
     </div>
 </div>
 
-
-
-
 @endsection
-
-
 @section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -326,7 +320,6 @@ function updateButtonStates(data) {
     setBtnState(document.getElementById('nextPriorityBtn'), servingEmpty && !prioEmpty);
     setBtnState(document.getElementById('returneeBtn'), servingEmpty && !returneeEmpty);
 
-    // 🟡 Disable each Upcoming queue container when servingQueue is active
     const upcomingIds = ['upcomingRegu', 'upcomingPrio', 'upcomingReturnee', 'pendingRegu', 'pendingPrio', 'pendingReturnee'];
     upcomingIds.forEach(id => {
         const el = document.getElementById(id);

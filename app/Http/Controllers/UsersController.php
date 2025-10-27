@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ClientType;
 use App\Http\Requests\ValidateUserQueueRequest;
 use App\Libraries\Sections;
 use App\Libraries\Steps;
@@ -676,7 +677,6 @@ class UsersController extends Controller
 
     public function getQueues()
     {
-        // 🛑 If user is not authenticated, return JSON error
         if (! Auth::check()) {
             return response()->json([
                 'error' => 'Unauthenticated',
@@ -685,78 +685,56 @@ class UsersController extends Controller
         }
 
         $user = Auth::user();
-        // Base query (scoped to logged-in user's section/step/window)
         $baseQuery = Transaction::where('section_id', $user->section_id)
             ->where('step_id', $user->step_id)
             ->whereDate('created_at', Carbon::today());
 
-        $regularQueues = (clone $baseQuery)
-            ->where('queue_status', 'waiting')
-            ->where('client_type', 'regular')
-            ->orderBy('queue_number', 'asc')
-            ->get()
-            ->map(fn ($q) => [
-                'id' => $q->id, // ✅ add this
-                'formatted_number' => 'R'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                'style_class' => 'bg-[#2e3192]',
-            ]);
+        $formatQueue = fn ($queues, $type) => $queues->map(fn ($q) => [
+            'id' => $q->id,
+            'formatted_number' => match ($type) {
+                ClientType::REGULAR => 'R'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                ClientType::PRIORITY => 'P'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                ClientType::DEFERRED => 'D'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                default => 'X'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+            },
+            'style_class' => match ($type) {
+                ClientType::REGULAR => 'bg-[#2e3192]',
+                ClientType::PRIORITY => 'bg-[#ee1c25]',
+                ClientType::DEFERRED => 'bg-[#f97316]',
+                default => 'bg-gray-500',
+            },
+        ]);
 
-        $priorityQueues = (clone $baseQuery)
-            ->where('queue_status', 'waiting')
-            ->where('client_type', 'priority')
-            ->orderBy('queue_number', 'asc')
-            ->get()
-            ->map(fn ($q) => [
-                'id' => $q->id, // ✅ add this
-                'formatted_number' => 'P'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                'style_class' => 'bg-[#ee1c25]',
-            ]);
+        $regularQueues = $formatQueue(
+            (clone $baseQuery)->where('queue_status', 'waiting')->where('client_type', ClientType::REGULAR)->orderBy('queue_number')->get(),
+            ClientType::REGULAR
+        );
 
-        $returneeQueues = (clone $baseQuery)
-            ->where('client_type', 'deferred')
-            ->where('ticket_status', 'issued')
-            ->where('queue_status', 'waiting')
-            ->orderBy('queue_number', 'asc')
-            ->get()
-            ->map(fn ($q) => [
-                'id' => $q->id, // ✅ add this
-                'formatted_number' => 'D'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                'style_class' => 'bg-[#f97316]',
-            ]);
+        $priorityQueues = $formatQueue(
+            (clone $baseQuery)->where('queue_status', 'waiting')->where('client_type', ClientType::PRIORITY)->orderBy('queue_number')->get(),
+            ClientType::PRIORITY
+        );
+
+        $returneeQueues = $formatQueue(
+            (clone $baseQuery)->where('queue_status', 'waiting')->where('client_type', ClientType::DEFERRED)->where('ticket_status', 'issued')->orderBy('queue_number')->get(),
+            ClientType::DEFERRED
+        );
 
         // 🔹 Pending
-        $pendingRegular = (clone $baseQuery)
-            ->where('queue_status', 'pending')
-            ->where('client_type', 'regular')
-            ->orderBy('queue_number', 'asc')
-            ->get()
-            ->map(fn ($q) => [
-                'id' => $q->id, // ✅ Add this
-                'formatted_number' => 'R'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                'style_class' => 'bg-[#2e3192]',
-            ]);
+        $pendingRegular = $formatQueue(
+            (clone $baseQuery)->where('queue_status', 'pending')->where('client_type', ClientType::REGULAR)->orderBy('queue_number')->get(),
+            ClientType::REGULAR
+        );
 
-        $pendingPriority = (clone $baseQuery)
-            ->where('queue_status', 'pending')
-            ->where('client_type', 'priority')
-            ->orderBy('queue_number', 'asc')
-            ->get()
-            ->map(fn ($q) => [
-                'id' => $q->id, // ✅ added
-                'formatted_number' => 'P'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                'style_class' => 'bg-[#ee1c25]',
-            ]);
+        $pendingPriority = $formatQueue(
+            (clone $baseQuery)->where('queue_status', 'pending')->where('client_type', ClientType::PRIORITY)->orderBy('queue_number')->get(),
+            ClientType::PRIORITY
+        );
 
-        $pendingReturnee = (clone $baseQuery)
-            ->where('queue_status', 'pending')
-            ->where('client_type', 'deferred')
-            ->orderBy('queue_number', 'asc')
-            ->get()
-            ->map(fn ($q) => [
-                'id' => $q->id, // ✅ Add this
-                'formatted_number' => 'D'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                'style_class' => 'bg-[#f97316]',
-            ]);
+        $pendingReturnee = $formatQueue(
+            (clone $baseQuery)->where('queue_status', 'pending')->where('client_type', ClientType::DEFERRED)->orderBy('queue_number')->get(),
+            ClientType::DEFERRED
+        );
 
         $deferred = (clone $baseQuery)
             ->where('queue_status', 'deferred')
@@ -766,27 +744,22 @@ class UsersController extends Controller
             ->get()
             ->map(fn ($q) => [
                 'formatted_number' => match ($q->client_type) {
-                    'regular' => 'R'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                    'priority' => 'P'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                    'deferred' => 'D'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                    default => 'X'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT), // fallback
+                    ClientType::REGULAR => 'R'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                    ClientType::PRIORITY => 'P'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                    ClientType::DEFERRED => 'D'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                    default => 'X'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
                 },
-                'style_class' => match ($q->client_type) {
-                    'regular' => 'bg-gray-500',
-                    'priority' => 'bg-gray-500',
-                    'deferred' => 'bg-gray-500', // orange for returnee
-                    default => 'bg-gray-500',
-                },
-            ]);
+                'style_class' => 'bg-gray-500',
+            ]
 
-        // Serving (only 1)
+            );
+
         $servingQuery = (clone $baseQuery)
             ->where('queue_status', 'serving')
             ->where('window_id', $user->window_id);
 
-        // ✅ Apply client_type filter only if section_id = 15 AND step_number = 1 or 2
         if ($user->section_id == 15 && in_array(optional($user->step)->step_number, [1, 2])) {
-            $servingQuery->whereIn('client_type', [$user->assigned_category, 'deferred']);
+            $servingQuery->whereIn('client_type', [$user->assigned_category, ClientType::DEFERRED]);
         }
 
         $servingQueue = $servingQuery
@@ -795,15 +768,15 @@ class UsersController extends Controller
             ->get()
             ->map(fn ($q) => [
                 'formatted_number' => match ($q->client_type) {
-                    'regular' => 'R'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                    'priority' => 'P'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
-                    'deferred' => 'D'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                    ClientType::REGULAR, 'both' => 'R'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                    ClientType::PRIORITY => 'P'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
+                    ClientType::DEFERRED => 'D'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
                     default => 'X'.str_pad($q->queue_number, 3, '0', STR_PAD_LEFT),
                 },
                 'style_class' => match ($q->client_type) {
-                    'regular' => 'bg-[#2e3192] text-8xl h-full flex items-center justify-center',
-                    'priority' => 'bg-[#ee1c25] text-8xl h-full flex items-center justify-center',
-                    'deferred' => 'bg-[#f97316] text-8xl h-full flex items-center justify-center',
+                    ClientType::REGULAR, 'both' => 'bg-[#2e3192] text-8xl h-full flex items-center justify-center',
+                    ClientType::PRIORITY => 'bg-[#ee1c25] text-8xl h-full flex items-center justify-center',
+                    ClientType::DEFERRED => 'bg-[#f97316] text-8xl h-full flex items-center justify-center',
                     default => 'bg-gray-500',
                 },
             ]);
