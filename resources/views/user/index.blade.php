@@ -364,7 +364,6 @@ const fetchQueues = () => {
         const text = await res.text();
 
         if (!res.ok) {
-            // 🛑 Handle 401 Unauthenticated (session expired or replaced)
             if (res.status === 401) {
                 try {
                     const data = JSON.parse(text);

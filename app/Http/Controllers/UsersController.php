@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ClientType;
+use App\Enums\QueueStatus;
 use App\Http\Requests\ValidateUserQueueRequest;
 use App\Libraries\Sections;
 use App\Libraries\Steps;
@@ -798,7 +799,6 @@ class UsersController extends Controller
         $user = Auth::user();
         $today = Carbon::today();
 
-        // Base query
         $query = Transaction::where('section_id', $user->section_id)
             ->where('step_id', $user->step_id)
             ->where('window_id', $user->window_id)
@@ -806,8 +806,14 @@ class UsersController extends Controller
             ->where('queue_status', 'serving')
             ->whereDate('updated_at', $today);
 
-        // ✅ Apply client_type filter only when section_id = 15 and step_number = 1 or 2
-        if ($user->section_id == 15 && in_array($user->step->step_number, [1, 2])) {
+        // ✅ Replace magic numbers with constants
+        $preAssessSectionId = Sections::CRISIS_INTERVENTION_SECTION();
+        $preAssessSteps = [Steps::PRE_ASSESSMENT(), Steps::ENCODING()];
+
+        if (
+            $user->section_id === $preAssessSectionId &&
+            in_array(optional($user->step)->step_number, $preAssessSteps)
+        ) {
             $query->where('client_type', $user->assigned_category);
         }
 
@@ -821,8 +827,8 @@ class UsersController extends Controller
         }
 
         $transaction->update([
-            'queue_status' => 'deferred',
-            'updated_at' => Carbon::now(),
+            'queue_status' => QueueStatus::DEFERRED,
+            'updated_at' => now(),
         ]);
 
         return response()->json([
