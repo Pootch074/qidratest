@@ -43,12 +43,12 @@ class UsersSeeder extends Seeder
             ['first_name' => 'General', 'last_name' => 'PACD', 'position' => 'SWAID', 'user_type' => User::TYPE_PACD, 'email' => 'genpacd@dswd.gov.ph'],
 
             // CBSS accounts
-            ['first_name' => 'CBSS', 'last_name' => 'Admin', 'section' => 'cbss', 'user_type' => User::TYPE_ADMIN, 'email' => 'cbss@dswd.gov.ph'],
+            ['first_name' => 'CBSS', 'last_name' => 'Admin', 'section' => 'cbss', 'user_type' => User::TYPE_ADMIN, 'email' => 'cbssadmin@dswd.gov.ph'],
             ['first_name' => 'CBSS', 'last_name' => 'User', 'position' => 'SWOII', 'section' => 'cbss', 'user_type' => User::TYPE_USER, 'step' => 'None', 'window' => 1, 'email' => 'usercbss@dswd.gov.ph'],
             ['first_name' => 'CBSS', 'last_name' => 'Display', 'email' => 'displaycbss@dswd.gov.ph', 'section' => 'cbss', 'user_type' => User::TYPE_DISPLAY],
 
             // CIS accounts
-            ['first_name' => 'CIS', 'last_name' => 'Admin', 'section' => 'cis', 'user_type' => User::TYPE_ADMIN, 'email' => 'cis@dswd.gov.ph'],
+            ['first_name' => 'CIS', 'last_name' => 'Admin', 'section' => 'cis', 'user_type' => User::TYPE_ADMIN, 'email' => 'cisadmin@dswd.gov.ph'],
             ['first_name' => 'CIS', 'last_name' => 'PACD', 'position' => 'SWAID', 'section' => 'cis', 'user_type' => User::TYPE_PACD, 'email' => 'cispacd@dswd.gov.ph'],
 
             // CIS Pre-assessment

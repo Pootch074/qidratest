@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ValidateUserQueueRequest;
+use App\Libraries\Sections;
+use App\Libraries\Steps;
 use App\Models\Step;
 use App\Models\Transaction;
 use App\Models\User;
@@ -17,12 +20,16 @@ class UsersController extends Controller
     {
         $sectionId = $user->section_id;
 
-        // Formatter for queues
         $formatQueues = function ($queues) {
             return $queues->map(function ($q) {
-                $q->formatted_number = strtoupper(substr($q->client_type, 0, 1))
+                $clientType = $q->client_type instanceof \App\Enums\ClientType
+                    ? $q->client_type->value
+                    : $q->client_type;
+
+                $q->formatted_number = strtoupper(substr($clientType, 0, 1))
                     .str_pad($q->queue_number, 3, '0', STR_PAD_LEFT);
-                $q->style_class = strtolower($q->client_type) === 'priority'
+
+                $q->style_class = strtolower($clientType) === 'priority'
                     ? 'bg-red-600'
                     : 'bg-[#150e60]';
 
@@ -338,33 +345,36 @@ class UsersController extends Controller
         }
     }
 
-    public function nextRegular()
+    public function nextRegular(ValidateUserQueueRequest $_request)
     {
         $user = Auth::user();
 
-        // Validate required fields exist
-        if (! $user->step_id || ! $user->section_id || ! $user->window_id) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'User is not assigned to a step, section, or window.',
-            ], 400);
-        }
-
-        // Use transaction + lock to prevent race conditions
         $transaction = DB::transaction(function () use ($user) {
-            $record = Transaction::where('queue_status', 'waiting')
+            $query = Transaction::where('queue_status', 'waiting')
                 ->where('client_type', 'regular')
                 ->where('step_id', $user->step_id)
                 ->where('section_id', $user->section_id)
                 ->whereDate('updated_at', Carbon::today())
                 ->lockForUpdate()
-                ->orderBy('queue_number', 'asc')
-                ->first();
+                ->orderBy('queue_number', 'asc');
+
+            $preAssessSectionId = Sections::PREASSESSMENT_SECTION();
+            $preAssessSteps = [Steps::PRE_ASSESSMENT(), Steps::ENCODING()];
+
+            if ($user->section_id === $preAssessSectionId && in_array($user->step->step_number, $preAssessSteps)) {
+                $category = $user->assigned_category instanceof \App\Enums\ClientType
+                    ? $user->assigned_category->value
+                    : $user->assigned_category;
+
+                $query->whereIn('client_type', [$category, 'deferred']);
+            }
+
+            $record = $query->first();
 
             if ($record) {
                 $record->update([
                     'queue_status' => 'serving',
-                    'window_id' => $user->window_id, // ✅ assign current cashier's window
+                    'window_id' => $user->window_id,
                 ]);
             }
 
@@ -372,10 +382,14 @@ class UsersController extends Controller
         });
 
         if ($transaction) {
+            $clientType = $transaction->client_type instanceof \App\Enums\ClientType
+                ? $transaction->client_type->value
+                : $transaction->client_type;
+
             return response()->json([
                 'status' => 'success',
-                // 'message' => "Serving client {$transaction->client_type}{$transaction->queue_number} at window {$user->window_id}",
                 'transaction' => $transaction,
+                'message' => "Serving client {$clientType}{$transaction->queue_number} at window {$user->window_id}",
             ]);
         }
 
@@ -488,7 +502,6 @@ class UsersController extends Controller
         }
 
         $transaction = DB::transaction(function () use ($user) {
-            // Build query for the currently serving transaction
             $query = Transaction::where('queue_status', 'serving')
                 ->where('section_id', $user->section_id)
                 ->where('step_id', $user->step_id)
@@ -496,9 +509,16 @@ class UsersController extends Controller
                 ->whereDate('updated_at', Carbon::today())
                 ->lockForUpdate();
 
-            // ✅ Apply client_type filter conditionally
-            if ($user->section_id == 15 && in_array($user->step->step_number, [1, 2])) {
-                $query->whereIn('client_type', [$user->assigned_category, 'deferred']);
+            // ✅ Replace magic numbers with descriptive constants
+            $preAssessSteps = [Steps::PRE_ASSESSMENT(), Steps::ENCODING()];
+            $preAssessSectionId = Sections::CRISIS_INTERVENTION_SECTION(); // your cached getter
+
+            if ($user->section_id === $preAssessSectionId && in_array($user->step->step_number, $preAssessSteps)) {
+                $category = $user->assigned_category instanceof \App\Enums\ClientType
+                    ? $user->assigned_category->value
+                    : $user->assigned_category;
+
+                $query->whereIn('client_type', [$category, 'deferred']);
             }
 
             $current = $query->first();
@@ -507,7 +527,6 @@ class UsersController extends Controller
                 return null;
             }
 
-            // Move it back to pending and clear window
             $current->update([
                 'queue_status' => 'pending',
                 'window_id' => null,
@@ -517,9 +536,13 @@ class UsersController extends Controller
         });
 
         if ($transaction) {
+            $clientType = $transaction->client_type instanceof \App\Enums\ClientType
+                ? $transaction->client_type->value
+                : $transaction->client_type;
+
             return response()->json([
                 'status' => 'success',
-                'message' => "Queue {$transaction->client_type}{$transaction->queue_number} has been skipped.",
+                'message' => "Queue {$clientType}{$transaction->queue_number} has been skipped.",
             ]);
         }
 

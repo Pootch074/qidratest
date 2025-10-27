@@ -48,24 +48,21 @@
             $pendingGridClass  = $gridMap[$visiblePending]  ?? 'grid-cols-1';
         @endphp
 
+        {{-- UPCOMING --}}
+        <div class="col-span-3 flex flex-col bg-white rounded-md shadow overflow-hidden min-h-0">
+            <div class="bg-[#2e3192] text-white text-center font-bold text-2xl py-2">UPCOMING</div>
 
-
-{{-- UPCOMING --}}
-<div class="col-span-3 flex flex-col bg-white rounded-md shadow overflow-hidden min-h-0">
-    <div class="bg-[#2e3192] text-white text-center font-bold text-2xl py-2">UPCOMING</div>
-
-    <div class="grid {{ $upcomingGridClass }} gap-4 p-2 bg-white rounded-b-lg border-2 border-[#2e3192] flex-1 w-full min-h-0">
-        @foreach($upcomingBlocks as $block)
-            @if($block['show'])
-                <div class="flex flex-col bg-white rounded-md shadow overflow-hidden w-full min-h-0">
-                    <div class="bg-[#2e3192] text-white text-center font-bold py-2">{{ $block['title'] }}</div>
-                    <div id="{{ $block['id'] }}" class="flex-1 bg-white p-2 overflow-y-auto max-h-[68vh] min-h-0"></div>
-                </div>
-            @endif
-        @endforeach
-    </div>
-</div>
-
+            <div class="grid {{ $upcomingGridClass }} gap-4 p-2 bg-white rounded-b-lg border-2 border-[#2e3192] flex-1 w-full min-h-0">
+                @foreach($upcomingBlocks as $block)
+                    @if($block['show'])
+                        <div class="flex flex-col bg-white rounded-md shadow overflow-hidden w-full min-h-0">
+                            <div class="bg-[#2e3192] text-white text-center font-bold py-2">{{ $block['title'] }}</div>
+                            <div id="{{ $block['id'] }}" class="flex-1 bg-white p-2 overflow-y-auto max-h-[68vh] min-h-0"></div>
+                        </div>
+                    @endif
+                @endforeach
+            </div>
+        </div>
 
         {{-- PENDING --}}
         <div class="col-span-4 flex flex-col bg-white rounded-md shadow overflow-hidden min-h-0">
@@ -208,14 +205,13 @@
 document.addEventListener('DOMContentLoaded', () => {
     const sectionId = {{ $sectionId ?? 'null' }};
     const stepNumber = {{ $stepNumber ?? 'null' }};
-    const stepPreassess = {{ Steps::PRE_ASSESSMENT() }};
+    const stepPreassess = @json(\App\Libraries\Steps::PRE_ASSESSMENT());
+    
     const stepEncoding = {{ Steps::ENCODING() }};
     const stepRelease = {{ Steps::RELEASE() }};
     const crisisSectionId = {{ $crisisSectionId ?? 'null' }};
 
     if (sectionId === crisisSectionId && (stepNumber === stepPreassess || stepNumber === stepEncoding)) {
-
-
         const restrictedDefer = [
                 '#deferBtn'
             ];
