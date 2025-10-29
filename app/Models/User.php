@@ -72,7 +72,7 @@ class User extends Authenticatable
 {
     static::creating(function ($user) {
         if (empty($user->password)) {
-            $user->password = 'password'; // Will be hashed by the mutator
+            $user->password = 'Password@123'; // Will be hashed by the mutator
         }
     });
 }
