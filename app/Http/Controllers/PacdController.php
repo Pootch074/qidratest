@@ -115,7 +115,7 @@ class PacdController extends Controller
 
     public function transactionsTable()
     {
-        $user = Auth::user();
+                                    $user = Auth::user();
         $excludedSectionIds = $this->getExcludedSectionIds();
 
         $query = Transaction::with(['step', 'section'])

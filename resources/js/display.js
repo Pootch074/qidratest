@@ -65,7 +65,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let speechQueue = [];
     let speaking = false;
 
-    /** ✅ Load voices properly (fix for Chrome delay) **/
     function loadVoices() {
         function setVoices() {
             availableVoices = window.speechSynthesis.getVoices();
@@ -79,17 +78,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     loadVoices();
 
-    /** ✅ Add message to speech queue **/
     function announce(formattedQueue, stepNumber, windowNumber, repeat) {
         const message = `Client number ${formattedQueue}, please proceed to step ${stepNumber}, window ${windowNumber}.`;
         speechQueue.push({ message, repeat });
 
-        if (!speaking) {
-            speakNext();
-        }
+        if (!speaking) speakNext();
     }
 
-    /** ✅ Sequential speech processor **/
     function speakNext() {
         if (speechQueue.length === 0) {
             speaking = false;
@@ -102,15 +97,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const playAlertThenSpeak = () => {
             alertAudio.currentTime = 0;
-
-            alertAudio.onended = () => {
-                setTimeout(speakMessage, 400); // small delay to stabilize playback
-            };
-
-            alertAudio.play().catch((err) => {
-                console.error("Failed to play alert:", err);
-                setTimeout(speakMessage, 400);
-            });
+            alertAudio.onended = () => setTimeout(speakMessage, 400);
+            alertAudio.play().catch(() => setTimeout(speakMessage, 400));
         };
 
         const speakMessage = () => {
@@ -123,39 +111,26 @@ document.addEventListener("DOMContentLoaded", () => {
             utterance.lang = "en-US";
             utterance.rate = 0.85;
             utterance.pitch = 1;
-            utterance.volume = 1;
 
-            // Use selected voice if available
             utterance.voice =
                 availableVoices.length > voiceIndex
                     ? availableVoices[voiceIndex]
                     : availableVoices[0] || null;
 
-            // ✅ Prevent speechSynthesis from getting stuck
             window.speechSynthesis.cancel();
 
-            console.log(
-                `🔊 Speaking message: "${message}" (Repeat #${
-                    count + 1
-                }/${repeat})`
-            );
-
-            // 🧩 Extract queue number, step, and window using regex
             const match = message.match(
                 /Client number (\w\d+), please proceed to step (\d+), window (\d+)/
             );
-
-            // Declare outside to avoid scope issues
             const flashDiv = document.getElementById("flashServingQueue");
 
             if (match && flashDiv) {
                 const [, queueNumber, stepNumber, windowNumber] = match;
                 flashDiv.innerHTML = `
-            <div id="flashContent" class="flex flex-col items-center justify-center w-full h-full opacity-100 transition-opacity duration-1000">
-                <span class="text-[15rem] font-extrabold leading-none">${queueNumber}</span>
-                <span class="text-[4rem] font-bold mt-4">STEP ${stepNumber} WINDOW ${windowNumber}</span>
-            </div>
-        `;
+                    <div id="flashContent" class="flex flex-col items-center justify-center w-full h-full opacity-100 transition-opacity duration-1000">
+                        <span class="text-[15rem] font-extrabold leading-none">${queueNumber}</span>
+                        <span class="text-[4rem] font-bold mt-4">STEP ${stepNumber} WINDOW ${windowNumber}</span>
+                    </div>`;
                 flashDiv.classList.add("animate-flash");
                 setTimeout(
                     () => flashDiv.classList.remove("animate-flash"),
@@ -163,20 +138,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
             }
 
-            // ✅ Always fade out when speech ends
             utterance.onend = () => {
                 count++;
                 const flashContent = document.getElementById("flashContent");
                 if (flashContent && flashDiv) {
-                    // 1️⃣ Start fade-out after speech ends
                     flashContent.style.opacity = "0";
-                    // 2️⃣ Wait 2 seconds, then clear the display
-                    setTimeout(() => {
-                        flashDiv.innerHTML = "";
-                    }, 2000);
+                    setTimeout(() => (flashDiv.innerHTML = ""), 2000);
                 }
 
-                // Continue the speaking sequence
                 if (count < repeat) {
                     setTimeout(speakMessage, 300);
                 } else {
@@ -184,7 +153,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             };
 
-            // ✅ Actually speak
             window.speechSynthesis.speak(utterance);
         };
 
@@ -192,10 +160,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /** ---------------- Fetch Steps ---------------- **/
-    /** ---------------- Fetch Steps ---------------- **/
     function fetchSteps() {
         fetch(window.appRoutes.steps)
-            .then((response) => response.json())
+            .then((res) => res.json())
             .then((data) => {
                 const container = document.getElementById("stepsContainer");
                 const noSteps = document.getElementById("noSteps");
@@ -209,12 +176,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 noSteps.classList.add("hidden");
 
                 data.forEach((step) => {
-                    // 🧠 Skip (don’t render) step 4 entirely
-                    if (step.step_number === 4) return;
+                    const normalizedName = step.step_name?.toLowerCase();
+                    if (normalizedName === "release") return;
 
-                    // 🧠 Skip Step 3 if user is 'regular'
                     if (
-                        step.step_number === 3 &&
+                        normalizedName === "assessment" &&
                         window.appUser.assignedCategory.toLowerCase() ===
                             "regular"
                     ) {
@@ -231,57 +197,55 @@ document.addEventListener("DOMContentLoaded", () => {
                             : "";
 
                     let html = `
-                    <h3 class="text-4xl font-bold text-[#000000] mb-1 py-3 flex items-center justify-center space-x-2 bg-white rounded">
-                        <span>STEP ${step.step_number}</span>
-                        ${
-                            stepNameDisplay
-                                ? `<span>${stepNameDisplay}</span>`
-                                : ""
-                        }
-                    </h3>
-                `;
+                        <h3 class="text-4xl font-bold text-[#000000] mb-1 py-3 flex items-center justify-center space-x-2 bg-white rounded">
+                            <span>STEP ${step.step_number}</span>
+                            ${
+                                stepNameDisplay
+                                    ? `<span>${stepNameDisplay}</span>`
+                                    : ""
+                            }
+                        </h3>
+                    `;
 
                     if (step.windows.length > 0) {
-                        html += `<div class="grid grid-cols-2 gap-2 ">`;
+                        html += `<div class="grid grid-cols-2 gap-2">`;
 
                         step.windows.forEach((win) => {
-                            let firstTx =
+                            const firstTx =
                                 win.transactions?.length > 0
                                     ? win.transactions[0]
                                     : null;
 
-                            // ✅ Default background
                             let bgClass = "bg-[#2e3192]";
 
-                            // ✅ Apply red background if step = 1 or 2 AND current user category = "priority"
+                            // ✅ Red for Priority users in PRE_ASSESSMENT / ENCODING
                             if (
-                                (step.step_number === 1 ||
-                                    step.step_number === 2) &&
+                                (normalizedName === "pre-assessment" ||
+                                    normalizedName === "encoding") &&
                                 window.appUser.assignedCategory.toLowerCase() ===
                                     "priority"
                             ) {
-                                bgClass = "bg-red-600"; // Tailwind red
+                                bgClass = "bg-red-600";
                             }
 
                             html += `
-                            <div class="rounded-lg text-[#FFFFFF] text-2xl font-semibold flex flex-col items-center justify-center w-full">
-                                <div class="flex items-center w-full h-full rounded-lg border-4 border-[#2e3192]">
-                                    <span class="${bgClass} py-1 text-center w-1/5">
-                                        <p class="text-xl font-semibold">Window</p>
-                                        <p class="text-5xl font-bold">${
-                                            win.window_number
-                                        }</p>
-                                    </span>
-                                    ${
-                                        firstTx
-                                            ? `<span class="queue-number flex items-center justify-center bg-[#FFFFFF] text-[#000000] px-3 py-1 text-6xl font-bold text-center w-4/5 h-full rounded-r-lg" data-queue="${firstTx.queue_number}">
+                                <div class="rounded-lg text-[#FFFFFF] text-2xl font-semibold flex flex-col items-center justify-center w-full">
+                                    <div class="flex items-center w-full h-full rounded-lg border-4 border-[#2e3192]">
+                                        <span class="${bgClass} py-1 text-center w-1/5">
+                                            <p class="text-xl font-semibold">Window</p>
+                                            <p class="text-5xl font-bold">${
+                                                win.window_number
+                                            }</p>
+                                        </span>
+                                        ${
+                                            firstTx
+                                                ? `<span class="queue-number flex items-center justify-center bg-[#FFFFFF] text-[#000000] px-3 py-1 text-6xl font-bold text-center w-4/5 h-full rounded-r-lg" data-queue="${firstTx.queue_number}">
                                                     ${firstTx.queue_number}
-                                            </span>`
-                                            : `<span class="flex items-center justify-center bg-[#FFFFFF] text-[#000000] px-3 py-1 text-sm text-center w-4/5 h-full rounded-r-lg">🚫</span>`
-                                    }
-                                </div>
-                            </div>
-                        `;
+                                                  </span>`
+                                                : `<span class="flex items-center justify-center bg-[#FFFFFF] text-[#000000] px-3 py-1 text-sm text-center w-4/5 h-full rounded-r-lg">🚫</span>`
+                                        }
+                                    </div>
+                                </div>`;
                         });
 
                         html += `</div>`;
@@ -308,7 +272,7 @@ document.addEventListener("DOMContentLoaded", () => {
         fetch(window.appRoutes.latestTransaction)
             .then((res) => res.json())
             .then((data) => {
-                if (!data || !data.length) return; // check array
+                if (!data || !data.length) return;
 
                 data.forEach((tx) => {
                     const key = `${tx.id}-${tx.step_number}`;
@@ -318,13 +282,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     };
 
                     let repeatTimes;
-
                     if (tx.recall_count == null || tx.recall_count === 0) {
-                        // Normal transaction → speak twice if not yet spoken twice
                         repeatTimes = 2 - lastAnnounced.spokenCount;
                         if (repeatTimes <= 0) return;
                     } else {
-                        // Recall transaction → speak once if recall_count changed
                         if (lastAnnounced.recall_count === tx.recall_count)
                             return;
                         repeatTimes = 1;
@@ -334,14 +295,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         tx.client_type?.charAt(0).toUpperCase() +
                         String(tx.queue_number).padStart(3, "0");
 
-                    // 🧠 Prevent speech synthesis when step_number = 4 or user is regular at step 3
-                    if (
-                        tx.step_number !== 4 &&
-                        !(
-                            window.appUser.assignedCategory.toLowerCase() ===
-                                "regular" && tx.step_number === 3
-                        )
-                    ) {
+                    const isRelease =
+                        tx.step_number === window.appSteps.RELEASE;
+                    const isAssessment =
+                        tx.step_number === window.appSteps.ASSESSMENT &&
+                        window.appUser.assignedCategory.toLowerCase() ===
+                            "regular";
+
+                    if (!isRelease && !isAssessment) {
                         announce(
                             formattedQueue,
                             tx.step_number,
@@ -360,7 +321,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .catch((err) => console.error("Error fetching transactions:", err));
     }
 
-    /** ---------------- Initial Load + Intervals ---------------- **/
+    /** ---------------- Initial Load ---------------- **/
     fetchSteps();
     fetchLatestTransaction();
     setInterval(fetchSteps, 1000);

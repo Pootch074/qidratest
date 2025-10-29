@@ -102,7 +102,7 @@ Route::middleware(['auth'])->group(function () {
 
     // === Display Routes ===
     Route::get('/steps', [DisplayController::class, 'getStepsBySectionId'])->name('steps');
-    Route::get('/display/transactions/latest', [DisplayController::class, 'getLatestTransaction']);
+    Route::get('/display/transactions/latest', [DisplayController::class, 'getLatestTransaction'])->name('display.latest-transaction');
 
     // === PACD Routes ===
     Route::prefix('pacd')->group(function () {
