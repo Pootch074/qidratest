@@ -48,7 +48,6 @@
                                     <td class="px-6 py-4 font-semibold">
                                         {{ $queue->queue_label }}
                                     </td>
-                                    {{-- <td class="px-6 py-4 whitespace-nowrap">{{ $queue->full_name }}</td> --}}
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $queue->step->step_number ?? 'N/A' }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $queue->window->window_number ?? 'N/A' }}
                                     </td>
@@ -93,7 +92,6 @@
             document.getElementById("resumeModal").classList.add("hidden");
         }
 
-        // 🔹 Reusable Print Ticket Function (from index.blade.php)
         function printTicket(data) {
             const ticketHtml = `
         <!doctype html>
@@ -134,7 +132,6 @@
             }, 150);
         }
 
-        // 🔹 Generate queue (with print)
         document.getElementById("generateQueueBtn").addEventListener("click", () => {
             fetch("{{ url('transactions') }}/" + selectedTransactionId + "/resume", {
                     method: "POST",
@@ -148,7 +145,7 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        printTicket(data); // ✅ Use reusable function
+                        printTicket(data);
                         closeResumeModal();
                         location.reload();
                     } else {
