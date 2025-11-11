@@ -266,13 +266,11 @@ class UsersController extends Controller
         $authUser = Auth::user();
         $sectionId = $authUser->section_id;
 
-        // 🟢 Validation rules
         $rules = [
             'first_name' => 'required|string|max:255|regex:/^[A-Za-z\s\'-]+$/',
             'last_name' => 'required|string|max:255|regex:/^[A-Za-z\s\'-]+$/',
             'email' => 'required|email|unique:users,email',
             'position' => 'required|string|max:255',
-            // 👇 allow "both" only if section_id == 15
             'assigned_category' => $sectionId == 15
                 ? 'required|string|in:regular,priority,both'
                 : 'nullable|string',
@@ -317,7 +315,7 @@ class UsersController extends Controller
             'step_id' => $validated['step_id'],
             'window_id' => $validated['window_id'] ?? null,
             'section_id' => $sectionId,
-            'password' => bcrypt($validated['password']),
+            'password' => $validated['password'] ?? null, // ✅ Let the model mutator handle hashing
         ]);
 
         return response()->json([

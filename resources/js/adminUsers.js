@@ -48,15 +48,20 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
         const data = {
-            first_name: form.first_name.value,
-            last_name: form.last_name.value,
-            email: form.email.value,
-            position: form.position.value,
+            first_name: form.first_name.value.trim(),
+            last_name: form.last_name.value.trim(),
+            email: form.email.value.trim(),
+            position: form.position.value.trim(),
             assigned_category: form.assigned_category.value,
             step_id: form.step_id.value,
             window_id: form.window_id.value,
-            password: form.password.value,
+            password: form.password.value.trim(),
         };
+
+        if (!data.password || data.password.trim() === "") {
+            alert("Password cannot be empty!");
+            return;
+        }
 
         try {
             const res = await fetch(window.appBaseUrl + "/admin/users/store", {

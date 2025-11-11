@@ -69,13 +69,13 @@ class User extends Authenticatable
     }
 
     protected static function booted()
-{
-    static::creating(function ($user) {
-        if (empty($user->password)) {
-            $user->password = 'Password@123'; // Will be hashed by the mutator
-        }
-    });
-}
+    {
+        static::creating(function ($user) {
+            if (empty($user->password)) {
+                $user->password = 'Password@123'; // Will be hashed by the mutator
+            }
+        });
+    }
 
 
     public function setPasswordAttribute($value)
