@@ -56,9 +56,9 @@ class UsersSeeder extends Seeder
             ['first_name' => 'Preasssess', 'last_name' => 'Priority', 'position' => 'SWOII', 'section' => 'cis', 'user_type' => User::TYPE_USER, 'assigned_category' => 'priority', 'step' => 'Pre-assessment', 'window' => 1, 'email' => 'preassessprio@dswd.gov.ph'],
 
             // CIS Encoder
-            ['first_name' => 'Encoding', 'last_name' => 'Regular', 'position' => 'SWOII', 'section' => 'cis', 'user_type' => User::TYPE_USER, 'assigned_category' => 'regular', 'step' => 'Encoding', 'window' => 1, 'email' => 'encodingregu1@dswd.gov.ph'],
-            ['first_name' => 'Encoding', 'last_name' => 'Regular', 'position' => 'SWOII', 'section' => 'cis', 'user_type' => User::TYPE_USER, 'assigned_category' => 'regular', 'step' => 'Encoding', 'window' => 2, 'email' => 'encodingregu2@dswd.gov.ph'],
-            ['first_name' => 'Encoding', 'last_name' => 'Priority', 'position' => 'SWOII', 'section' => 'cis', 'user_type' => User::TYPE_USER, 'assigned_category' => 'priority', 'step' => 'Encoding', 'window' => 1, 'email' => 'encodingprio1@dswd.gov.ph'],
+            ['first_name' => 'Encoding', 'last_name' => 'Regular', 'position' => 'SWOII', 'section' => 'cis', 'user_type' => User::TYPE_USER, 'assigned_category' => 'regular', 'step' => 'Encode', 'window' => 1, 'email' => 'encodingregu1@dswd.gov.ph'],
+            ['first_name' => 'Encoding', 'last_name' => 'Regular', 'position' => 'SWOII', 'section' => 'cis', 'user_type' => User::TYPE_USER, 'assigned_category' => 'regular', 'step' => 'Encode', 'window' => 2, 'email' => 'encodingregu2@dswd.gov.ph'],
+            ['first_name' => 'Encoding', 'last_name' => 'Priority', 'position' => 'SWOII', 'section' => 'cis', 'user_type' => User::TYPE_USER, 'assigned_category' => 'priority', 'step' => 'Encode', 'window' => 1, 'email' => 'encodingprio1@dswd.gov.ph'],
 
             // CIS Assessment
             ['first_name' => 'Assessment', 'last_name' => 'Window1', 'position' => 'SWOII', 'section' => 'cis', 'user_type' => User::TYPE_USER, 'assigned_category' => 'both', 'step' => 'Assessment', 'window' => 1, 'email' => 'assessment1@dswd.gov.ph'],

@@ -218,10 +218,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                             let bgClass = "bg-[#2e3192]";
 
-                            // ✅ Red for Priority users in PRE_ASSESSMENT / ENCODING
                             if (
                                 (normalizedName === "pre-assessment" ||
-                                    normalizedName === "encoding") &&
+                                    normalizedName === "encode") &&
                                 window.appUser.assignedCategory.toLowerCase() ===
                                     "priority"
                             ) {

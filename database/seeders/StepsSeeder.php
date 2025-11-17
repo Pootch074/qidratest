@@ -42,7 +42,7 @@ class StepsSeeder extends Seeder
             ['section_name' => 'COMMUNITY-BASED SERVICES SECTION (CBSS)', 'step_number' => 1, 'step_name' => 'None'],
 
             ['section_name' => 'CRISIS INTERVENTION SECTION', 'step_number' => 1, 'step_name' => 'Pre-assessment'],
-            ['section_name' => 'CRISIS INTERVENTION SECTION', 'step_number' => 2, 'step_name' => 'Encoding'],
+            ['section_name' => 'CRISIS INTERVENTION SECTION', 'step_number' => 2, 'step_name' => 'Encode'],
             ['section_name' => 'CRISIS INTERVENTION SECTION', 'step_number' => 3, 'step_name' => 'Assessment'],
             ['section_name' => 'CRISIS INTERVENTION SECTION', 'step_number' => 4, 'step_name' => 'Release'],
 

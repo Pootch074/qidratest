@@ -150,13 +150,15 @@
             // ✅ Step Name Duplicate Check
             const stepNameSelect = document.getElementById('step_name');
             const saveButton = document.querySelector('#addStepForm button[type="submit"]');
+            const stepNameError = document.getElementById('stepNameError');
 
             stepNameSelect.addEventListener('change', () => {
                 const stepName = stepNameSelect.value;
-                const stepNameError = document.getElementById('stepNameError');
 
                 if (!stepName || stepName === "None") {
                     stepNameSelect.setCustomValidity("");
+                    stepNameError.textContent = "";
+                    stepNameError.classList.add('hidden');
                     saveButton.disabled = false;
                     return;
                 }
@@ -172,6 +174,7 @@
                             saveButton.disabled = true;
                         } else {
                             stepNameSelect.setCustomValidity("");
+                            stepNameError.textContent = "";
                             stepNameError.classList.add('hidden');
                             saveButton.disabled = false;
                         }

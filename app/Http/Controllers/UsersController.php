@@ -359,7 +359,7 @@ class UsersController extends Controller
                 ->orderBy('queue_number', 'asc');
 
             $preAssessSectionId = Sections::PREASSESSMENT_SECTION();
-            $preAssessSteps = [Steps::PRE_ASSESSMENT(), Steps::ENCODING()];
+            $preAssessSteps = [Steps::PRE_ASSESSMENT(), Steps::ENCODE()];
 
             if ($user->section_id === $preAssessSectionId && in_array($user->step->step_number, $preAssessSteps)) {
                 $category = $user->assigned_category instanceof \App\Enums\ClientType
@@ -510,7 +510,7 @@ class UsersController extends Controller
                 ->lockForUpdate();
 
             // ✅ Replace magic numbers with descriptive constants
-            $preAssessSteps = [Steps::PRE_ASSESSMENT(), Steps::ENCODING()];
+            $preAssessSteps = [Steps::PRE_ASSESSMENT(), Steps::ENCODE()];
             $preAssessSectionId = Sections::CRISIS_INTERVENTION_SECTION(); // your cached getter
 
             if ($user->section_id === $preAssessSectionId && in_array($user->step->step_number, $preAssessSteps)) {
@@ -806,7 +806,7 @@ class UsersController extends Controller
 
         // ✅ Replace magic numbers with constants
         $preAssessSectionId = Sections::CRISIS_INTERVENTION_SECTION();
-        $preAssessSteps = [Steps::PRE_ASSESSMENT(), Steps::ENCODING()];
+        $preAssessSteps = [Steps::PRE_ASSESSMENT(), Steps::ENCODE()];
 
         if (
             $user->section_id === $preAssessSectionId &&

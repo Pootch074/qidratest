@@ -2,7 +2,6 @@
 @section('title', 'Display')
 @section('header')
 
-
 @endsection
 
 @section('content')
@@ -49,7 +48,6 @@
                 </div>
             </div>
 
-
             <div class="flex w-full h-[24vh]">
                 <div class="flex flex-col justify-center items-center p-4 flex-1 text-center">
                     <p id="current-date" class="text-1xl md:text-2xl font-bold mb-2"></p>
@@ -63,14 +61,11 @@
                 </div>
             </div>
 
-
             {{-- Flash new serving queue --}}
             <div id="flashServingQueue"
                 class="flex items-center justify-center h-[60vh] bg-gray-900 text-white text-[12rem] font-extrabold rounded-lg relative overflow-hidden">
                 <span id="servingNumber" class="hidden"></span>
             </div>
-
-
 
             <div class="w-full flex flex-col items-center space-y-4 bg-red-300 h-[8vh]">
                 <div class="w-full h-full bg-[#2e3192] text-white flex items-center overflow-hidden relative">
@@ -95,7 +90,7 @@
     @php
         $appSteps = [
             'PRE_ASSESSMENT' => \App\Libraries\Steps::id('Pre-assessment'),
-            'ENCODING' => \App\Libraries\Steps::id('Encoding'),
+            'ENCODE' => \App\Libraries\Steps::id('Encode'),
             'ASSESSMENT' => \App\Libraries\Steps::id('Assessment'),
             'RELEASE' => \App\Libraries\Steps::id('Release'),
         ];
