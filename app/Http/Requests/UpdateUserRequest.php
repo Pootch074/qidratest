@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -28,7 +27,6 @@ class UpdateUserRequest extends FormRequest
             'status' => 'nullable|integer|in:0,1',
         ];
     }
-
 
     public function messages(): array
     {

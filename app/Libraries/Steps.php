@@ -31,7 +31,6 @@ class Steps
         return null;
     }
 
-
     public static function id(string $key): ?int
     {
         return self::__callStatic($key, []);

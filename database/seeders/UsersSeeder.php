@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class UsersSeeder extends Seeder
 {
-        public function run(): void
+    public function run(): void
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         User::truncate();

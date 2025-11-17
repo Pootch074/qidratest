@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Division;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use App\Models\Division;
 
 class SectionsSeeder extends Seeder
 {
@@ -24,6 +24,7 @@ class SectionsSeeder extends Seeder
 
         if ($divisionIds->isEmpty()) {
             $this->command->error('❌ No divisions found. Please seed Divisions first.');
+
             return;
         }
 

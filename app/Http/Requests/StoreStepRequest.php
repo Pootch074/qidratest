@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class StoreStepRequest extends FormRequest
 {
@@ -12,10 +14,15 @@ class StoreStepRequest extends FormRequest
         return true;
     }
 
-    public function rules(): array
+    public function rules()
     {
         return [
-            'step_name' => 'required|string|max:255',
+            'step_name' => [
+                'required',
+                Rule::unique('steps')->where(function ($q) {
+                    return $q->where('section_id', Auth::user()->section_id);
+                }),
+            ],
         ];
     }
 }

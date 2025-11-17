@@ -29,6 +29,7 @@ Route::get('/session/check', function () {
     if ($user->session_id !== session()->getId()) {
         Auth::logout();
         session()->invalidate();
+
         return response()->json(['active' => false]);
     }
 
@@ -40,7 +41,7 @@ Route::get('/session/check', function () {
 | Public Routes
 |--------------------------------------------------------------------------
 */
-Route::get('/', fn() => Auth::check() ? redirect()->intended() : redirect(route('login')));
+Route::get('/', fn () => Auth::check() ? redirect()->intended() : redirect(route('login')));
 
 Route::get('/auth/login', [LoginController::class, 'login'])->name('login');
 Route::post('/auth/login', [LoginController::class, 'authenticate'])->name('authenticate');
@@ -60,7 +61,7 @@ Route::middleware(['auth'])->group(function () {
 | Authenticated Routes by User Type
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', CheckUserType::class . ':0,1,2,3,5,6'])->group(function () {
+Route::middleware(['auth', CheckUserType::class.':0,1,2,3,5,6'])->group(function () {
     Route::get('superadmin', [SuperAdminController::class, 'index'])->name('superadmin');
     Route::get('admin', [UsersController::class, 'admin'])->name('admin');
     Route::get('idscan', [IdscanController::class, 'index'])->name('idscan');
@@ -91,6 +92,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/steps/{id}', [StepsController::class, 'update'])->name('steps.update');
     Route::delete('/steps/{id}', [StepsController::class, 'destroy'])->name('steps.destroy');
     Route::get('/steps/check/{sectionId}/{stepNumber}', [StepsController::class, 'check']);
+    Route::get('/steps/check-name/{sectionId}/{stepName}', [StepsController::class, 'checkName']);
 
     // === Windows Management ===
     Route::prefix('admin/windows')->group(function () {

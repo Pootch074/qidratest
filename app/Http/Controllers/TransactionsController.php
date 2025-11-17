@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Transaction;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Enums\ClientType;
 use App\Enums\QueueStatus;
+use App\Models\Transaction;
+use Illuminate\Http\Request;
 
 class TransactionsController extends Controller
 {
@@ -27,7 +26,7 @@ class TransactionsController extends Controller
             'queue_status' => QueueStatus::WAITING,
         ]);
 
-        $displayNumber = $clientType->prefix() . str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT);
+        $displayNumber = $clientType->prefix().str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT);
 
         return response()->json([
             'success' => true,

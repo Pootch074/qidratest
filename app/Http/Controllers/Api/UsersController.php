@@ -17,7 +17,7 @@ class UsersController extends Controller
             return [
                 'id' => $user->id,
                 'email' => $user->email,
-                'name' => $user->first_name . ' ' . $user->last_name,
+                'name' => $user->first_name.' '.$user->last_name,
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
                 'user_type' => $user->getUserType($user->user_type),
@@ -48,7 +48,7 @@ class UsersController extends Controller
             'user' => [
                 'id' => $user->id,
                 'email' => $user->email,
-                'name' => $user->first_name . ' ' . $user->last_name,
+                'name' => $user->first_name.' '.$user->last_name,
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
                 'user_type' => $user->getUserType($user->user_type),
@@ -84,7 +84,7 @@ class UsersController extends Controller
             'user' => [
                 'id' => $user->id,
                 'email' => $user->email,
-                'name' => $user->first_name . ' ' . $user->last_name,
+                'name' => $user->first_name.' '.$user->last_name,
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
                 'user_type' => $user->getUserType($user->user_type),
@@ -99,11 +99,11 @@ class UsersController extends Controller
         ]);
     }
 
-
     public function delete($id)
     {
         $user = User::findOrFail($id);
         $user->delete();
+
         return response()->json(['message' => 'User deleted successfully']);
     }
 }

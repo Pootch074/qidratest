@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreWindowRequest;
 use App\Models\Step;
 use App\Models\Window;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\StoreWindowRequest;
 
 class WindowsController extends Controller
 {
@@ -31,25 +31,25 @@ class WindowsController extends Controller
     }
 
     public function store(StoreWindowRequest $request)
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    $step = Step::where('id', $request->step_id)
-        ->where('section_id', $user->section_id)
-        ->firstOrFail();
+        $step = Step::where('id', $request->step_id)
+            ->where('section_id', $user->section_id)
+            ->firstOrFail();
 
-    $latestWindow = Window::where('step_id', $step->id)
-        ->max('window_number');
+        $latestWindow = Window::where('step_id', $step->id)
+            ->max('window_number');
 
-    $nextWindowNumber = $latestWindow ? $latestWindow + 1 : 1;
+        $nextWindowNumber = $latestWindow ? $latestWindow + 1 : 1;
 
-    Window::create([
-        'step_id' => $step->id,
-        'window_number' => $nextWindowNumber,
-    ]);
+        Window::create([
+            'step_id' => $step->id,
+            'window_number' => $nextWindowNumber,
+        ]);
 
-    return redirect()->back()->with('success', "Window #{$nextWindowNumber} created successfully!");
-}
+        return redirect()->back()->with('success', "Window #{$nextWindowNumber} created successfully!");
+    }
 
     public function destroy($id)
     {

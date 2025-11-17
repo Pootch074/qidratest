@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="{{ Vite::asset('resources/images/icons/qidra-icon3.png') }}">
     <title>{{ config('app.name', 'DSWD - Qidra') }} - {{ strtoupper(auth()->user()->getUserTypeName()) }} </title>
-    
+
     @vite(['resources/js/app.js'])
     @livewireStyles
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    @yield('header') 
-    
+    @yield('header')
+
     <script>
         window.appBaseUrl = "{{ url('') }}";
         window.routes = {
@@ -31,23 +31,15 @@
     <div>
         @include('layouts.inc.sidebar')
     </div>
-    
 
     <div class="flex flex-1">
         @yield('content')
     </div>
 
-
-    {{-- <div class="w-full h-[8vh] bg-white">
-        @include('layouts.inc.footer')
-    </div> --}}
-
-
-
     @yield('scripts')
     @stack('scripts')
     @livewireScripts
 
-
 </body>
+
 </html>

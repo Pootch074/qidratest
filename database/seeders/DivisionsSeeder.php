@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Office;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use App\Models\Office;
 
 class DivisionsSeeder extends Seeder
 {
@@ -24,6 +24,7 @@ class DivisionsSeeder extends Seeder
         // Defensive check — prevents seeding if the office doesn’t exist
         if (! $officeId) {
             $this->command->error('❌ Office "DSWD FO XI" not found. Please seed the offices table first.');
+
             return;
         }
 

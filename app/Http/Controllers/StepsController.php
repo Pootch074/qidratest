@@ -2,21 +2,18 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Http\Requests\StoreStepRequest;
 use App\Http\Requests\UpdateStepRequest;
 use App\Models\Step;
 use App\Models\Window;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
 
 class StepsController extends Controller
 {
     public function steps()
     {
         $sectionId = Auth::user()->section_id;
-
         $steps = Step::where('section_id', $sectionId)
             ->orderBy('step_number', 'asc')
             ->get();
@@ -27,25 +24,21 @@ class StepsController extends Controller
     public function store(StoreStepRequest $request)
     {
         $user = Auth::user();
-
         $step = DB::transaction(function () use ($user, $request) {
             $latestStep = Step::where('section_id', $user->section_id)
                 ->lockForUpdate() // ensures no duplicate step numbers
                 ->max('step_number');
-
             $nextStepNumber = $latestStep ? $latestStep + 1 : 1;
 
-            // Create the step
             $step = Step::create([
-                'section_id'  => $user->section_id,
+                'section_id' => $user->section_id,
                 'step_number' => $nextStepNumber,
-                'step_name'   => $request->step_name,
+                'step_name' => $request->step_name,
             ]);
 
-            // Create its first window
             Window::create([
                 'window_number' => 1,
-                'step_id'       => $step->id,
+                'step_id' => $step->id,
             ]);
 
             return $step;
@@ -91,6 +84,15 @@ class StepsController extends Controller
     {
         $exists = Step::where('section_id', $sectionId)
             ->where('step_number', $stepNumber)
+            ->exists();
+
+        return response()->json(['exists' => $exists]);
+    }
+
+    public function checkName($sectionId, $stepName)
+    {
+        $exists = Step::where('section_id', $sectionId)
+            ->where('step_name', $stepName)
             ->exists();
 
         return response()->json(['exists' => $exists]);

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Transaction;
 use App\Models\Section;
 use App\Models\Step;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -45,7 +45,7 @@ class DisplayController extends Controller
                                             ->orWhere('transactions.client_type', 'deferred');
                                     });
                             })
-                            ->orWhereNotIn('steps.id', $initialStepIds);
+                                ->orWhereNotIn('steps.id', $initialStepIds);
                         });
                     }
                 })

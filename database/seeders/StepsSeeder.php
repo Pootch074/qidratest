@@ -2,14 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\Section;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use App\Models\Section;
 
 class StepsSeeder extends Seeder
 {
-
     public function run(): void
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
@@ -22,6 +21,7 @@ class StepsSeeder extends Seeder
 
         if ($sectionIds->isEmpty()) {
             $this->command->error('❌ No sections found. Please seed Sections first.');
+
             return;
         }
 
