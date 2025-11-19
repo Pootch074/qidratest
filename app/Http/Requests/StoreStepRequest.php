@@ -10,19 +10,32 @@ class StoreStepRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // Optionally restrict based on role or section
         return true;
     }
 
     public function rules()
-    {
-        return [
-            'step_name' => [
-                'required',
-                Rule::unique('steps')->where(function ($q) {
-                    return $q->where('section_id', Auth::user()->section_id);
-                }),
-            ],
-        ];
-    }
+{
+    return [
+        'step_name' => [
+            'required',
+            'string',
+            function ($attribute, $value, $fail) {
+                // Allow "None" always
+                if ($value === "None") {
+                    return;
+                }
+
+                // Normal duplicate check for other names
+                $exists = \App\Models\Step::where('section_id', Auth::user()->section_id)
+                    ->where('step_name', $value)
+                    ->exists();
+
+                if ($exists) {
+                    $fail("This step name already exists in your section.");
+                }
+            }
+        ],
+    ];
+}
+
 }

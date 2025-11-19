@@ -202,38 +202,60 @@
                     const newValue = input.value.trim();
                     const span = input.previousElementSibling;
 
-                    if (!newValue || newValue === span.textContent.trim()) {
-                        input.classList.add('hidden');
-                        span.classList.remove('hidden');
-                        return;
+                    // Prevent duplicate names except for "None"
+                    if (newValue !== "None") {
+                        fetch(
+                                `${window.appBaseUrl}/steps/check-name/${sectionId}/${encodeURIComponent(newValue)}`
+                                )
+                            .then(res => res.json())
+                            .then(data => {
+                                // If duplicate AND not the same row
+                                if (data.exists && newValue !== span.textContent.trim()) {
+                                    alert("This step name already exists in your section.");
+                                    input.value = span.textContent.trim();
+                                    input.classList.add('hidden');
+                                    span.classList.remove('hidden');
+                                    return;
+                                }
+
+                                // Proceed to update if no duplicate
+                                updateStepName();
+                            });
+                    } else {
+                        updateStepName(); // Auto-allow "None"
                     }
 
-                    fetch(`${window.appBaseUrl}/steps/${id}`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': csrfToken
-                            },
-                            body: JSON.stringify({
-                                step_name: newValue,
-                                _method: 'PUT'
+                    function updateStepName() {
+                        fetch(`${window.appBaseUrl}/steps/${id}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken
+                                },
+                                body: JSON.stringify({
+                                    step_name: newValue,
+                                    _method: 'PUT'
+                                })
                             })
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                span.textContent = newValue;
-                            } else {
-                                alert("Error updating step name.");
-                            }
-                            input.classList.add('hidden');
-                            span.classList.remove('hidden');
-                        })
-                        .catch(() => {
-                            alert("Failed to update step name.");
-                            input.classList.add('hidden');
-                            span.classList.remove('hidden');
-                        });
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    span.textContent = newValue;
+                                } else {
+                                    alert("Error updating step name.");
+                                }
+                                input.classList.add('hidden');
+                                span.classList.remove('hidden');
+                            })
+                            .catch(() => {
+                                alert("Failed to update step name.");
+                                input.classList.add('hidden');
+                                span.classList.remove('hidden');
+                            });
+                    }
+
+
+
                 });
 
                 input.addEventListener('keydown', e => {
