@@ -36,7 +36,7 @@
                                     Queue Number</th>
                                 {{-- <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Full Name</th> --}}
                                 <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Step</th>
-                                <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Window</th>
+                                {{-- <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Window</th> --}}
                                 <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">Section</th>
                                 <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider rounded-tr-lg">
                                     Action</th>
@@ -49,8 +49,8 @@
                                         {{ $queue->queue_label }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $queue->step->step_number ?? 'N/A' }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $queue->window->window_number ?? 'N/A' }}
-                                    </td>
+                                    {{-- <td class="px-6 py-4 whitespace-nowrap">{{ $queue->window->window_number ?? 'N/A' }}
+                                    </td> --}}
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $queue->section->section_name ?? 'N/A' }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
