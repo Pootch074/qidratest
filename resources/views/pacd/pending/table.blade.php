@@ -159,7 +159,10 @@
 
                 // 🔄 Resume transaction and create new queue
                 resumeTransaction(id) {
-                    fetch(`/transactions/${id}/resume`, {
+                    // Use Laravel's route helper inside Blade
+                    const url = @js(route('transactions.resume', ['id' => 'REPLACE_ID'])).replace('REPLACE_ID', id);
+
+                    fetch(url, {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
@@ -170,8 +173,6 @@
                         .then(res => res.json())
                         .then(response => {
                             if (response.success) {
-
-                                // Build the ticket data from controller response
                                 const data = {
                                     section: response.section,
                                     queue_number: response.queue_number,
@@ -179,21 +180,19 @@
                                     step_number: response.step_number,
                                 };
 
-                                // Determine number of copies based on section
                                 const copies = (this.userSectionId == 15) ? 2 : 1;
-
-                                // Print the ticket 'copies' times
                                 for (let i = 0; i < copies; i++) {
                                     this.generateQueue(data);
                                 }
 
-                                // ✅ Remove the old transaction row from the table
+                                // Remove old row
                                 const row = document.querySelector(`tr[data-id='${id}']`);
                                 if (row) row.remove();
                             }
                         })
                         .catch(err => console.error("Error:", err));
                 },
+
 
 
             };
