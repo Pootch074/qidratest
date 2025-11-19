@@ -21,28 +21,11 @@
                         @csrf
                         <div class="mb-4">
                             <label for="step_name" class="block text-sm font-medium text-gray-700">Step Name</label>
-                            <select id="step_name" name="step_name" class="mt-1 block w-full border rounded-md p-2"
-                                required>
-                                <option value="None">None</option>
-                                <option value="Assessment">Assessment</option>
-                                <option value="Counseling">Counseling</option>
-                                <option value="Data Update">Data Update / Maintenance</option>
-                                <option value="Encode">Encode</option>
-                                <option value="Emergency Response">Emergency Response</option>
-                                <option value="Follow Up">Follow-up / Monitoring</option>
-                                <option value="Home Visit">Home Visit</option>
-                                <option value="Initial Interview">Initial Interview</option>
-                                <option value="Orientation">Orientation / Briefing</option>
-                                <option value="Payment">Payment</option>
-                                <option value="Pre-assessment">Pre-assessment</option>
-                                <option value="Release">Release</option>
-                                <option value="Referral">Referral to Other Agencies</option>
-                                <option value="Reassessment">Re-assessment</option>
-                                <option value="Validation">Validation</option>
-                                <option value="Verification">Verification</option>
-                                <option value="Approval">Approval</option>
-                                <option value="Client Feedback">Client Feedback / Survey</option>
-                                <option value="Closure">Case Closure</option>
+                            <select id="stepName" name="step_name" required
+                                class="mt-1 block w-full border rounded-md p-2">
+                                @foreach (\App\Libraries\StepNames::all() as $step_name)
+                                    <option value="{{ $step_name }}">{{ $step_name }}</option>
+                                @endforeach
                             </select>
                             <p id="stepNameError" class="text-red-600 text-sm mt-1 hidden"></p>
                         </div>
@@ -148,7 +131,7 @@
             if (cancelBtn && modal) cancelBtn.addEventListener('click', () => modal.classList.add('hidden'));
 
             // ✅ Step Name Duplicate Check
-            const stepNameSelect = document.getElementById('step_name');
+            const stepNameSelect = document.getElementById('stepName');
             const saveButton = document.querySelector('#addStepForm button[type="submit"]');
             const stepNameError = document.getElementById('stepNameError');
 
@@ -206,7 +189,7 @@
                     if (newValue !== "None") {
                         fetch(
                                 `${window.appBaseUrl}/steps/check-name/${sectionId}/${encodeURIComponent(newValue)}`
-                                )
+                            )
                             .then(res => res.json())
                             .then(data => {
                                 // If duplicate AND not the same row
