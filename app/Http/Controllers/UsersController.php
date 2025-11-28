@@ -214,13 +214,10 @@ class UsersController extends Controller
             'assigned_category' => 'Category',
         ];
 
-        // Steps that belong to the user's section
         $steps = Step::where('section_id', $sectionId)->get();
 
-        // Windows will be loaded dynamically by step
-        $windows = []; // keep empty initially
+        $windows = [];
 
-        // User types excluding Admin
         $userTypes = collect(User::getUserTypes())
             ->except([User::TYPE_SUPERADMIN, User::TYPE_ADMIN, User::TYPE_IDSCAN, User::TYPE_PACD]);
 
@@ -240,7 +237,7 @@ class UsersController extends Controller
 
         $users = User::with(['step', 'window'])
             ->where('section_id', $sectionId)
-            ->where('user_type', '!=', 1) // ✅ exclude type 1
+            ->where('user_type', '!=', 1)
             ->orderBy('id', 'asc')
             ->get();
 
@@ -279,15 +276,14 @@ class UsersController extends Controller
             'password' => [
                 'required',
                 'string',
-                'min:12',                 // ✅ at least 12 chars
-                'regex:/[a-z]/',          // ✅ at least 1 lowercase
-                'regex:/[A-Z]/',          // ✅ at least 1 uppercase
-                'regex:/[0-9]/',          // ✅ at least 1 number
-                'regex:/[@$!%*?&]/',      // ✅ at least 1 special char
+                'min:12',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*?&]/',
             ],
         ];
 
-        // 🟡 Custom error messages
         $messages = [
             'first_name.regex' => 'First name may only contain letters, spaces, apostrophes, or hyphens.',
             'last_name.regex' => 'Last name may only contain letters, spaces, apostrophes, or hyphens.',
@@ -297,11 +293,9 @@ class UsersController extends Controller
 
         $validated = $request->validate($rules, $messages);
 
-        // 🛡️ Force defaults
         $validated['user_type'] = 5; // always TYPE_USER
 
         if ($sectionId != 15) {
-            // 🔒 override regardless of input
             $validated['assigned_category'] = 'both';
         }
 
@@ -315,7 +309,7 @@ class UsersController extends Controller
             'step_id' => $validated['step_id'],
             'window_id' => $validated['window_id'] ?? null,
             'section_id' => $sectionId,
-            'password' => $validated['password'] ?? null, // ✅ Let the model mutator handle hashing
+            'password' => $validated['password'] ?? null,
         ]);
 
         return response()->json([
@@ -337,7 +331,7 @@ class UsersController extends Controller
     public function destroy(User $user)
     {
         try {
-            $user->forceDelete(); // ⚡️ this will run DELETE FROM users WHERE id=?
+            $user->forceDelete();
 
             return response()->json(['success' => true]);
         } catch (\Exception $e) {

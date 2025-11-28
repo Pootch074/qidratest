@@ -28,7 +28,7 @@
             </div>
 
             <!-- Display Errors -->
-            @error('email')
+            @error('recaptcha_token')
                 <div class="text-red-500 text-sm">{{ $message }}</div>
             @enderror
 
@@ -39,8 +39,9 @@
             @endif
 
             <!-- Form -->
-            <form class="space-y-5" action="{{ route('authenticate') }}" method="POST">
+            <form id="loginForm" class="space-y-5" action="{{ route('authenticate') }}" method="POST">
                 @csrf
+                <input type="hidden" name="recaptcha_token" id="recaptcha_token">
 
                 <!-- Email Input -->
                 <div class="relative">
@@ -97,6 +98,7 @@
                     </button>
                 </div>
             </form>
+            <script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_SITE_KEY') }}"></script>
 
             <!-- Help -->
             <div class="text-center text-sm text-gray-500 mt-4">
@@ -107,5 +109,23 @@
 
         </div>
     </div>
+@endsection
+
+@section('scripts')
+    <script>
+        grecaptcha.ready(() => {
+            grecaptcha.execute('{{ env('RECAPTCHA_SITE_KEY') }}', {
+                    action: 'login'
+                })
+                .then(token => {
+                    const recaptchaInput = document.getElementById('recaptcha_token');
+                    if (recaptchaInput) {
+                        recaptchaInput.value = token;
+                    } else {
+                        console.error('recaptcha_token input not found!');
+                    }
+                });
+        });
+    </script>
 @endsection
 {{-- @vite('resources/css/app.css') --}}
