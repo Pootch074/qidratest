@@ -12,6 +12,17 @@ class LoginRequest extends FormRequest
         return true;
     }
 
+    // Enable recaptcha
+    // public function rules(): array
+    // {
+    //     return [
+    //         'email' => ['required', 'email'],
+    //         'password' => ['required', 'string'],
+    //         'recaptcha_token' => ['required', new Recaptcha()],
+    //     ];
+    // }
+
+    // Disable recaptcha
     public function rules(): array
     {
         $rules = [

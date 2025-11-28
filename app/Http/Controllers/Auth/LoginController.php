@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 class LoginController extends Controller
 {
@@ -30,7 +31,7 @@ class LoginController extends Controller
                 try {
                     Session::getHandler()->destroy($user->session_id);
                 } catch (\Exception $e) {
-                    \Log::warning("Failed to destroy old session for user {$user->id}: {$e->getMessage()}");
+                    Log::warning("Failed to destroy old session for user {$user->id}: {$e->getMessage()}");
                 }
             }
 
