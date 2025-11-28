@@ -14,11 +14,17 @@ class LoginRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
+        $rules = [
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
-            'recaptcha_token' => ['required', new Recaptcha()],
         ];
+
+        // Only validate recaptcha if enabled
+        if (env('RECAPTCHA_ENABLED', false)) {
+            $rules['recaptcha_token'] = ['required', new Recaptcha()];
+        }
+
+        return $rules;
     }
 
     public function messages(): array
@@ -27,7 +33,6 @@ class LoginRequest extends FormRequest
             'email.required' => 'Please enter your email address.',
             'email.email' => 'Enter a valid email address.',
             'password.required' => 'Please enter your password.',
-            'recaptcha_token.required' => 'reCAPTCHA verification failed.',
         ];
     }
 }
