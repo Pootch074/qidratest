@@ -9,12 +9,12 @@
 
         <ul class="space-y-2 font-medium">
             <li>
-                <a href="{{ route('admin') }}"
+                <a href="{{ route('superadmin') }}"
                     class="flex items-center p-2 text-white rounded-lg group
-               {{ request()->routeIs('admin') ? 'bg-[#F03D46]' : 'hover:bg-[#5057c9]' }}">
+               {{ request()->routeIs('superadmin') ? 'bg-[#F03D46]' : 'hover:bg-[#5057c9]' }}">
                     <img src="{{ Vite::asset('resources/images/icons/bar-chart-big.png') }}" alt="Users"
                         class="shrink-0 w-7 h-7 transition duration-75 group-hover:opacity-80">
-                    <span class="ms-3 text-white">Dashboard</span>
+                    <span class="ms-3 text-white">Offices</span>
                 </a>
             </li>
 
