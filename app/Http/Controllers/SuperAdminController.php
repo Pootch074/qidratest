@@ -7,33 +7,23 @@ use App\Models\Section;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+
 
 class SuperAdminController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $query = User::with('section')->admins(); // scope instead of raw where
+        $user = Auth::user();
+        
+        $sections = is_null($user->section_id)
+            ? Section::whereNotIn('id', $excludedSectionIds)->orderBy('section_name')->get(['id', 'section_name'])
+            : Section::where('id', $user->section_id)->get(['id', 'section_name']);
 
-        // 🔎 Search by first_name, last_name, or email
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('first_name', 'like', "%{$search}%")
-                    ->orWhere('last_name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
-            });
-        }
-
-        // 📌 Filter by section
-        if ($request->filled('section')) {
-            $query->where('section_id', $request->section);
-        }
-
-        $admins = $query->latest()->get();
-        $sections = Section::orderBy('section_name')->get();
-
-        return view('superadmin.index', compact('admins', 'sections'));
+        return view('superadmin.index', compact('sections'));
     }
+
+    
 
     /**
      * Store a new admin user (user_type = 1).
