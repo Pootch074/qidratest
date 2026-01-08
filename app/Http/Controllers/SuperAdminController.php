@@ -15,12 +15,7 @@ class SuperAdminController extends Controller
     public function index()
     {
         $user = Auth::user();
-        
-        $sections = is_null($user->section_id)
-            ? Section::whereNotIn('id', $excludedSectionIds)->orderBy('section_name')->get(['id', 'section_name'])
-            : Section::where('id', $user->section_id)->get(['id', 'section_name']);
-
-        return view('superadmin.index', compact('sections'));
+        return view('superadmin.index');
     }
 
     
