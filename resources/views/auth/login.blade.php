@@ -97,6 +97,13 @@
                         Login
                     </button>
                 </div>
+
+                <div class="flex items-center space-x-2 pl-2">
+                    <label for="terms" class="text-sm text-gray-700">
+                        Don't have an account? <a href="{{ route('register') }}"
+                            class="text-indigo-600 hover:underline">Sign up</a>
+                    </label>
+                </div>
             </form>
             <script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_SITE_KEY') }}"></script>
 

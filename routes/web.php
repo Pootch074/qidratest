@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DisplayController;
 use App\Http\Controllers\IdscanController;
 use App\Http\Controllers\PacdController;
@@ -42,9 +43,9 @@ Route::get('/session/check', function () {
 |--------------------------------------------------------------------------
 */
 Route::get('/', fn () => Auth::check() ? redirect()->intended() : redirect(route('login')));
-
 Route::get('/auth/login', [LoginController::class, 'login'])->name('login');
 Route::post('/auth/login', [LoginController::class, 'authenticate'])->name('authenticate');
+Route::get('/auth/register', [RegisterController::class, 'index'])->name('register');
 
 /*
 |--------------------------------------------------------------------------
