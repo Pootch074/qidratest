@@ -41,6 +41,33 @@
 
                 <!-- Position & Area of Assignment -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Area of Assignment -->
+                    <div class="relative">
+                        <select name="area_assignment" required
+                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                            <option value="" disabled selected>Area of Assignment</option>
+                            @foreach ($offices as $id => $name)
+                                <option value="{{ $id }}" {{ old('area_assignment') == $id ? 'selected' : '' }}>
+                                    {{ $name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Section -->
+                    <div class="relative">
+                        <select name="section" required
+                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                            <option value="" disabled selected>Select Section</option>
+                            @foreach ($sections as $id => $name)
+                                <option value="{{ $id }}" {{ old('section') == $id ? 'selected' : '' }}>
+                                    {{ $name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Position -->
                     <div class="relative">
                         <select name="position" required
@@ -52,26 +79,11 @@
                         </select>
                     </div>
 
-                    <!-- Area of Assignment -->
+                    <!-- Email Address -->
                     <div class="relative">
-                        <select name="area_assignment" required
+                        <input type="email" name="email" autocomplete="email" required placeholder="Email Address"
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-
-                            <option value="" disabled selected>Area of Assignment</option>
-
-                            @foreach ($offices as $id => $name)
-                                <option value="{{ $id }}" {{ old('area_assignment') == $id ? 'selected' : '' }}>
-                                    {{ $name }}
-                                </option>
-                            @endforeach
-                        </select>
                     </div>
-                </div>
-
-                <!-- Email Address -->
-                <div class="relative">
-                    <input type="email" name="email" autocomplete="email" required placeholder="Email Address"
-                        class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                 </div>
 
                 <!-- Password -->
