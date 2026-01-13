@@ -16,49 +16,82 @@
             </div>
 
             <!-- Form -->
-            <form id="loginForm" class="space-y-5" action="{{ route('authenticate') }}" method="POST">
+            <form id="registerForm" class="space-y-5" action="{{ route('authenticate') }}" method="POST">
                 @csrf
                 <input type="hidden" name="recaptcha_token" id="recaptcha_token">
 
-                <!-- Email Input -->
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                        <img src="{{ Vite::asset('resources/images/icons/icon-email.png') }}" alt="Email"
-                            class="w-6 h-6">
-                    </span>
-                    <input type="email" name="email" id="email" autocomplete="email" required
-                        placeholder="jdcruz@dswd.gov.ph"
-                        class="block w-full h-14 pl-12 pr-4 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] transition outline-none">
+                <!-- First Name & Last Name -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- First Name -->
+                    <div class="relative">
+                        {{-- <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <img src="{{ Vite::asset('resources/images/icons/icon-user.png') }}" alt="First Name"
+                                class="w-6 h-6">
+                        </span> --}}
+                        <input type="text" name="first_name" required placeholder="First Name"
+                            class="block w-full h-14 pl-6 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                    </div>
+
+                    <!-- Last Name -->
+                    <div class="relative">
+                        {{-- <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <img src="{{ Vite::asset('resources/images/icons/icon-user.png') }}" alt="Last Name"
+                                class="w-6 h-6">
+                        </span> --}}
+                        <input type="text" name="last_name" required placeholder="Last Name"
+                            class="block w-full h-14 pl-6 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                    </div>
                 </div>
 
-                <!-- Password Input with Eye Toggle (Alpine) -->
+                <!-- Position & Area of Assignment -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Position -->
+                    <div class="relative">
+                        {{-- <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <img src="{{ Vite::asset('resources/images/icons/icon-briefcase.png') }}" alt="Position"
+                                class="w-6 h-6">
+                        </span> --}}
+                        <input type="text" name="position" required placeholder="Position"
+                            class="block w-full h-14 pl-6 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                    </div>
+
+                    <!-- Area of Assignment -->
+                    <div class="relative">
+                        {{-- <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <img src="{{ Vite::asset('resources/images/icons/icon-location.png') }}"
+                                alt="Area of Assignment" class="w-6 h-6">
+                        </span> --}}
+                        <input type="text" name="area_assignment" required placeholder="Area of Assignment"
+                            class="block w-full h-14 pl-6 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                    </div>
+                </div>
+
+                <!-- Email Address -->
+                <div class="relative">
+                    {{-- <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <img src="{{ Vite::asset('resources/images/icons/icon-email.png') }}" alt="Email"
+                            class="w-6 h-6">
+                    </span> --}}
+                    <input type="email" name="email" autocomplete="email" required placeholder="Email Address"
+                        class="block w-full h-14 pl-6 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                </div>
+
+                <!-- Password -->
                 <div class="relative" x-data="{ show: false }">
-                    <!-- Left Icon -->
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                    {{-- <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                         <img src="{{ Vite::asset('resources/images/icons/icon-password.png') }}" alt="Password"
                             class="w-6 h-6">
-                    </span>
+                    </span> --}}
 
-                    <!-- Password Field -->
-                    <input :type="show ? 'text' : 'password'" name="password" id="password" autocomplete="current-password"
-                        required placeholder="********"
-                        class="block w-full h-14 pl-12 pr-12 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] transition outline-none">
+                    <input :type="show ? 'text' : 'password'" name="password" required placeholder="Password"
+                        class="block w-full h-14 pl-6 pr-12 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
 
-                    <!-- Eye Toggle Button -->
-                    <button type="button" @click="show = !show"
-                        class="absolute inset-y-0 right-0 flex items-center pr-3 focus:outline-none">
-
-                        <!-- Closed eye (default) -->
-                        <img x-show="!show" src="{{ Vite::asset('resources/images/icons/eye-close.png') }}"
-                            alt="Show Password" class="w-5 h-5">
-
-                        <!-- Open eye -->
-                        <img x-show="show" src="{{ Vite::asset('resources/images/icons/eye-open.png') }}"
-                            alt="Hide Password" class="w-5 h-5">
+                    <button type="button" @click="show = !show" class="absolute inset-y-0 right-0 flex items-center pr-3">
+                        <img x-show="!show" src="{{ Vite::asset('resources/images/icons/eye-close.png') }}" class="w-5 h-5">
+                        <img x-show="show" src="{{ Vite::asset('resources/images/icons/eye-open.png') }}" class="w-5 h-5">
                     </button>
                 </div>
 
-                <!-- Terms Checkbox -->
                 <div class="flex items-center space-x-2 pl-2">
                     <input type="checkbox" name="terms" id="terms" required
                         class="w-4 h-4 text-indigo-600 rounded focus:ring-[#2e3192] border-gray-300">
@@ -67,14 +100,11 @@
                     </label>
                 </div>
 
-                <!-- Submit Button -->
-                <div>
-                    <button type="submit"
-                        class="w-full flex justify-center items-center h-14 px-6 rounded-xl bg-[#2e3192] text-white font-semibold shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-[#2e3192] transition">
-                        Login
-                    </button>
-                </div>
-
+                <!-- Submit -->
+                <button type="submit"
+                    class="w-full h-14 rounded-xl bg-[#2e3192] text-white font-semibold hover:bg-indigo-700 transition">
+                    Register
+                </button>
                 <div class="flex items-center space-x-2 pl-2">
                     <label for="terms" class="text-sm text-gray-700">
                         Already have an account? <a href="{{ route('login') }}" class="text-indigo-600 hover:underline">Sign
@@ -82,6 +112,7 @@
                     </label>
                 </div>
             </form>
+
             <script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_SITE_KEY') }}"></script>
 
             <!-- Help -->
