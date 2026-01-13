@@ -34,10 +34,6 @@
 
                     <!-- Last Name -->
                     <div class="relative">
-                        {{-- <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                            <img src="{{ Vite::asset('resources/images/icons/icon-user.png') }}" alt="Last Name"
-                                class="w-6 h-6">
-                        </span> --}}
                         <input type="text" name="last_name" required placeholder="Last Name"
                             class="block w-full h-14 pl-6 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                     </div>
@@ -47,20 +43,17 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Position -->
                     <div class="relative">
-                        {{-- <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                            <img src="{{ Vite::asset('resources/images/icons/icon-briefcase.png') }}" alt="Position"
-                                class="w-6 h-6">
-                        </span> --}}
-                        <input type="text" name="position" required placeholder="Position"
+                        <select name="position" required
                             class="block w-full h-14 pl-6 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                            <option value="" disabled selected>Select Position</option>
+                            @foreach ($positions as $position)
+                                <option value="{{ $position }}">{{ $position }}</option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <!-- Area of Assignment -->
                     <div class="relative">
-                        {{-- <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                            <img src="{{ Vite::asset('resources/images/icons/icon-location.png') }}"
-                                alt="Area of Assignment" class="w-6 h-6">
-                        </span> --}}
                         <input type="text" name="area_assignment" required placeholder="Area of Assignment"
                             class="block w-full h-14 pl-6 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                     </div>
@@ -68,21 +61,12 @@
 
                 <!-- Email Address -->
                 <div class="relative">
-                    {{-- <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                        <img src="{{ Vite::asset('resources/images/icons/icon-email.png') }}" alt="Email"
-                            class="w-6 h-6">
-                    </span> --}}
                     <input type="email" name="email" autocomplete="email" required placeholder="Email Address"
                         class="block w-full h-14 pl-6 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                 </div>
 
                 <!-- Password -->
                 <div class="relative" x-data="{ show: false }">
-                    {{-- <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                        <img src="{{ Vite::asset('resources/images/icons/icon-password.png') }}" alt="Password"
-                            class="w-6 h-6">
-                    </span> --}}
-
                     <input :type="show ? 'text' : 'password'" name="password" required placeholder="Password"
                         class="block w-full h-14 pl-6 pr-12 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
 
