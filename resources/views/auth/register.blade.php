@@ -1,7 +1,7 @@
 @extends('layouts.auth')
 @section('content')
     <div id="auth-login">
-        <div class="w-full max-w-md bg-[#f6f6f6] rounded-2xl shadow-lg p-8 space-y-6">
+        <div class="w-full max-w-md bg-[#f6f6f6] rounded-2xl shadow-lg p-6 space-y-6">
             <div class="text-center flex flex-col items-center">
                 <h2 class="text-2xl font-bold text-gray-900">Welcome to</h2>
 
@@ -29,13 +29,13 @@
                                 class="w-6 h-6">
                         </span> --}}
                         <input type="text" name="first_name" required placeholder="First Name"
-                            class="block w-full h-14 pl-6 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                     </div>
 
                     <!-- Last Name -->
                     <div class="relative">
                         <input type="text" name="last_name" required placeholder="Last Name"
-                            class="block w-full h-14 pl-6 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                     </div>
                 </div>
 
@@ -44,7 +44,7 @@
                     <!-- Position -->
                     <div class="relative">
                         <select name="position" required
-                            class="block w-full h-14 pl-6 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                             <option value="" disabled selected>Select Position</option>
                             @foreach ($positions as $position)
                                 <option value="{{ $position }}">{{ $position }}</option>
@@ -54,26 +54,53 @@
 
                     <!-- Area of Assignment -->
                     <div class="relative">
-                        <input type="text" name="area_assignment" required placeholder="Area of Assignment"
-                            class="block w-full h-14 pl-6 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                        <select name="area_assignment" required
+                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+
+                            <option value="" disabled selected>Area of Assignment</option>
+
+                            @foreach ($offices as $id => $name)
+                                <option value="{{ $id }}" {{ old('area_assignment') == $id ? 'selected' : '' }}>
+                                    {{ $name }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
 
                 <!-- Email Address -->
                 <div class="relative">
                     <input type="email" name="email" autocomplete="email" required placeholder="Email Address"
-                        class="block w-full h-14 pl-6 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                        class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                 </div>
 
                 <!-- Password -->
-                <div class="relative" x-data="{ show: false }">
-                    <input :type="show ? 'text' : 'password'" name="password" required placeholder="Password"
-                        class="block w-full h-14 pl-6 pr-12 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="relative" x-data="{ show: false }">
+                        <input :type="show ? 'text' : 'password'" name="password" required placeholder="Password"
+                            class="block w-full h-14 pl-3 pr-12 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
 
-                    <button type="button" @click="show = !show" class="absolute inset-y-0 right-0 flex items-center pr-3">
-                        <img x-show="!show" src="{{ Vite::asset('resources/images/icons/eye-close.png') }}" class="w-5 h-5">
-                        <img x-show="show" src="{{ Vite::asset('resources/images/icons/eye-open.png') }}" class="w-5 h-5">
-                    </button>
+                        <button type="button" @click="show = !show"
+                            class="absolute inset-y-0 right-0 flex items-center pr-3">
+                            <img x-show="!show" src="{{ Vite::asset('resources/images/icons/eye-close.png') }}"
+                                class="w-5 h-5">
+                            <img x-show="show" src="{{ Vite::asset('resources/images/icons/eye-open.png') }}"
+                                class="w-5 h-5">
+                        </button>
+                    </div>
+
+                    <div class="relative" x-data="{ show: false }">
+                        <input :type="show ? 'text' : 'password'" name="password" required placeholder="Confirm Password"
+                            class="block w-full h-14 pl-3 pr-12 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+
+                        <button type="button" @click="show = !show"
+                            class="absolute inset-y-0 right-0 flex items-center pr-3">
+                            <img x-show="!show" src="{{ Vite::asset('resources/images/icons/eye-close.png') }}"
+                                class="w-5 h-5">
+                            <img x-show="show" src="{{ Vite::asset('resources/images/icons/eye-open.png') }}"
+                                class="w-5 h-5">
+                        </button>
+                    </div>
                 </div>
 
                 <div class="flex items-center space-x-2 pl-2">
@@ -91,7 +118,8 @@
                 </button>
                 <div class="flex items-center space-x-2 pl-2">
                     <label for="terms" class="text-sm text-gray-700">
-                        Already have an account? <a href="{{ route('login') }}" class="text-indigo-600 hover:underline">Sign
+                        Already have an account? <a href="{{ route('login') }}"
+                            class="text-indigo-600 hover:underline">Sign
                             in</a>
                     </label>
                 </div>
