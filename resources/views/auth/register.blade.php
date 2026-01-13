@@ -16,7 +16,7 @@
             </div>
 
             <!-- Form -->
-            <form id="registerForm" class="space-y-5" action="{{ route('authenticate') }}" method="POST">
+            <form id="registerForm" class="space-y-5" action="{{ route('register.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="recaptcha_token" id="recaptcha_token">
 
@@ -83,6 +83,17 @@
                     <div class="relative">
                         <input type="email" name="email" autocomplete="email" required placeholder="Email Address"
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+
+                        @error('email')
+                            <p id="emailMessage" class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+
+                        <script>
+                            setTimeout(() => {
+                                const toast = document.getElementById('emailMessage');
+                                if (toast) toast.remove();
+                            }, 4000);
+                        </script>
                     </div>
                 </div>
 
@@ -102,7 +113,8 @@
                     </div>
 
                     <div class="relative" x-data="{ show: false }">
-                        <input :type="show ? 'text' : 'password'" name="password" required placeholder="Confirm Password"
+                        <input :type="show ? 'text' : 'password'" name="password_confirmation" required
+                            placeholder="Confirm Password"
                             class="block w-full h-14 pl-3 pr-12 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
 
                         <button type="button" @click="show = !show"

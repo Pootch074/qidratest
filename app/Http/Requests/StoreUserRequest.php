@@ -8,8 +8,6 @@ class StoreUserRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // You can add authorization logic here if needed.
-        // For now, allow everyone:
         return true;
     }
 

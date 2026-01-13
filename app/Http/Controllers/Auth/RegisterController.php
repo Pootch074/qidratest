@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterRequest;
 use App\Libraries\Offices;
-use App\Libraries\Sections;
 use App\Libraries\Positions;
+use App\Libraries\Sections;
+use App\Models\User;
 
 class RegisterController extends Controller
 {
@@ -17,5 +19,15 @@ class RegisterController extends Controller
             'positions' => Positions::all(),
 
         ]);
+    }
+
+    public function register(RegisterRequest $request)
+    {
+        $data = $request->validated();
+
+        $data['password'] = bcrypt($data['password']);
+        $user = User::create($data);
+
+        return redirect()->route('login')->with('success', 'Account created successfully!');
     }
 }

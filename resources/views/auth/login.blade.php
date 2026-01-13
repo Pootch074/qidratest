@@ -38,6 +38,20 @@
                 </div>
             @endif
 
+            @if (session('success'))
+                <div id="success-toast"
+                    class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4 text-sm">
+                    {{ session('success') }}
+                </div>
+
+                <script>
+                    setTimeout(() => {
+                        const toast = document.getElementById('success-toast');
+                        if (toast) toast.remove();
+                    }, 4000);
+                </script>
+            @endif
+
             <!-- Form -->
             <form id="loginForm" class="space-y-5" action="{{ route('authenticate') }}" method="POST">
                 @csrf

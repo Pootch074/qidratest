@@ -43,9 +43,19 @@ Route::get('/session/check', function () {
 |--------------------------------------------------------------------------
 */
 Route::get('/', fn () => Auth::check() ? redirect()->intended() : redirect(route('login')));
-Route::get('/auth/login', [LoginController::class, 'login'])->name('login');
-Route::post('/auth/login', [LoginController::class, 'authenticate'])->name('authenticate');
-Route::get('/auth/register', [RegisterController::class, 'index'])->name('register');
+
+
+Route::prefix('auth')->group(function () {
+    // Show registration form
+    Route::get('/register', [RegisterController::class, 'index'])->name('register');
+
+    // Handle registration form submission
+    Route::post('/register', [RegisterController::class, 'register'])->name('register.store');
+
+    // Login route 
+    Route::get('/login', [LoginController::class, 'login'])->name('login');
+    Route::post('/login', [LoginController::class, 'authenticate'])->name('authenticate');
+});
 
 /*
 |--------------------------------------------------------------------------
