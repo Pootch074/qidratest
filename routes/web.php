@@ -10,6 +10,7 @@ use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\TransactionsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\WindowsController;
+use App\Http\Controllers\OtpController;
 use App\Http\Middleware\CheckUserType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -42,8 +43,11 @@ Route::get('/session/check', function () {
 | Public Routes
 |--------------------------------------------------------------------------
 */
-Route::get('/', fn () => Auth::check() ? redirect()->intended() : redirect(route('login')));
+Route::get('/otp-verify', [OtpController::class, 'show'])->name('otp.verify');
+Route::post('/otp-verify', [OtpController::class, 'verify'])->name('otp.verify.submit');
 
+
+Route::get('/', fn () => Auth::check() ? redirect()->intended() : redirect(route('login')));
 
 Route::prefix('auth')->group(function () {
     // Show registration form

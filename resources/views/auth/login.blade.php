@@ -48,7 +48,7 @@
                     setTimeout(() => {
                         const toast = document.getElementById('success-toast');
                         if (toast) toast.remove();
-                    }, 4000);
+                    }, 10000);
                 </script>
             @endif
 
