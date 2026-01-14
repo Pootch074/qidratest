@@ -28,7 +28,6 @@ class StoreUserRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.unique' => 'This email is already registered.',
             'user_type.in' => 'User type must be one of: 0, 1, 2, 3, or 4.',
         ];
     }

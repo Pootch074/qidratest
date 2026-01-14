@@ -22,53 +22,45 @@
 
                 <!-- First Name & Last Name -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- First Name -->
                     <div class="relative">
-                        {{-- <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                            <img src="{{ Vite::asset('resources/images/icons/icon-user.png') }}" alt="First Name"
-                                class="w-6 h-6">
-                        </span> --}}
                         <input type="text" name="first_name" required placeholder="First Name"
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                     </div>
 
-                    <!-- Last Name -->
                     <div class="relative">
                         <input type="text" name="last_name" required placeholder="Last Name"
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                     </div>
                 </div>
 
-                <!-- Position & Area of Assignment -->
+                <!-- Area of Assignment & Section -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Area of Assignment -->
                     <div class="relative">
-                        <select name="area_assignment" required
+                        <select name="office_id" required
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                             <option value="" disabled selected>Area of Assignment</option>
                             @foreach ($offices as $id => $name)
-                                <option value="{{ $id }}" {{ old('area_assignment') == $id ? 'selected' : '' }}>
+                                <option value="{{ $id }}" {{ old('office_id') == $id ? 'selected' : '' }}>
                                     {{ $name }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
-                    <!-- Section -->
                     <div class="relative">
-                        <select name="section" required
+                        <select name="section_id" required
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                             <option value="" disabled selected>Select Section</option>
                             @foreach ($sections as $id => $name)
-                                <option value="{{ $id }}" {{ old('section') == $id ? 'selected' : '' }}>
+                                <option value="{{ $id }}" {{ old('section_id') == $id ? 'selected' : '' }}>
                                     {{ $name }}</option>
                             @endforeach
                         </select>
                     </div>
                 </div>
 
+                <!-- Position & Email Add-->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Position -->
                     <div class="relative">
                         <select name="position" required
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
@@ -79,21 +71,13 @@
                         </select>
                     </div>
 
-                    <!-- Email Address -->
                     <div class="relative">
                         <input type="email" name="email" autocomplete="email" required placeholder="Email Address"
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
 
                         @error('email')
-                            <p id="emailMessage" class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                            <p id="emailMessage" class="form-error text-red-600 text-sm mt-1">{{ $message }}</p>
                         @enderror
-
-                        <script>
-                            setTimeout(() => {
-                                const toast = document.getElementById('emailMessage');
-                                if (toast) toast.remove();
-                            }, 4000);
-                        </script>
                     </div>
                 </div>
 
@@ -125,6 +109,13 @@
                                 class="w-5 h-5">
                         </button>
                     </div>
+                    @error('password')
+                        <p class="form-error text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+
+                    @error('password_confirmation')
+                        <p class="form-error text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="flex items-center space-x-2 pl-2">
@@ -149,8 +140,6 @@
                 </div>
             </form>
 
-            <script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_SITE_KEY') }}"></script>
-
             <!-- Help -->
             <div class="text-center text-sm text-gray-500 mt-4">
                 Need Help? Email us at
@@ -161,8 +150,17 @@
         </div>
     </div>
 @endsection
+<script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_SITE_KEY') }}"></script>
 
 @section('scripts')
+    <script>
+        setTimeout(() => {
+            document.querySelectorAll('.form-error').forEach(el => {
+                el.remove();
+            });
+        }, 10000);
+    </script>
+
     <script>
         grecaptcha.ready(() => {
             grecaptcha.execute('{{ env('RECAPTCHA_SITE_KEY') }}', {
