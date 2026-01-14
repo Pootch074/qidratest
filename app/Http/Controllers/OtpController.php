@@ -21,6 +21,7 @@ class OtpController extends Controller
             'otp_code' => 'required|digits:6',
         ]);
 
+        // Step 2: Find the user
         $user = User::where('email', $request->email)
                     ->where('otp_code', $request->otp_code)
                     ->first();
@@ -30,11 +31,11 @@ class OtpController extends Controller
         }
 
         if ($user->otp_expires_at < Carbon::now()) {
-            return back()->withErrors(['otp_code' => 'OTP has expired.']);
+            return back()->withErrors(['otp_code' => 'Your OTP has expired. Please request a new one.']);
         }
 
         // Mark user as verified
-        $user->is_verified = true;
+        $user->email_is_verified = true;
         // $user->status = User::STATUS_ACTIVE;
         $user->otp_code = null;
         $user->otp_expires_at = null;

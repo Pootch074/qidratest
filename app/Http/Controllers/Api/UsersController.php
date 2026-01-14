@@ -26,7 +26,7 @@ class UsersController extends Controller
                 'assigned_category' => $user->assigned_category,
                 'window_id' => $user->window_id,
                 'status' => $user->getStatus($user->status),
-                'email_verified_at' => $user->email_verified_at,
+                'email_is_verified' => $user->email_is_verified,
                 'created_at' => $user->created_at,
                 'updated_at' => $user->updated_at,
             ];

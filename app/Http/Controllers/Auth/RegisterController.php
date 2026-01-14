@@ -36,7 +36,7 @@ class RegisterController extends Controller
         // Generate OTP
         $otp = rand(100000, 999999); // 6-digit code
         $user->otp_code = $otp;
-        $user->otp_expires_at = Carbon::now()->addMinutes(1); // OTP valid for 5 mins
+        $user->otp_expires_at = Carbon::now()->addMinutes(5); // OTP valid for 5 mins
         $user->save();
 
         // Send OTP via email
