@@ -27,6 +27,14 @@ class LoginController extends Controller
 
             $user = User::find(Auth::id());
 
+            // BLOCK LOGIN if user status = 1
+            if ($user->status === User::STATUS_INACTIVE) { // or === 1 if you prefer literal
+                Auth::logout(); // immediately log out
+                return back()->withErrors([
+                    'email' => 'Login denied: Your account is pending or blocked.',
+                ])->onlyInput('email');
+            }
+
             if ($user->is_logged_in && $user->session_id && $user->session_id !== session()->getId()) {
                 try {
                     Session::getHandler()->destroy($user->session_id);
@@ -52,21 +60,21 @@ class LoginController extends Controller
             $request->session()->put('field_office', $office->field_office ?? null);
 
             switch ($user->user_type) {
-                case 0:
-                    return redirect()->route('superadmin');
-                case 1:
-                    return redirect()->route('admin');
-                case 2:
-                    return redirect()->route('idscan');
-                case 3:
-                    return redirect()->route('pacd');
-                case 5:
-                    return redirect()->route('user');
-                case 6:
-                    return redirect()->route('display');
-                default:
-                    return redirect()->route('login');
-            }
+            case User::TYPE_SUPERADMIN:
+                return redirect()->route('superadmin');
+            case User::TYPE_ADMIN:
+                return redirect()->route('admin');
+            case User::TYPE_IDSCAN:
+                return redirect()->route('idscan');
+            case User::TYPE_PACD:
+                return redirect()->route('pacd');
+            case User::TYPE_USER:
+                return redirect()->route('user');
+            case User::TYPE_DISPLAY:
+                return redirect()->route('display');
+            default:
+                return redirect()->route('login');
+        }
         }
 
         return back()->withErrors([

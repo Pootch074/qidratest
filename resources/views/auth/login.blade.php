@@ -67,6 +67,11 @@
                         placeholder="jdcruz@dswd.gov.ph"
                         class="block w-full h-14 pl-12 pr-4 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] transition outline-none">
                 </div>
+                @if ($errors->has('email'))
+                    <p class="mt-2 text-sm text-red-600">
+                        {{ $errors->first('email') }}
+                    </p>
+                @endif
 
                 <!-- Password Input with Eye Toggle (Alpine) -->
                 <div class="relative" x-data="{ show: false }">

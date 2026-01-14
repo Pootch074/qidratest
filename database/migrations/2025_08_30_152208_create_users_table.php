@@ -27,7 +27,7 @@ return new class extends Migration
             $table->foreign('step_id')->references('id')->on('steps')->onDelete('set null');
             $table->unsignedBigInteger('window_id')->nullable();
             $table->foreign('window_id')->references('id')->on('windows')->onDelete('set null');
-            $table->tinyInteger('status')->default(1);
+            $table->tinyInteger('status')->default(0);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
