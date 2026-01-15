@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\DB;
 
 class SectionsSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');

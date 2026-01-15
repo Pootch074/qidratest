@@ -10,7 +10,7 @@ class Offices
     public static function all()
     {
         if (self::$offices === null) {
-            self::$offices = Office::pluck('field_office', 'id')->toArray();
+            self::$offices = Office::pluck('office_name', 'id')->toArray();
         }
 
         return self::$offices;

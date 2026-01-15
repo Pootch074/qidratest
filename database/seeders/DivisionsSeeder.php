@@ -19,7 +19,7 @@ class DivisionsSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         // ✅ Dynamically fetch the office ID for “DSWD FO XI”
-        $officeId = Office::where('field_office', 'DSWD FO XI')->value('id');
+        $officeId = Office::where('office_name', 'DSWD FO XI')->value('id');
 
         // Defensive check — prevents seeding if the office doesn’t exist
         if (! $officeId) {

@@ -18,7 +18,7 @@ class OfficesSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $offices = [
-            'field_office' => 'DSWD FO XI',
+            'office_name' => 'DSWD FO XI',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ];

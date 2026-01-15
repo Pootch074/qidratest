@@ -84,7 +84,7 @@ class UsersController extends Controller
 
         $stepNumber = optional($user->step)->step_number;
         $windowNumber = optional($user->window)->window_number;
-        $fieldOffice = optional($user->section?->division?->office)->field_office;
+        $fieldOffice = optional($user->section?->division?->office)->office_name;
         $divisionName = optional($user->section?->division)->division_name;
         $sectionName = optional($user->section)->section_name;
 
@@ -110,7 +110,7 @@ class UsersController extends Controller
             'windowNumber' => optional($user->window)->window_number ?? 'N/A',
             'sectionName' => optional($user->section)->section_name ?? 'N/A',
             'divisionName' => optional($user->section?->division)->division_name ?? 'N/A',
-            'fieldOffice' => optional($user->section?->division?->office)->field_office ?? 'N/A',
+            'fieldOffice' => optional($user->section?->division?->office)->office_name ?? 'N/A',
         ];
 
         return response()->json(array_merge($queues, [

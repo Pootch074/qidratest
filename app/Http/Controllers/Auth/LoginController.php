@@ -57,7 +57,7 @@ class LoginController extends Controller
             $request->session()->put('step_number', $user->window->step->step_number ?? null);
             $request->session()->put('section_name', $section->section_name ?? null);
             $request->session()->put('division_name', $division->division_name ?? null);
-            $request->session()->put('field_office', $office->field_office ?? null);
+            $request->session()->put('office_name', $office->office_name ?? null);
 
             switch ($user->user_type) {
             case User::TYPE_SUPERADMIN:
