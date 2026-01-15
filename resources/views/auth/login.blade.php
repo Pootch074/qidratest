@@ -137,9 +137,6 @@
                         I agree to the <a href="" id="openTermsModal" class="text-indigo-600 hover:underline">Terms
                             and Conditions</a>
                     </label>
-                    {{-- <label type="button"  >
-                        
-                    </label>. --}}
                 </div>
 
                 <!-- Submit Button -->
