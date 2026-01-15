@@ -134,11 +134,12 @@
                 <div class="flex items-center space-x-2 pl-2">
                     <input type="checkbox" name="terms" id="terms" required>
                     <label for="terms" class="text-sm text-gray-700">
-                        I agree to the
+                        I agree to the <a href="" id="openTermsModal" class="text-indigo-600 hover:underline">Terms
+                            and Conditions</a>
                     </label>
-                    <button type="button" id="openTermsModal" class="text-indigo-600 hover:underline">
-                        Terms and Conditions
-                    </button>.
+                    {{-- <label type="button"  >
+                        
+                    </label>. --}}
                 </div>
 
                 <!-- Submit Button -->
