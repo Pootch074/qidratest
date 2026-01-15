@@ -75,7 +75,7 @@ class UsersController extends Controller
         ];
     }
 
-    public function user()
+    public function index()
     {
         $user = Auth::user();
         logger()->info('Logged-in user step_id: '.$user->step_id);

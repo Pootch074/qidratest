@@ -81,7 +81,7 @@ Route::middleware(['auth', CheckUserType::class.':0,1,2,3,5,6'])->group(function
     Route::get('admin', [UsersController::class, 'admin'])->name('admin');
     Route::get('idscan', [IdscanController::class, 'index'])->name('idscan');
     Route::get('pacd', [PacdController::class, 'index'])->name('pacd');
-    Route::get('user', [UsersController::class, 'user'])->name('user');
+    Route::get('user', [UsersController::class, 'index'])->name('user');
     Route::get('display', [DisplayController::class, 'index'])->name('display');
 });
 
