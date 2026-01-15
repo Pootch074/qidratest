@@ -167,7 +167,6 @@ class UsersController extends Controller
             'position' => 'Position',
             'user_type' => 'User Type',
             'assigned_category' => 'Category',
-            'window_id' => 'Window ID',
         ];
 
         $users = User::where('section_id', $sectionId)
