@@ -17,10 +17,11 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'divisionId' => ['required', 'integer', 'exists:offices,id'],
-            'sectionId' => ['required', 'integer', 'exists:sections,id'],
             'firstName' => ['required', 'string', 'max:255'],
             'lastName' => ['required', 'string', 'max:255'],
+            'divisionId' => ['required', 'integer', 'exists:divisions,id'],
+            'sectionId' => ['required', 'integer', 'exists:sections,id'],
+            'position' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email', 'regex:/^[\w\.\-]+@([\w\-]+\.)+[a-zA-Z]{2,}$/'],
             'password' => [
                 'required',
@@ -33,7 +34,6 @@ class RegisterRequest extends FormRequest
                 'confirmed',           // must match password_confirmation
             ],
             'password_confirmation' => ['required', 'string', 'min:12'],
-            'position' => ['required', 'string'],
             'terms' => ['required', 'accepted'],
         ];
     }

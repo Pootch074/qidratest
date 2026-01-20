@@ -17,7 +17,7 @@ class RegisterController extends Controller
     public function index()
     {
         return view('auth.register', [
-            'areaOfAssignment' => Divisions::all(),
+            'divisions' => Divisions::all(),
             'sections' => Sections::all(),
             'positions' => Positions::all(),
 
@@ -30,7 +30,7 @@ class RegisterController extends Controller
         $user = User::create([
             'first_name' => $data['firstName'],
             'last_name' => $data['lastName'],
-            'office_id' => $data['divisionId'],
+            'division_id' => $data['divisionId'],
             'section_id' => $data['sectionId'],
             'position' => $data['position'],
             'email' => $data['email'],

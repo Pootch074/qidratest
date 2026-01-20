@@ -36,12 +36,12 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Area of Assignment -->
                     <div class="relative">
-                        <select name="divisionId" id="office_id" required
+                        <select name="divisionId" id="division_id" required
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                            <option value="" disabled {{ old('office_id') ? '' : 'selected' }}>Area of Assignment
+                            <option value="" disabled {{ old('divisionId') ? '' : 'selected' }}>Area of Assignment
                             </option>
-                            @foreach ($areaOfAssignment as $id => $name)
-                                <option value="{{ $id }}" {{ old('office_id') == $id ? 'selected' : '' }}>
+                            @foreach ($divisions as $id => $name)
+                                <option value="{{ $id }}" {{ old('divisionId') == $id ? 'selected' : '' }}>
                                     {{ $name }}
                                 </option>
                             @endforeach
@@ -52,19 +52,19 @@
                     <div class="relative">
                         <select name="sectionId" id="section_id" required
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
-                            {{ old('office_id') ? '' : 'disabled' }}>
+                            {{ old('divisionId') ? '' : 'disabled' }}>
                             <option value="" disabled selected>Section/Unit</option>
 
-                            @if (old('office_id'))
+                            @if (old('divisionId'))
                                 @php
                                     $sections = DB::table('sections')
-                                        ->where('division_id', old('office_id'))
+                                        ->where('division_id', old('divisionId'))
                                         ->orderBy('section_name')
                                         ->get();
                                 @endphp
                                 @foreach ($sections as $section)
                                     <option value="{{ $section->id }}"
-                                        {{ old('section_id') == $section->id ? 'selected' : '' }}>
+                                        {{ old('sectionId') == $section->id ? 'selected' : '' }}>
                                         {{ $section->section_name }}
                                     </option>
                                 @endforeach
@@ -78,10 +78,16 @@
                     <div class="relative">
                         <select name="position" required
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                            <option value="" disabled selected>Select Position</option>
+                            <option value="" disabled {{ old('position') ? '' : 'selected' }}>
+                                Select Position
+                            </option>
+
                             @foreach ($positions as $position)
-                                <option value="{{ $position }}">{{ $position }}</option>
+                                <option value="{{ $position }}" {{ old('position') == $position ? 'selected' : '' }}>
+                                    {{ $position }}
+                                </option>
                             @endforeach
+
                         </select>
                     </div>
 
@@ -193,7 +199,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const divisionSelect = document.getElementById('office_id');
+            const divisionSelect = document.getElementById('division_id');
             const sectionSelect = document.getElementById('section_id');
 
             divisionSelect.addEventListener('change', function() {
