@@ -28,8 +28,11 @@ class RegisterController extends Controller
     {
         $data = $request->validated();
         $user = User::create([
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'],
+            'first_name' => $data['firstName'],
+            'last_name' => $data['lastName'],
+            'office_id' => $data['divisionId'],
+            'section_id' => $data['sectionId'],
+            'position' => $data['position'],
             'email' => $data['email'],
             'status' => User::STATUS_INACTIVE, // keep user inactive until OTP verification
         ]);

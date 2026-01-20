@@ -17,10 +17,10 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'office_id' => ['required', 'integer', 'exists:offices,id'],
-            'section_id' => ['required', 'integer', 'exists:sections,id'],
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
+            'divisionId' => ['required', 'integer', 'exists:offices,id'],
+            'sectionId' => ['required', 'integer', 'exists:sections,id'],
+            'firstName' => ['required', 'string', 'max:255'],
+            'lastName' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email', 'regex:/^[\w\.\-]+@([\w\-]+\.)+[a-zA-Z]{2,}$/'],
             'password' => [
                 'required',
@@ -41,8 +41,8 @@ class RegisterRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'first_name.required' => 'Please enter your first name.',
-            'last_name.required' => 'Please enter your last name.',
+            'firstName.required' => 'Please enter your first name.',
+            'lastName.required' => 'Please enter your last name.',
             'email.required' => 'Please enter your email address.',
             'email.email' => 'Please enter a valid email address.',
             'email.unique' => 'This email is already registered.',

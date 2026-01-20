@@ -23,12 +23,12 @@
                 <!-- First Name & Last Name -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="relative">
-                        <input type="text" name="first_name" required placeholder="First Name"
+                        <input type="text" name="firstName" required placeholder="First Name"
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                     </div>
 
                     <div class="relative">
-                        <input type="text" name="last_name" required placeholder="Last Name"
+                        <input type="text" name="lastName" required placeholder="Last Name"
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                     </div>
                 </div>
@@ -36,7 +36,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Area of Assignment -->
                     <div class="relative">
-                        <select name="office_id" id="office_id" required
+                        <select name="divisionId" id="office_id" required
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                             <option value="" disabled {{ old('office_id') ? '' : 'selected' }}>Area of Assignment
                             </option>
@@ -50,7 +50,7 @@
 
                     <!-- Section / Unit -->
                     <div class="relative">
-                        <select name="section_id" id="section_id" required
+                        <select name="sectionId" id="section_id" required
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
                             {{ old('office_id') ? '' : 'disabled' }}>
                             <option value="" disabled selected>Section/Unit</option>
