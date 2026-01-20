@@ -25,7 +25,7 @@ class RegisterRequest extends FormRequest
             'password' => [
                 'required',
                 'string',
-                'min:12',               // minimum 12 characters
+                'min:12',              // minimum 12 characters
                 'regex:/[a-z]/',       // at least one lowercase letter
                 'regex:/[A-Z]/',       // at least one uppercase letter
                 'regex:/[0-9]/',       // at least one number

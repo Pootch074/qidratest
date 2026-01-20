@@ -33,12 +33,13 @@
                     </div>
                 </div>
 
-                <!-- Area of Assignment & Section -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Area of Assignment -->
                     <div class="relative">
-                        <select name="office_id" required
+                        <select name="office_id" id="office_id" required
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                            <option value="" disabled selected>Area of Assignment</option>
+                            <option value="" disabled {{ old('office_id') ? '' : 'selected' }}>Area of Assignment
+                            </option>
                             @foreach ($areaOfAssignment as $id => $name)
                                 <option value="{{ $id }}" {{ old('office_id') == $id ? 'selected' : '' }}>
                                     {{ $name }}
@@ -47,14 +48,27 @@
                         </select>
                     </div>
 
+                    <!-- Section / Unit -->
                     <div class="relative">
-                        <select name="section_id" required
-                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                        <select name="section_id" id="section_id" required
+                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
+                            {{ old('office_id') ? '' : 'disabled' }}>
                             <option value="" disabled selected>Section/Unit</option>
-                            @foreach ($sections as $id => $name)
-                                <option value="{{ $id }}" {{ old('section_id') == $id ? 'selected' : '' }}>
-                                    {{ $name }}</option>
-                            @endforeach
+
+                            @if (old('office_id'))
+                                @php
+                                    $sections = DB::table('sections')
+                                        ->where('division_id', old('office_id'))
+                                        ->orderBy('section_name')
+                                        ->get();
+                                @endphp
+                                @foreach ($sections as $section)
+                                    <option value="{{ $section->id }}"
+                                        {{ old('section_id') == $section->id ? 'selected' : '' }}>
+                                        {{ $section->section_name }}
+                                    </option>
+                                @endforeach
+                            @endif
                         </select>
                     </div>
                 </div>
@@ -174,6 +188,46 @@
                         console.error('recaptcha_token input not found!');
                     }
                 });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const divisionSelect = document.getElementById('office_id');
+            const sectionSelect = document.getElementById('section_id');
+
+            divisionSelect.addEventListener('change', function() {
+                const divisionId = this.value;
+
+                // Disable Section while loading
+                sectionSelect.disabled = true;
+                sectionSelect.innerHTML = '<option value="" disabled selected>Loading...</option>';
+
+                fetch(`/auth/sections/${divisionId}`)
+                    .then(response => response.json())
+                    .then(sections => {
+                        sectionSelect.disabled = false;
+                        sectionSelect.innerHTML =
+                            '<option value="" disabled selected>Section/Unit</option>';
+
+                        if (sections.length === 0) {
+                            sectionSelect.innerHTML +=
+                                '<option value="">No sections available</option>';
+                            return;
+                        }
+
+                        sections.forEach(section => {
+                            const option = document.createElement('option');
+                            option.value = section.id;
+                            option.textContent = section.section_name;
+                            sectionSelect.appendChild(option);
+                        });
+                    })
+                    .catch(() => {
+                        sectionSelect.disabled = false;
+                        sectionSelect.innerHTML = '<option value="">Failed to load sections</option>';
+                    });
+            });
         });
     </script>
 @endsection

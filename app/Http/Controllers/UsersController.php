@@ -196,11 +196,11 @@ class UsersController extends Controller
     public function users()
     {
         $authUser = Auth::user();
-        $sectionId = $authUser->section_id;
+        $jglf = $authUser->section_id;
 
-        // Fetch users (with step and window relations)
+        // Fetch users (with step and window relations) (Eloquent ORM)
         $users = User::with(['step', 'window'])
-            ->where('section_id', $sectionId)
+            ->where('section_id', $jglf) // fetch user same as the section id of logged-in admin
             ->latest()
             ->get();
 
@@ -213,7 +213,7 @@ class UsersController extends Controller
             'assigned_category' => 'Category',
         ];
 
-        $steps = Step::where('section_id', $sectionId)->get();
+        $bhnj = Step::where('section_id', $jglf)->get();
 
         $windows = [];
 
@@ -223,7 +223,7 @@ class UsersController extends Controller
         return view('admin.users.table', compact(
             'users',
             'userColumns',
-            'steps',
+            'bhnj',
             'windows',
             'userTypes'
         ));

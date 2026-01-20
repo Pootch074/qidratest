@@ -56,6 +56,10 @@ Route::prefix('auth')->group(function () {
     // Handle registration form submission
     Route::post('/register', [RegisterController::class, 'register'])->name('register.store');
 
+    // Fetch sections by division (Area of Assignment)
+    Route::get('/sections/{divisionId}', [RegisterController::class, 'sectionsByDivision'])
+        ->name('auth.sections.byDivision');
+
     // Login route 
     Route::get('/login', [LoginController::class, 'login'])->name('login');
     Route::post('/login', [LoginController::class, 'authenticate'])->name('authenticate');

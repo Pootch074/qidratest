@@ -53,13 +53,13 @@
 
                             </div>
 
-                            {{-- put assign step here --}}
+                            {{-- Assing Step --}}
                             <div>
                                 <label class="block text-sm font-medium text-gray-600">Assign Step</label>
                                 <select name="step_id" required
                                     class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     <option value="" disabled selected>-- Select Step --</option>
-                                    @foreach ($steps as $step)
+                                    @foreach ($bhnj as $step)
                                         <option value="{{ $step->id }}">{{ $step->step_number }} -
                                             {{ $step->step_name }}</option>
                                     @endforeach
@@ -67,8 +67,8 @@
                             </div>
                         </div>
 
-                        {{-- Assign Step --}}
                         <div class="grid grid-cols-2 gap-4">
+                            {{-- Assign Window --}}
                             <div>
                                 <label class="block text-sm font-medium text-gray-600">Assign Window</label>
                                 <select name="window_id" required disabled
