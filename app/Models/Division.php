@@ -8,6 +8,11 @@ class Division extends Model
 {
     public function office()
     {
-        return $this->belongsTo(\App\Models\Office::class, 'office_id');
+        return $this->belongsTo(Office::class, 'office_id');
+    }
+
+    public function sections()
+    {
+        return $this->hasMany(Section::class, 'division_id');
     }
 }
