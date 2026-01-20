@@ -29,17 +29,19 @@ class RegisterController extends Controller
 
         // Create the user and assign OTP in one step
         $user = tap(User::create([
-            'first_name' => $data['firstName'],
-            'last_name' => $data['lastName'],
+            'first_name'  => $data['firstName'],
+            'last_name'   => $data['lastName'],
             'division_id' => $data['divisionId'],
-            'section_id' => $data['sectionId'],
-            'position' => $data['position'],
-            'email' => $data['email'],
-            'status' => User::STATUS_INACTIVE, // keep user inactive until OTP verification
-        ]))->update([
-            'otp_code' => rand(100000, 999999),
-            'otp_expires_at' => now()->addMinutes(5),
-        ]);
+            'section_id'  => $data['sectionId'],
+            'position'    => $data['position'],
+            'email'       => $data['email'],
+            'status'      => User::STATUS_INACTIVE,
+        ]), function ($user) {
+            $user->otp_code = rand(100000, 999999);
+            $user->otp_expires_at = now()->addMinutes(5);
+            $user->save();
+        });
+
 
         // Load related division and section if you need their names
         $user->load(['division', 'section']);
