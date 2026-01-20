@@ -44,6 +44,12 @@ class SectionsSeeder extends Seeder
             ['section_name' => 'SOCIAL PENSION PROGRAM', 'division_name' => 'Protective Services Division'],
             ['section_name' => 'SUPPLEMENTARY FEEDING PROGRAM', 'division_name' => 'Protective Services Division'],
             ['section_name' => 'PANTAWID PAMILYA PILIPINO PROGRAM MANAGEMENT SECTION', 'division_name' => 'Pantawid Pamilyang Pilipino Program Management Division'],
+
+            ['section_name' => 'SWAD DIGOS', 'division_name' => 'POO Davao Del Sur'],
+            ['section_name' => 'SWAD TAGUM', 'division_name' => 'POO Davao Del Norte'],
+            ['section_name' => 'SWAD MALITA', 'division_name' => 'POO Davao Occidental'],
+            ['section_name' => 'SWAD MATI', 'division_name' => 'POO Davao Oriental'],
+            ['section_name' => 'SWAD NABUNTURAN', 'division_name' => 'POO Davao De Oro'],
         ];
 
         $sections = array_map(function ($section) use ($divisionIds, $now) {
