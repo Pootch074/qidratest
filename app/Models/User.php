@@ -174,6 +174,11 @@ class User extends Authenticatable
         return $this->belongsTo(Step::class);
     }
 
+    public function division()
+    {
+        return $this->belongsTo(Division::class);
+    }
+
     public function section()
     {
         return $this->belongsTo(Section::class);
