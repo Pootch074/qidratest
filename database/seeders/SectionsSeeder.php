@@ -28,8 +28,8 @@ class SectionsSeeder extends Seeder
         $sections = [
             ['section_name' => 'DISASTER RESPONSE MANAGEMENT SECTION', 'division_name' => 'Disaster Response Management Division'],
             ['section_name' => 'ACCOUNTING SECTION', 'division_name' => 'Financial Management Division'],
-            ['section_name' => 'PROPERTY AND SUPPLY SECTION', 'division_name' => 'GENERAL ADMINISTRATIVE SUPPORT SERVICES DIVISION'],
-            ['section_name' => 'RECORDS AND ARCHIVE MANAGEMENT SECTION', 'division_name' => 'GENERAL ADMINISTRATIVE SUPPORT SERVICES DIVISION'],
+            ['section_name' => 'PROPERTY AND SUPPLY SECTION', 'division_name' => 'General Administrative Support Services Division'],
+            ['section_name' => 'RECORDS AND ARCHIVE MANAGEMENT SECTION', 'division_name' => 'General Administrative Support Services Division'],
             ['section_name' => 'HR PERSONNEL ADMINISTRATION SECTION (HRPASS)', 'division_name' => 'Human Resource Management and Development Division'],
             ['section_name' => 'LEGAL UNIT', 'division_name' => 'Office of the Regional Director'],
             ['section_name' => 'SOCIAL MARKETING UNIT', 'division_name' => 'Office of the Regional Director'],

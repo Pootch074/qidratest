@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
-use App\Libraries\Offices;
+use App\Libraries\Divisions;
 use App\Libraries\Positions;
 use App\Libraries\Sections;
 use App\Models\User;
@@ -16,7 +16,7 @@ class RegisterController extends Controller
     public function index()
     {
         return view('auth.register', [
-            'offices' => Offices::all(),
+            'areaOfAssignment' => Divisions::all(),
             'sections' => Sections::all(),
             'positions' => Positions::all(),
 

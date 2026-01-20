@@ -39,7 +39,7 @@
                         <select name="office_id" required
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                             <option value="" disabled selected>Area of Assignment</option>
-                            @foreach ($offices as $id => $name)
+                            @foreach ($areaOfAssignment as $id => $name)
                                 <option value="{{ $id }}" {{ old('office_id') == $id ? 'selected' : '' }}>
                                     {{ $name }}
                                 </option>
@@ -50,7 +50,7 @@
                     <div class="relative">
                         <select name="section_id" required
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                            <option value="" disabled selected>Select Section</option>
+                            <option value="" disabled selected>Section/Unit</option>
                             @foreach ($sections as $id => $name)
                                 <option value="{{ $id }}" {{ old('section_id') == $id ? 'selected' : '' }}>
                                     {{ $name }}</option>

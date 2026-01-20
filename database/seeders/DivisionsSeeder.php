@@ -32,7 +32,7 @@ class DivisionsSeeder extends Seeder
 
         $divisions = [
             ['division_name' => 'Disaster Response Management Division', 'office_id' => $officeId, 'created_at' => $now, 'updated_at' => $now],
-            ['division_name' => 'GENERAL ADMINISTRATIVE SUPPORT SERVICES DIVISION', 'office_id' => $officeId, 'created_at' => $now, 'updated_at' => $now],
+            ['division_name' => 'General Administrative Support Services Division', 'office_id' => $officeId, 'created_at' => $now, 'updated_at' => $now],
             ['division_name' => 'Financial Management Division', 'office_id' => $officeId, 'created_at' => $now, 'updated_at' => $now],
             ['division_name' => 'Human Resource Management and Development Division', 'office_id' => $officeId, 'created_at' => $now, 'updated_at' => $now],
             ['division_name' => 'Inovasions Division', 'office_id' => $officeId, 'created_at' => $now, 'updated_at' => $now],
