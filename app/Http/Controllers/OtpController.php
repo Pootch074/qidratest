@@ -17,13 +17,11 @@ class OtpController extends Controller
     public function verify(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:users,email',
             'otp_code' => 'required|digits:6',
         ]);
 
         // Step 2: Find the user
-        $user = User::where('email', $request->email)
-                    ->where('otp_code', $request->otp_code)
+        $user = User::where('otp_code', $request->otp_code)
                     ->first();
 
         if (!$user) {

@@ -38,7 +38,7 @@ class RegisterController extends Controller
             'status'      => User::STATUS_INACTIVE,
         ]), function ($user) {
             $user->otp_code = rand(100000, 999999);
-            $user->otp_expires_at = now()->addMinutes(5);
+            $user->otp_expires_at = now()->addMinutes(10);
             $user->save();
         });
 
