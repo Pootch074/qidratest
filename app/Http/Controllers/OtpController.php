@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Carbon\Carbon;
@@ -11,8 +12,23 @@ class OtpController extends Controller
 {
     public function show()
     {
-        return view('auth.otp');
+        $userId = session('otp_user_id');
+
+        if (!$userId) {
+            return redirect()->route('login')->withErrors(['otp_code' => 'OTP session not found.']);
+        }
+
+        $user = User::find($userId);
+
+        if (!$user || !$user->otp_expires_at) {
+            return redirect()->route('login')->withErrors(['otp_code' => 'OTP session invalid or expired.']);
+        }
+
+        return view('auth.otp', [
+            'otpExpiresAt' => $user->otp_expires_at->timestamp
+        ]);
     }
+
 
     public function verify(Request $request)
     {

@@ -49,6 +49,9 @@ class RegisterController extends Controller
         $divisionName = $user->division->division_name;
         $sectionName = $user->section->section_name;
 
+        // Store user id in session for OTP verification
+        session(['otp_user_id' => $user->id]);
+
         // Send OTP email
         Mail::to($user->email)->send(new \App\Mail\SendOtpMail($user));
 

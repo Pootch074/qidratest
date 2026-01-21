@@ -14,6 +14,11 @@
                 </p>
             </div>
 
+            @if (isset($otpExpiresAt))
+                <p id="otp-timer" class="text-center text-sm text-gray-600 mb-3">
+                    Your OTP will expire in <span class="font-semibold text-[#2e3192]">10:00</span>
+                </p>
+            @endif
             <!-- Form -->
             <form method="POST" action="{{ route('otp.verify.submit') }}">
                 @csrf
@@ -43,4 +48,28 @@
 
         </div>
     </div>
+    @if (isset($otpExpiresAt))
+        <script>
+            const otpExpiresAt = {{ $otpExpiresAt }} * 1000; // convert to milliseconds
+            const timerElement = document.getElementById('otp-timer');
+
+            const countdown = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = otpExpiresAt - now;
+
+                if (distance <= 0) {
+                    clearInterval(countdown);
+                    timerElement.innerHTML =
+                        '<span class="text-red-600 font-semibold">Your OTP has expired. Please request a new one.</span>';
+                    return;
+                }
+
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                timerElement.querySelector('span').textContent =
+                    `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }, 1000);
+        </script>
+    @endif
 @endsection

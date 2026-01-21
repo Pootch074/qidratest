@@ -38,6 +38,9 @@ class User extends Authenticatable
         'step_id',
         'window_id',
         'status',
+        'email_is_verified',
+        'otp_code',
+        'otp_expires_at',
         'password',
     ];
 
@@ -67,6 +70,8 @@ class User extends Authenticatable
             'window_id' => 'integer',
             'status' => 'integer',
             'user_type' => 'integer',
+            'otp_expires_at' => 'datetime', // <-- add this line
+            'email_is_verified' => 'boolean',
         ];
     }
 
