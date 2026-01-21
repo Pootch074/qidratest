@@ -9,7 +9,7 @@
     @yield('header')
     @livewireStyles
     {{-- recaptcha api --}}
-    <script src="https://www.google.com/recaptcha/api.js"></script>
+    {{-- <script src="https://www.google.com/recaptcha/api.js"></script> --}}
 </head>
 
 <body class="qidraBg bg-gray-200 flex min-h-screen items-center justify-center"

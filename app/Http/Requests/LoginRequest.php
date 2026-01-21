@@ -31,9 +31,9 @@ class LoginRequest extends FormRequest
         ];
 
         // Only validate recaptcha if enabled
-        if (env('RECAPTCHA_ENABLED', false)) {
-            $rules['recaptcha_token'] = ['required', new Recaptcha()];
-        }
+        // if (env('RECAPTCHA_ENABLED', false)) {
+        //     $rules['recaptcha_token'] = ['required', new Recaptcha()];
+        // }
 
         return $rules;
     }

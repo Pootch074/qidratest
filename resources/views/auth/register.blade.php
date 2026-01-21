@@ -18,7 +18,7 @@
             <!-- Form -->
             <form id="registerForm" class="space-y-5" action="{{ route('register.store') }}" method="POST">
                 @csrf
-                <input type="hidden" name="recaptcha_token" id="recaptcha_token">
+                {{-- <input type="hidden" name="recaptcha_token" id="recaptcha_token"> --}}
 
                 <!-- First Name & Last Name -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -170,7 +170,7 @@
         </div>
     </div>
 @endsection
-<script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_SITE_KEY') }}"></script>
+{{-- <script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_SITE_KEY') }}"></script> --}}
 
 @section('scripts')
     <script>
@@ -181,7 +181,7 @@
         }, 10000);
     </script>
 
-    <script>
+    {{-- <script>
         grecaptcha.ready(() => {
             grecaptcha.execute('{{ env('RECAPTCHA_SITE_KEY') }}', {
                     action: 'login'
@@ -195,7 +195,7 @@
                     }
                 });
         });
-    </script>
+    </script> --}}
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

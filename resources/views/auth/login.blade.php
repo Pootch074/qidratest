@@ -28,9 +28,9 @@
             </div>
 
             <!-- Display Errors -->
-            @error('recaptcha_token')
+            {{-- @error('recaptcha_token')
                 <div class="text-red-500 text-sm">{{ $message }}</div>
-            @enderror
+            @enderror --}}
 
             @if (session('error'))
                 <div class="bg-red-100 text-red-700 p-3 rounded-md text-sm">
@@ -82,10 +82,15 @@
                 </div>
             </div>
 
+            @if ($errors->has('email'))
+                <p class="mt-2 text-sm text-red-600">
+                    {{ $errors->first('email') }}
+                </p>
+            @endif
             <!-- Form -->
             <form id="loginForm" class="space-y-5" action="{{ route('authenticate') }}" method="POST">
                 @csrf
-                <input type="hidden" name="recaptcha_token" id="recaptcha_token">
+                {{-- <input type="hidden" name="recaptcha_token" id="recaptcha_token"> --}}
 
                 <!-- Email Input -->
                 <div class="relative">
@@ -97,11 +102,6 @@
                         placeholder="jdcruz@dswd.gov.ph"
                         class="block w-full h-14 pl-12 pr-4 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] transition outline-none">
                 </div>
-                @if ($errors->has('email'))
-                    <p class="mt-2 text-sm text-red-600">
-                        {{ $errors->first('email') }}
-                    </p>
-                @endif
 
                 <!-- Password Input with Eye Toggle (Alpine) -->
                 <div class="relative" x-data="{ show: false }">
@@ -154,7 +154,7 @@
                     </label>
                 </div>
             </form>
-            <script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_SITE_KEY') }}"></script>
+            {{-- <script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_SITE_KEY') }}"></script> --}}
 
             <!-- Help -->
             <div class="text-center text-sm text-gray-500 mt-4">
@@ -181,7 +181,7 @@
         });
     </script>
 
-    <script>
+    {{-- <script>
         grecaptcha.ready(() => {
             grecaptcha.execute('{{ env('RECAPTCHA_SITE_KEY') }}', {
                     action: 'login'
@@ -195,6 +195,6 @@
                     }
                 });
         });
-    </script>
+    </script> --}}
 @endsection
 {{-- @vite('resources/css/app.css') --}}
