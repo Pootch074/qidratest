@@ -4,13 +4,13 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DisplayController;
 use App\Http\Controllers\IdscanController;
+use App\Http\Controllers\OtpController;
 use App\Http\Controllers\PacdController;
 use App\Http\Controllers\StepsController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\TransactionsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\WindowsController;
-use App\Http\Controllers\OtpController;
 use App\Http\Middleware\CheckUserType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -46,23 +46,19 @@ Route::get('/session/check', function () {
 Route::get('/otp-verify', [OtpController::class, 'show'])->name('otp.verify');
 Route::post('/otp-verify', [OtpController::class, 'verify'])->name('otp.verify.submit');
 
-
 Route::get('/', fn () => Auth::check() ? redirect()->intended() : redirect(route('login')));
 
 Route::prefix('auth')->group(function () {
-    // Show registration form
     Route::get('/register', [RegisterController::class, 'index'])->name('register');
-
-    // Handle registration form submission
     Route::post('/register', [RegisterController::class, 'register'])->name('register.store');
-
-    // Fetch sections by division (Area of Assignment)
     Route::get('/sections/{divisionId}', [RegisterController::class, 'sectionsByDivision'])
         ->name('auth.sections.byDivision');
-
-    // Login route 
     Route::get('/login', [LoginController::class, 'login'])->name('login');
     Route::post('/login', [LoginController::class, 'authenticate'])->name('authenticate');
+
+    // OTP verification
+    Route::get('/verify-otp', [LoginController::class, 'showOtpForm'])->name('showOtpForm');
+    Route::post('/verify-otp', [LoginController::class, 'verifyOtp'])->name('verifyOtp');
 });
 
 /*
@@ -80,7 +76,7 @@ Route::middleware(['auth'])->group(function () {
 | Authenticated Routes by User Type
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', CheckUserType::class.':0,1,2,3,5,6'])->group(function () {
+Route::middleware(['auth', 'otp.verified', CheckUserType::class.':0,1,2,3,5,6'])->group(function () {
     Route::get('superadmin', [SuperAdminController::class, 'index'])->name('superadmin');
     Route::get('admin', [UsersController::class, 'admin'])->name('admin');
     Route::get('idscan', [IdscanController::class, 'index'])->name('idscan');

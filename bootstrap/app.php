@@ -12,10 +12,16 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->web(append: [
-            \App\Http\Middleware\CheckUserSession::class,
-        ]);
-    })
+    $middleware->web(append: [
+        \App\Http\Middleware\CheckUserSession::class,
+    ]);
+
+    // Add OTP middleware alias
+    $middleware->alias([
+        'otp.verified' => \App\Http\Middleware\EnsureOtpVerified::class,
+    ]);
+})
+
 
     ->withExceptions(function (Exceptions $exceptions) {
         //
