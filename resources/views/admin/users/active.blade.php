@@ -7,7 +7,7 @@
     <div class="w-full p-4 bg-gray-200">
         <div class="p-4 sm:ml-64">
             {{-- ✅ Add User Modal --}}
-            <div id="addUserModal"
+            {{-- <div id="addUserModal"
                 class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300">
                 <div
                     class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-8 transform transition-transform duration-300 scale-95">
@@ -18,7 +18,6 @@
                     </div>
                     <form id="addUserForm" class="space-y-5">
                         @csrf
-                        {{-- First & Last Name --}}
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-600">First Name</label>
@@ -32,14 +31,12 @@
                             </div>
                         </div>
 
-                        {{-- Email --}}
                         <div>
                             <label class="block text-sm font-medium text-gray-600">Email</label>
                             <input type="email" name="email" required
                                 class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
 
-                        {{-- Position & User Type --}}
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-600">Position</label>
@@ -53,7 +50,6 @@
 
                             </div>
 
-                            {{-- Assing Step --}}
                             <div>
                                 <label class="block text-sm font-medium text-gray-600">Assign Step</label>
                                 <select name="step_id" required
@@ -68,7 +64,6 @@
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
-                            {{-- Assign Window --}}
                             <div>
                                 <label class="block text-sm font-medium text-gray-600">Assign Window</label>
                                 <select name="window_id" required disabled
@@ -92,11 +87,9 @@
                                 </div>
                             @endif
 
-                            {{-- Hidden field, no name by default --}}
                             <input type="hidden" id="assignedCategoryHidden" name="assigned_category" value="both">
                         </div>
 
-                        {{-- Password --}}
                         <div x-data="{ show: false }" class="relative">
                             <label for="password" class="block text-sm font-medium text-gray-600">Password</label>
 
@@ -104,21 +97,17 @@
                                 class="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 placeholder="Enter password">
 
-                            <!-- Eye toggle button -->
                             <button type="button" @click="show = !show"
                                 class="absolute inset-y-0 right-0 flex items-center pt-4 pr-3 text-gray-500 focus:outline-none">
 
-                                <!-- Closed eye -->
                                 <img x-show="!show" src="{{ Vite::asset('resources/images/icons/eye-close.png') }}"
                                     alt="Show Password" class="h-5 w-5">
 
-                                <!-- Open eye -->
                                 <img x-show="show" src="{{ Vite::asset('resources/images/icons/eye-open.png') }}"
                                     alt="Hide Password" class="h-5 w-5">
                             </button>
                         </div>
 
-                        {{-- Buttons --}}
                         <div class="flex justify-end space-x-3">
                             <button type="button" id="cancelAddUser"
                                 class="text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-gray-300 dark:focus:ring-gray-800 shadow-lg shadow-gray-500/50 dark:shadow-lg dark:shadow-gray-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Cancel</button>
@@ -127,15 +116,15 @@
                         </div>
                     </form>
                 </div>
-            </div>
+            </div> --}}
 
             <div class="bg-white rounded-lg p-4 shadow-lg h-[84vh] flex flex-col">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold text-gray-700">Active Users</h2>
-                    <button id="openAddUserModal"
+                    {{-- <button id="openAddUserModal"
                         class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                         Add User
-                    </button>
+                    </button> --}}
                 </div>
                 <div class="overflow-x-auto flex-1">
                     <table id="usersTable" class="min-w-full divide-y divide-gray-200 text-gray-700">
@@ -186,8 +175,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="{{ count($userColumns) + 3 }}"
-                                        class="px-6 py-3 text-center text-gray-500">
+                                    <td colspan="{{ count($userColumns) + 3 }}" class="px-6 py-3 text-center text-gray-500">
                                         🚫 No users found.
                                     </td>
                                 </tr>
