@@ -59,7 +59,7 @@
                                 <select name="step_id" required
                                     class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     <option value="" disabled selected>-- Select Step --</option>
-                                    @foreach ($bhnj as $step)
+                                    @foreach ($users as $step)
                                         <option value="{{ $step->id }}">{{ $step->step_number }} -
                                             {{ $step->step_name }}</option>
                                     @endforeach
@@ -141,35 +141,39 @@
                     <table id="usersTable" class="min-w-full divide-y divide-gray-200 text-gray-700">
                         <thead class="bg-[#2e3192] text-white sticky top-0 z-10">
                             <tr>
-                                @foreach ($userColumns as $label)
-                                    <th class="px-6 py-3 font-semibold tracking-wide">{{ $label }}</th>
-                                @endforeach
-                                <th class="px-6 py-3 font-semibold tracking-wide">Assigned Step</th>
-                                <th class="px-6 py-3 font-semibold tracking-wide">Assigned Window</th>
+                                <th class="px-6 py-3 font-semibold tracking-wide text-center rounded-tl-lg">First Name</th>
+                                <th class="px-6 py-3 font-semibold tracking-wide text-center">Last Name</th>
+                                <th class="px-6 py-3 font-semibold tracking-wide text-center">Email Address</th>
+                                <th class="px-6 py-3 font-semibold tracking-wide text-center">Position</th>
+                                <th class="px-6 py-3 font-semibold tracking-wide text-center">Assigned Step</th>
+                                <th class="px-6 py-3 font-semibold tracking-wide text-center">Assigned Window</th>
+                                <th class="px-6 py-3 font-semibold tracking-wide text-center">Assigned Category</th>
                                 <th class="px-6 py-3 font-semibold tracking-wide text-center rounded-tr-lg">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200 overflow-y-auto">
                             @forelse ($users as $u)
                                 <tr class="odd:bg-white even:bg-gray-200 hover:bg-indigo-50 transition duration-200">
-                                    @foreach ($userColumns as $field => $label)
-                                        <td class="px-6 py-3 text-gray-700">
-                                            @if ($field === 'user_type')
-                                                {{ $u->getUserTypeName() }}
-                                            @else
-                                                {{ $u->$field ?? '—' }}
-                                            @endif
-                                        </td>
-                                    @endforeach
-
-                                    {{-- Assigned Step --}}
+                                    <td class="px-6 py-3 text-gray-700">
+                                        {{ $u->first_name ?? '—' }}
+                                    </td>
+                                    <td class="px-6 py-3 text-gray-700">
+                                        {{ $u->last_name ?? '—' }}
+                                    </td>
+                                    <td class="px-6 py-3 text-gray-700">
+                                        {{ $u->email ?? '—' }}
+                                    </td>
+                                    <td class="px-6 py-3 text-gray-700">
+                                        {{ $u->position ?? '—' }}
+                                    </td>
                                     <td class="px-6 py-3 text-gray-700">
                                         {{ $u->step->step_number ?? '—' }}
                                     </td>
-
-                                    {{-- Assigned Window --}}
                                     <td class="px-6 py-3 text-gray-700">
                                         {{ $u->window->window_number ?? '—' }}
+                                    </td>
+                                    <td class="px-6 py-3 text-gray-700">
+                                        {{ $u->assigned_category ?? '—' }}
                                     </td>
 
                                     {{-- Actions --}}
@@ -197,9 +201,9 @@
 @endsection
 
 @section('scripts')
-    <script>
+    {{-- <script>
         window.appBaseUrl = "{{ url('') }}";
         window.userColumnsCount = {{ count($userColumns) + 3 }};
-    </script>
+    </script> --}}
     @vite('resources/js/adminUsers.js')
 @endsection

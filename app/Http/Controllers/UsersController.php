@@ -198,36 +198,13 @@ class UsersController extends Controller
     {
         $authUser = Auth::user();
         $jglf = $authUser->section_id;
-
-        // Fetch users (with step and window relations) (Eloquent ORM)
         $users = User::with(['step', 'window'])
             ->where('section_id', $jglf) // fetch user same as the section id of logged-in admin
+            ->where('status', 1)
             ->latest()
             ->get();
 
-        $userColumns = [
-            'first_name' => 'First Name',
-            'last_name' => 'Last Name',
-            'email' => 'Email',
-            'position' => 'Position',
-            'user_type' => 'User Type',
-            'assigned_category' => 'Category',
-        ];
-
-        $bhnj = Step::where('section_id', $jglf)->get();
-
-        $windows = [];
-
-        $userTypes = collect(User::getUserTypes())
-            ->except([User::TYPE_SUPERADMIN, User::TYPE_ADMIN, User::TYPE_IDSCAN, User::TYPE_PACD]);
-
-        return view('admin.users.active', compact(
-            'users',
-            'userColumns',
-            'bhnj',
-            'windows',
-            'userTypes'
-        ));
+        return view('admin.users.active', compact('users',));
     }
 
     public function pendingUsers()
@@ -236,7 +213,7 @@ class UsersController extends Controller
         $eols = $authUser->section_id;
         $users = User::with(['step', 'window'])
             ->where('section_id', $eols)
-            ->where('status', 1)
+            ->where('status', 0)
             ->latest()
             ->get();
 
