@@ -131,7 +131,7 @@
 
             <div class="bg-white rounded-lg p-4 shadow-lg h-[84vh] flex flex-col">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold text-gray-700">Users</h2>
+                    <h2 class="text-xl font-semibold text-gray-700">Active Users</h2>
                     <button id="openAddUserModal"
                         class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                         Add User
@@ -163,12 +163,12 @@
                                     @endforeach
 
                                     {{-- Assigned Step --}}
-                                    <td class="px-6 py-3 font-medium text-gray-700">
+                                    <td class="px-6 py-3 text-gray-700">
                                         {{ $u->step->step_number ?? '—' }}
                                     </td>
 
                                     {{-- Assigned Window --}}
-                                    <td class="px-6 py-3 font-medium text-gray-700">
+                                    <td class="px-6 py-3 text-gray-700">
                                         {{ $u->window->window_number ?? '—' }}
                                     </td>
 

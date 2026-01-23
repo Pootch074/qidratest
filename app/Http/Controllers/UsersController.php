@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class UsersController extends Controller
 {
@@ -232,8 +233,14 @@ class UsersController extends Controller
     public function pendingUsers()
     {
         $authUser = Auth::user();
+        $eols = $authUser->section_id;
+        $users = User::with(['step', 'window'])
+            ->where('section_id', $eols)
+            ->where('status', 1)
+            ->latest()
+            ->get();
 
-        return view('admin.users.pending');
+        return view('admin.users.pending', compact('users'));
     }
 
     public function usersJson()
@@ -933,7 +940,7 @@ class UsersController extends Controller
 
             return response()->json(['message' => 'Queue updated successfully'], 200);
         } catch (\Throwable $e) {
-            \Log::error('updateUpcoming error: '.$e->getMessage());
+            Log::error('updateUpcoming error: '.$e->getMessage());
 
             return response()->json(['message' => 'Server error: '.$e->getMessage()], 500);
         }
