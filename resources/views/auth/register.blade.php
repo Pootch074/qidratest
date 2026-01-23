@@ -101,6 +101,68 @@
                     </div>
                 </div>
 
+                <!-- Step, Window, Category -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="relative">
+                        <select name="divisionId" id="division_id" required
+                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                            <option value="" disabled {{ old('divisionId') ? '' : 'selected' }}>Step
+                            </option>
+                            @foreach ($divisions as $id => $name)
+                                <option value="{{ $id }}" {{ old('divisionId') == $id ? 'selected' : '' }}>
+                                    {{ $name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="relative">
+                        <select name="sectionId" id="section_id" required
+                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
+                            {{ old('divisionId') ? '' : 'disabled' }}>
+                            <option value="" disabled selected>Window</option>
+
+                            @if (old('divisionId'))
+                                @php
+                                    $sections = DB::table('sections')
+                                        ->where('division_id', old('divisionId'))
+                                        ->orderBy('section_name')
+                                        ->get();
+                                @endphp
+                                @foreach ($sections as $section)
+                                    <option value="{{ $section->id }}"
+                                        {{ old('sectionId') == $section->id ? 'selected' : '' }}>
+                                        {{ $section->section_name }}
+                                    </option>
+                                @endforeach
+                            @endif
+                        </select>
+                    </div>
+
+                    <div class="relative">
+                        <select name="sectionId" id="section_id" required
+                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
+                            {{ old('divisionId') ? '' : 'disabled' }}>
+                            <option value="" disabled selected>Category</option>
+
+                            @if (old('divisionId'))
+                                @php
+                                    $sections = DB::table('sections')
+                                        ->where('division_id', old('divisionId'))
+                                        ->orderBy('section_name')
+                                        ->get();
+                                @endphp
+                                @foreach ($sections as $section)
+                                    <option value="{{ $section->id }}"
+                                        {{ old('sectionId') == $section->id ? 'selected' : '' }}>
+                                        {{ $section->section_name }}
+                                    </option>
+                                @endforeach
+                            @endif
+                        </select>
+                    </div>
+                </div>
+
                 <!-- Password -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="relative" x-data="{ show: false }">
