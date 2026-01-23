@@ -78,26 +78,37 @@ Route::middleware(['auth'])->group(function () {
 */
 Route::middleware(['auth', 'otp.verified', CheckUserType::class.':0,1,2,3,5,6'])->group(function () {
     Route::get('superadmin', [SuperAdminController::class, 'index'])->name('superadmin');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Routes
+    |--------------------------------------------------------------------------
+    */
     Route::get('admin', [UsersController::class, 'admin'])->name('admin');
+    Route::prefix('admin/active-users')->group(function () {
+        Route::get('/', [UsersController::class, 'activeUsers'])->name('admin.activeUsers');
+        Route::get('/json', [UsersController::class, 'usersJson'])->name('admin.users.json');
+        Route::post('/store', [UsersController::class, 'store'])->name('admin.storeUsers');
+        Route::delete('/{user}', [UsersController::class, 'destroy'])->name('admin.destroyUsers');
+    });
+    Route::prefix('admin/pending-users')->group(function () {
+        Route::get('/', [UsersController::class, 'pendingUsers'])->name('admin.pendingUsers');
+    });
+
+
+
     Route::get('idscan', [IdscanController::class, 'index'])->name('idscan');
     Route::get('pacd', [PacdController::class, 'index'])->name('pacd');
     Route::get('user', [UsersController::class, 'index'])->name('user');
     Route::get('display', [DisplayController::class, 'index'])->name('display');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Admin Routes
-|--------------------------------------------------------------------------
-*/
+
 Route::middleware(['auth'])->group(function () {
     // === Users Management ===
-    Route::prefix('admin/users')->group(function () {
-        Route::get('/', [UsersController::class, 'users'])->name('admin.users');
-        Route::get('/json', [UsersController::class, 'usersJson'])->name('admin.users.json');
-        Route::post('/store', [UsersController::class, 'store'])->name('admin.users.store');
-        Route::delete('/{user}', [UsersController::class, 'destroy'])->name('admin.users.destroy');
-    });
+    
+
+    
 
     // === Steps Management ===
     Route::prefix('admin/steps')->group(function () {

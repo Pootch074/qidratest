@@ -193,7 +193,7 @@ class UsersController extends Controller
         ));
     }
 
-    public function users()
+    public function activeUsers()
     {
         $authUser = Auth::user();
         $jglf = $authUser->section_id;
@@ -220,13 +220,20 @@ class UsersController extends Controller
         $userTypes = collect(User::getUserTypes())
             ->except([User::TYPE_SUPERADMIN, User::TYPE_ADMIN, User::TYPE_IDSCAN, User::TYPE_PACD]);
 
-        return view('admin.users.table', compact(
+        return view('admin.users.active', compact(
             'users',
             'userColumns',
             'bhnj',
             'windows',
             'userTypes'
         ));
+    }
+
+    public function pendingUsers()
+    {
+        $authUser = Auth::user();
+
+        return view('admin.users.pending');
     }
 
     public function usersJson()

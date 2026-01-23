@@ -18,11 +18,9 @@
                 </a>
             </li>
 
-            <li x-data="{ open: @js(request()->routeIs('admin.users.*')) }" class="space-y-1">
+            <li x-data="{ open: @js(request()->routeIs('admin.*')) }" class="space-y-1">
                 {{-- Parent --}}
-                <button @click="open = !open"
-                    class="flex items-center w-full p-2 text-white rounded-lg transition
-        {{ request()->routeIs('admin.users.*') ? 'bg-[#F03D46]' : 'hover:bg-[#5057c9]' }}">
+                <button @click="open = !open" class="flex items-center w-full p-2 text-white rounded-lg transition">
 
                     <img src="{{ Vite::asset('resources/images/icons/group.png') }}" class="w-7 h-7 shrink-0">
                     <span class="flex-1 ms-3 text-left">Users</span>
@@ -37,14 +35,14 @@
                 {{-- Children --}}
                 <ul x-show="open" x-collapse class="pl-10 space-y-1 text-sm">
                     <li>
-                        <a href="{{ route('admin.users') }}"
+                        <a href="{{ route('admin.activeUsers') }}"
                             class="flex items-center gap-3 px-3 py-2 rounded-lg text-white transition
-                {{ request()->routeIs('admin.users') ? 'bg-[#F03D46]' : 'hover:bg-[#5057c9]' }}">
+                {{ request()->routeIs('admin.activeUsers') ? 'bg-[#F03D46]' : 'hover:bg-[#5057c9]' }}">
 
                             {{-- Bullet --}}
                             <span
                                 class="w-2 h-2 rounded-full
-                    {{ request()->routeIs('admin.users') ? 'bg-white' : 'bg-gray-300' }}">
+                    {{ request()->routeIs('admin.activeUsers') ? 'bg-white' : 'bg-gray-300' }}">
                             </span>
 
                             <span>Active Users</span>
@@ -52,14 +50,14 @@
                     </li>
 
                     <li>
-                        <a href=""
+                        <a href="{{ route('admin.pendingUsers') }}"
                             class="flex items-center gap-3 px-3 py-2 rounded-lg text-white transition
-                {{ request()->routeIs('admin.users.pending') ? 'bg-[#F03D46]' : 'hover:bg-[#5057c9]' }}">
+                {{ request()->routeIs('admin.pendingUsers') ? 'bg-[#F03D46]' : 'hover:bg-[#5057c9]' }}">
 
                             {{-- Bullet --}}
                             <span
                                 class="w-2 h-2 rounded-full
-                    {{ request()->routeIs('admin.users.pending') ? 'bg-white' : 'bg-gray-300' }}">
+                    {{ request()->routeIs('admin.pendingUsers') ? 'bg-white' : 'bg-gray-300' }}">
                             </span>
 
                             <span>Pending Users</span>
