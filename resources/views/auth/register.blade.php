@@ -104,20 +104,21 @@
                 <!-- Step, Window, Category -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="relative">
-                        <select name="divisionId" id="division_id" required
+                        <select name="stepId" id="division_id" required
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                            <option value="" disabled {{ old('divisionId') ? '' : 'selected' }}>Step
+                            <option value="" disabled {{ old('stepId') ? '' : 'selected' }}>Step
                             </option>
-                            @foreach ($divisions as $id => $name)
-                                <option value="{{ $id }}" {{ old('divisionId') == $id ? 'selected' : '' }}>
-                                    {{ $name }}
-                                </option>
-                            @endforeach
+                            @foreach ($steps as $step)
+    <option value="{{ $step->id }}" {{ old('stepId') == $step->id ? 'selected' : '' }}>
+        {{ $step->name }}
+    </option>
+@endforeach
+
                         </select>
                     </div>
 
                     <div class="relative">
-                        <select name="sectionId" id="section_id" required
+                        <select name="windowId" id="section_id" required
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
                             {{ old('divisionId') ? '' : 'disabled' }}>
                             <option value="" disabled selected>Window</option>
@@ -140,7 +141,7 @@
                     </div>
 
                     <div class="relative">
-                        <select name="sectionId" id="section_id" required
+                        <select name="category" id="section_id" required
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
                             {{ old('divisionId') ? '' : 'disabled' }}>
                             <option value="" disabled selected>Category</option>

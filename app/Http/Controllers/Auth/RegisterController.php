@@ -7,6 +7,7 @@ use App\Http\Requests\RegisterRequest;
 use App\Libraries\Divisions;
 use App\Libraries\Positions;
 use App\Libraries\Sections;
+use App\Libraries\Steps;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -19,6 +20,7 @@ class RegisterController extends Controller
             'divisions' => Divisions::all(),
             'sections' => Sections::all(),
             'positions' => Positions::all(),
+            'steps' => Steps::all(),
 
         ]);
     }
@@ -35,6 +37,9 @@ class RegisterController extends Controller
             'section_id'  => $data['sectionId'],
             'position'    => $data['position'],
             'email'       => $data['email'],
+            'step_id'       => $data['stepId'],
+            'window_id'       => $data['windowId'],
+            'assigned_category'       => $data['category'],
             'status'      => User::STATUS_INACTIVE,
         ]), function ($user) {
             $user->otp_code = rand(100000, 999999);

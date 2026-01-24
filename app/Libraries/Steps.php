@@ -11,7 +11,7 @@ class Steps
     protected static function all()
     {
         if (self::$steps === null) {
-            self::$steps = Step::pluck('id', 'step_name')->toArray();
+            self::$steps = Step::pluck('step_name', 'id')->toArray();
         }
 
         return self::$steps;
