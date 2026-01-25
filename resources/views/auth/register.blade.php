@@ -224,75 +224,59 @@
     </script> --}}
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', () => {
             const divisionSelect = document.getElementById('division_id');
             const sectionSelect = document.getElementById('section_id');
             const stepSelect = document.getElementById('step_id');
 
+            /**
+             * Generic function to populate a dropdown via AJAX
+             * @param {HTMLSelectElement} select - The select element to populate
+             * @param {string} url - The API endpoint to fetch data
+             * @param {string} placeholder - Placeholder text for default option
+             * @param {string} textKey - Object key for option text
+             */
+            const populateDropdown = (select, url, placeholder, textKey) => {
+                select.disabled = true;
+                select.innerHTML = `<option value="" disabled selected>Loading...</option>`;
+
+                fetch(url)
+                    .then(res => res.json())
+                    .then(items => {
+                        select.disabled = false;
+                        select.innerHTML = `<option value="" disabled selected>${placeholder}</option>`;
+
+                        if (!items.length) {
+                            select.innerHTML +=
+                                `<option value="">No ${placeholder.toLowerCase()} available</option>`;
+                            return;
+                        }
+
+                        items.forEach(item => {
+                            const option = document.createElement('option');
+                            option.value = item.id;
+                            option.textContent = item[textKey];
+                            select.appendChild(option);
+                        });
+                    })
+                    .catch(() => {
+                        select.disabled = false;
+                        select.innerHTML =
+                            `<option value="">Failed to load ${placeholder.toLowerCase()}</option>`;
+                    });
+            };
+
+            // Division -> Section
             divisionSelect.addEventListener('change', function() {
                 const divisionId = this.value;
-
-                // Disable Section while loading
-                sectionSelect.disabled = true;
-                sectionSelect.innerHTML = '<option value="" disabled selected>Loading...</option>';
-
-                fetch(`/auth/sections/${divisionId}`)
-                    .then(response => response.json())
-                    .then(sections => {
-                        sectionSelect.disabled = false;
-                        sectionSelect.innerHTML =
-                            '<option value="" disabled selected>Section/Office</option>';
-
-                        if (sections.length === 0) {
-                            sectionSelect.innerHTML +=
-                                '<option value="">No sections available</option>';
-                            return;
-                        }
-
-                        sections.forEach(section => {
-                            const option = document.createElement('option');
-                            option.value = section.id;
-                            option.textContent = section.section_name;
-                            sectionSelect.appendChild(option);
-                        });
-                    })
-                    .catch(() => {
-                        sectionSelect.disabled = false;
-                        sectionSelect.innerHTML = '<option value="">Failed to load sections</option>';
-                    });
+                populateDropdown(sectionSelect, `/auth/sections/${divisionId}`, 'Section/Office',
+                    'section_name');
             });
 
-
+            // Section -> Step
             sectionSelect.addEventListener('change', function() {
                 const sectionId = this.value;
-
-                stepSelect.disabled = true;
-                stepSelect.innerHTML = '<option value="" disabled selected>Loading...</option>';
-
-                fetch(`/auth/steps/${sectionId}`)
-                    .then(response => response.json())
-                    .then(steps => {
-                        stepSelect.disabled = false;
-                        stepSelect.innerHTML =
-                            '<option value="" disabled selected>Step</option>';
-
-                        if (steps.length === 0) {
-                            stepSelect.innerHTML +=
-                                '<option value="">No steps available</option>';
-                            return;
-                        }
-
-                        steps.forEach(step => {
-                            const option = document.createElement('option');
-                            option.value = step.id;
-                            option.textContent = step.step_number;
-                            stepSelect.appendChild(option);
-                        });
-                    })
-                    .catch(() => {
-                        stepSelect.disabled = false;
-                        stepSelect.innerHTML = '<option value="">Failed to load steps</option>';
-                    });
+                populateDropdown(stepSelect, `/auth/steps/${sectionId}`, 'Step', 'step_number');
             });
         });
     </script>
