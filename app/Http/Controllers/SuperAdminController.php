@@ -3,22 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSuperAdminRequest;
-use App\Models\Section;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Hash;
 
 class SuperAdminController extends Controller
 {
     public function index()
     {
         $user = Auth::user();
+
         return view('superadmin.index');
     }
-
-    
 
     /**
      * Store a new admin user (user_type = 1).

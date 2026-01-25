@@ -204,7 +204,7 @@ class UsersController extends Controller
             ->latest()
             ->get();
 
-        return view('admin.users.active', compact('users',));
+        return view('admin.users.active', compact('users'));
     }
 
     public function pendingUsers()

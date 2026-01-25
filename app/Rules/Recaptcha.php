@@ -7,7 +7,6 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-
 class Recaptcha implements ValidationRule
 {
     public function validate(string $attribute, mixed $value, Closure $fail): void
@@ -18,7 +17,7 @@ class Recaptcha implements ValidationRule
         ])->json();
 
         // Check success
-        if (!isset($response['success']) || !$response['success']) {
+        if (! isset($response['success']) || ! $response['success']) {
             $fail('reCAPTCHA verification failed.');
         }
 

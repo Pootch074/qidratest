@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Step;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Step;
 
 class UpdateStepRequest extends FormRequest
 {
@@ -21,7 +21,7 @@ class UpdateStepRequest extends FormRequest
                 'string',
                 function ($attribute, $value, $fail) {
                     // Allow "None" as many times as needed
-                    if ($value === "None") {
+                    if ($value === 'None') {
                         return;
                     }
 
@@ -31,9 +31,9 @@ class UpdateStepRequest extends FormRequest
                         ->exists();
 
                     if ($exists) {
-                        $fail("This step name already exists in your section.");
+                        $fail('This step name already exists in your section.');
                     }
-                }
+                },
             ],
         ];
     }

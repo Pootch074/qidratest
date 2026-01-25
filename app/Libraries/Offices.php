@@ -7,6 +7,7 @@ use App\Models\Office;
 class Offices
 {
     protected static $offices = null;
+
     public static function all()
     {
         if (self::$offices === null) {

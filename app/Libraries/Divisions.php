@@ -7,6 +7,7 @@ use App\Models\Division;
 class Divisions
 {
     protected static $divisions = null;
+
     public static function all()
     {
         if (self::$divisions === null) {

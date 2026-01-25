@@ -13,12 +13,19 @@ class User extends Authenticatable
     use HasFactory, Notifiable, SoftDeletes;
 
     const TYPE_SUPERADMIN = 0;
+
     const TYPE_ADMIN = 1;
+
     const TYPE_IDSCAN = 2;
+
     const TYPE_PACD = 3;
+
     const TYPE_USER = 5;
+
     const TYPE_DISPLAY = 6;
+
     const STATUS_INACTIVE = 0;
+
     const STATUS_ACTIVE = 1;
 
     /**

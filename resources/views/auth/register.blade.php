@@ -109,10 +109,10 @@
                             <option value="" disabled {{ old('stepId') ? '' : 'selected' }}>Step
                             </option>
                             @foreach ($steps as $step)
-    <option value="{{ $step->id }}" {{ old('stepId') == $step->id ? 'selected' : '' }}>
-        {{ $step->name }}
-    </option>
-@endforeach
+                                <option value="{{ $step->id }}" {{ old('stepId') == $step->id ? 'selected' : '' }}>
+                                    {{ $step->name }}
+                                </option>
+                            @endforeach
 
                         </select>
                     </div>

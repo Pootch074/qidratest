@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Division;
-use App\Models\Section;
 use App\Models\Office;
+use App\Models\Section;
 use App\Models\Step;
 use App\Models\User;
 use App\Models\Window;

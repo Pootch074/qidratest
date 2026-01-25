@@ -95,20 +95,14 @@ Route::middleware(['auth', 'otp.verified', CheckUserType::class.':0,1,2,3,5,6'])
         Route::get('/', [UsersController::class, 'pendingUsers'])->name('admin.pendingUsers');
     });
 
-
-
     Route::get('idscan', [IdscanController::class, 'index'])->name('idscan');
     Route::get('pacd', [PacdController::class, 'index'])->name('pacd');
     Route::get('user', [UsersController::class, 'index'])->name('user');
     Route::get('display', [DisplayController::class, 'index'])->name('display');
 });
 
-
 Route::middleware(['auth'])->group(function () {
     // === Users Management ===
-    
-
-    
 
     // === Steps Management ===
     Route::prefix('admin/steps')->group(function () {

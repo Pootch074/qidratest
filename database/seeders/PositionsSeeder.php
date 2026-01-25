@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class PositionsSeeder extends Seeder
 {
@@ -102,7 +102,7 @@ class PositionsSeeder extends Seeder
         ];
 
         // Map to insertable array
-        $positionsToInsert = array_map(fn($position) => [
+        $positionsToInsert = array_map(fn ($position) => [
             'position_name' => $position,
             'created_at' => $now,
             'updated_at' => $now,

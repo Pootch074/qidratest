@@ -8,6 +8,7 @@ class Sections
 {
     // Example of caching all sections at runtime
     protected static $sections = null;
+
     public static function all()
     {
         if (self::$sections === null) {
@@ -27,6 +28,7 @@ class Sections
                 return $id;
             }
         }
+
         return null;
     }
 
