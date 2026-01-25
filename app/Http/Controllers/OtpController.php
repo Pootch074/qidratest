@@ -52,6 +52,6 @@ class OtpController extends Controller
         $user->otp_expires_at = null;
         $user->save();
 
-        return redirect()->route('login')->with('success', 'Your account has been verified. Please wait for administrator approval before logging in.');
+        return redirect()->route('login')->with('success', 'Your account has been verified. Please wait for the administrator’s approval to log in successfully.');
     }
 }

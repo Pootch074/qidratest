@@ -29,7 +29,7 @@
                     </div>
 
                     <div class="relative">
-                        <input type="text" name="lastName" required placeholder="Last Name"
+                        <input type="text" name="lastName" value="{{ old('lastName') }}" required placeholder="Last Name"
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                     </div>
                 </div>
@@ -55,12 +55,13 @@
                         <select name="sectionId" id="section_id" required
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
                             {{ old('divisionId') ? '' : 'disabled' }}>
-                            <option value="" disabled selected>Section/Office</option>
+                            <option value="" disabled {{ old('sectionId') ? '' : 'selected' }}>
+                                Section/Office</option>
 
                             @foreach ($sections as $section)
                                 <option value="{{ $section->id }}"
                                     {{ old('sectionId') == $section->id ? 'selected' : '' }}>
-                                    {{-- {{ $section->section_name }} --}}
+                                    {{ $section->section_name }}
                                 </option>
                             @endforeach
                         </select>
@@ -73,21 +74,22 @@
                     <div class="relative">
                         <select name="position" required
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                            <option value="" disabled>
+                            <option value="" disabled {{ old('position') ? '' : 'selected' }}>
                                 Select Position
                             </option>
 
                             @foreach ($positions as $pstn)
-                                <option value="{{ $pstn->id }}">
+                                <option value="{{ $pstn->position_name }}"
+                                    {{ old('position') == $pstn->position_name ? 'selected' : '' }}>
                                     {{ $pstn->position_name }}
                                 </option>
                             @endforeach
-
                         </select>
                     </div>
 
                     <div class="relative">
-                        <input type="email" name="email" autocomplete="email" required placeholder="Email Address"
+                        <input type="email" name="email" autocomplete="email" value="{{ old('email') }}" required
+                            placeholder="Email Address"
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
 
                         @error('email')
@@ -106,7 +108,7 @@
 
                             @foreach ($steps as $stp)
                                 <option value="{{ $stp->id }}" {{ old('stepId') == $stp->id ? 'selected' : '' }}>
-                                    {{-- {{ $stp->step_name }} --}}
+                                    {{ $stp->step_name }}
                                 </option>
                             @endforeach
                         </select>
@@ -129,8 +131,16 @@
                     <div class="relative">
                         <select name="category" required
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                            <option value="" disabled selected>Category</option>
+                            <option value="" disabled {{ old('category') ? '' : 'selected' }}>
+                                Category
+                            </option>
 
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->value }}"
+                                    {{ old('category') == $category->value ? 'selected' : '' }}>
+                                    {{ $category->description() }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
                 </div>

@@ -23,6 +23,9 @@ class RegisterRequest extends FormRequest
             'sectionId' => ['required', 'integer', 'exists:sections,id'],
             'position' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email', 'regex:/^[\w\.\-]+@([\w\-]+\.)+[a-zA-Z]{2,}$/'],
+            'stepId' => ['required', 'integer', 'exists:steps,id'],
+            'windowId' => ['required', 'integer', 'exists:windows,id'],
+            'category' => ['required', 'string', 'max:255'],
             'password' => [
                 'required',
                 'string',

@@ -11,6 +11,8 @@ use App\Models\Window;
 use App\Models\User;
 use App\Models\Position;
 use Illuminate\Support\Facades\Mail;
+use App\Enums\UserCategory;
+
 
 class RegisterController extends Controller
 {
@@ -34,6 +36,7 @@ class RegisterController extends Controller
             'divisions', 'sections', 'steps', 'windows'
         ))->with([
             'positions' => Position::all(),
+            'categories' => UserCategory::cases(),
         ]);
     }
 
