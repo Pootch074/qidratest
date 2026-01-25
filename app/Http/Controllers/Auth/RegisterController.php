@@ -8,6 +8,7 @@ use App\Libraries\Divisions;
 use App\Libraries\Positions;
 use App\Libraries\Sections;
 use App\Libraries\Steps;
+use App\Libraries\Windows;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -16,13 +17,26 @@ class RegisterController extends Controller
 {
     public function index()
     {
-        return view('auth.register', [
-            'divisions' => Divisions::all(),
-            'sections' => Sections::all(),
-            'positions' => Positions::all(),
-            'steps' => Steps::all(),
+        $divisions = Divisions::all();
+        $sections = [];
+        $steps = [];
 
-        ]);
+        if (old('divisionId')) {
+            $sections = Sections::where('division_id', old('divisionId'))
+                ->orderBy('section_name')
+                ->get();
+        }
+        if (old('sectionId')) {
+            $steps = Steps::where('section_id', old('sectionId'))
+                ->orderBy('step_number')
+                ->get();
+        }
+
+        return view('auth.register', compact('divisions', 'sections', 'steps'))
+            ->with([
+                'positions' => Positions::all(),
+                'window' => Windows::all(),
+            ]);
     }
 
     public function register(RegisterRequest $request)
@@ -50,9 +64,6 @@ class RegisterController extends Controller
         // Load related division and section if you need their names
         $user->load(['division', 'section']);
 
-        $divisionName = $user->division->division_name;
-        $sectionName = $user->section->section_name;
-
         // Store user id in session for OTP verification
         session(['otp_user_id' => $user->id]);
 
@@ -72,5 +83,16 @@ class RegisterController extends Controller
             ->get(['id', 'section_name']);
 
         return response()->json($sections);
+    }
+
+    public function stepsBySection($sectionId)
+    {
+        // Fetch steps belonging to the selected section
+        $steps = DB::table('steps')
+            ->where('section_id', $sectionId)
+            ->orderBy('step_number')
+            ->get(['id', 'step_number']);
+
+        return response()->json($steps);
     }
 }

@@ -8,10 +8,10 @@ class Steps
 {
     protected static $steps = null;
 
-    protected static function all()
+    public static function all()
     {
         if (self::$steps === null) {
-            self::$steps = Step::pluck('step_name', 'id')->toArray();
+            self::$steps = Step::pluck('step_number', 'id')->toArray();
         }
 
         return self::$steps;
@@ -20,10 +20,10 @@ class Steps
     public static function __callStatic($name, $arguments)
     {
         $steps = self::all();
-        $normalizedName = preg_replace('/[-_\s]+/', '', strtolower($name));
+        $formatted = ucwords(strtolower(str_replace('_', ' ', $name)));
+
         foreach ($steps as $stepName => $id) {
-            $normalizedStep = preg_replace('/[-_\s]+/', '', strtolower($stepName));
-            if ($normalizedStep === $normalizedName) {
+            if (strcasecmp($stepName, $formatted) === 0) {
                 return $id;
             }
         }

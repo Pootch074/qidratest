@@ -23,7 +23,8 @@
                 <!-- First Name & Last Name -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="relative">
-                        <input type="text" name="firstName" required placeholder="First Name"
+                        <input type="text" name="firstName" value="{{ old('firstName') }}" required
+                            placeholder="First Name"
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                     </div>
 
@@ -53,24 +54,17 @@
                         <select name="sectionId" id="section_id" required
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
                             {{ old('divisionId') ? '' : 'disabled' }}>
-                            <option value="" disabled selected>Section/Unit</option>
+                            <option value="" disabled selected>Section/Office</option>
 
-                            @if (old('divisionId'))
-                                @php
-                                    $sections = DB::table('sections')
-                                        ->where('division_id', old('divisionId'))
-                                        ->orderBy('section_name')
-                                        ->get();
-                                @endphp
-                                @foreach ($sections as $section)
-                                    <option value="{{ $section->id }}"
-                                        {{ old('sectionId') == $section->id ? 'selected' : '' }}>
-                                        {{ $section->section_name }}
-                                    </option>
-                                @endforeach
-                            @endif
+                            @foreach ($sections as $section)
+                                <option value="{{ $section->id }}"
+                                    {{ old('sectionId') == $section->id ? 'selected' : '' }}>
+                                    {{ $section->section_name }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
+
                 </div>
 
                 <!-- Position & Email Add-->
@@ -82,9 +76,9 @@
                                 Select Position
                             </option>
 
-                            @foreach ($positions as $position)
-                                <option value="{{ $position }}" {{ old('position') == $position ? 'selected' : '' }}>
-                                    {{ $position }}
+                            @foreach ($positions as $pstn)
+                                <option value="{{ $pstn }}" {{ old('position') == $pstn ? 'selected' : '' }}>
+                                    {{ $pstn }}
                                 </option>
                             @endforeach
 
@@ -104,62 +98,31 @@
                 <!-- Step, Window, Category -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="relative">
-                        <select name="stepId" id="division_id" required
-                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                            <option value="" disabled {{ old('stepId') ? '' : 'selected' }}>Step
-                            </option>
-                            @foreach ($steps as $step)
-                                <option value="{{ $step->id }}" {{ old('stepId') == $step->id ? 'selected' : '' }}>
-                                    {{ $step->name }}
+                        <select name="stepId" id="step_id" required
+                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
+                            {{ old('sectionId') ? '' : 'disabled' }}>
+                            <option value="" disabled selected>Step</option>
+
+                            @foreach ($steps as $stp)
+                                <option value="{{ $stp->id }}" {{ old('stepId') == $stp->id ? 'selected' : '' }}>
+                                    {{ $stp->step_number }}
                                 </option>
                             @endforeach
-
                         </select>
                     </div>
 
                     <div class="relative">
-                        <select name="windowId" id="section_id" required
-                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
-                            {{ old('divisionId') ? '' : 'disabled' }}>
+                        <select name="windowId" required
+                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                             <option value="" disabled selected>Window</option>
-
-                            @if (old('divisionId'))
-                                @php
-                                    $sections = DB::table('sections')
-                                        ->where('division_id', old('divisionId'))
-                                        ->orderBy('section_name')
-                                        ->get();
-                                @endphp
-                                @foreach ($sections as $section)
-                                    <option value="{{ $section->id }}"
-                                        {{ old('sectionId') == $section->id ? 'selected' : '' }}>
-                                        {{ $section->section_name }}
-                                    </option>
-                                @endforeach
-                            @endif
                         </select>
                     </div>
 
                     <div class="relative">
-                        <select name="category" id="section_id" required
-                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
-                            {{ old('divisionId') ? '' : 'disabled' }}>
+                        <select name="category" required
+                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                             <option value="" disabled selected>Category</option>
 
-                            @if (old('divisionId'))
-                                @php
-                                    $sections = DB::table('sections')
-                                        ->where('division_id', old('divisionId'))
-                                        ->orderBy('section_name')
-                                        ->get();
-                                @endphp
-                                @foreach ($sections as $section)
-                                    <option value="{{ $section->id }}"
-                                        {{ old('sectionId') == $section->id ? 'selected' : '' }}>
-                                        {{ $section->section_name }}
-                                    </option>
-                                @endforeach
-                            @endif
                         </select>
                     </div>
                 </div>
@@ -264,6 +227,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const divisionSelect = document.getElementById('division_id');
             const sectionSelect = document.getElementById('section_id');
+            const stepSelect = document.getElementById('step_id');
 
             divisionSelect.addEventListener('change', function() {
                 const divisionId = this.value;
@@ -277,7 +241,7 @@
                     .then(sections => {
                         sectionSelect.disabled = false;
                         sectionSelect.innerHTML =
-                            '<option value="" disabled selected>Section/Unit</option>';
+                            '<option value="" disabled selected>Section/Office</option>';
 
                         if (sections.length === 0) {
                             sectionSelect.innerHTML +=
@@ -295,6 +259,39 @@
                     .catch(() => {
                         sectionSelect.disabled = false;
                         sectionSelect.innerHTML = '<option value="">Failed to load sections</option>';
+                    });
+            });
+
+
+            sectionSelect.addEventListener('change', function() {
+                const sectionId = this.value;
+
+                stepSelect.disabled = true;
+                stepSelect.innerHTML = '<option value="" disabled selected>Loading...</option>';
+
+                fetch(`/auth/steps/${sectionId}`)
+                    .then(response => response.json())
+                    .then(steps => {
+                        stepSelect.disabled = false;
+                        stepSelect.innerHTML =
+                            '<option value="" disabled selected>Step</option>';
+
+                        if (steps.length === 0) {
+                            stepSelect.innerHTML +=
+                                '<option value="">No steps available</option>';
+                            return;
+                        }
+
+                        steps.forEach(step => {
+                            const option = document.createElement('option');
+                            option.value = step.id;
+                            option.textContent = step.step_number;
+                            stepSelect.appendChild(option);
+                        });
+                    })
+                    .catch(() => {
+                        stepSelect.disabled = false;
+                        stepSelect.innerHTML = '<option value="">Failed to load steps</option>';
                     });
             });
         });
