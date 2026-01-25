@@ -967,6 +967,7 @@ class UsersController extends Controller
         ]);
 
         $user->user_type = $request->user_type;
+        $user->status = User::STATUS_ACTIVE; // set status to 1
         $user->save();
 
         return response()->json(['success' => true]);
