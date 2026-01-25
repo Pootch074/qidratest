@@ -4,39 +4,37 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
-use App\Libraries\Divisions;
-use App\Libraries\Positions;
-use App\Libraries\Sections;
-use App\Libraries\Steps;
-use App\Libraries\Windows;
+use App\Models\Division;
+use App\Models\Section;
+use App\Models\Step;
+use App\Models\Window;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
+use App\Models\Position;
 use Illuminate\Support\Facades\Mail;
 
 class RegisterController extends Controller
 {
     public function index()
     {
-        $divisions = Divisions::all();
-        $sections = [];
-        $steps = [];
+        $divisions = Division::all();
 
-        if (old('divisionId')) {
-            $sections = Sections::where('division_id', old('divisionId'))
-                ->orderBy('section_name')
-                ->get();
-        }
-        if (old('sectionId')) {
-            $steps = Steps::where('section_id', old('sectionId'))
-                ->orderBy('step_number')
-                ->get();
-        }
+        $sections = old('divisionId')
+            ? Section::where('division_id', old('divisionId'))->orderBy('section_name')->get()
+            : collect();
 
-        return view('auth.register', compact('divisions', 'sections', 'steps'))
-            ->with([
-                'positions' => Positions::all(),
-                'window' => Windows::all(),
-            ]);
+        $steps = old('sectionId')
+            ? Step::where('section_id', old('sectionId'))->orderBy('step_number')->get()
+            : collect();
+
+        $windows = old('stepId')
+            ? Window::where('step_id', old('stepId'))->orderBy('window_number')->get()
+            : collect();
+
+        return view('auth.register', compact(
+            'divisions', 'sections', 'steps', 'windows'
+        ))->with([
+            'positions' => Position::all(),
+        ]);
     }
 
     public function register(RegisterRequest $request)
@@ -74,25 +72,24 @@ class RegisterController extends Controller
         return redirect()->route('otp.verify')->with('success', 'OTP sent to your email.');
     }
 
-    public function sectionsByDivision($divisionId)
+    public function sectionsByDivision(Division $divisionId)
     {
-        // Fetch sections belonging to the selected division
-        $sections = DB::table('sections')
-            ->where('division_id', $divisionId)
-            ->orderBy('section_name')
-            ->get(['id', 'section_name']);
-
-        return response()->json($sections);
+        return response()->json(
+            $divisionId->sections()->orderBy('section_name')->get(['id', 'section_name'])
+        );
     }
 
-    public function stepsBySection($sectionId)
+    public function stepsBySection(Section $sectionId)
     {
-        // Fetch steps belonging to the selected section
-        $steps = DB::table('steps')
-            ->where('section_id', $sectionId)
-            ->orderBy('step_number')
-            ->get(['id', 'step_number']);
+        return response()->json(
+            $sectionId->steps()->orderBy('step_number')->get(['id', 'step_name'])
+        );
+    }
 
-        return response()->json($steps);
+    public function windowsByStep(Step $stepId)
+    {
+        return response()->json(
+            $stepId->windows()->orderBy('window_number')->get(['id', 'window_number'])
+        );
     }
 }

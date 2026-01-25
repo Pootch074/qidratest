@@ -41,9 +41,10 @@
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                             <option value="" disabled {{ old('divisionId') ? '' : 'selected' }}>Area of Assignment
                             </option>
-                            @foreach ($divisions as $id => $name)
-                                <option value="{{ $id }}" {{ old('divisionId') == $id ? 'selected' : '' }}>
-                                    {{ $name }}
+
+                            @foreach ($divisions as $dvsn)
+                                <option value="{{ $dvsn->id }}" {{ old('divisionId') == $dvsn->id ? 'selected' : '' }}>
+                                    {{ $dvsn->division_name }}
                                 </option>
                             @endforeach
                         </select>
@@ -59,7 +60,7 @@
                             @foreach ($sections as $section)
                                 <option value="{{ $section->id }}"
                                     {{ old('sectionId') == $section->id ? 'selected' : '' }}>
-                                    {{ $section->section_name }}
+                                    {{-- {{ $section->section_name }} --}}
                                 </option>
                             @endforeach
                         </select>
@@ -72,13 +73,13 @@
                     <div class="relative">
                         <select name="position" required
                             class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                            <option value="" disabled {{ old('position') ? '' : 'selected' }}>
+                            <option value="" disabled>
                                 Select Position
                             </option>
 
                             @foreach ($positions as $pstn)
-                                <option value="{{ $pstn }}" {{ old('position') == $pstn ? 'selected' : '' }}>
-                                    {{ $pstn }}
+                                <option value="{{ $pstn->id }}">
+                                    {{ $pstn->position_name }}
                                 </option>
                             @endforeach
 
@@ -105,16 +106,23 @@
 
                             @foreach ($steps as $stp)
                                 <option value="{{ $stp->id }}" {{ old('stepId') == $stp->id ? 'selected' : '' }}>
-                                    {{ $stp->step_number }}
+                                    {{-- {{ $stp->step_name }} --}}
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
                     <div class="relative">
-                        <select name="windowId" required
-                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                        <select name="windowId" id="window_id" required
+                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
+                            {{ old('stepId') ? '' : 'disabled' }}>
                             <option value="" disabled selected>Window</option>
+
+                            @foreach ($windows as $wndw)
+                                <option value="{{ $wndw->id }}" {{ old('windowId') == $wndw->id ? 'selected' : '' }}>
+                                    {{ $wndw->window_number }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -228,6 +236,7 @@
             const divisionSelect = document.getElementById('division_id');
             const sectionSelect = document.getElementById('section_id');
             const stepSelect = document.getElementById('step_id');
+            const windowSelect = document.getElementById('window_id');
 
             /**
              * Generic function to populate a dropdown via AJAX
@@ -276,7 +285,12 @@
             // Section -> Step
             sectionSelect.addEventListener('change', function() {
                 const sectionId = this.value;
-                populateDropdown(stepSelect, `/auth/steps/${sectionId}`, 'Step', 'step_number');
+                populateDropdown(stepSelect, `/auth/steps/${sectionId}`, 'Step', 'step_name');
+            });
+
+            stepSelect.addEventListener('change', function() {
+                const stepId = this.value;
+                populateDropdown(windowSelect, `/auth/windows/${stepId}`, 'Window', 'window_number');
             });
         });
     </script>

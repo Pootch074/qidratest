@@ -53,9 +53,11 @@ Route::prefix('auth')->group(function () {
     Route::post('/register', [RegisterController::class, 'register'])->name('register.store');
     Route::get('/sections/{divisionId}', [RegisterController::class, 'sectionsByDivision'])
         ->name('auth.sections.byDivision');
-
     Route::get('/steps/{sectionId}', [RegisterController::class, 'stepsBySection'])
         ->name('auth.steps.bySection');
+
+    Route::get('/windows/{stepId}', [RegisterController::class, 'windowsByStep'])
+        ->name('auth.windows.byStep');
 
     Route::get('/login', [LoginController::class, 'login'])->name('login');
     Route::post('/login', [LoginController::class, 'authenticate'])->name('authenticate');

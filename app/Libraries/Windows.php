@@ -6,14 +6,6 @@ use App\Models\Window;
 
 class Windows
 {
-    /**
-     * Create a new class instance.
-     */
-    public function __construct()
-    {
-        //
-    }
-
     protected static $windows = null;
 
     public static function all()
@@ -23,5 +15,24 @@ class Windows
         }
 
         return self::$windows;
+    }
+
+    public static function __callStatic($name, $arguments)
+    {
+        $windows = self::all();
+        $formatted = ucwords(strtolower(str_replace('_', ' ', $name)));
+
+        foreach ($windows as $windowName => $id) {
+            if (strcasecmp($windowName, $formatted) === 0) {
+                return $id;
+            }
+        }
+
+        return null;
+    }
+
+    public static function id(string $key): ?int
+    {
+        return self::__callStatic($key, []);
     }
 }
