@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\UserCategory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
 use App\Models\Division;
+use App\Models\Position;
 use App\Models\Section;
 use App\Models\Step;
-use App\Models\Window;
 use App\Models\User;
-use App\Models\Position;
+use App\Models\Window;
 use Illuminate\Support\Facades\Mail;
-use App\Enums\UserCategory;
-
 
 class RegisterController extends Controller
 {

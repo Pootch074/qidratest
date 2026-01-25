@@ -96,9 +96,13 @@ Route::middleware(['auth', 'otp.verified', CheckUserType::class.':0,1,2,3,5,6'])
         Route::get('/json', [UsersController::class, 'usersJson'])->name('admin.users.json');
         Route::post('/store', [UsersController::class, 'store'])->name('admin.storeUsers');
         Route::delete('/{user}', [UsersController::class, 'destroy'])->name('admin.destroyUsers');
+
+        
+
     });
     Route::prefix('admin/pending-users')->group(function () {
         Route::get('/', [UsersController::class, 'pendingUsers'])->name('admin.pendingUsers');
+        Route::put('/users/{user}/update-type', [UsersController::class, 'updateType'])->name('admin.users.updateType');
     });
 
     Route::get('idscan', [IdscanController::class, 'index'])->name('idscan');

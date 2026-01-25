@@ -35,6 +35,7 @@
                                 <th class="px-6 py-3 font-semibold tracking-wide text-center">Last Name</th>
                                 <th class="px-6 py-3 font-semibold tracking-wide text-center">Email Address</th>
                                 <th class="px-6 py-3 font-semibold tracking-wide text-center">Position</th>
+                                <th class="px-6 py-3 font-semibold tracking-wide text-center">Role</th>
                                 <th class="px-6 py-3 font-semibold tracking-wide text-center">Assigned Step</th>
                                 <th class="px-6 py-3 font-semibold tracking-wide text-center">Assigned Window</th>
                                 <th class="px-6 py-3 font-semibold tracking-wide text-center">Assigned Category</th>
@@ -58,6 +59,10 @@
                                         {{ $u->position ?? '—' }}
                                     </td>
                                     <td class="px-6 py-3 text-gray-700">
+                                        {{ $u->user_type_text }}
+                                    </td>
+
+                                    <td class="px-6 py-3 text-gray-700">
                                         {{ $u->step->step_number ?? '—' }}
                                     </td>
                                     <td class="px-6 py-3 text-gray-700">
@@ -67,10 +72,12 @@
                                         {{ $u->assigned_category ?? '—' }}
                                     </td>
                                     <td class="px-6 py-3 text-center space-x-2">
-                                        <button onclick="deleteUser({{ $u->id }})"
-                                            class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2">
-                                            <i class="fas fa-trash-alt"></i> Approve
+                                        <button onclick="openEditUserModal({{ $u->id }}, {{ $u->user_type ?? 5 }})"
+                                            class="text-white bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-yellow-300 shadow-lg shadow-yellow-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                            <i class="fas fa-edit"></i> Edit
                                         </button>
+
+
                                     </td>
                                 </tr>
                             @empty
@@ -79,11 +86,118 @@
                         </tbody>
                     </table>
                 </div>
+                {{-- Edit User Modal --}}
+                <div id="editUserModal"
+                    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300">
+                    <div
+                        class="bg-white rounded-2xl shadow-xl w-full max-w-md p-8 transform transition-transform duration-300 scale-95">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-2xl font-semibold text-gray-800">Edit User Role</h3>
+                            <button id="closeEditUserModal"
+                                class="text-gray-500 hover:text-gray-700 text-2xl font-bold">&times;</button>
+                        </div>
+
+                        <form id="editUserForm" method="POST">
+                            @csrf
+                            @method('PUT')
+
+                            <input type="hidden" name="user_id" id="editUserId">
+
+                            <div class="mb-4">
+                                <label for="user_type" class="block text-gray-700 font-medium mb-2">User Type</label>
+                                <select name="user_type" id="editUserType" required
+                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                                    <option value="" disabled selected>Select Type</option>
+
+                                    <option value="{{ \App\Models\User::TYPE_SUPERADMIN }}">Super Admin</option>
+                                    <option value="{{ \App\Models\User::TYPE_ADMIN }}">Admin</option>
+                                    <option value="{{ \App\Models\User::TYPE_IDSCAN }}">ID Scan</option>
+                                    <option value="{{ \App\Models\User::TYPE_PACD }}">PACD</option>
+                                    <option value="{{ \App\Models\User::TYPE_USER }}">User</option>
+                                    <option value="{{ \App\Models\User::TYPE_DISPLAY }}">Display</option>
+                                </select>
+                            </div>
+
+                            <div class="flex justify-end space-x-2">
+                                <button type="button" id="cancelEditUser"
+                                    class="px-5 py-2.5 bg-gray-300 rounded-lg hover:bg-gray-400">Cancel</button>
+                                <button type="submit"
+                                    class="px-5 py-2.5 bg-[#2e3192] text-white rounded-lg hover:bg-indigo-700">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+
             </div>
         </div>
     </div>
 @endsection
 
 @section('scripts')
+    <script>
+        const editModal = document.getElementById('editUserModal');
+        const closeEditModalBtn = document.getElementById('closeEditUserModal');
+        const cancelEditBtn = document.getElementById('cancelEditUser');
+        const editUserForm = document.getElementById('editUserForm');
+        const editUserIdInput = document.getElementById('editUserId');
+        const editUserTypeSelect = document.getElementById('editUserType');
+
+        function openEditUserModal(userId, userType) {
+            document.getElementById('editUserId').value = userId;
+            document.getElementById('editUserType').value = userType;
+            document.getElementById('editUserModal').classList.remove('hidden');
+        }
+
+        document.getElementById('closeEditUserModal').addEventListener('click', () => {
+            document.getElementById('editUserModal').classList.add('hidden');
+        });
+
+        document.getElementById('cancelEditUser').addEventListener('click', () => {
+            document.getElementById('editUserModal').classList.add('hidden');
+        });
+
+
+        closeEditModalBtn.addEventListener('click', () => {
+            editModal.classList.add('hidden');
+        });
+
+        cancelEditBtn.addEventListener('click', () => {
+            editModal.classList.add('hidden');
+        });
+
+        // Optional: submit via AJAX (otherwise, normal form submission)
+        editUserForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const userId = editUserIdInput.value;
+            const userType = editUserTypeSelect.value;
+
+            fetch(`/admin/pending-users/users/${userId}/update-type`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        user_type: userType
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('User type updated!');
+                        location.reload(); // refresh table
+                    } else {
+                        alert('Failed to update user type.');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Error occurred.');
+                });
+        });
+    </script>
+
     @vite('resources/js/adminUsers.js')
 @endsection

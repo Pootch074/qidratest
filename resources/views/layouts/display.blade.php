@@ -4,20 +4,21 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="{{ Vite::asset('resources/images/icons/qidra-icon3.png') }}">
-    <title>{{ config('app.name', 'DSWD - Qidra') }} - {{ strtoupper(auth()->user()->getUserTypeName()) }} </title>
+    <title>{{ config('app.name', 'DSWD - Qidra') }} - {{ strtoupper(auth()->user()->getUserTypeTextAttribute()) }}
+    </title>
     @vite(['resources/js/app.js'])
 
     @yield('header')
     @livewireStyles
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    
+
     <!-- ✅ Global app URL -->
     <script>
         window.appUrl = "{{ url('/') }}";
     </script>
-    
-    @yield('header') 
-    
+
+    @yield('header')
+
 </head>
 
 <body class="min-h-screen flex flex-col">
@@ -44,4 +45,5 @@
     </script>
 
 </body>
+
 </html>

@@ -238,7 +238,7 @@ class UsersController extends Controller
                 'last_name' => $u->last_name,
                 'email' => $u->email,
                 'position' => $u->position,
-                'user_type_name' => $u->getUserTypeName(),
+                'user_type_name' => $u->getUserTypeTextAttribute(),
                 'assigned_category' => $u->assigned_category,
                 'step_number' => $u->step?->step_number,
                 'window_number' => $u->window?->window_number,
@@ -310,7 +310,7 @@ class UsersController extends Controller
                 'last_name' => $user->last_name,
                 'email' => $user->email,
                 'position' => $user->position,
-                'user_type_name' => $user->getUserTypeName(),
+                'user_type_name' => $user->getUserTypeTextAttribute(),
                 'assigned_category' => $user->assigned_category,
                 'window_number' => $user->window->window_number ?? null,
                 'step_number' => $user->step->step_number ?? null,
@@ -959,4 +959,17 @@ class UsersController extends Controller
 
         return response()->json(['success' => true, 'message' => $message]);
     }
+
+    public function updateType(Request $request, User $user)
+    {
+        $request->validate([
+            'user_type' => 'required|integer|in:0,1,2,3,5,6', // validate allowed constants
+        ]);
+
+        $user->user_type = $request->user_type;
+        $user->save();
+
+        return response()->json(['success' => true]);
+    }
+
 }

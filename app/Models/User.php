@@ -118,14 +118,9 @@ class User extends Authenticatable
         ];
     }
 
-    public function getUserType(int $i): string
+    public function getUserTypeTextAttribute(): string
     {
-        return self::getUserTypes()[$i] ?? 'Unknown';
-    }
-
-    public function getUserTypeName(): string
-    {
-        return $this->getUserType($this->user_type);
+        return self::getUserTypes()[$this->user_type] ?? 'Unknown';
     }
 
     public static function getStatuses()
@@ -136,9 +131,9 @@ class User extends Authenticatable
         ];
     }
 
-    public function getStatus(int $i): string
+    public function getStatusTextAttribute(): string
     {
-        return self::getStatuses()[$i] ?? 'Unknown';
+        return self::getStatuses()[$this->status] ?? 'Unknown';
     }
 
     public function scopeAdmins($query)
