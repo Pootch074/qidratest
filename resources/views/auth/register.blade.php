@@ -297,12 +297,12 @@
             sectionSelect.addEventListener('change', function() {
                 const sectionId = this.value;
                 populateDropdown(stepSelect, `{{ url('auth/steps') }}/${sectionId}`, 'Step', 'step_name');
-
             });
 
             stepSelect.addEventListener('change', function() {
                 const stepId = this.value;
-                populateDropdown(windowSelect, `/auth/windows/${stepId}`, 'Window', 'window_number');
+                populateDropdown(windowSelect, `{{ url('auth/windows') }}/${stepId}`, 'Window',
+                    'window_number');
             });
         });
     </script>
