@@ -23,8 +23,8 @@ class EnsureOtpVerified
         // If OTP is not verified, redirect to OTP page
         if (session('otp_verified') !== true) {
             // allow OTP page itself to be accessed
-            if (! $request->routeIs('showOtpForm') && ! $request->routeIs('verifyOtp')) {
-                return redirect()->route('showOtpForm');
+            if (! $request->routeIs('login.show.otp') && ! $request->routeIs('login.verify.otp')) {
+                return redirect()->route('login.show.otp');
             }
         }
 

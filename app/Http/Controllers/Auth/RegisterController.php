@@ -72,7 +72,7 @@ class RegisterController extends Controller
         Mail::to($user->email)->send(new \App\Mail\SendOtpMail($user));
 
         // Redirect to OTP verification page
-        return redirect()->route('otp.verify')->with('success', 'OTP sent to your email.');
+        return redirect()->route('register.show.otp')->with('success', 'OTP sent to your email.');
     }
 
     public function sectionsByDivision(Division $divisionId)

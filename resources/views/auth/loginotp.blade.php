@@ -1,7 +1,7 @@
 @extends('layouts.auth')
 @section('content')
     <div class="w-full max-w-md bg-[#f6f6f6] rounded-2xl shadow-lg p-8 space-y-6 mx-auto mt-20">
-        <h2 class="text-2xl font-bold text-gray-900 text-center">OTP Verification</h2>
+        <h2 class="text-2xl font-bold text-gray-900 text-center">Login OTP Verification</h2>
         <p class="text-center text-gray-600">Enter the 6-digit code sent to your email.</p>
 
         {{-- Check if there is a validation error for the "otp" field --}}
@@ -23,13 +23,13 @@
             </div>
         @endif
 
-        <form action="{{ route('verifyOtp') }}" method="POST" class="space-y-5">
+        <form action="{{ route('login.verify.otp') }}" method="POST" class="space-y-5">
             @csrf
             <input type="text" name="otp" maxlength="6" placeholder="Enter OTP"
                 class="block w-full h-14 pl-4 pr-4 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 text-center text-xl focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
 
             <div class="flex justify-between">
-                <a href="{{ route('register') }}" class="text-indigo-600 hover:underline self-center">Cancel</a>
+                <a href="{{ route('login') }}" class="text-indigo-600 hover:underline self-center">Cancel</a>
                 <button type="submit"
                     class="px-6 py-3 rounded-xl bg-[#2e3192] text-white font-semibold hover:bg-indigo-700">
                     Submit

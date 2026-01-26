@@ -55,11 +55,11 @@ class LoginController extends Controller
                 ->subject('Your Login OTP Code');
         });
 
-        return redirect()->route('showOtpForm')->with('success', 'OTP sent to your email');
+        return redirect()->route('login.show.otp')->with('success', 'OTP sent to your email');
     }
 
     // Show OTP form
-    public function showOtpForm()
+    public function loginShowOtp()
     {
         if (! session()->has('otp_user_id')) {
             return redirect()->route('login')->withErrors(['email' => 'Please login first']);
@@ -68,7 +68,7 @@ class LoginController extends Controller
         return view('auth.loginotp');
     }
 
-    public function verifyOtp(Request $request)
+    public function loginVerifyOtp(Request $request)
     {
         $request->validate([
             'otp' => 'required|digits:6',

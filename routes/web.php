@@ -62,11 +62,11 @@ Route::prefix('auth')->group(function () {
     Route::post('/login', [LoginController::class, 'authenticate'])->name('authenticate');
 
     // OTP verification
-    Route::get('/verify-otp', [LoginController::class, 'showOtpForm'])->name('showOtpForm');
-    Route::post('/verify-otp', [LoginController::class, 'verifyOtp'])->name('verifyOtp');
+    Route::get('/verify-otp', [LoginController::class, 'loginShowOtp'])->name('login.show.otp');
+    Route::post('/verify-otp', [LoginController::class, 'loginVerifyOtp'])->name('login.verify.otp');
 
-    Route::get('/otp-verify', [RegisterController::class, 'show'])->name('otp.verify');
-    Route::post('/otp-verify', [RegisterController::class, 'verify'])->name('otp.verify.submit');
+    Route::get('/otp-verify', [RegisterController::class, 'show'])->name('register.show.otp');
+    Route::post('/otp-verify', [RegisterController::class, 'verify'])->name('register.verify.otp');
 });
 
 /*
