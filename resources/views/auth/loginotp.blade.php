@@ -7,14 +7,12 @@
         @if (isset($otpExpiresAt))
             <p id="otp-timer" class="text-center text-sm text-gray-600 mb-3">
                 Your OTP will expire in
-                <span class="font-semibold text-[#2e3192]"></span>
+                <span class="font-semibold text-[#2e3192]">10:00</span>
             </p>
         @endif
 
         @if ($errors->has('otp'))
-            <div class="text-red-600 text-sm text-center">
-                {{ $errors->first('otp') }}
-            </div>
+            <div class="text-red-600 text-sm text-center">{{ $errors->first('otp') }}</div>
         @endif
 
         @if (session('success'))
@@ -28,7 +26,7 @@
             <input type="text" name="otp" maxlength="6" placeholder="Enter OTP"
                 class="block w-full h-14 pl-4 pr-4 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 text-center text-xl focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
 
-            <div class="flex justify-between">
+            <div class="flex justify-between items-center">
                 <a href="{{ route('login') }}" class="text-indigo-600 hover:underline self-center">Cancel</a>
                 <button type="submit"
                     class="px-6 py-3 rounded-xl bg-[#2e3192] text-white font-semibold hover:bg-indigo-700">
@@ -36,13 +34,24 @@
                 </button>
             </div>
         </form>
+
+        <div class="text-center mt-2">
+            <form action="{{ route('login.resend.otp') }}" method="POST">
+                @csrf
+                <button type="submit" class="text-sm text-indigo-600 hover:underline" id="resendBtn" disabled>
+                    Resend OTP
+                </button>
+            </form>
+        </div>
     </div>
 
     @if (isset($otpExpiresAt))
         <script>
-            const otpExpiresAt = {{ $otpExpiresAt }} * 1000; // seconds → ms
+            const otpExpiresAt = {{ $otpExpiresAt }} * 1000;
             const timerElement = document.getElementById('otp-timer');
             const timeSpan = timerElement.querySelector('span');
+            const submitButton = document.querySelector('button[type="submit"]');
+            const resendButton = document.getElementById('resendBtn');
 
             function updateTimer() {
                 const now = Date.now();
@@ -52,19 +61,19 @@
                     clearInterval(countdown);
                     timerElement.innerHTML =
                         '<span class="text-red-600 font-semibold">Your OTP has expired. Please request a new one.</span>';
+                    submitButton.disabled = true;
+                    submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+                    resendButton.disabled = false;
                     return;
                 }
 
                 const minutes = Math.floor(remaining / (1000 * 60));
                 const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
 
-                timeSpan.textContent =
-                    `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                timeSpan.textContent = `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
             }
 
-            // ⬅️ Run immediately so it matches backend time exactly
             updateTimer();
-
             const countdown = setInterval(updateTimer, 1000);
         </script>
     @endif

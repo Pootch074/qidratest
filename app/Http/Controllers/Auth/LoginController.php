@@ -127,4 +127,36 @@ class LoginController extends Controller
                 return redirect()->route('login');
         }
     }
+
+    public function resendOtp(Request $request)
+{
+    $userId = session('otp_user_id');
+
+    if (! $userId) {
+        return redirect()->route('login')->withErrors(['email' => 'Please login first']);
+    }
+
+    $user = User::find($userId);
+
+    if (! $user) {
+        return redirect()->route('login')->withErrors(['email' => 'User not found']);
+    }
+
+    // Generate new OTP and update session
+    $otp = rand(100000, 999999);
+    session([
+        'otp_code' => $otp,
+        'otp_expires_at' => now()->addMinutes(10),
+        'otp_verified' => false,
+    ]);
+
+    // Send OTP email
+    Mail::raw("Your OTP code is: $otp", function ($message) use ($user) {
+        $message->to($user->email)
+                ->subject('Your Login OTP Code');
+    });
+
+    return redirect()->route('login.show.otp')->with('success', 'A new OTP has been sent to your email.');
+}
+
 }
