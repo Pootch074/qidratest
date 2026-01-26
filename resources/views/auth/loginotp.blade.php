@@ -23,7 +23,7 @@
             </div>
         @endif
 
-        <form action="{{ route('login.verify.otp') }}" method="POST" class="space-y-5">
+        <form action="{{ route('login.verify.otp') }}" method="POST" class="space-y-3">
             @csrf
             <input type="text" name="otp" maxlength="6" placeholder="Enter OTP"
                 class="block w-full h-14 pl-4 pr-4 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 text-center text-xl focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
