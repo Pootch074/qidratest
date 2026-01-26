@@ -4,20 +4,20 @@
         <h2 class="text-2xl font-bold text-gray-900 text-center">Login OTP Verification</h2>
         <p class="text-center text-gray-600">Enter the 6-digit code sent to your email.</p>
 
-        {{-- Check if there is a validation error for the "otp" field --}}
+        @if (isset($otpExpiresAt))
+            <p id="otp-timer" class="text-center text-sm text-gray-600 mb-3">
+                Your OTP will expire in
+                <span class="font-semibold text-[#2e3192]"></span>
+            </p>
+        @endif
+
         @if ($errors->has('otp'))
-            {{-- Display the first validation error message for "otp" --}}
-            {{-- Styled in red text, small font, and centered --}}
             <div class="text-red-600 text-sm text-center">
                 {{ $errors->first('otp') }}
             </div>
         @endif
 
-        {{-- Check if there is a "success" message stored in the session --}}
         @if (session('success'))
-            {{-- Display the success message --}}
-            {{-- Styled with a green background, green border, rounded corners, --}}
-            {{-- padding, small text, and centered alignment --}}
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4 text-sm text-center">
                 {{ session('success') }}
             </div>
@@ -37,4 +37,35 @@
             </div>
         </form>
     </div>
+
+    @if (isset($otpExpiresAt))
+        <script>
+            const otpExpiresAt = {{ $otpExpiresAt }} * 1000; // seconds → ms
+            const timerElement = document.getElementById('otp-timer');
+            const timeSpan = timerElement.querySelector('span');
+
+            function updateTimer() {
+                const now = Date.now();
+                const remaining = otpExpiresAt - now;
+
+                if (remaining <= 0) {
+                    clearInterval(countdown);
+                    timerElement.innerHTML =
+                        '<span class="text-red-600 font-semibold">Your OTP has expired. Please request a new one.</span>';
+                    return;
+                }
+
+                const minutes = Math.floor(remaining / (1000 * 60));
+                const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+
+                timeSpan.textContent =
+                    `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }
+
+            // ⬅️ Run immediately so it matches backend time exactly
+            updateTimer();
+
+            const countdown = setInterval(updateTimer, 1000);
+        </script>
+    @endif
 @endsection

@@ -4,17 +4,9 @@
         <h2 class="text-2xl font-bold text-gray-900 text-center">Registration OTP Verification</h2>
         <p class="text-center text-gray-600">Enter the 6-digit code sent to your email.</p>
 
-        {{-- Check if the variable $otpExpiresAt exists and is not null --}}
         @if (isset($otpExpiresAt))
-            {{-- Paragraph element that will display the OTP expiration message --}}
-            {{-- Centered text, small font size, gray color, with bottom margin --}}
             <p id="otp-timer" class="text-center text-sm text-gray-600 mb-3">
-
-                {{-- Static text shown to the user --}}
                 Your OTP will expire in
-
-                {{-- Span used to highlight the countdown timer --}}
-                {{-- Bold text and custom blue color --}}
                 <span class="font-semibold text-[#2e3192]">
                     10:00
                 </span>

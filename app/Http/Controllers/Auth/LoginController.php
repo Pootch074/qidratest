@@ -42,7 +42,7 @@ class LoginController extends Controller
         session([
             'otp_user_id' => $user->id,
             'otp_code' => $otp,
-            'otp_expires_at' => now()->addMinutes(5),
+            'otp_expires_at' => now()->addMinutes(10),
             'otp_verified' => false,
         ]);
 
@@ -58,14 +58,25 @@ class LoginController extends Controller
         return redirect()->route('login.show.otp')->with('success', 'OTP sent to your email');
     }
 
-    // Show OTP form
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login');
+    }
+
     public function loginShowOtp()
     {
         if (! session()->has('otp_user_id')) {
-            return redirect()->route('login')->withErrors(['email' => 'Please login first']);
+            return redirect()->route('login')
+                ->withErrors(['email' => 'Please login first']);
         }
 
-        return view('auth.loginotp');
+        return view('auth.loginotp', [
+            'otpExpiresAt' => session('otp_expires_at')->timestamp,
+        ]);
     }
 
     public function loginVerifyOtp(Request $request)
@@ -115,14 +126,5 @@ class LoginController extends Controller
             default:
                 return redirect()->route('login');
         }
-    }
-
-    public function logout(Request $request)
-    {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect()->route('login');
     }
 }

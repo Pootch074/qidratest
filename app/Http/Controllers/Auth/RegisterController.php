@@ -11,8 +11,9 @@ use App\Models\Section;
 use App\Models\Step;
 use App\Models\User;
 use App\Models\Window;
-use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class RegisterController extends Controller
 {

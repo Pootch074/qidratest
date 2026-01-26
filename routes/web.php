@@ -4,7 +4,6 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DisplayController;
 use App\Http\Controllers\IdscanController;
-use App\Http\Controllers\OtpController;
 use App\Http\Controllers\PacdController;
 use App\Http\Controllers\StepsController;
 use App\Http\Controllers\SuperAdminController;
@@ -43,7 +42,6 @@ Route::get('/session/check', function () {
 | Public Routes
 |--------------------------------------------------------------------------
 */
-
 
 Route::get('/', fn () => Auth::check() ? redirect()->intended() : redirect(route('login')));
 
@@ -96,8 +94,6 @@ Route::middleware(['auth', 'otp.verified', CheckUserType::class.':0,1,2,3,5,6'])
         Route::get('/json', [UsersController::class, 'usersJson'])->name('admin.users.json');
         Route::post('/store', [UsersController::class, 'store'])->name('admin.storeUsers');
         Route::delete('/{user}', [UsersController::class, 'destroy'])->name('admin.destroyUsers');
-
-        
 
     });
     Route::prefix('admin/pending-users')->group(function () {
