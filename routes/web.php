@@ -43,8 +43,7 @@ Route::get('/session/check', function () {
 | Public Routes
 |--------------------------------------------------------------------------
 */
-Route::get('/otp-verify', [OtpController::class, 'show'])->name('otp.verify');
-Route::post('/otp-verify', [OtpController::class, 'verify'])->name('otp.verify.submit');
+
 
 Route::get('/', fn () => Auth::check() ? redirect()->intended() : redirect(route('login')));
 
@@ -65,6 +64,9 @@ Route::prefix('auth')->group(function () {
     // OTP verification
     Route::get('/verify-otp', [LoginController::class, 'showOtpForm'])->name('showOtpForm');
     Route::post('/verify-otp', [LoginController::class, 'verifyOtp'])->name('verifyOtp');
+
+    Route::get('/otp-verify', [RegisterController::class, 'show'])->name('otp.verify');
+    Route::post('/otp-verify', [RegisterController::class, 'verify'])->name('otp.verify.submit');
 });
 
 /*
