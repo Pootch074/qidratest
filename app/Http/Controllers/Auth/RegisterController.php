@@ -96,7 +96,7 @@ class RegisterController extends Controller
         );
     }
 
-    public function show()
+    public function registerShowOtp()
     {
         $userId = session('otp_user_id');
 
@@ -115,7 +115,7 @@ class RegisterController extends Controller
         ]);
     }
 
-    public function verify(Request $request)
+    public function registerVerifyOtp(Request $request)
     {
         $request->validate([
             'otp_code' => 'required|digits:6',

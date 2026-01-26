@@ -61,12 +61,10 @@ Route::prefix('auth')->group(function () {
     Route::get('/login', [LoginController::class, 'login'])->name('login');
     Route::post('/login', [LoginController::class, 'authenticate'])->name('authenticate');
 
-    // OTP verification
-    Route::get('/verify-otp', [LoginController::class, 'loginShowOtp'])->name('login.show.otp');
-    Route::post('/verify-otp', [LoginController::class, 'loginVerifyOtp'])->name('login.verify.otp');
-
-    Route::get('/otp-verify', [RegisterController::class, 'show'])->name('register.show.otp');
-    Route::post('/otp-verify', [RegisterController::class, 'verify'])->name('register.verify.otp');
+    Route::get('/login-verify-otp', [LoginController::class, 'loginShowOtp'])->name('login.show.otp');
+    Route::post('/login-verify-otp', [LoginController::class, 'loginVerifyOtp'])->name('login.verify.otp');
+    Route::get('/register-verify-otp', [RegisterController::class, 'registerShowOtp'])->name('register.show.otp');
+    Route::post('/register-verify-otp', [RegisterController::class, 'registerVerifyOtp'])->name('register.verify.otp');
 });
 
 /*
