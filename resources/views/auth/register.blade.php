@@ -288,7 +288,8 @@
             // Division -> Section
             divisionSelect.addEventListener('change', function() {
                 const divisionId = this.value;
-                populateDropdown(sectionSelect, `/auth/sections/${divisionId}`, 'Section/Office',
+                populateDropdown(sectionSelect, `{{ url('auth/sections') }}/${divisionId}`,
+                    'Section/Office',
                     'section_name');
             });
 
