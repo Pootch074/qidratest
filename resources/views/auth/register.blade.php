@@ -296,7 +296,8 @@
             // Section -> Step
             sectionSelect.addEventListener('change', function() {
                 const sectionId = this.value;
-                populateDropdown(stepSelect, `/auth/steps/${sectionId}`, 'Step', 'step_name');
+                populateDropdown(stepSelect, `{{ url('auth/steps') }}/${sectionId}`, 'Step', 'step_name');
+
             });
 
             stepSelect.addEventListener('change', function() {
