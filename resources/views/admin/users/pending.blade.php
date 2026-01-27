@@ -62,13 +62,13 @@
                                         {{ $u->user_type_text }}
                                     </td>
 
-                                    <td class="px-6 py-3 text-gray-700">
+                                    <td class="px-6 py-3 text-center text-gray-700">
                                         {{ $u->step->step_number ?? '—' }}
                                     </td>
-                                    <td class="px-6 py-3 text-gray-700">
+                                    <td class="px-6 py-3 text-center text-gray-700">
                                         {{ $u->window->window_number ?? '—' }}
                                     </td>
-                                    <td class="px-6 py-3 text-gray-700">
+                                    <td class="px-6 py-3 text-center text-gray-700">
                                         {{ $u->assigned_category ?? '—' }}
                                     </td>
                                     <td class="px-6 py-3 text-center space-x-2">
@@ -76,7 +76,6 @@
                                             class="text-white bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-yellow-300 shadow-lg shadow-yellow-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                                             <i class="fas fa-edit"></i> Edit
                                         </button>
-
 
                                     </td>
                                 </tr>
@@ -127,7 +126,6 @@
                         </form>
                     </div>
                 </div>
-
 
             </div>
         </div>
