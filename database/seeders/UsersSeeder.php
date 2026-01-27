@@ -86,6 +86,7 @@ class UsersSeeder extends Seeder
             // ['division' => 'psd', 'first_name' => 'Display', 'last_name' => 'Priority', 'email' => 'cisdisplayprio@dswd.gov.ph', 'section' => 'cis', 'user_type' => User::TYPE_DISPLAY, 'assigned_category' => 'priority', 'status' => User::STATUS_ACTIVE],
 
             ['division' => 'psd', 'first_name' => 'Bladymer', 'last_name' => 'Ybalio', 'email' => 'baybalio@dswd.gov.ph', 'section' => 'cis', 'user_type' => User::TYPE_ADMIN, 'status' => User::STATUS_ACTIVE, 'email_is_verified' => true],
+            ['division' => 'psd', 'first_name' => 'Yhena', 'last_name' => 'Villamil', 'email' => 'yvvillamil@dswd.gov.ph', 'section' => 'cis', 'user_type' => User::TYPE_ADMIN, 'status' => User::STATUS_ACTIVE, 'email_is_verified' => true],
             // ['division' => 'psd', 'section' => 'cis', 'first_name' => 'Juan', 'last_name' => 'Dela Cruz', 'email' => 'jdcruz@dswd.gov.ph', 'position' => 'Social Welfare Officer II', 'user_type' => User::TYPE_USER, 'assigned_category' => 'regular', 'status' => User::STATUS_INACTIVE,  'email_is_verified' => true],
         ];
 
