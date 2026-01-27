@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Models\User;
+use App\Models\LoginLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -46,8 +47,20 @@ class LoginController extends Controller
             'otp_verified' => false,
         ]);
 
+        // After OTP is generated
+        $loginLog = LoginLog::create([
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'status' => 'PENDING', // waiting for OTP
+        ]);
+
+        // Store login_log_id in session
+        session(['login_log_id' => $loginLog->id]);
+
         // Temporarily log out user until OTP verified
-        Auth::logout();
+        // Auth::logout();
 
         // Send OTP email
         Mail::raw("Your OTP code is: $otp", function ($message) use ($user) {
@@ -88,28 +101,71 @@ class LoginController extends Controller
         $otp = session('otp_code');
         $expiresAt = session('otp_expires_at');
         $userId = session('otp_user_id');
+        $logId = session('login_log_id');
 
+        /**
+         * 1️⃣ OTP EXPIRED
+         */
         if (! $otp || ! $userId || now()->gt($expiresAt)) {
-            session()->forget(['otp_user_id', 'otp_code', 'otp_expires_at', 'otp_verified']);
 
-            return redirect()->route('login')->withErrors(['email' => 'OTP expired. Please login again']);
+            if ($logId) {
+                \App\Models\LoginLog::where('id', $logId)->update([
+                    'status' => 'FAILED',
+                    'reason' => 'OTP expired',
+                    'completed_at' => now(),
+                ]);
+            }
+
+            session()->forget([
+                'otp_user_id',
+                'otp_code',
+                'otp_expires_at',
+                'otp_verified',
+                'login_log_id',
+            ]);
+
+            return redirect()->route('login')
+                ->withErrors(['email' => 'OTP expired. Please login again']);
         }
 
+        /**
+         * 2️⃣ OTP INVALID
+         */
         if ($request->otp != $otp) {
+
+            if ($logId) {
+                \App\Models\LoginLog::where('id', $logId)->update([
+                    'status' => 'FAILED',
+                    'reason' => 'Invalid OTP',
+                    'completed_at' => now(),
+                ]);
+            }
+
             return back()->withErrors(['otp' => 'Invalid OTP code']);
         }
 
-        // OTP correct, log the user in
+        /**
+         * 3️⃣ OTP SUCCESS
+         */
         $user = User::find($userId);
         Auth::login($user);
 
-        // Mark OTP as verified
-        session(['otp_verified' => true]);
+        if ($logId) {
+            LoginLog::where('id', $logId)->update([
+                'status' => 'SUCCESS',
+                'reason' => 'OTP verified',
+                'completed_at' => now(),
+            ]);
+        }
 
-        // Remove OTP session data
-        session()->forget(['otp_code', 'otp_expires_at', 'otp_user_id']);
+        session()->forget([
+            'otp_code',
+            'otp_expires_at',
+            'otp_user_id',
+            'login_log_id',
+        ]);
 
-        // Redirect user based on role
+        // Redirect by role
         switch ($user->user_type) {
             case User::TYPE_SUPERADMIN:
                 return redirect()->route('superadmin');
@@ -129,34 +185,33 @@ class LoginController extends Controller
     }
 
     public function resendOtp(Request $request)
-{
-    $userId = session('otp_user_id');
+    {
+        $userId = session('otp_user_id');
 
-    if (! $userId) {
-        return redirect()->route('login')->withErrors(['email' => 'Please login first']);
-    }
+        if (! $userId) {
+            return redirect()->route('login')->withErrors(['email' => 'Please login first']);
+        }
 
-    $user = User::find($userId);
+        $user = User::find($userId);
 
-    if (! $user) {
-        return redirect()->route('login')->withErrors(['email' => 'User not found']);
-    }
+        if (! $user) {
+            return redirect()->route('login')->withErrors(['email' => 'User not found']);
+        }
 
-    // Generate new OTP and update session
-    $otp = rand(100000, 999999);
-    session([
-        'otp_code' => $otp,
-        'otp_expires_at' => now()->addMinutes(10),
-        'otp_verified' => false,
-    ]);
+        // Generate new OTP and update session
+        $otp = rand(100000, 999999);
+        session([
+            'otp_code' => $otp,
+            'otp_expires_at' => now()->addMinutes(10),
+            'otp_verified' => false,
+        ]);
 
-    // Send OTP email
-    Mail::raw("Your OTP code is: $otp", function ($message) use ($user) {
-        $message->to($user->email)
+        // Send OTP email
+        Mail::raw("Your OTP code is: $otp", function ($message) use ($user) {
+            $message->to($user->email)
                 ->subject('Your Login OTP Code');
-    });
+        });
 
-    return redirect()->route('login.show.otp')->with('success', 'A new OTP has been sent to your email.');
-}
-
+        return redirect()->route('login.show.otp')->with('success', 'A new OTP has been sent to your email.');
+    }
 }

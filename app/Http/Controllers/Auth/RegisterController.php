@@ -145,33 +145,32 @@ class RegisterController extends Controller
     }
 
     public function resendOtp(Request $request)
-{
-    $userId = session('otp_user_id');
+    {
+        $userId = session('otp_user_id');
 
-    if (! $userId) {
-        return redirect()->route('register')->withErrors(['otp_code' => 'OTP session not found.']);
+        if (! $userId) {
+            return redirect()->route('register')->withErrors(['otp_code' => 'OTP session not found.']);
+        }
+
+        $user = User::find($userId);
+
+        if (! $user) {
+            return redirect()->route('register')->withErrors(['otp_code' => 'User not found.']);
+        }
+
+        // Generate new OTP
+        $user->otp_code = rand(100000, 999999);
+        $user->otp_expires_at = now()->addMinutes(10);
+        $user->save();
+
+        // Update session
+        session([
+            'otp_user_id' => $user->id,
+        ]);
+
+        // Send OTP email
+        Mail::to($user->email)->send(new \App\Mail\SendOtpMail($user));
+
+        return redirect()->route('register.show.otp')->with('success', 'A new OTP has been sent to your email.');
     }
-
-    $user = User::find($userId);
-
-    if (! $user) {
-        return redirect()->route('register')->withErrors(['otp_code' => 'User not found.']);
-    }
-
-    // Generate new OTP
-    $user->otp_code = rand(100000, 999999);
-    $user->otp_expires_at = now()->addMinutes(10);
-    $user->save();
-
-    // Update session
-    session([
-        'otp_user_id' => $user->id,
-    ]);
-
-    // Send OTP email
-    Mail::to($user->email)->send(new \App\Mail\SendOtpMail($user));
-
-    return redirect()->route('register.show.otp')->with('success', 'A new OTP has been sent to your email.');
-}
-
 }
