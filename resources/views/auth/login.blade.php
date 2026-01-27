@@ -52,7 +52,7 @@
                 </script>
             @endif
 
-            <div id="termsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            {{-- <div id="termsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
                 <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6">
                     <h2 class="text-lg font-semibold mb-4">
                         Terms and Conditions
@@ -80,7 +80,7 @@
                         </button>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             @if ($errors->has('email'))
                 <p class="mt-2 text-sm text-red-600">
@@ -131,13 +131,13 @@
                 </div>
 
                 <!-- Terms Checkbox -->
-                <div class="flex items-center space-x-2 pl-2">
+                {{-- <div class="flex items-center space-x-2 pl-2">
                     <input type="checkbox" name="terms" id="terms" required>
                     <label for="terms" class="text-sm text-gray-700">
                         I agree to the <a href="" id="openTermsModal" class="text-indigo-600 hover:underline">Terms
                             and Conditions</a>
                     </label>
-                </div>
+                </div> --}}
 
                 <!-- Submit Button -->
                 <div>
@@ -168,7 +168,7 @@
 @endsection
 
 @section('scripts')
-    <script>
+    {{-- <script>
         document.getElementById('openTermsModal').addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation(); // extra safety
@@ -179,7 +179,7 @@
         document.getElementById('closeTermsModal').addEventListener('click', function() {
             document.getElementById('termsModal').classList.add('hidden');
         });
-    </script>
+    </script> --}}
 
     {{-- <script>
         grecaptcha.ready(() => {

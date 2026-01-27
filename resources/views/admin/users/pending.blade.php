@@ -61,7 +61,6 @@
                                     <td class="px-6 py-3 text-gray-700">
                                         {{ $u->user_type_text }}
                                     </td>
-
                                     <td class="px-6 py-3 text-center text-gray-700">
                                         {{ $u->step->step_number ?? '—' }}
                                     </td>
