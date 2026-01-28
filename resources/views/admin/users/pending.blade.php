@@ -102,13 +102,15 @@
                                 <label for="user_type" class="block text-gray-700 font-medium mb-2">User Type</label>
                                 <select name="user_type" id="editUserType" required
                                     class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                                    <option value="" disabled selected>Select Type</option>
-                                    <option value="{{ \App\Models\User::TYPE_SUPERADMIN }}">Super Admin</option>
-                                    <option value="{{ \App\Models\User::TYPE_ADMIN }}">Admin</option>
-                                    <option value="{{ \App\Models\User::TYPE_IDSCAN }}">ID Scan</option>
-                                    <option value="{{ \App\Models\User::TYPE_PACD }}">PACD</option>
-                                    <option value="{{ \App\Models\User::TYPE_USER }}">User</option>
-                                    <option value="{{ \App\Models\User::TYPE_DISPLAY }}">Display</option>
+                                    <option value="" disabled>Select Type</option>
+                                    {{-- @foreach (\App\Models\User::getUserTypes() as $value => $label)
+                                        <option value="{{ $value }}">{{ $label }}</option>
+                                    @endforeach --}}
+
+                                    @foreach ($userTypes as $value => $label)
+                                        <option value="{{ $value }}">{{ $label }}</option>
+                                    @endforeach
+
                                 </select>
                             </div>
 
@@ -149,7 +151,6 @@
         document.getElementById('cancelEditUser').addEventListener('click', () => {
             document.getElementById('editUserModal').classList.add('hidden');
         });
-
 
         closeEditModalBtn.addEventListener('click', () => {
             editModal.classList.add('hidden');

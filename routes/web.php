@@ -10,6 +10,7 @@ use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\TransactionsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\WindowsController;
+use App\Http\Controllers\AdminController;
 use App\Http\Middleware\CheckUserType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -92,17 +93,18 @@ Route::middleware(['auth', 'otp.verified', CheckUserType::class.':0,1,2,3,5,6'])
     | Admin Routes
     |--------------------------------------------------------------------------
     */
-    Route::get('admin', [UsersController::class, 'admin'])->name('admin');
+    Route::get('admin', [AdminController::class, 'index'])->name('admin');
+
     Route::prefix('admin/active-users')->group(function () {
-        Route::get('/', [UsersController::class, 'activeUsers'])->name('admin.activeUsers');
-        Route::get('/json', [UsersController::class, 'usersJson'])->name('admin.users.json');
-        Route::post('/store', [UsersController::class, 'store'])->name('admin.storeUsers');
-        Route::delete('/{user}', [UsersController::class, 'destroy'])->name('admin.destroyUsers');
+        Route::get('/', [AdminController::class, 'activeUsers'])->name('admin.activeUsers');
+        Route::get('/json', [AdminController::class, 'usersJson'])->name('admin.users.json');
+        Route::post('/store', [AdminController::class, 'store'])->name('admin.storeUsers');
+        Route::delete('/{user}', [AdminController::class, 'destroy'])->name('admin.destroyUsers');
 
     });
     Route::prefix('admin/pending-users')->group(function () {
-        Route::get('/', [UsersController::class, 'pendingUsers'])->name('admin.pendingUsers');
-        Route::put('/users/{user}/update-type', [UsersController::class, 'updateType'])->name('admin.users.updateType');
+        Route::get('/', [AdminController::class, 'pendingUsers'])->name('admin.pendingUsers');
+        Route::put('/users/{user}/update-type', [AdminController::class, 'updateType'])->name('admin.users.updateType');
     });
 
     Route::get('idscan', [IdscanController::class, 'index'])->name('idscan');
