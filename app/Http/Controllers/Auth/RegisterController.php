@@ -60,7 +60,7 @@ class RegisterController extends Controller
 
         // Gerate OTP
         $otp = rand(100000, 999999);
-        $otpExpiresAt = now()->addMinutes(1);
+        $otpExpiresAt = now()->addMinutes(5);
 
         session([
             'otp_code' => $otp,

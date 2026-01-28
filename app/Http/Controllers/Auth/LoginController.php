@@ -42,7 +42,7 @@ class LoginController extends Controller
         session([
             'otp_user_id' => $user->id,
             'otp_code' => $otp,
-            'otp_expires_at' => now()->addMinutes(10),
+            'otp_expires_at' => now()->addMinutes(5),
             'otp_verified' => false,
         ]);
 
@@ -203,7 +203,7 @@ class LoginController extends Controller
         $otp = rand(100000, 999999);
         session([
             'otp_code' => $otp,
-            'otp_expires_at' => now()->addMinutes(10),
+            'otp_expires_at' => now()->addMinutes(5),
             'otp_verified' => false,
         ]);
 
