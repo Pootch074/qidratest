@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Step;
 use App\Models\Transaction;
 
 
@@ -219,7 +220,15 @@ class AdminController extends Controller
             ->latest()
             ->get();
 
-        return view('admin.users.pending', compact('users'))->with(['userTypes' => User::getUserTypes(),]);
+        $usertypes = User::getUserTypes();
+
+        $steps = Step::where('section_id', $eols)->get();
+
+        // $steps = old('sectionId')
+        //     ? Step::where('section_id', old('sectionId'))->orderBy('step_number')->get()
+        //     : collect();
+
+        return view('admin.users.pending', compact('users', 'usertypes', 'steps'));
     }
 
     public function updateType(Request $request, User $user)

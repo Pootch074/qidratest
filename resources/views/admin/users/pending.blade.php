@@ -90,7 +90,7 @@
                     <div
                         class="bg-white rounded-2xl shadow-xl w-full max-w-md p-8 transform transition-transform duration-300 scale-95">
                         <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-2xl font-semibold text-gray-800">Edit User Role</h3>
+                            <h3 class="text-2xl font-semibold text-gray-800">Edit User Details</h3>
                             <button id="closeEditUserModal"
                                 class="text-gray-500 hover:text-gray-700 text-2xl font-bold">&times;</button>
                         </div>
@@ -99,20 +99,47 @@
                             @method('PUT')
                             <input type="hidden" name="user_id" id="editUserId">
                             <div class="mb-4">
-                                <label for="user_type" class="block text-gray-700 font-medium mb-2">User Type</label>
+                                <label for="user_role" class="block text-gray-700 font-medium mb-2">Role</label>
+                                <select name="user_role" id="editUserType" required
+                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                                    <option value="" disabled>Select Type</option>
+                                    @foreach ($usertypes as $key => $label)
+                                        <option value="{{ $key }}">{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="user_step" class="block text-gray-700 font-medium mb-2">Step</label>
+                                <select name="userStep" id="editUserType" required
+                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                                    <option value="" disabled>Select Type</option>
+                                    @foreach ($steps as $step)
+                                        <option value="{{ $step->id }}">{{ $step->step_number }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            {{-- <div class="mb-4">
+                                <label for="user_type" class="block text-gray-700 font-medium mb-2">Window</label>
                                 <select name="user_type" id="editUserType" required
                                     class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                                     <option value="" disabled>Select Type</option>
-                                    {{-- @foreach (\App\Models\User::getUserTypes() as $value => $label)
-                                        <option value="{{ $value }}">{{ $label }}</option>
-                                    @endforeach --}}
-
                                     @foreach ($userTypes as $value => $label)
                                         <option value="{{ $value }}">{{ $label }}</option>
                                     @endforeach
 
                                 </select>
                             </div>
+                            <div class="mb-4">
+                                <label for="user_type" class="block text-gray-700 font-medium mb-2">Category</label>
+                                <select name="user_type" id="editUserType" required
+                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                                    <option value="" disabled>Select Type</option>
+                                    @foreach ($userTypes as $value => $label)
+                                        <option value="{{ $value }}">{{ $label }}</option>
+                                    @endforeach
+
+                                </select>
+                            </div> --}}
 
                             <div class="flex justify-end space-x-2">
                                 <button type="button" id="cancelEditUser"
