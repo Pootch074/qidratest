@@ -28,13 +28,11 @@ class LoginController extends Controller
         }
 
         $request->session()->regenerate();
-
         $user = Auth::user();
 
         // Block inactive accounts
         if ($user->status === User::STATUS_INACTIVE) {
             Auth::logout();
-
             return back()->withErrors(['email' => 'Account pending or blocked'])->onlyInput('email');
         }
 
@@ -60,7 +58,7 @@ class LoginController extends Controller
         session(['login_log_id' => $loginLog->id]);
 
         // Temporarily log out user until OTP verified
-        // Auth::logout();
+        Auth::logout();
 
         // Send OTP email
         Mail::raw("Your OTP code is: $otp", function ($message) use ($user) {
@@ -69,27 +67,6 @@ class LoginController extends Controller
         });
 
         return redirect()->route('login.show.otp')->with('success', 'OTP sent to your email');
-    }
-
-    public function logout(Request $request)
-    {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect()->route('login');
-    }
-
-    public function loginShowOtp()
-    {
-        if (! session()->has('otp_user_id')) {
-            return redirect()->route('login')
-                ->withErrors(['email' => 'Please login first']);
-        }
-
-        return view('auth.loginotp', [
-            'otpExpiresAt' => session('otp_expires_at')->timestamp,
-        ]);
     }
 
     public function loginVerifyOtp(Request $request)
@@ -107,9 +84,8 @@ class LoginController extends Controller
          * 1️⃣ OTP EXPIRED
          */
         if (! $otp || ! $userId || now()->gt($expiresAt)) {
-
             if ($logId) {
-                \App\Models\LoginLog::where('id', $logId)->update([
+                LoginLog::where('id', $logId)->update([
                     'status' => 'FAILED',
                     'reason' => 'OTP expired',
                     'completed_at' => now(),
@@ -134,7 +110,7 @@ class LoginController extends Controller
         if ($request->otp != $otp) {
 
             if ($logId) {
-                \App\Models\LoginLog::where('id', $logId)->update([
+                LoginLog::where('id', $logId)->update([
                     'status' => 'FAILED',
                     'reason' => 'Invalid OTP',
                     'completed_at' => now(),
@@ -157,6 +133,9 @@ class LoginController extends Controller
                 'completed_at' => now(),
             ]);
         }
+
+        // Mark OTP as verified
+        session(['otp_verified' => true]);
 
         session()->forget([
             'otp_code',
@@ -182,6 +161,27 @@ class LoginController extends Controller
             default:
                 return redirect()->route('login');
         }
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login');
+    }
+
+    public function loginShowOtp()
+    {
+        if (! session()->has('otp_user_id')) {
+            return redirect()->route('login')
+                ->withErrors(['email' => 'Please login first']);
+        }
+
+        return view('auth.loginotp', [
+            'otpExpiresAt' => session('otp_expires_at')->timestamp,
+        ]);
     }
 
     public function resendOtp(Request $request)
