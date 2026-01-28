@@ -2,20 +2,18 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use App\Http\Requests\RegisterRequest;
-use App\Http\Controllers\Controller;
 use App\Enums\UserCategory;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterRequest;
+use App\Mail\RegOtpMail;
 use App\Models\Division;
 use App\Models\Position;
 use App\Models\Section;
 use App\Models\Step;
 use App\Models\User;
 use App\Models\Window;
-use Carbon\Carbon;
-
-use App\Mail\SendOtpMail;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class RegisterController extends Controller
 {
@@ -46,7 +44,8 @@ class RegisterController extends Controller
     public function register(RegisterRequest $request)
     {
         $data = $request->validated();
-        $user = tap(User::create([
+
+        $registrationData = [
             'first_name' => $data['firstName'],
             'last_name' => $data['lastName'],
             'division_id' => $data['divisionId'],
@@ -56,16 +55,29 @@ class RegisterController extends Controller
             'step_id' => $data['stepId'],
             'window_id' => $data['windowId'],
             'assigned_category' => $data['category'],
-            'status' => User::STATUS_INACTIVE,
-        ]), function ($user) {
-            $user->otp_code = rand(100000, 999999);
-            $user->otp_expires_at = now()->addMinutes(1);
-            $user->save();
-        });
+        ];
+        session(['registration_data' => $registrationData]);
 
-        $user->load(['division', 'section']);
-        session(['otp_user_id' => $user->id]);
-        Mail::to($user->email)->send(new SendOtpMail($user));
+        // Gerate OTP
+        $otp = rand(100000, 999999);
+        $otpExpiresAt = now()->addMinutes(1);
+
+        session([
+            'otp_code' => $otp,
+            'otp_expires_at' => $otpExpiresAt,
+        ]);
+
+        $regData = session('registration_data');
+        $email = $regData['email'];
+        $firstName = $regData['first_name'];
+        $otp = session('otp_code');
+        $otpUser = (object) [
+            'email' => $email,
+            'first_name' => $firstName,
+            'otp_code' => $otp,
+        ];
+        Mail::to($email)->send(new RegOtpMail($otpUser));
+
         return redirect()->route('register.show.otp')->with('success', 'OTP sent to your email.');
     }
 
@@ -75,43 +87,49 @@ class RegisterController extends Controller
             'otp_code' => 'required|digits:6',
         ]);
 
-        // Step 2: Find the user
-        $user = User::where('otp_code', $request->otp_code)
-            ->first();
+        $otpCode = session('otp_code');
+        $registrationData = session('registration_data');
+        $otpExpiresAt = session('otp_expires_at');
 
-        if (! $user) {
+        if (! $registrationData || ! $otpCode || ! $otpExpiresAt) {
+            return redirect()->route('register')->withErrors(['otp_code' => 'OTP session not found or expired.']);
+        }
+
+        if ($request->otp_code != $otpCode) {
             return back()->withErrors(['otp_code' => 'Invalid OTP code.']);
         }
 
-        if ($user->otp_expires_at < Carbon::now()) {
+        if (now()->gt($otpExpiresAt)) {
             return back()->withErrors(['otp_code' => 'Your OTP has expired. Please request a new one.']);
         }
 
-        // Mark user as verified
+        // OTP verified — now create the user
+        $user = User::create($registrationData);
+
+        // Optionally mark as verified or set status
         $user->email_is_verified = true;
-        $user->otp_code = null;
-        $user->otp_expires_at = null;
         $user->save();
 
-        return redirect()->route('login')->with('success', 'Your account has been verified. Please wait for the administrator’s approval to log in successfully.');
+        // Clear session data
+        session()->forget(['registration_data', 'otp_code', 'otp_expires_at']);
+
+        return redirect()->route('login')->with('success', 'Your account has been verified. Please wait for admin approval to log in.');
     }
 
     public function registerShowOtp()
     {
-        $userId = session('otp_user_id');
+        $registrationData = session('registration_data');
+        $otpCode = session('otp_code');
+        $otpExpiresAt = session('otp_expires_at');
 
-        if (! $userId) {
-            return redirect()->route('login')->withErrors(['otp_code' => 'OTP session not found.']);
-        }
-
-        $user = User::find($userId);
-
-        if (! $user || ! $user->otp_expires_at) {
-            return redirect()->route('login')->withErrors(['otp_code' => 'OTP session invalid or expired.']);
+        if (! $registrationData || ! $otpCode || ! $otpExpiresAt) {
+            return redirect()->route('register')->withErrors(['otp_code' => 'OTP session not found or expired.']);
         }
 
         return view('auth.registerotp', [
-            'otpExpiresAt' => $user->otp_expires_at->timestamp,
+            'otpExpiresAt' => $otpExpiresAt->timestamp,
+            'email' => $registrationData['email'],
+            'first_name' => $registrationData['first_name'],
         ]);
     }
 

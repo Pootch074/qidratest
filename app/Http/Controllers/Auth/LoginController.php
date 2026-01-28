@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
-use App\Models\User;
 use App\Models\LoginLog;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -33,6 +33,7 @@ class LoginController extends Controller
         // Block inactive accounts
         if ($user->status === User::STATUS_INACTIVE) {
             Auth::logout();
+
             return back()->withErrors(['email' => 'Account pending or blocked'])->onlyInput('email');
         }
 
