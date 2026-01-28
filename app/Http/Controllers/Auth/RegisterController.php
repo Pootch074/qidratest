@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Enums\UserCategory;
-use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Controllers\Controller;
+use App\Enums\UserCategory;
 use App\Models\Division;
 use App\Models\Position;
 use App\Models\Section;
@@ -12,8 +14,8 @@ use App\Models\Step;
 use App\Models\User;
 use App\Models\Window;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+
+use App\Mail\SendOtpMail;
 
 class RegisterController extends Controller
 {
@@ -44,8 +46,6 @@ class RegisterController extends Controller
     public function register(RegisterRequest $request)
     {
         $data = $request->validated();
-
-        // Create the user and assign OTP in one step
         $user = tap(User::create([
             'first_name' => $data['firstName'],
             'last_name' => $data['lastName'],
@@ -59,61 +59,14 @@ class RegisterController extends Controller
             'status' => User::STATUS_INACTIVE,
         ]), function ($user) {
             $user->otp_code = rand(100000, 999999);
-            $user->otp_expires_at = now()->addMinutes(10);
+            $user->otp_expires_at = now()->addMinutes(1);
             $user->save();
         });
 
-        // Load related division and section if you need their names
         $user->load(['division', 'section']);
-
-        // Store user id in session for OTP verification
         session(['otp_user_id' => $user->id]);
-
-        // Send OTP email
-        Mail::to($user->email)->send(new \App\Mail\SendOtpMail($user));
-
-        // Redirect to OTP verification page
+        Mail::to($user->email)->send(new SendOtpMail($user));
         return redirect()->route('register.show.otp')->with('success', 'OTP sent to your email.');
-    }
-
-    public function sectionsByDivision(Division $divisionId)
-    {
-        return response()->json(
-            $divisionId->sections()->orderBy('section_name')->get(['id', 'section_name'])
-        );
-    }
-
-    public function stepsBySection(Section $sectionId)
-    {
-        return response()->json(
-            $sectionId->steps()->orderBy('step_number')->get(['id', 'step_name'])
-        );
-    }
-
-    public function windowsByStep(Step $stepId)
-    {
-        return response()->json(
-            $stepId->windows()->orderBy('window_number')->get(['id', 'window_number'])
-        );
-    }
-
-    public function registerShowOtp()
-    {
-        $userId = session('otp_user_id');
-
-        if (! $userId) {
-            return redirect()->route('login')->withErrors(['otp_code' => 'OTP session not found.']);
-        }
-
-        $user = User::find($userId);
-
-        if (! $user || ! $user->otp_expires_at) {
-            return redirect()->route('login')->withErrors(['otp_code' => 'OTP session invalid or expired.']);
-        }
-
-        return view('auth.registerotp', [
-            'otpExpiresAt' => $user->otp_expires_at->timestamp,
-        ]);
     }
 
     public function registerVerifyOtp(Request $request)
@@ -136,12 +89,51 @@ class RegisterController extends Controller
 
         // Mark user as verified
         $user->email_is_verified = true;
-        // $user->status = User::STATUS_ACTIVE;
         $user->otp_code = null;
         $user->otp_expires_at = null;
         $user->save();
 
         return redirect()->route('login')->with('success', 'Your account has been verified. Please wait for the administrator’s approval to log in successfully.');
+    }
+
+    public function registerShowOtp()
+    {
+        $userId = session('otp_user_id');
+
+        if (! $userId) {
+            return redirect()->route('login')->withErrors(['otp_code' => 'OTP session not found.']);
+        }
+
+        $user = User::find($userId);
+
+        if (! $user || ! $user->otp_expires_at) {
+            return redirect()->route('login')->withErrors(['otp_code' => 'OTP session invalid or expired.']);
+        }
+
+        return view('auth.registerotp', [
+            'otpExpiresAt' => $user->otp_expires_at->timestamp,
+        ]);
+    }
+
+    public function sectionsByDivision(Division $divisionId)
+    {
+        return response()->json(
+            $divisionId->sections()->orderBy('section_name')->get(['id', 'section_name'])
+        );
+    }
+
+    public function stepsBySection(Section $sectionId)
+    {
+        return response()->json(
+            $sectionId->steps()->orderBy('step_number')->get(['id', 'step_name'])
+        );
+    }
+
+    public function windowsByStep(Step $stepId)
+    {
+        return response()->json(
+            $stepId->windows()->orderBy('window_number')->get(['id', 'window_number'])
+        );
     }
 
     public function resendOtp(Request $request)
