@@ -94,19 +94,15 @@
                             <button id="closeEditUserModal"
                                 class="text-gray-500 hover:text-gray-700 text-2xl font-bold">&times;</button>
                         </div>
-
                         <form id="editUserForm" method="POST">
                             @csrf
                             @method('PUT')
-
                             <input type="hidden" name="user_id" id="editUserId">
-
                             <div class="mb-4">
                                 <label for="user_type" class="block text-gray-700 font-medium mb-2">User Type</label>
                                 <select name="user_type" id="editUserType" required
                                     class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                                     <option value="" disabled selected>Select Type</option>
-
                                     <option value="{{ \App\Models\User::TYPE_SUPERADMIN }}">Super Admin</option>
                                     <option value="{{ \App\Models\User::TYPE_ADMIN }}">Admin</option>
                                     <option value="{{ \App\Models\User::TYPE_IDSCAN }}">ID Scan</option>
@@ -169,8 +165,7 @@
 
             const userId = editUserIdInput.value;
             const userType = editUserTypeSelect.value;
-
-            fetch(`/admin/pending-users/users/${userId}/update-type`, {
+            fetch(`{{ url('admin/pending-users/users') }}/${userId}/update-type`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',

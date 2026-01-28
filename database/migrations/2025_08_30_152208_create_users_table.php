@@ -28,7 +28,6 @@ return new class extends Migration
             $table->unsignedBigInteger('window_id')->nullable();
             $table->foreign('window_id')->references('id')->on('windows')->onDelete('set null');
             $table->tinyInteger('status')->default(0);
-            // $table->timestamp('email_verified_at')->nullable();
             $table->boolean('email_is_verified')->nullable();
             $table->string('otp_code')->nullable();
             $table->timestamp('otp_expires_at')->nullable();
