@@ -119,7 +119,6 @@ class UsersController extends Controller
         ]));
     }
 
-
     public function nextRegular(ValidateUserQueueRequest $_request)
     {
         $user = Auth::user();

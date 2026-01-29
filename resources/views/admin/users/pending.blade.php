@@ -110,26 +110,25 @@
                             </div>
                             <div class="mb-4">
                                 <label for="user_step" class="block text-gray-700 font-medium mb-2">Step</label>
-                                <select name="userStep" id="editUserType" required
+                                <select id="stepSelect" required
                                     class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                                    <option value="" disabled>Select Type</option>
+                                    <option value="" disabled>Select Step</option>
                                     @foreach ($steps as $step)
-                                        <option value="{{ $step->id }}">{{ $step->step_number }}</option>
+                                        <option value="{{ $step->id }}">
+                                            Step {{ $step->step_number }}
+                                        </option>
                                     @endforeach
-                                </select>
-                            </div>
-                            {{-- <div class="mb-4">
-                                <label for="user_type" class="block text-gray-700 font-medium mb-2">Window</label>
-                                <select name="user_type" id="editUserType" required
-                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                                    <option value="" disabled>Select Type</option>
-                                    @foreach ($userTypes as $value => $label)
-                                        <option value="{{ $value }}">{{ $label }}</option>
-                                    @endforeach
-
                                 </select>
                             </div>
                             <div class="mb-4">
+                                <label for="user_window" class="block text-gray-700 font-medium mb-2">Window</label>
+                                <select id="windowSelect" required
+                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
+                                    disabled>
+                                    <option value="" disabled>Select Window</option>
+                                </select>
+                            </div>
+                            {{-- <div class="mb-4">
                                 <label for="user_type" class="block text-gray-700 font-medium mb-2">Category</label>
                                 <select name="user_type" id="editUserType" required
                                     class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
@@ -215,6 +214,37 @@
                 .catch(err => {
                     console.error(err);
                     alert('Error occurred.');
+                });
+        });
+    </script>
+    <script>
+        document.getElementById('stepSelect').addEventListener('change', function() {
+            const stepId = this.value;
+            const windowSelect = document.getElementById('windowSelect');
+
+            windowSelect.innerHTML = '<option value="">Loading...</option>';
+            windowSelect.disabled = true;
+
+            if (!stepId) {
+                windowSelect.innerHTML = '<option value="">Select Window</option>';
+                return;
+            }
+            fetch(`{{ url('admin/pending-users/steps') }}/${stepId}/windows`)
+                .then(res => res.json())
+                .then(data => {
+                    windowSelect.innerHTML = '<option value="">Select Window</option>';
+
+                    data.windows.forEach(win => {
+                        const option = document.createElement('option');
+                        option.value = win.id;
+                        option.textContent = `Window ${win.window_number}`;
+                        windowSelect.appendChild(option);
+                    });
+
+                    windowSelect.disabled = false;
+                })
+                .catch(() => {
+                    windowSelect.innerHTML = '<option value="">Error loading windows</option>';
                 });
         });
     </script>

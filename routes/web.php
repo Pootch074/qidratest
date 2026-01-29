@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DisplayController;
@@ -10,7 +11,6 @@ use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\TransactionsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\WindowsController;
-use App\Http\Controllers\AdminController;
 use App\Http\Middleware\CheckUserType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -105,6 +105,8 @@ Route::middleware(['auth', 'otp.verified', CheckUserType::class.':0,1,2,3,5,6'])
     Route::prefix('admin/pending-users')->group(function () {
         Route::get('/', [AdminController::class, 'pendingUsers'])->name('admin.pendingUsers');
         Route::put('/users/{user}/update-type', [AdminController::class, 'updateType'])->name('admin.users.updateType');
+        Route::get('/steps/{step}/windows', [AdminController::class, 'getWindowsByStep'])->name('admin.steps.windows');
+
     });
 
     Route::get('idscan', [IdscanController::class, 'index'])->name('idscan');

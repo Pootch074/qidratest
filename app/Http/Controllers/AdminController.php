@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use App\Models\User;
 use App\Models\Step;
 use App\Models\Transaction;
-
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -88,6 +87,7 @@ class AdminController extends Controller
             'completedCount'
         ));
     }
+
     public function activeUsers()
     {
         $authUser = Auth::user();
@@ -100,6 +100,7 @@ class AdminController extends Controller
 
         return view('admin.users.active', compact('users'));
     }
+
     public function usersJson()
     {
         $authUser = Auth::user();
@@ -127,6 +128,7 @@ class AdminController extends Controller
 
         return response()->json($formatted);
     }
+
     public function store(Request $request)
     {
         $authUser = Auth::user();
@@ -196,6 +198,7 @@ class AdminController extends Controller
             ],
         ]);
     }
+
     public function destroy(User $user)
     {
         try {
@@ -213,22 +216,19 @@ class AdminController extends Controller
     public function pendingUsers()
     {
         $authUser = Auth::user();
-        $eols = $authUser->section_id;
+        $sectionId = $authUser->section_id;
+
         $users = User::with(['step', 'window'])
-            ->where('section_id', $eols)
+            ->where('section_id', $sectionId)
             ->where('status', 0)
             ->latest()
             ->get();
 
-        $usertypes = User::getUserTypes();
-
-        $steps = Step::where('section_id', $eols)->get();
-
-        // $steps = old('sectionId')
-        //     ? Step::where('section_id', old('sectionId'))->orderBy('step_number')->get()
-        //     : collect();
-
-        return view('admin.users.pending', compact('users', 'usertypes', 'steps'));
+        return view('admin.users.pending', [
+            'users' => $users,
+            'usertypes' => User::getUserTypes(),
+            'steps' => Step::where('section_id', $sectionId)->get(),
+        ]);
     }
 
     public function updateType(Request $request, User $user)
@@ -243,4 +243,11 @@ class AdminController extends Controller
 
         return response()->json(['success' => true]);
     }
+    public function getWindowsByStep(Step $step)
+    {
+        return response()->json([
+            'windows' => $step->windows()->select('id', 'window_number')->get()
+        ]);
+    }
+
 }
