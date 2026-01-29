@@ -23,51 +23,61 @@ class LoginController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        if (! Auth::attempt($credentials)) {
-            return back()->withErrors(['email' => 'Invalid credentials'])->onlyInput('email');
-        }
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            $user = User::find(Auth::id());
 
-        $request->session()->regenerate();
-        $user = Auth::user();
+            if ($user->is_logged_in && $user->session_id && $user->session_id !== session()->getId()) {
+                try {
+                    Session::getHandler()->destroy($user->session_id);
+                } catch (\Exception $e) {
+                    Log::warning("Failed to destroy old session for user {$user->id}: {$e->getMessage()}");
+                }
+            }
+            // Block inactive accounts
+            if ($user->status === User::STATUS_INACTIVE) {
+                Auth::logout();
 
-        // Block inactive accounts
-        if ($user->status === User::STATUS_INACTIVE) {
+                return back()->withErrors(['email' => 'Account pending or blocked'])->onlyInput('email');
+            }
+            $user = Auth::user();
+
+            // Generate OTP and store in session
+            $otp = rand(100000, 999999);
+            session([
+                'otp_user_id' => $user->id,
+                'otp_code' => $otp,
+                'otp_expires_at' => now()->addMinutes(5),
+                'otp_verified' => false,
+            ]);
+
+            // After OTP is generated
+            $loginLog = LoginLog::create([
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'status' => 'PENDING', // waiting for OTP
+            ]);
+
+            // Store login_log_id in session
+            session(['login_log_id' => $loginLog->id]);
+
+            // Temporarily log out user until OTP verified
             Auth::logout();
 
-            return back()->withErrors(['email' => 'Account pending or blocked'])->onlyInput('email');
+            // Send OTP email
+            Mail::raw("Your OTP code is: $otp", function ($message) use ($user) {
+                $message->to($user->email)
+                    ->subject('Your Login OTP Code');
+            });
+
+            return redirect()->route('login.show.otp')->with('success', 'OTP sent to your email');
+
         }
 
-        // Generate OTP and store in session
-        $otp = rand(100000, 999999);
-        session([
-            'otp_user_id' => $user->id,
-            'otp_code' => $otp,
-            'otp_expires_at' => now()->addMinutes(5),
-            'otp_verified' => false,
-        ]);
+        return back()->withErrors(['email' => 'Invalid credentials'])->onlyInput('email');
 
-        // After OTP is generated
-        $loginLog = LoginLog::create([
-            'user_id' => $user->id,
-            'email' => $user->email,
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->userAgent(),
-            'status' => 'PENDING', // waiting for OTP
-        ]);
-
-        // Store login_log_id in session
-        session(['login_log_id' => $loginLog->id]);
-
-        // Temporarily log out user until OTP verified
-        Auth::logout();
-
-        // Send OTP email
-        Mail::raw("Your OTP code is: $otp", function ($message) use ($user) {
-            $message->to($user->email)
-                ->subject('Your Login OTP Code');
-        });
-
-        return redirect()->route('login.show.otp')->with('success', 'OTP sent to your email');
     }
 
     public function loginVerifyOtp(Request $request)
@@ -134,7 +144,9 @@ class LoginController extends Controller
                 'completed_at' => now(),
             ]);
         }
-
+        $user->is_logged_in = true;
+        $user->session_id = session()->getId();
+        $user->save();
         // Mark OTP as verified
         session(['otp_verified' => true]);
 
@@ -166,9 +178,20 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
+        $user = Auth::user();
+        if ($user) {
+            $user->session_id = null;
+            $user->is_logged_in = false;
+            $user->save();
+        }
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+        
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Logged out']);
+        }
 
         return redirect()->route('login');
     }

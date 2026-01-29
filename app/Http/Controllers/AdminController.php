@@ -239,10 +239,11 @@ class AdminController extends Controller
 
         return response()->json(['success' => true]);
     }
+
     public function getWindowsByStep(Step $step)
     {
         return response()->json([
-            'windows' => $step->windows()->select('id', 'window_number')->get()
+            'windows' => $step->windows()->select('id', 'window_number')->get(),
         ]);
     }
 }
