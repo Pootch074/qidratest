@@ -12,42 +12,32 @@
     @livewireStyles
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- insert here the content of the @section('header') -->
-        @yield('header')
-        <script>
-            window.routes = {
-                pacdGenerate: @json(route('pacd.generate', ['section' => '__SECTION__']))
-            };
-        </script>
-    </head>
+    @yield('header')
+    <script>
+        window.routes = {
+            pacdGenerate: @json(route('pacd.generate', ['section' => '__SECTION__']))
+        };
+    </script>
+</head>
 
-    <body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col">
 
-        <div class="flex items-center justify-between px-4 w-full h-[8vh] bg-[#2e3192] shadow">
-            @include('layouts.inc.header')
-        </div>
+    <div class="flex items-center justify-between px-4 w-full h-[8vh] bg-[#2e3192] shadow">
+        @include('layouts.inc.header')
+    </div>
 
-        <div>
-            @include('layouts.inc.pacdsidebar')
-        </div>
+    <div>
+        @include('layouts.inc.pacdsidebar')
+    </div>
 
-        <div class="flex flex-1">
-            @yield('content')
-        </div>
+    <div class="flex flex-1">
+        @yield('content')
+    </div>
 
+    @yield('scripts')
+    @stack('scripts')
+    @livewireScripts
 
-        {{-- <div class="w-full h-[8vh] bg-white">
-        @include('layouts.inc.footer')
-    </div> --}}
+</body>
 
-
-
-        @yield('scripts')
-        @stack('scripts')
-        @livewireScripts
-
-
-
-    </body>
-
-    </html>
+</html>
