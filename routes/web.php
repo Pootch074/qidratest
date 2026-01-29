@@ -85,7 +85,8 @@ Route::middleware(['auth'])->group(function () {
 | Authenticated Routes by User Type
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'otp.verified', CheckUserType::class.':0,1,2,3,5,6'])->group(function () {
+Route::middleware(['auth', CheckUserType::class.':0,1,2,3,5,6'])->group(function () {
+// Route::middleware(['auth', 'otp.verified', CheckUserType::class.':0,1,2,3,5,6'])->group(function () {
     Route::get('superadmin', [SuperAdminController::class, 'index'])->name('superadmin');
 
     /*

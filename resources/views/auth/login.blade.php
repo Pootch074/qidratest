@@ -53,33 +53,6 @@
             @endif
 
             {{-- <div id="termsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6">
-                    <h2 class="text-lg font-semibold mb-4">
-                        Terms and Conditions
-                    </h2>
-
-                    <div class="text-sm text-gray-600 max-h-60 overflow-y-auto">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam dictum dolor at arcu facilisis
-                        fermentum. Fusce a vestibulum lorem. Suspendisse efficitur urna in dignissim porta. Nunc ut quam sit
-                        amet tellus suscipit vehicula. Pellentesque habitant morbi tristique senectus et netus et malesuada
-                        fames ac turpis egestas. Sed ex ex, congue vitae diam sed, eleifend condimentum sapien. Nullam
-                        venenatis sit amet purus sed iaculis. Sed vel lacinia erat, a accumsan urna.
-                        <br><br>
-                        Donec ultricies pharetra egestas. Duis tincidunt libero magna, posuere maximus mauris malesuada
-                        eget. Praesent a felis et erat suscipit elementum. Aliquam erat volutpat. Sed eu diam vel risus
-                        tempor luctus. Phasellus lobortis, leo facilisis elementum finibus, nulla augue porttitor nisi, in
-                        pharetra nisl eros id turpis. Donec interdum lectus malesuada mauris aliquam, et congue tellus
-                        egestas. Phasellus varius eros sem, ac lobortis libero feugiat vitae. Ut eu nunc eget mi viverra
-                        sagittis. Nullam lacus neque, pulvinar non dolor quis, laoreet tempus ex. Morbi mollis justo eget
-                        sapien egestas tempor. Ut vitae elementum tellus, sed condimentum sapien.
-                    </div>
-
-                    <div class="mt-6 flex justify-end">
-                        <button id="closeTermsModal" class="px-4 py-2 text-sm text-white bg-blue-600 rounded">
-                            Close
-                        </button>
-                    </div>
-                </div>
             </div> --}}
 
             @if ($errors->has('email'))
@@ -131,13 +104,6 @@
                 </div>
 
                 <!-- Terms Checkbox -->
-                {{-- <div class="flex items-center space-x-2 pl-2">
-                    <input type="checkbox" name="terms" id="terms" required>
-                    <label for="terms" class="text-sm text-gray-700">
-                        I agree to the <a href="" id="openTermsModal" class="text-indigo-600 hover:underline">Terms
-                            and Conditions</a>
-                    </label>
-                </div> --}}
 
                 <!-- Submit Button -->
                 <div>
@@ -168,33 +134,5 @@
 @endsection
 
 @section('scripts')
-    {{-- <script>
-        document.getElementById('openTermsModal').addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation(); // extra safety
-            document.getElementById('termsModal').classList.remove('hidden');
-        });
-
-
-        document.getElementById('closeTermsModal').addEventListener('click', function() {
-            document.getElementById('termsModal').classList.add('hidden');
-        });
-    </script> --}}
-
-    {{-- <script>
-        grecaptcha.ready(() => {
-            grecaptcha.execute('{{ env('RECAPTCHA_SITE_KEY') }}', {
-                    action: 'login'
-                })
-                .then(token => {
-                    const recaptchaInput = document.getElementById('recaptcha_token');
-                    if (recaptchaInput) {
-                        recaptchaInput.value = token;
-                    } else {
-                        console.error('recaptcha_token input not found!');
-                    }
-                });
-        });
-    </script> --}}
 @endsection
 {{-- @vite('resources/css/app.css') --}}
