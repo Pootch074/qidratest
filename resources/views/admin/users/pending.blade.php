@@ -22,10 +22,6 @@
             <div class="bg-white rounded-lg p-4 shadow-lg h-[84vh] flex flex-col">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold text-gray-700">Pending Users</h2>
-                    {{-- <button id="openAddUserModal"
-                        class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
-                        Add User
-                    </button> --}}
                 </div>
                 <div class="overflow-x-auto flex-1">
                     <table id="usersTable" class="min-w-full divide-y divide-gray-200 text-gray-700">
@@ -128,17 +124,16 @@
                                     <option value="" disabled>Select Window</option>
                                 </select>
                             </div>
-                            {{-- <div class="mb-4">
-                                <label for="user_type" class="block text-gray-700 font-medium mb-2">Category</label>
-                                <select name="user_type" id="editUserType" required
+                            <div class="mb-4">
+                                <label for="user_category" class="block text-gray-700 font-medium mb-2">Category</label>
+                                <select name="user_category" id="editUserCategory" required
                                     class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                                    <option value="" disabled>Select Type</option>
-                                    @foreach ($userTypes as $value => $label)
-                                        <option value="{{ $value }}">{{ $label }}</option>
-                                    @endforeach
-
+                                    <option value="" disabled selected>Select Category</option>
+                                    <option value="regular">Regular</option>
+                                    <option value="priority">Priority</option>
+                                    <option value="both">Both</option>
                                 </select>
-                            </div> --}}
+                            </div>
 
                             <div class="flex justify-end space-x-2">
                                 <button type="button" id="cancelEditUser"
@@ -192,7 +187,7 @@
 
             const userId = editUserIdInput.value;
             const userType = editUserTypeSelect.value;
-            fetch(`{{ url('admin/pending-users/users') }}/${userId}/update-type`, {
+            fetch(`{{ url('admin/pending-users/users') }}/${userId}/update-status`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -216,8 +211,7 @@
                     alert('Error occurred.');
                 });
         });
-    </script>
-    <script>
+
         document.getElementById('stepSelect').addEventListener('change', function() {
             const stepId = this.value;
             const windowSelect = document.getElementById('windowSelect');

@@ -10,9 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
-    /**
-     * Admin Active Users
-     */
+    /** Admin Active Users */
     public function index()
     {
         $user = Auth::user();
@@ -210,9 +208,7 @@ class AdminController extends Controller
         }
     }
 
-    /**
-     * Admin Pending Users
-     */
+    /** Admin Pending Users */
     public function pendingUsers()
     {
         $authUser = Auth::user();
@@ -231,7 +227,7 @@ class AdminController extends Controller
         ]);
     }
 
-    public function updateType(Request $request, User $user)
+    public function updateStatus(Request $request, User $user)
     {
         $request->validate([
             'user_type' => 'required|integer|in:0,1,2,3,5,6', // validate allowed constants
@@ -249,5 +245,4 @@ class AdminController extends Controller
             'windows' => $step->windows()->select('id', 'window_number')->get()
         ]);
     }
-
 }

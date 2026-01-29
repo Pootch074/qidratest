@@ -104,7 +104,7 @@ Route::middleware(['auth', 'otp.verified', CheckUserType::class.':0,1,2,3,5,6'])
     });
     Route::prefix('admin/pending-users')->group(function () {
         Route::get('/', [AdminController::class, 'pendingUsers'])->name('admin.pendingUsers');
-        Route::put('/users/{user}/update-type', [AdminController::class, 'updateType'])->name('admin.users.updateType');
+        Route::put('/users/{user}/update-status', [AdminController::class, 'updateStatus'])->name('admin.users.updateStatus');
         Route::get('/steps/{step}/windows', [AdminController::class, 'getWindowsByStep'])->name('admin.steps.windows');
 
     });
