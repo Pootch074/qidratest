@@ -147,7 +147,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/transactions/table', [PacdController::class, 'transactionsTable'])->name('pacd.transactions.table');
         Route::get('/sections/cards', [PacdController::class, 'sectionsCards'])->name('pacd.sections.cards');
         Route::get('/pending/table', [PacdController::class, 'pendingQueues'])->name('pacd.pending.table');
-        Route::get('/scanned_id/table', [PacdController::class, 'clientsTable'])->name('pacd.scanned_id.table');
+        Route::get('/clients/table', [PacdController::class, 'clientsTable'])->name('pacd.clients.table');
     });
     Route::post('/transactions/{id}/resume', [PacdController::class, 'resumeTransaction'])->name('transactions.resume');
 
