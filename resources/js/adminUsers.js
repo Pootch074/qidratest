@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
         modal.classList.remove("hidden");
         setTimeout(
             () => modal.firstElementChild.classList.remove("scale-95"),
-            10
+            10,
         );
     };
 
@@ -36,14 +36,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!nameRegex.test(form.first_name.value.trim())) {
             alert(
-                "First name must contain only letters, spaces, apostrophes, or hyphens."
+                "First name must contain only letters, spaces, apostrophes, or hyphens.",
             );
             return;
         }
 
         if (!nameRegex.test(form.last_name.value.trim())) {
             alert(
-                "Last name must contain only letters, spaces, apostrophes, or hyphens."
+                "Last name must contain only letters, spaces, apostrophes, or hyphens.",
             );
             return;
         }
@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            fetchUsers();
+            // fetchUsers();
             closeModal();
         } catch (err) {
             console.error("Add user failed:", err);
@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const userTypeSelect = document.querySelector('select[name="user_type"]');
     if (userTypeSelect) {
         const assignedCategory = document.querySelector(
-            'select[name="assigned_category"]'
+            'select[name="assigned_category"]',
         );
         const stepSelect = document.querySelector('select[name="step_id"]');
         const windowSelect = document.querySelector('select[name="window_id"]');
@@ -224,99 +224,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ===============================
-// Delete User
-// ===============================
-function deleteUser(userId) {
-    if (!confirm("Are you sure you want to delete this user?")) return;
-    fetch(`${window.appBaseUrl}/admin/users/${userId}`, {
-        method: "DELETE",
-        headers: {
-            "X-CSRF-TOKEN": document
-                .querySelector('meta[name="csrf-token"]')
-                .getAttribute("content"),
-            Accept: "application/json",
-        },
-    })
-        .then((res) => res.json())
-        .then((data) => {
-            if (data.success) {
-                document.getElementById(`userRow-${userId}`)?.remove();
-            } else {
-                alert(
-                    "Error deleting user: " + (data.message ?? "Unknown error")
-                );
-            }
-        })
-        .catch((err) => {
-            console.error("Delete user failed:", err);
-            alert("An error occurred while deleting the user.");
-        });
-}
-
-// ===============================
-// Render + Fetch Users
-// ===============================
-function renderUsers(users) {
-    const tbody = document.querySelector("#usersTable tbody");
-    tbody.innerHTML = "";
-
-    if (!users || users.length === 0) {
-        tbody.innerHTML = `<tr>
-            <td colspan="${window.userColumnsCount}" class="px-6 py-3 text-center text-gray-500">
-                🚫 No users found.
-            </td>
-        </tr>`;
-        return;
-    }
-
-    users.forEach((u) => {
-        const row = document.createElement("tr");
-        row.id = `userRow-${u.id}`;
-        row.className =
-            "odd:bg-white even:bg-gray-200 hover:bg-indigo-50 transition duration-200";
-
-        row.innerHTML = `
-            <td class="px-6 py-3 text-gray-700">${u.first_name}</td>
-            <td class="px-6 py-3 text-gray-700">${u.last_name}</td>
-            <td class="px-6 py-3 text-gray-700">${u.email}</td>
-            <td class="px-6 py-3 text-gray-700">${u.position}</td>
-            <td class="px-6 py-3 text-gray-700">${u.user_type_name}</td>
-            <td class="px-6 py-3 text-gray-700">${u.assigned_category}</td>
-            <td class="px-6 py-3 text-gray-700">${u.step_number ?? "—"}</td>
-            <td class="px-6 py-3 text-gray-700">${u.window_number ?? "—"}</td>
-            <td class="px-6 py-3 text-center space-x-2"></td>
-        `;
-
-        // ✅ Create button in JS
-        const actionCell = row.querySelector("td:last-child");
-        const delBtn = document.createElement("button");
-        delBtn.className =
-            "text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 \
-                            hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-red-300 \
-                            dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 \
-                            font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2";
-        delBtn.innerHTML = `<i class="fas fa-trash-alt"></i> Delete`;
-
-        // ✅ Attach event listener
-        delBtn.addEventListener("click", () => deleteUser(u.id));
-
-        actionCell.appendChild(delBtn);
-        tbody.appendChild(row);
-    });
-}
-
-function fetchUsers() {
-    fetch(window.appBaseUrl + "/admin/users/json")
-        .then((res) => res.json())
-        .then((data) => renderUsers(data))
-        .catch((err) => console.error(err));
-}
-
-// Initial fetch and interval
-fetchUsers();
-setInterval(fetchUsers, 1000);
-
-// ===============================
 // Password Eye Toggle
 // ===============================
 const passwordInput = document.getElementById("password");
@@ -332,3 +239,33 @@ togglePassword?.addEventListener("click", () => {
             ? '<path d="M10 3C5 3 1.73 7.11 1 10c.73 2.89 4 7 9 7s8.27-4.11 9-7c-.73-2.89-4-7-9-7zm0 12a5 5 0 110-10 5 5 0 010 10z" /><path d="M10 7a3 3 0 100 6 3 3 0 000-6z" />'
             : '<path d="M3.707 3.707a1 1 0 00-1.414 1.414l1.095 1.094C2.52 7.083 1.732 8.462 1 10c.73 2.89 4 7 9 7 1.605 0 3.123-.483 4.414-1.293l1.879 1.879a1 1 0 001.414-1.414l-14-14zM10 5a5 5 0 014.546 3.032l-1.479 1.478A3 3 0 0010 7a3 3 0 00-1.667.516L7.044 7.03A5 5 0 0110 5z"/>';
 });
+
+// ===============================
+// Delete User (MAKE IT GLOBAL)
+// ===============================
+window.deleteUser = function (userId) {
+    if (!confirm("Are you sure you want to delete this user?")) return;
+    fetch(`${window.appBaseUrl}/admin/active-users/${userId}`, {
+        method: "DELETE",
+        headers: {
+            "X-CSRF-TOKEN": document
+                .querySelector('meta[name="csrf-token"]')
+                .getAttribute("content"),
+            Accept: "application/json",
+        },
+    })
+        .then((res) => res.json())
+        .then((data) => {
+            if (data.success) {
+                document.getElementById(`userRow-${userId}`)?.remove();
+            } else {
+                alert(
+                    "Error deleting user: " + (data.message ?? "Unknown error"),
+                );
+            }
+        })
+        .catch((err) => {
+            console.error("Delete user failed:", err);
+            alert("An error occurred while deleting the user.");
+        });
+};
