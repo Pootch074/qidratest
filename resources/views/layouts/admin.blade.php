@@ -21,6 +21,7 @@
             checkWindow: "{{ route('windows.check', ['stepId' => ':step', 'windowNumber' => ':window']) }}"
         };
     </script>
+
 </head>
 
 <body class="min-h-screen flex flex-col">
