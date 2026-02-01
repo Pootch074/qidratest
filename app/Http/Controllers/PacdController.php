@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ClientLogs;
 use App\Models\Section;
 use App\Models\Step;
 use App\Models\Transaction;
@@ -210,6 +211,11 @@ class PacdController extends Controller
     {
         $user = Auth::user();
 
-        return view('pacd.clients.table');
+        $clientlogs = ClientLogs::where('created_at', '>=', now()->startOfDay())
+            ->where('created_at', '<=', now()->endOfDay())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('pacd.clients.table', compact('clientlogs'));
     }
 }
