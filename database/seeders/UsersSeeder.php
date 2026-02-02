@@ -65,12 +65,12 @@ class UsersSeeder extends Seeder
             // ['division' => 'psd', 'first_name' => 'Preasssess', 'last_name' => 'Regular', 'position' => 'Social Welfare Officer II', 'section' => 'cis', 'user_type' => User::TYPE_USER, 'assigned_category' => 'regular', 'step' => 'Pre-assessment', 'window' => 1, 'email' => 'preassessregu@dswd.gov.ph', 'status' => User::STATUS_ACTIVE],
             // ['division' => 'psd', 'first_name' => 'Preasssess', 'last_name' => 'Priority', 'position' => 'Social Welfare Officer II', 'section' => 'cis', 'user_type' => User::TYPE_USER, 'assigned_category' => 'priority', 'step' => 'Pre-assessment', 'window' => 1, 'email' => 'preassessprio@dswd.gov.ph', 'status' => User::STATUS_ACTIVE],
 
-            // // CIS Encoder
+            // CIS Encoder
             // ['division' => 'psd', 'first_name' => 'Encoding', 'last_name' => 'Regular', 'position' => 'Social Welfare Officer II', 'section' => 'cis', 'user_type' => User::TYPE_USER, 'assigned_category' => 'regular', 'step' => 'Encode', 'window' => 1, 'email' => 'encodingregu1@dswd.gov.ph', 'status' => User::STATUS_ACTIVE],
             // ['division' => 'psd', 'first_name' => 'Encoding', 'last_name' => 'Regular', 'position' => 'Social Welfare Officer II', 'section' => 'cis', 'user_type' => User::TYPE_USER, 'assigned_category' => 'regular', 'step' => 'Encode', 'window' => 2, 'email' => 'encodingregu2@dswd.gov.ph', 'status' => User::STATUS_ACTIVE],
             // ['division' => 'psd', 'first_name' => 'Encoding', 'last_name' => 'Priority', 'position' => 'Social Welfare Officer II', 'section' => 'cis', 'user_type' => User::TYPE_USER, 'assigned_category' => 'priority', 'step' => 'Encode', 'window' => 1, 'email' => 'encodingprio1@dswd.gov.ph', 'status' => User::STATUS_ACTIVE],
 
-            // // CIS Assessment
+            // CIS Assessment
             // ['division' => 'psd', 'first_name' => 'Assessment', 'last_name' => 'Window1', 'position' => 'Social Welfare Officer II', 'section' => 'cis', 'user_type' => User::TYPE_USER, 'assigned_category' => 'both', 'step' => 'Assessment', 'window' => 1, 'email' => 'assessment1@dswd.gov.ph', 'status' => User::STATUS_ACTIVE],
             // ['division' => 'psd', 'first_name' => 'Assessment', 'last_name' => 'Window2', 'position' => 'Social Welfare Officer II', 'section' => 'cis', 'user_type' => User::TYPE_USER, 'assigned_category' => 'both', 'step' => 'Assessment', 'window' => 2, 'email' => 'assessment2@dswd.gov.ph', 'status' => User::STATUS_ACTIVE],
             // ['division' => 'psd', 'first_name' => 'Assessment', 'last_name' => 'Window3', 'position' => 'Social Welfare Officer II', 'section' => 'cis', 'user_type' => User::TYPE_USER, 'assigned_category' => 'both', 'step' => 'Assessment', 'window' => 3, 'email' => 'assessment3@dswd.gov.ph', 'status' => User::STATUS_ACTIVE],
@@ -90,6 +90,13 @@ class UsersSeeder extends Seeder
             //  'assigned_category' => 'regular', 'step' => 'Release', 'window' => 3,
                'status' => User::STATUS_ACTIVE, 'email_is_verified' => true],
             ['division' => 'psd', 'section' => 'cis', 'first_name' => 'Yhena', 'last_name' => 'Villamil', 'email' => 'yvvillamil@dswd.gov.ph', 'position' => 'Computer Programmer III',  'user_type' => User::TYPE_ADMIN, 'status' => User::STATUS_ACTIVE, 'email_is_verified' => true],
+
+            ['division' => 'psd', 'section' => 'cis', 'first_name' => 'Yhena', 'last_name' => 'Villamil', 'email' => 'villamil.yhena@gmail.com', 'position' => 'Administrative Assistant I',  'user_type' => User::TYPE_USER, 'assigned_category' => 'both', 'step' => 'Assessment', 'window' => 3, 'status' => User::STATUS_ACTIVE, 'email_is_verified' => true],
+            ['division' => 'psd', 'section' => 'cis', 'first_name' => 'Francis', 'last_name' => 'Sale', 'email' => 'fosale@dswd.gov.ph', 'position' => 'Administrative Aide II', 'user_type' => User::TYPE_USER, 'assigned_category' => 'regular', 'step' => 'Pre-assessment', 'window' => 1, 'status' => User::STATUS_INACTIVE, 'email_is_verified' => true],
+            ['division' => 'psd', 'section' => 'cis', 'first_name' => 'Kim', 'last_name' => 'Juanico', 'email' => 'krajuanico@dswd.gov.ph', 'position' => 'Administrative Aide I', 'user_type' => User::TYPE_USER, 'assigned_category' => 'priority', 'step' => 'Pre-assessment', 'window' => 1, 'status' => User::STATUS_INACTIVE, 'email_is_verified' => true],
+            ['division' => 'psd', 'section' => 'cis', 'first_name' => 'Jay', 'last_name' => 'Villas', 'email' => 'fjlvillas@dswd.gov.ph', 'position' => 'Administrative Aide IV', 'user_type' => User::TYPE_USER, 'assigned_category' => 'regular', 'step' => 'Encode', 'window' => 1, 'status' => User::STATUS_INACTIVE, 'email_is_verified' => true],
+
+
             // ['division' => 'psd', 'section' => 'cis', 'first_name' => 'Juan', 'last_name' => 'Dela Cruz', 'email' => 'jdcruz@dswd.gov.ph', 'position' => 'Social Welfare Officer II', 'user_type' => User::TYPE_USER, 'assigned_category' => 'regular', 'status' => User::STATUS_INACTIVE,  'email_is_verified' => true],
         ];
 
