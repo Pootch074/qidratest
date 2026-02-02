@@ -18,7 +18,9 @@ class ActiveUsersTable extends Component
     // Reload users
     public function loadUsers()
     {
-        $this->users = User::with(['step', 'window'])->get();
+        $this->users = User::with(['step', 'window'])
+        ->where('status', 1)
+        ->get();
     }
 
     // Delete user action
