@@ -15,7 +15,11 @@
                         <input type="text" id="searchName" placeholder="Search Name" class="px-3 py-2 border rounded w-1/3">
                         <input type="text" id="searchSection" placeholder="Search Section"
                             class="px-3 py-2 border rounded w-1/3">
-                        <input type="date" id="searchDate" class="px-3 py-2 border rounded w-1/3">
+                        <input type="time" id="searchTime" class="px-3 py-2 border rounded w-1/3">
+                        <button id="clearFilters"
+                            class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition">
+                            Clear Filters
+                        </button>
                     </div>
 
                     <table id="clientLogsTable" class="min-w-full divide-y divide-gray-200 text-gray-700">
@@ -34,10 +38,17 @@
                         <tbody id="clientLogsBody" class="bg-white divide-y divide-gray-200 overflow-y-auto">
                             @forelse ($clientlogs as $client)
                                 <tr class="odd:bg-white even:bg-gray-200 hover:bg-indigo-50 transition duration-200">
-                                    <td class="px-6 py-4 font-semibold">{{ $client->fullname }}</td>
-                                    <td class="px-6 py-4">{{ $client->section }}</td>
-                                    <td class="px-6 py-4">{{ $client->created_at->format('Y-m-d H:i') }}</td>
+                                    <td class="px-6 py-4 font-semibold fullname">
+                                        {{ $client->fullname }}
+                                    </td>
+                                    <td class="px-6 py-4 section">
+                                        {{ $client->section }}
+                                    </td>
+                                    <td class="px-6 py-4 created_at">
+                                        {{ $client->created_at->format('Y-m-d H:i') }}
+                                    </td>
                                 </tr>
+
                             @empty
                                 <tr>
                                     <td colspan="4" class="px-6 py-4 text-center text-gray-500 font-medium">
@@ -57,50 +68,49 @@
 @endsection
 @section('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', () => {
             const searchName = document.getElementById('searchName');
             const searchSection = document.getElementById('searchSection');
-            const searchDate = document.getElementById('searchDate');
+            const searchTime = document.getElementById('searchTime');
+            const clearBtn = document.getElementById('clearFilters');
             const tableBody = document.getElementById('clientLogsBody');
-            const rows = Array.from(tableBody.getElementsByTagName('tr'));
+
+            const rows = tableBody.querySelectorAll('tr');
 
             function filterTable() {
-                const nameValue = searchName.value.toLowerCase();
-                const sectionValue = searchSection.value.toLowerCase();
-                const dateValue = searchDate.value; // format YYYY-MM-DD
+                const nameValue = searchName.value.toLowerCase().trim();
+                const sectionValue = searchSection.value.toLowerCase().trim();
+                const timeValue = searchTime.value; // HH:mm
 
                 rows.forEach(row => {
-                    const fullname = row.querySelector('.fullname').textContent.toLowerCase();
-                    const section = row.querySelector('.section').textContent.toLowerCase();
-                    const createdAt = row.querySelector('.created_at').textContent; // "2026-02-01 15:30"
+                    const fullname = row.querySelector('.fullname')?.textContent.toLowerCase() || '';
+                    const section = row.querySelector('.section')?.textContent.toLowerCase() || '';
+                    const createdAt = row.querySelector('.created_at')?.textContent || '';
+                    const rowTime = createdAt.split(' ')[1] ?? '';
 
-                    let show = true;
+                    let isVisible = true;
 
-                    // Filter by name
-                    if (nameValue && !fullname.includes(nameValue)) {
-                        show = false;
-                    }
+                    if (nameValue && !fullname.includes(nameValue)) isVisible = false;
+                    if (sectionValue && !section.includes(sectionValue)) isVisible = false;
+                    if (timeValue && !rowTime.startsWith(timeValue)) isVisible = false;
 
-                    // Filter by section
-                    if (sectionValue && !section.includes(sectionValue)) {
-                        show = false;
-                    }
-
-                    // Filter by date only (ignore time)
-                    if (dateValue) {
-                        if (!createdAt.startsWith(dateValue)) {
-                            show = false;
-                        }
-                    }
-
-                    row.style.display = show ? '' : 'none';
+                    row.style.display = isVisible ? '' : 'none';
                 });
             }
 
-            // Add event listeners
+            function clearFilters() {
+                searchName.value = '';
+                searchSection.value = '';
+                searchTime.value = '';
+                // Show all rows
+                rows.forEach(row => row.style.display = '');
+            }
+
             searchName.addEventListener('input', filterTable);
             searchSection.addEventListener('input', filterTable);
-            searchDate.addEventListener('change', filterTable);
+            searchTime.addEventListener('input', filterTable);
+            clearBtn.addEventListener('click', clearFilters);
         });
     </script>
+
 @endsection
