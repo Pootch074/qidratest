@@ -10,7 +10,12 @@ class ClientLogs extends Model
     use HasFactory;
     protected $fillable = [
         'fullname',
-        'section',
+        'section_id',
         'phone_number',
     ];
+
+    public function section()
+    {
+        return $this->belongsTo(Section::class);
+    }
 }

@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('client_logs', function (Blueprint $table) {
             $table->id();
             $table->string('fullname');
-            $table->string('section')->nullable();
+            $table->unsignedBigInteger('section_id')->nullable();
+            $table->foreign('section_id')->references('id')->on('sections')->onDelete('set null');
             $table->string('phone_number')->nullable();
             $table->timestamps();
         });

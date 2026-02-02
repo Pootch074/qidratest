@@ -42,11 +42,12 @@
                                         {{ $client->fullname }}
                                     </td>
                                     <td class="px-6 py-4 section">
-                                        {{ $client->section }}
+                                        {{ $client->section->section_name ?? 'N/A' }}
                                     </td>
                                     <td class="px-6 py-4 created_at">
-                                        {{ $client->created_at->format('Y-m-d H:i') }}
+                                        {{ $client->created_at->format('M d, Y g:i A') }}
                                     </td>
+
                                 </tr>
 
                             @empty

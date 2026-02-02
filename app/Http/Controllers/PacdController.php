@@ -218,4 +218,25 @@ class PacdController extends Controller
 
         return view('pacd.clients.table', compact('clientlogs'));
     }
+
+    public function storeClient(Request $request)
+    {
+        // Validate input
+        $request->validate([
+            'client_name' => 'required|string|max:255',
+            'phone_number' => 'nullable|string|max:11',
+        ]);
+
+        // Get current user's section_id
+        $sectionId = Auth::user()->section_id;
+
+        // Create the client record
+        ClientLogs::create([
+            'fullname'   => $request->client_name,
+            'phone_number' => $request->phone_number,
+            'section_id' => $sectionId,
+        ]);
+
+        return redirect()->back()->with('success', 'Client added successfully.');
+    }
 }

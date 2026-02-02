@@ -10,6 +10,38 @@
             {{-- Scanned ID Table --}}
             <div class="bg-white rounded-lg p-4 shadow-lg h-[84vh] flex flex-col">
                 <h2 class="text-2xl font-semibold text-gray-800 mb-4">Generate Ticket</h2>
+                <form action="{{ route('pacd.storeClient') }}" method="POST" id="clientLog">
+                    @csrf
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                        <!-- Client Name -->
+                        <div class="relative">
+                            <label for="client_name" class="block text-gray-700 font-medium mb-2">Client Name</label>
+                            <input type="text" name="client_name" id="client_name" required
+                                placeholder="Enter client name..."
+                                class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div class="relative">
+                            <label for="phone_number" class="block text-gray-700 font-medium mb-2">Phone Number</label>
+                            <input type="text" name="phone_number" placeholder="Optional" maxlength="11"
+                                id="phone_number"
+                                class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="relative">
+                            <button type="submit"
+                                class="w-1/4 h-14 bg-blue-500 text-white text-lg font-medium rounded-xl hover:bg-blue-600 transition">
+                                Submit
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <br>
+
                 <div class="overflow-x-auto flex-1">
                     {{-- Section Buttons (always visible) --}}
                     <div x-show="showSections" x-cloak>
