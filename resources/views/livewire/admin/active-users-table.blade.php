@@ -1,4 +1,4 @@
-<div>
+<div class="flex flex-col h-[90%]">
     @if (session()->has('message'))
         <div class="mb-2 text-green-600">{{ session('message') }}</div>
     @endif
@@ -6,8 +6,9 @@
         <div class="mb-2 text-red-600">{{ session('error') }}</div>
     @endif
 
-    <div class="overflow-x-auto flex-1">
-        <table class="min-w-full divide-y divide-gray-200 text-gray-700">
+    <!-- Table wrapper with scroll -->
+    <div class="overflow-x-auto overflow-y-auto flex-1">
+        <table class="w-full table-auto divide-y divide-gray-200 text-gray-700">
             <thead class="bg-[#2e3192] text-white sticky top-0 z-10">
                 <tr>
                     <th class="px-6 py-3 font-semibold tracking-wide text-center rounded-tl-lg">First Name</th>
@@ -20,7 +21,7 @@
                     <th class="px-6 py-3 font-semibold tracking-wide text-center rounded-tr-lg">Actions</th>
                 </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200 overflow-y-auto">
+            <tbody class="bg-white divide-y divide-gray-200">
                 @forelse ($users as $u)
                     <tr class="odd:bg-white even:bg-gray-200 hover:bg-indigo-50 transition duration-200">
                         <td class="px-6 py-3 text-gray-700">{{ $u->first_name ?? '—' }}</td>
