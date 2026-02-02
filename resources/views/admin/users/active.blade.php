@@ -10,8 +10,65 @@
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold text-gray-700">Active Users</h2>
                 </div>
+                <div class="overflow-x-auto flex-1">
+                    <table id="usersTable" class="min-w-full divide-y divide-gray-200 text-gray-700">
+                        <thead class="bg-[#2e3192] text-white sticky top-0 z-10">
+                            <tr>
+                                <th class="px-6 py-3 font-semibold tracking-wide text-center rounded-tl-lg">First Name</th>
+                                <th class="px-6 py-3 font-semibold tracking-wide text-center">Last Name</th>
+                                <th class="px-6 py-3 font-semibold tracking-wide text-center">Email Address</th>
+                                <th class="px-6 py-3 font-semibold tracking-wide text-center">Position</th>
+                                <th class="px-6 py-3 font-semibold tracking-wide text-center">Role</th>
+                                <th class="px-6 py-3 font-semibold tracking-wide text-center">Assigned Step</th>
+                                <th class="px-6 py-3 font-semibold tracking-wide text-center">Assigned Window</th>
+                                <th class="px-6 py-3 font-semibold tracking-wide text-center">Assigned Category</th>
+                                <th class="px-6 py-3 font-semibold tracking-wide text-center rounded-tr-lg">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200 overflow-y-auto">
+                            @forelse ($users as $u)
+                                <tr id="user-row-{{ $u->id }}"
+                                    class="odd:bg-white even:bg-gray-200 hover:bg-indigo-50 transition duration-200">
+                                    <td class="px-6 py-3 text-gray-700 first_name">{{ $u->first_name ?? '—' }}</td>
+                                    <td class="px-6 py-3 text-gray-700 last_name">{{ $u->last_name ?? '—' }}</td>
+                                    <td class="px-6 py-3 text-gray-700 email">{{ $u->email ?? '—' }}</td>
+                                    <td class="px-6 py-3 text-gray-700 position">{{ $u->position ?? '—' }}</td>
+                                    <td class="px-6 py-3 text-gray-700 role">{{ $u->user_type_text }}</td>
+                                    <td class="px-6 py-3 text-gray-700 text-center step">{{ $u->step->step_number ?? '—' }}
+                                    </td>
+                                    <td class="px-6 py-3 text-gray-700 text-center window">
+                                        {{ $u->window->window_number ?? '—' }}</td>
+                                    <td class="px-6 py-3 text-gray-700 text-center category">
+                                        {{ $u->assigned_category ?? '—' }}</td>
+                                    <td class="px-6 py-3 text-center space-x-2">
+                                        <div class="flex justify-center space-x-2">
+                                            <!-- Edit Button -->
+                                            <button
+                                                onclick="openEditModal({{ $u->id }}, {{ $u->user_type }}, {{ $u->step_id ?? 'null' }}, {{ $u->window_id ?? 'null' }}, '{{ $u->assigned_category ?? '' }}')"
+                                                class="flex-1 text-white bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:to-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 font-medium rounded-lg text-sm px-4 py-2 transition duration-200">
+                                                Edit
+                                            </button>
 
-                <!-- Edit User Modal -->
+                                            <!-- Delete Button -->
+                                            <button onclick="deleteUser({{ $u->id }})"
+                                                class="flex-1 text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:from-red-500 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 font-medium rounded-lg text-sm px-4 py-2 transition duration-200">
+                                                <i class="fas fa-trash-alt mr-1"></i> Delete
+                                            </button>
+                                        </div>
+                                    </td>
+
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="{{ count($userColumns) + 3 }}"
+                                        class="px-6 py-3 text-center text-gray-500">
+                                        🚫 No users found.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
                 <div id="editUserModal"
                     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
                     <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
@@ -71,63 +128,6 @@
                             ✕
                         </button>
                     </div>
-                </div>
-
-                <div class="overflow-x-auto flex-1">
-                    <table id="usersTable" class="min-w-full divide-y divide-gray-200 text-gray-700">
-                        <thead class="bg-[#2e3192] text-white sticky top-0 z-10">
-                            <tr>
-                                <th class="px-6 py-3 font-semibold tracking-wide text-center rounded-tl-lg">First Name</th>
-                                <th class="px-6 py-3 font-semibold tracking-wide text-center">Last Name</th>
-                                <th class="px-6 py-3 font-semibold tracking-wide text-center">Email Address</th>
-                                <th class="px-6 py-3 font-semibold tracking-wide text-center">Position</th>
-                                <th class="px-6 py-3 font-semibold tracking-wide text-center">Role</th>
-                                <th class="px-6 py-3 font-semibold tracking-wide text-center">Assigned Step</th>
-                                <th class="px-6 py-3 font-semibold tracking-wide text-center">Assigned Window</th>
-                                <th class="px-6 py-3 font-semibold tracking-wide text-center">Assigned Category</th>
-                                <th class="px-6 py-3 font-semibold tracking-wide text-center rounded-tr-lg">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200 overflow-y-auto">
-                            @forelse ($users as $u)
-                                <tr id="user-row-{{ $u->id }}"
-                                    class="odd:bg-white even:bg-gray-200 hover:bg-indigo-50 transition duration-200">
-                                    <td class="px-6 py-3 text-gray-700 first_name">{{ $u->first_name ?? '—' }}</td>
-                                    <td class="px-6 py-3 text-gray-700 last_name">{{ $u->last_name ?? '—' }}</td>
-                                    <td class="px-6 py-3 text-gray-700 email">{{ $u->email ?? '—' }}</td>
-                                    <td class="px-6 py-3 text-gray-700 position">{{ $u->position ?? '—' }}</td>
-                                    <td class="px-6 py-3 text-gray-700 role">{{ $u->user_type_text }}</td>
-                                    <td class="px-6 py-3 text-gray-700 step">{{ $u->step->step_number ?? '—' }}</td>
-                                    <td class="px-6 py-3 text-gray-700 window">{{ $u->window->window_number ?? '—' }}</td>
-                                    <td class="px-6 py-3 text-gray-700 category">{{ $u->assigned_category ?? '—' }}</td>
-                                    <td class="px-6 py-3 text-center">
-                                        <div class="flex justify-center space-x-2">
-                                            <!-- Edit Button -->
-                                            <button
-                                                onclick="openEditModal({{ $u->id }}, {{ $u->user_type }}, {{ $u->step_id ?? 'null' }}, {{ $u->window_id ?? 'null' }}, '{{ $u->assigned_category ?? '' }}')"
-                                                class="flex-1 text-white bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:to-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 font-medium rounded-lg text-sm px-4 py-2 transition duration-200">
-                                                Edit
-                                            </button>
-
-                                            <!-- Delete Button -->
-                                            <button onclick="deleteUser({{ $u->id }})"
-                                                class="flex-1 text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:from-red-500 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 font-medium rounded-lg text-sm px-4 py-2 transition duration-200">
-                                                <i class="fas fa-trash-alt mr-1"></i> Delete
-                                            </button>
-                                        </div>
-                                    </td>
-
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="{{ count($userColumns) + 3 }}"
-                                        class="px-6 py-3 text-center text-gray-500">
-                                        🚫 No users found.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>

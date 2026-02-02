@@ -6,25 +6,12 @@
 @section('content')
     <div class="w-full p-4 bg-gray-200">
         <div class="p-4 sm:ml-64">
-            {{-- ✅ Add User Modal --}}
-            <div id="addUserModal"
-                class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300">
-                <div
-                    class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-8 transform transition-transform duration-300 scale-95">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-2xl font-semibold text-gray-800">Add New User</h3>
-                        <button id="closeAddUserModal"
-                            class="text-gray-500 hover:text-gray-700 text-2xl font-bold">&times;</button>
-                    </div>
-                </div>
-            </div>
-
             <div class="bg-white rounded-lg p-4 shadow-lg h-[84vh] flex flex-col">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold text-gray-700">Pending Users</h2>
                 </div>
                 <div class="overflow-x-auto flex-1">
-                    <table id="usersTable" class="min-w-full divide-y divide-gray-200 text-gray-700">
+                    <table id="pendingUsersTable" class="min-w-full divide-y divide-gray-200 text-gray-700">
                         <thead class="bg-[#2e3192] text-white sticky top-0 z-10">
                             <tr>
                                 <th class="px-6 py-3 font-semibold tracking-wide text-center rounded-tl-lg">First Name</th>
@@ -36,7 +23,6 @@
                                 <th class="px-6 py-3 font-semibold tracking-wide text-center">Assigned Window</th>
                                 <th class="px-6 py-3 font-semibold tracking-wide text-center">Assigned Category</th>
                                 <th class="px-6 py-3 font-semibold tracking-wide text-center rounded-tr-lg">Actions</th>
-
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200 overflow-y-auto">
@@ -68,7 +54,7 @@
                                     </td>
                                     <td class="px-6 py-3 text-center space-x-2">
                                         <button onclick="openEditUserModal({{ $u->id }}, {{ $u->user_type ?? 5 }})"
-                                            class="text-white bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-yellow-300 shadow-lg shadow-yellow-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                            class="flex-1 text-white bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:to-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 font-medium rounded-lg text-sm px-4 py-2 transition duration-200">
                                             <i class="fas fa-edit"></i> Edit
                                         </button>
 
