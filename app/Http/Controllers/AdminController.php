@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Step;
-use App\Models\Transaction;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Transaction;
+use App\Models\User;
+use App\Models\Step;
+use App\Models\Window;
+
 
 class AdminController extends Controller
 {
@@ -90,14 +92,20 @@ class AdminController extends Controller
     {
         $authUser = Auth::user();
         $jglf = $authUser->section_id;
+
         $users = User::with(['step', 'window'])
-            ->where('section_id', $jglf) // fetch user same as the section id of logged-in admin
+            ->where('section_id', $jglf)
             ->where('status', 1)
             ->latest()
             ->get();
 
-        return view('admin.users.active', compact('users'));
+        // Fetch all steps and windows for the dropdowns
+        $steps = Step::all();
+        $windows = Window::all();
+
+        return view('admin.users.active', compact('users', 'steps', 'windows'));
     }
+
 
     public function usersJson()
     {
@@ -246,4 +254,27 @@ class AdminController extends Controller
             'windows' => $step->windows()->select('id', 'window_number')->get(),
         ]);
     }
+
+    public function updateAssignment(Request $request, User $user)
+    {
+        $request->validate([
+            'role' => 'required|integer|in:0,1,2', // use your numeric mapping: 0=user,1=admin,2=superadmin
+            'step_id' => 'nullable|exists:steps,id',
+            'window_id' => 'nullable|exists:windows,id',
+            'assigned_category' => 'nullable|in:regular,priority,both',
+        ]);
+
+        $user->user_type = $request->role;
+        $user->step_id = $request->step_id;
+        $user->window_id = $request->window_id;
+        $user->assigned_category = $request->assigned_category;
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User updated successfully!',
+            'user' => $user->load('step', 'window'),
+        ]);
+    }
+
 }

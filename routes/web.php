@@ -101,7 +101,7 @@ Route::middleware(['auth', CheckUserType::class.':0,1,2,3,5,6'])->group(function
         Route::get('/json', [AdminController::class, 'usersJson'])->name('admin.users.json');
         Route::post('/store', [AdminController::class, 'store'])->name('admin.storeUsers');
         Route::delete('/{user}', [AdminController::class, 'destroy'])->name('admin.destroyUsers');
-
+        Route::post('/{user}/update-assignment', [AdminController::class, 'updateAssignment'])->name('admin.users.updateAssignment');
     });
     Route::prefix('admin/pending-users')->group(function () {
         Route::get('/', [AdminController::class, 'pendingUsers'])->name('admin.pendingUsers');
