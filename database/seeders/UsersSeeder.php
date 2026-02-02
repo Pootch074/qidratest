@@ -96,6 +96,10 @@ class UsersSeeder extends Seeder
             ['division' => 'psd', 'section' => 'cis', 'first_name' => 'Kim', 'last_name' => 'Juanico', 'email' => 'krajuanico@dswd.gov.ph', 'position' => 'Administrative Aide I', 'user_type' => User::TYPE_USER, 'assigned_category' => 'priority', 'step' => 'Pre-assessment', 'window' => 1, 'status' => User::STATUS_INACTIVE, 'email_is_verified' => true],
             ['division' => 'psd', 'section' => 'cis', 'first_name' => 'Jay', 'last_name' => 'Villas', 'email' => 'fjlvillas@dswd.gov.ph', 'position' => 'Administrative Aide IV', 'user_type' => User::TYPE_USER, 'assigned_category' => 'regular', 'step' => 'Encode', 'window' => 1, 'status' => User::STATUS_INACTIVE, 'email_is_verified' => true],
 
+            ['division' => 'psd', 'section' => 'cis', 'first_name' => 'Dan', 'last_name' => 'Umbay', 'email' => 'jdcumbay@dswd.gov.ph', 'position' => 'Administrative Aide I', 'user_type' => User::TYPE_USER, 'assigned_category' => 'priority', 'step' => 'Encode', 'window' => 1, 'status' => User::STATUS_INACTIVE, 'email_is_verified' => true],
+            ['division' => 'psd', 'section' => 'cis', 'first_name' => 'Chard', 'last_name' => 'Tams', 'email' => 'rgtamala@dswd.gov.ph', 'position' => 'Administrative Aide I', 'user_type' => User::TYPE_USER, 'assigned_category' => 'both', 'step' => 'Release', 'window' => 1, 'status' => User::STATUS_INACTIVE, 'email_is_verified' => true],
+
+
 
             // ['division' => 'psd', 'section' => 'cis', 'first_name' => 'Juan', 'last_name' => 'Dela Cruz', 'email' => 'jdcruz@dswd.gov.ph', 'position' => 'Social Welfare Officer II', 'user_type' => User::TYPE_USER, 'assigned_category' => 'regular', 'status' => User::STATUS_INACTIVE,  'email_is_verified' => true],
         ];
