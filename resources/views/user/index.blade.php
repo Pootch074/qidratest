@@ -247,8 +247,8 @@
             const stepNumber = {{ $stepNumber ?? 'null' }};
             const stepPreassess = @json(\App\Libraries\Steps::PRE_ASSESSMENT());
 
-            const stepEncoding = {{ Steps::ENCODE() }};
-            const stepRelease = {{ Steps::RELEASE() }};
+            const stepEncoding = @json(Steps::ENCODE());
+            const stepRelease = @json(Steps::RELEASE());
             const crisisSectionId = {{ $crisisSectionId ?? 'null' }};
 
             if (sectionId === crisisSectionId && (stepNumber === stepPreassess || stepNumber === stepEncoding)) {
