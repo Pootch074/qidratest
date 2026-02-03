@@ -262,6 +262,7 @@ class AdminController extends Controller
     public function updateAssignment(Request $request, User $user)
     {
         try {
+            // 1️⃣ Validate input
             $validated = $request->validate([
                 'role' => 'required|integer|in:1,2,3,5,6', // match User::getUserTypes() keys
                 'step_id' => 'nullable|exists:steps,id',
@@ -269,10 +270,12 @@ class AdminController extends Controller
                 'assigned_category' => 'nullable|in:regular,priority,both',
             ]);
 
+            // 2️⃣ Save current values before update
             $roleBefore = $user->user_type;
             $stepBefore = $user->step_id;
             $windowBefore = $user->window_id;
 
+            // 3️⃣ Update user record
             $user->update([
                 'user_type' => $validated['role'],
                 'step_id' => $validated['step_id'] ?? null,
@@ -280,25 +283,35 @@ class AdminController extends Controller
                 'assigned_category' => $validated['assigned_category'] ?? null,
             ]);
 
-            if ($roleBefore != $validated['role'] || $stepBefore != ($validated['step_id'] ?? null) || $windowBefore != ($validated['window_id'] ?? null)) {
-                UserAssignmentLog::create([
+            // 4️⃣ Determine which fields actually changed
+            $changes = [];
+
+            if ($roleBefore != $validated['role']) {
+                $changes['role_before'] = (string) $roleBefore;
+                $changes['role_after'] = (string) $validated['role'];
+            }
+
+            if ($stepBefore != ($validated['step_id'] ?? null)) {
+                $changes['step_before'] = $stepBefore !== null ? (string) $stepBefore : null;
+                $changes['step_after'] = isset($validated['step_id']) ? (string) $validated['step_id'] : null;
+            }
+
+            if ($windowBefore != ($validated['window_id'] ?? null)) {
+                $changes['window_before'] = $windowBefore !== null ? (string) $windowBefore : null;
+                $changes['window_after'] = isset($validated['window_id']) ? (string) $validated['window_id'] : null;
+            }
+
+            // 5️⃣ Log the changes if any
+            if (! empty($changes)) {
+                UserAssignmentLog::create(array_merge([
                     'section_id' => $user->section_id,
                     'admin_id' => Auth::id(),
                     'target_user_id' => $user->id,
-
-                    // required field causing the error
-                    'assignment_id' => $user->id,
-
-                    'role_before' => (string) $roleBefore,
-                    'role_after' => (string) $validated['role'],
-                    'step_before' => (string) $stepBefore,
-                    'step_after' => $validated['step_id'] ? (string) $validated['step_id'] : null,
-                    'window_before' => (string) $windowBefore,
-                    'window_after' => $validated['window_id'] ? (string) $validated['window_id'] : null,
-                ]);
-
+                    'assignment_id' => $user->id, // required field
+                ], $changes));
             }
 
+            // 6️⃣ Return success response
             return response()->json([
                 'success' => true,
                 'message' => 'User updated successfully!',

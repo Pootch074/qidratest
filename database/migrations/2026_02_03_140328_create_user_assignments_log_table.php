@@ -13,17 +13,36 @@ return new class extends Migration
     {
         Schema::create('user_assignments_log', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('section_id')->nullable();
-            $table->foreign('section_id')->references('id')->on('sections')->onDelete('set null');
-            $table->unsignedBigInteger('admin_id')->nullable();
-            $table->foreign('admin_id')->references('id')->on('users')->onDelete('set null');
-            $table->bigInteger('target_user_id');
+
+            // IDs
+            $table->unsignedBigInteger('section_id');
+            $table->unsignedBigInteger('admin_id');
+            $table->unsignedBigInteger('target_user_id');
+            $table->unsignedBigInteger('assignment_id');
+
+            // Role changes
             $table->string('role_before');
             $table->string('role_after');
-            $table->string('step_before');
-            $table->string('step_after');
-            $table->bigInteger('assignment_id');
+
+            // Step changes (nullable)
+            $table->string('step_before')->nullable();
+            $table->string('step_after')->nullable();
+
+            // Window changes (nullable)
+            $table->string('window_before')->nullable();
+            $table->string('window_after')->nullable();
+
+            // Optional: you can add assigned_category logging if needed
+            $table->string('assigned_category_before')->nullable();
+            $table->string('assigned_category_after')->nullable();
+
             $table->timestamps();
+
+            // Indexes for faster queries
+            $table->index('section_id');
+            $table->index('admin_id');
+            $table->index('target_user_id');
+            $table->index('assignment_id');
         });
     }
 
