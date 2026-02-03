@@ -29,6 +29,9 @@
                                     Name</th>
                                 <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">
                                     Section</th>
+                                <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">
+                                    Phone Number
+                                </th>
                                 <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider rounded-tr-lg">
                                     Entry Time
                                 </th>
@@ -43,6 +46,9 @@
                                     </td>
                                     <td class="px-6 py-4 section">
                                         {{ $client->section->section_name ?? 'N/A' }}
+                                    </td>
+                                    <td>
+                                        {{ $client->phone_number ?? 'N/A' }}
                                     </td>
                                     <td class="px-6 py-4 created_at">
                                         {{ $client->created_at->format('M d, Y g:i A') }}
