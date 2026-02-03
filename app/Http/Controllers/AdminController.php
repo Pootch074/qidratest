@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Step;
 use App\Models\Transaction;
 use App\Models\User;
-use App\Models\Step;
+use App\Models\UserAssignmentLog;
 use App\Models\Window;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -110,8 +110,6 @@ class AdminController extends Controller
             'userTypes'
         ));
     }
-
-
 
     public function usersJson()
     {
@@ -265,11 +263,13 @@ class AdminController extends Controller
     {
         try {
             $validated = $request->validate([
-                'role' => 'required|integer|in:1,2,5', // match User::getUserTypes() keys
+                'role' => 'required|integer|in:1,2,3,5,6', // match User::getUserTypes() keys
                 'step_id' => 'nullable|exists:steps,id',
                 'window_id' => 'nullable|exists:windows,id',
                 'assigned_category' => 'nullable|in:regular,priority,both',
             ]);
+
+            $roleBefore = $user->user_type;
 
             $user->update([
                 'user_type' => $validated['role'],
@@ -277,6 +277,17 @@ class AdminController extends Controller
                 'window_id' => $validated['window_id'] ?? null,
                 'assigned_category' => $validated['assigned_category'] ?? null,
             ]);
+
+            if ($roleBefore != $validated['role']) {
+                UserAssignmentLog::create([
+                    'section_id' => $user->section_id,
+                    'admin_id' => Auth::id(),
+                    'target_user_id' => $user->id,
+                    'role_before' => (string) $roleBefore,
+                    'role_after' => (string) $validated['role'],
+                    'assignment_id' => $user->id,
+                ]);
+            }
 
             return response()->json([
                 'success' => true,
