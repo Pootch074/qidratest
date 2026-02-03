@@ -60,8 +60,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="{{ count($userColumns) + 3 }}"
-                                        class="px-6 py-3 text-center text-gray-500">
+                                    <td class="px-6 py-3 text-center text-gray-500">
                                         🚫 No users found.
                                     </td>
                                 </tr>
@@ -73,39 +72,35 @@
                     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
                     <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
                         <h3 class="text-xl font-semibold mb-4 text-gray-700">Edit User</h3>
-
                         <form id="editUserForm" class="space-y-4">
                             <input type="hidden" id="editUserId">
 
+                            <!-- Role Dropdown -->
                             <div>
                                 <label class="block text-gray-600 mb-1">Role</label>
-                                <select id="editRole" class="w-full border rounded px-3 py-2">
-                                    <option value="2">Superadmin</option>
-                                    <option value="1">Admin</option>
-                                    <option value="0">User</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-gray-600 mb-1">Assigned Step</label>
-                                <select id="editStep" class="w-full border rounded px-3 py-2">
-                                    <option value="">—</option>
-                                    @foreach ($steps as $step)
-                                        <option value="{{ $step->id }}">{{ $step->step_number }}</option>
+                                <select id="editRole" name="role" class="w-full border rounded px-3 py-2">
+                                    @foreach ($userTypes as $value => $label)
+                                        <option value="{{ $value }}">{{ $label }}</option>
                                     @endforeach
                                 </select>
+
                             </div>
 
+                            <!-- Step Dropdown -->
+                            <div>
+                                <label class="block text-gray-600 mb-1">Assigned Step</label>
+                                <select id="editStep" class="w-full border rounded px-3 py-2"></select>
+                            </div>
+
+                            <!-- Window Dropdown -->
                             <div>
                                 <label class="block text-gray-600 mb-1">Assigned Window</label>
                                 <select id="editWindow" class="w-full border rounded px-3 py-2">
                                     <option value="">—</option>
-                                    @foreach ($windows as $window)
-                                        <option value="{{ $window->id }}">{{ $window->window_number }}</option>
-                                    @endforeach
                                 </select>
                             </div>
 
+                            <!-- Category Dropdown -->
                             <div>
                                 <label class="block text-gray-600 mb-1">Assigned Category</label>
                                 <select id="editCategory" class="w-full border rounded px-3 py-2">
@@ -124,36 +119,91 @@
                             </div>
                         </form>
 
-                        <button onclick="closeModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
-                            ✕
-                        </button>
+                        <button onclick="closeModal()"
+                            class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">✕</button>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 @endsection
 
 @section('scripts')
-    {{-- <script>
-        window.appBaseUrl = "{{ url('') }}";
-        window.userColumnsCount = {{ count($userColumns) + 3 }};
-    </script> --}}
     <script>
+        // Pass Blade variables to JS
+        const userTypesData = @json($userTypes);
+        const stepsData = @json($steps);
+        const windowsData = @json($windows);
+        const currentSectionId = {{ auth()->user()->section_id }};
+
+
+        // Open Edit Modal
         function openEditModal(userId, role, stepId, windowId, category) {
             document.getElementById('editUserId').value = userId;
-            document.getElementById('editRole').value = role;
-            document.getElementById('editStep').value = stepId ?? '';
-            document.getElementById('editWindow').value = windowId ?? '';
             document.getElementById('editCategory').value = category ?? '';
+
+            // Populate Roles
+            const roleSelect = document.getElementById('editRole');
+            roleSelect.innerHTML = '';
+            for (const [value, label] of Object.entries(userTypesData)) {
+                const opt = document.createElement('option');
+                opt.value = value;
+                opt.textContent = label;
+                roleSelect.appendChild(opt);
+            }
+            roleSelect.value = role ?? '';
+
+            // Populate Steps
+            const stepSelect = document.getElementById('editStep');
+            stepSelect.innerHTML = '<option value="">—</option>';
+            stepsData.forEach(step => {
+                if (step.section_id == currentSectionId) {
+                    const opt = document.createElement('option');
+                    opt.value = step.id;
+                    opt.textContent = step.step_number;
+                    stepSelect.appendChild(opt);
+                }
+            });
+            stepSelect.value = stepId ?? '';
+
+            // Populate Windows for selected step
+            populateWindows(stepId, windowId);
+
+            // Update windows when step changes
+            stepSelect.onchange = function() {
+                populateWindows(this.value, null);
+            };
 
             document.getElementById('editUserModal').classList.remove('hidden');
         }
 
+        // Populate Windows dropdown dynamically based on selected step
+        function populateWindows(stepId, selectedWindowId) {
+            const windowSelect = document.getElementById('editWindow');
+            windowSelect.innerHTML = '<option value="">—</option>';
+
+            if (!stepId) return;
+
+            windowsData
+                .filter(w => w.step_id == stepId) // only filter by step_id
+                .forEach(w => {
+                    const opt = document.createElement('option');
+                    opt.value = w.id;
+                    opt.textContent = w.window_number;
+                    windowSelect.appendChild(opt);
+                });
+
+            if (selectedWindowId) windowSelect.value = selectedWindowId;
+        }
+
+
+        // Close modal
         function closeModal() {
             document.getElementById('editUserModal').classList.add('hidden');
         }
 
+        // Submit form via AJAX
         document.getElementById('editUserForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -162,10 +212,12 @@
             const step_id = document.getElementById('editStep').value || null;
             const window_id = document.getElementById('editWindow').value || null;
             const assigned_category = document.getElementById('editCategory').value;
+
             fetch(`${window.appBaseUrl}/admin/active-users/${userId}/update-assignment`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Accept': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                     },
                     body: JSON.stringify({
@@ -175,31 +227,24 @@
                         assigned_category
                     })
                 })
-                .then(res => res.json())
+                .then(async res => {
+                    if (!res.ok) throw new Error(await res.text());
+                    return res.json();
+                })
                 .then(data => {
-                    if (data.success) {
-                        // Update table row dynamically
-                        const row = document.getElementById(`user-row-${userId}`);
-
-                        // Map role integer to text
-                        const roleText = role == 2 ? 'Superadmin' : role == 1 ? 'Admin' : 'User';
-                        row.querySelector('.role').textContent = roleText;
-                        row.querySelector('.step').textContent = data.user.step ? data.user.step.step_number :
-                            '—';
-                        row.querySelector('.window').textContent = data.user.window ? data.user.window
-                            .window_number : '—';
-                        row.querySelector('.category').textContent = assigned_category || '—';
-
-                        closeModal();
-                    } else {
-                        alert('Failed to update user.');
-                    }
+                    const row = document.getElementById(`user-row-${userId}`);
+                    row.querySelector('.role').textContent = data.user.user_type_text;
+                    row.querySelector('.step').textContent = data.user.step?.step_number ?? '—';
+                    row.querySelector('.window').textContent = data.user.window?.window_number ?? '—';
+                    row.querySelector('.category').textContent = assigned_category || '—';
+                    closeModal();
                 })
                 .catch(err => {
                     console.error(err);
-                    alert('An error occurred.');
+                    alert('Error: check console for details.');
                 });
         });
     </script>
+
     @vite('resources/js/adminUsers.js')
 @endsection

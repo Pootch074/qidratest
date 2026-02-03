@@ -91,20 +91,26 @@ class AdminController extends Controller
     public function activeUsers()
     {
         $authUser = Auth::user();
-        $jglf = $authUser->section_id;
+        $sectionId = $authUser->section_id;
 
         $users = User::with(['step', 'window'])
-            ->where('section_id', $jglf)
+            ->where('section_id', $sectionId)
             ->where('status', 1)
-            ->latest()
+            ->orderBy('user_type')
             ->get();
 
-        // Fetch all steps and windows for the dropdowns
-        $steps = Step::all();
+        $steps = Step::where('section_id', $sectionId)->get();
         $windows = Window::all();
+        $userTypes = User::getUserTypes(); // ✅ roles source
 
-        return view('admin.users.active', compact('users', 'steps', 'windows'));
+        return view('admin.users.active', compact(
+            'users',
+            'steps',
+            'windows',
+            'userTypes'
+        ));
     }
+
 
 
     public function usersJson()
@@ -257,24 +263,31 @@ class AdminController extends Controller
 
     public function updateAssignment(Request $request, User $user)
     {
-        $request->validate([
-            'role' => 'required|integer|in:0,1,2', // use your numeric mapping: 0=user,1=admin,2=superadmin
-            'step_id' => 'nullable|exists:steps,id',
-            'window_id' => 'nullable|exists:windows,id',
-            'assigned_category' => 'nullable|in:regular,priority,both',
-        ]);
+        try {
+            $validated = $request->validate([
+                'role' => 'required|integer|in:1,2,5', // match User::getUserTypes() keys
+                'step_id' => 'nullable|exists:steps,id',
+                'window_id' => 'nullable|exists:windows,id',
+                'assigned_category' => 'nullable|in:regular,priority,both',
+            ]);
 
-        $user->user_type = $request->role;
-        $user->step_id = $request->step_id;
-        $user->window_id = $request->window_id;
-        $user->assigned_category = $request->assigned_category;
-        $user->save();
+            $user->update([
+                'user_type' => $validated['role'],
+                'step_id' => $validated['step_id'] ?? null,
+                'window_id' => $validated['window_id'] ?? null,
+                'assigned_category' => $validated['assigned_category'] ?? null,
+            ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'User updated successfully!',
-            'user' => $user->load('step', 'window'),
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'User updated successfully!',
+                'user' => $user->load('step', 'window'),
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['success' => false, 'errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
-
 }
