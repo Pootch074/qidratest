@@ -270,6 +270,8 @@ class AdminController extends Controller
             ]);
 
             $roleBefore = $user->user_type;
+            $stepBefore = $user->step_id;
+            $windowBefore = $user->window_id;
 
             $user->update([
                 'user_type' => $validated['role'],
@@ -278,15 +280,23 @@ class AdminController extends Controller
                 'assigned_category' => $validated['assigned_category'] ?? null,
             ]);
 
-            if ($roleBefore != $validated['role']) {
+            if ($roleBefore != $validated['role'] || $stepBefore != ($validated['step_id'] ?? null) || $windowBefore != ($validated['window_id'] ?? null)) {
                 UserAssignmentLog::create([
                     'section_id' => $user->section_id,
                     'admin_id' => Auth::id(),
                     'target_user_id' => $user->id,
+
+                    // required field causing the error
+                    'assignment_id' => $user->id,
+
                     'role_before' => (string) $roleBefore,
                     'role_after' => (string) $validated['role'],
-                    'assignment_id' => $user->id,
+                    'step_before' => (string) $stepBefore,
+                    'step_after' => $validated['step_id'] ? (string) $validated['step_id'] : null,
+                    'window_before' => (string) $windowBefore,
+                    'window_after' => $validated['window_id'] ? (string) $validated['window_id'] : null,
                 ]);
+
             }
 
             return response()->json([

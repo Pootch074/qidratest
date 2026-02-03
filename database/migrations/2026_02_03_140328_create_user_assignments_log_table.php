@@ -15,10 +15,13 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('section_id')->nullable();
             $table->foreign('section_id')->references('id')->on('sections')->onDelete('set null');
-            $table->bigInteger('admin_id');
+            $table->unsignedBigInteger('admin_id')->nullable();
+            $table->foreign('admin_id')->references('id')->on('users')->onDelete('set null');
             $table->bigInteger('target_user_id');
             $table->string('role_before');
             $table->string('role_after');
+            $table->string('step_before');
+            $table->string('step_after');
             $table->bigInteger('assignment_id');
             $table->timestamps();
         });
