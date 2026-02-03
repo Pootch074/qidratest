@@ -232,7 +232,7 @@ class PacdController extends Controller
 
         // Create the client record
         ClientLogs::create([
-            'fullname'   => $request->client_name,
+            'fullname' => $request->client_name,
             'phone_number' => $request->phone_number,
             'section_id' => $sectionId,
         ]);

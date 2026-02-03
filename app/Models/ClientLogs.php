@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ClientLogs extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'fullname',
         'section_id',

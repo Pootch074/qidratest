@@ -86,7 +86,7 @@ Route::middleware(['auth'])->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', CheckUserType::class.':0,1,2,3,5,6'])->group(function () {
-// Route::middleware(['auth', 'otp.verified', CheckUserType::class.':0,1,2,3,5,6'])->group(function () {
+    // Route::middleware(['auth', 'otp.verified', CheckUserType::class.':0,1,2,3,5,6'])->group(function () {
     Route::get('superadmin', [SuperAdminController::class, 'index'])->name('superadmin');
 
     /*
@@ -122,7 +122,6 @@ Route::middleware(['auth', CheckUserType::class.':0,1,2,3,5,6'])->group(function
         Route::post('/pacd/store-client', [PacdController::class, 'storeClient'])->name('pacd.storeClient');
     });
 
-
     Route::get('user', [UsersController::class, 'index'])->name('user');
     Route::get('display', [DisplayController::class, 'index'])->name('display');
 });
@@ -152,7 +151,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/steps', [DisplayController::class, 'getStepsBySectionId'])->name('steps');
     Route::get('/display/transactions/latest', [DisplayController::class, 'getLatestTransaction'])->name('display.latest-transaction');
 
-    
     Route::post('/transactions/{id}/resume', [PacdController::class, 'resumeTransaction'])->name('transactions.resume');
 
     // === Queue Operations ===

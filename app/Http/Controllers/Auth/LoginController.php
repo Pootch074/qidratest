@@ -6,12 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Models\LoginLog;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Http\RedirectResponse;
 
 class LoginController extends Controller
 {
@@ -92,6 +92,7 @@ class LoginController extends Controller
             // BLOCK LOGIN if user status = 1
             if ($user->status === User::STATUS_INACTIVE) { // or === 1 if you prefer literal
                 Auth::logout(); // immediately log out
+
                 return back()->withErrors([
                     'email' => 'Login denied: Your account is pending or blocked.',
                 ])->onlyInput('email');
@@ -122,21 +123,21 @@ class LoginController extends Controller
             $request->session()->put('office_name', $office->office_name ?? null);
 
             switch ($user->user_type) {
-            case User::TYPE_SUPERADMIN:
-                return redirect()->route('superadmin');
-            case User::TYPE_ADMIN:
-                return redirect()->route('admin');
-            case User::TYPE_IDSCAN:
-                return redirect()->route('idscan');
-            case User::TYPE_PACD:
-                return redirect()->route('pacd');
-            case User::TYPE_USER:
-                return redirect()->route('user');
-            case User::TYPE_DISPLAY:
-                return redirect()->route('display');
-            default:
-                return redirect()->route('login');
-        }
+                case User::TYPE_SUPERADMIN:
+                    return redirect()->route('superadmin');
+                case User::TYPE_ADMIN:
+                    return redirect()->route('admin');
+                case User::TYPE_IDSCAN:
+                    return redirect()->route('idscan');
+                case User::TYPE_PACD:
+                    return redirect()->route('pacd');
+                case User::TYPE_USER:
+                    return redirect()->route('user');
+                case User::TYPE_DISPLAY:
+                    return redirect()->route('display');
+                default:
+                    return redirect()->route('login');
+            }
         }
 
         return back()->withErrors([
@@ -252,7 +253,7 @@ class LoginController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        
+
         if ($request->expectsJson()) {
             return response()->json(['message' => 'Logged out']);
         }
