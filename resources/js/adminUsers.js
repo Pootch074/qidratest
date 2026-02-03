@@ -244,7 +244,12 @@ togglePassword?.addEventListener("click", () => {
 // Delete User (MAKE IT GLOBAL)
 // ===============================
 window.deleteUser = function (userId) {
-    if (!confirm("Are you sure you want to delete this user?")) return;
+    if (
+        !confirm(
+            "Disapproving this user will permanently delete them and cannot be undone. Are you sure you want to proceed?",
+        )
+    )
+        return;
     fetch(`${window.appBaseUrl}/admin/active-users/${userId}`, {
         method: "DELETE",
         headers: {
