@@ -123,7 +123,24 @@
                             class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">✕</button>
                     </div>
                 </div>
-
+                <!-- Confirmation Modal -->
+                <div id="confirmSaveModal"
+                    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+                    <div class="bg-white rounded-lg shadow-lg w-full max-w-sm p-6 relative">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-700">Confirm Save</h3>
+                        <p class="text-gray-600 mb-6">Are you sure you want to save these changes?</p>
+                        <div class="flex justify-end space-x-2">
+                            <button id="cancelConfirmBtn"
+                                class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+                            <button id="confirmSaveBtn"
+                                class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">Yes, Save</button>
+                        </div>
+                        <button onclick="closeConfirmModal()"
+                            class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+                            ✕
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -136,6 +153,7 @@
         const stepsData = @json($steps);
         const windowsData = @json($windows);
         const currentSectionId = {{ auth()->user()->section_id }};
+        let pendingFormData = null;
 
 
         // Open Edit Modal
@@ -213,6 +231,15 @@
             const window_id = document.getElementById('editWindow').value || null;
             const assigned_category = document.getElementById('editCategory').value;
 
+            pendingFormData = {
+                userId,
+                role,
+                step_id,
+                window_id,
+                assigned_category
+            };
+            document.getElementById('confirmSaveModal').classList.remove('hidden');
+
             fetch(`${window.appBaseUrl}/admin/active-users/${userId}/update-assignment`, {
                     method: 'POST',
                     headers: {
@@ -244,6 +271,65 @@
                     alert('Error: check console for details.');
                 });
         });
+
+        // Cancel button
+        document.getElementById('cancelConfirmBtn').addEventListener('click', () => {
+            pendingFormData = null;
+            closeConfirmModal();
+        });
+
+        // Confirm button
+        document.getElementById('confirmSaveBtn').addEventListener('click', async () => {
+            if (!pendingFormData) return;
+
+            const {
+                userId,
+                role,
+                step_id,
+                window_id,
+                assigned_category
+            } = pendingFormData;
+
+            try {
+                const res = await fetch(`${window.appBaseUrl}/admin/active-users/${userId}/update-assignment`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        role,
+                        step_id,
+                        window_id,
+                        assigned_category
+                    })
+                });
+
+                if (!res.ok) throw new Error(await res.text());
+                const data = await res.json();
+
+                // Update table row
+                const row = document.getElementById(`user-row-${userId}`);
+                row.querySelector('.role').textContent = data.user.user_type_text;
+                row.querySelector('.step').textContent = data.user.step?.step_number ?? '—';
+                row.querySelector('.window').textContent = data.user.window?.window_number ?? '—';
+                row.querySelector('.category').textContent = assigned_category || '—';
+
+                // Close modals
+                closeModal();
+                closeConfirmModal();
+
+                pendingFormData = null;
+            } catch (err) {
+                console.error(err);
+                alert('Error: check console for details.');
+            }
+        });
+
+        function closeConfirmModal() {
+            document.getElementById('confirmSaveModal').classList.add('hidden');
+        }
     </script>
 
     @vite('resources/js/adminUsers.js')
