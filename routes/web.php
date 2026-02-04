@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DisplayController;
 use App\Http\Controllers\IdscanController;
 use App\Http\Controllers\PacdController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\StepsController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\TransactionsController;
@@ -188,3 +189,8 @@ Route::middleware(['auth'])->group(function () {
     // === SuperAdmin Actions ===
     Route::post('superadmin/store', [SuperAdminController::class, 'store'])->name('superadmin.store');
 });
+
+Route::get('/forgot-password', [PasswordController::class, 'passwordRequest'])->middleware('guest')->name('password.request');
+Route::post('/forgot-password', [PasswordController::class, 'passwordEmail'])->middleware('guest')->name('password.email');
+Route::get('/reset-password/{token}', [PasswordController::class, 'resetPassword'])->middleware('guest')->name('password.reset');
+Route::post('/reset-password', [PasswordController::class, 'updatePassword'])->middleware('guest')->name('password.update');

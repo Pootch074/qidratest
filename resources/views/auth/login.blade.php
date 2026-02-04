@@ -112,6 +112,10 @@
                         Login
                     </button>
                 </div>
+                <div class="text-center">
+                    <a href="{{ route('password.request') }}" class="text-sm text-indigo-600 hover:underline">Forgot
+                        Password?</a>
+                </div>
 
                 <div class="flex items-center space-x-2 pl-2">
                     <label for="terms" class="text-sm text-gray-700">
