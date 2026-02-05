@@ -60,14 +60,14 @@ Route::prefix('auth')->group(function () {
 
     Route::get('/login', [LoginController::class, 'login'])->name('login');
     Route::post('/login', [LoginController::class, 'authenticate'])->name('authenticate');
-
     Route::get('/login-verify-otp', [LoginController::class, 'loginShowOtp'])->name('login.show.otp');
     Route::post('/login-verify-otp', [LoginController::class, 'loginVerifyOtp'])->name('login.verify.otp');
+    Route::post('/login/resend-otp', [LoginController::class, 'resendOtp'])->name('login.resend.otp');
+    
     Route::get('/register-verify-otp', [RegisterController::class, 'registerShowOtp'])->name('register.show.otp');
     Route::post('/register-verify-otp', [RegisterController::class, 'registerVerifyOtp'])->name('register.verify.otp');
 
     Route::post('/register/resend-otp', [RegisterController::class, 'resendOtp'])->name('register.resend.otp');
-    Route::post('/login/resend-otp', [LoginController::class, 'resendOtp'])->name('login.resend.otp');
 
 });
 

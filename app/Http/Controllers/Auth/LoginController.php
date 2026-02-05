@@ -20,6 +20,7 @@ class LoginController extends Controller
         return view('auth.login');
     }
 
+    // With login OTP activated
     public function authenticate(LoginRequest $request)
     {
         $credentials = $request->only('email', 'password');
@@ -69,7 +70,7 @@ class LoginController extends Controller
         return back()->withErrors(['email' => 'Invalid credentials'])->onlyInput('email');
     }
 
-
+    // With login OTP deactivated
     // public function authenticate(LoginRequest $request): RedirectResponse
     // {
     //     $credentials = $request->only('email', 'password');
