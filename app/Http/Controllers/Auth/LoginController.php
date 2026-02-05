@@ -24,50 +24,87 @@ class LoginController extends Controller
     public function authenticate(LoginRequest $request)
     {
         $credentials = $request->only('email', 'password');
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            $user = User::find(Auth::id());
-            if ($user->is_logged_in && $user->session_id && $user->session_id !== session()->getId()) {
-                try {
-                    Session::getHandler()->destroy($user->session_id);
-                } catch (\Exception $e) {
-                    Log::warning("Failed to destroy old session for user {$user->id}: {$e->getMessage()}");
-                }
-            }
-            // Block inactive accounts
-            if ($user->status === User::STATUS_INACTIVE) {
-                Auth::logout();
-                return back()->withErrors(['email' => 'Account pending or blocked'])->onlyInput('email');
-            }
-            $user = Auth::user();
-            // Generate OTP and store in session
-            $otp = rand(100000, 999999);
+
+        // Attempt login
+        if (! Auth::attempt($credentials)) {
+            return back()
+                ->withErrors(['email' => 'Invalid credentials'])
+                ->onlyInput('email');
+        }
+
+        $request->session()->regenerate();
+
+        $user = Auth::user();
+
+        /**
+         * ✅ Clear stale login state (after password reset safety)
+         */
+        $user->is_logged_in = false;
+        $user->session_id = null;
+        $user->save();
+
+        /**
+         * 🔒 Block inactive accounts
+         */
+        if ($user->status === User::STATUS_INACTIVE) {
+            Auth::logout();
+
+            return back()
+                ->withErrors(['email' => 'Account pending or blocked'])
+                ->onlyInput('email');
+        }
+
+        /**
+         * 🧹 Clean expired OTP
+         */
+        if ($user->otp_expires_at && $user->otp_expires_at < now()) {
+            $user->otp_code = null;
+            $user->otp_expires_at = null;
+            $user->save();
+        }
+
+        /**
+         * ⏱ Prevent spamming OTP: only generate if no valid OTP exists
+         */
+        if (! $user->otp_expires_at || $user->otp_expires_at < now()) {
+            // 🔐 Generate secure OTP
+            $otp = random_int(100000, 999999);
+
+            $user->otp_code = $otp;
+            $user->otp_expires_at = now()->addMinutes(5);
+            $user->save();
+
             session([
                 'otp_user_id' => $user->id,
                 'otp_code' => $otp,
-                'otp_expires_at' => now()->addMinutes(5),
+                'otp_expires_at' => $user->otp_expires_at,
                 'otp_verified' => false,
             ]);
-            // After OTP is generated
+
+            // Log the login attempt as PENDING
             $loginLog = LoginLog::create([
                 'user_id' => $user->id,
                 'email' => $user->email,
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
-                'status' => 'PENDING', // waiting for OTP
+                'status' => 'PENDING',
             ]);
-            // Store login_log_id in session
+
             session(['login_log_id' => $loginLog->id]);
-            // Temporarily log out user until OTP verified
-            Auth::logout();
+
             // Send OTP email
             Mail::raw("Your OTP code is: $otp", function ($message) use ($user) {
                 $message->to($user->email)
                     ->subject('Your Login OTP Code');
             });
-            return redirect()->route('login.show.otp')->with('success', 'OTP sent to your email');
         }
-        return back()->withErrors(['email' => 'Invalid credentials'])->onlyInput('email');
+
+        // 🔒 Temporarily log out until OTP is verified
+        Auth::logout();
+
+        return redirect()
+            ->route('login.show.otp')
+            ->with('success', 'OTP sent to your email (valid for 5 minutes)');
     }
 
     // With login OTP deactivated
@@ -147,9 +184,7 @@ class LoginController extends Controller
         $userId = session('otp_user_id');
         $logId = session('login_log_id');
 
-        /**
-         * 1️⃣ OTP EXPIRED
-         */
+        // 1️⃣ OTP EXPIRED
         if (! $otp || ! $userId || now()->gt($expiresAt)) {
             if ($logId) {
                 LoginLog::where('id', $logId)->update([
@@ -160,9 +195,9 @@ class LoginController extends Controller
             }
 
             session()->forget([
-                'otp_user_id',
                 'otp_code',
                 'otp_expires_at',
+                'otp_user_id',
                 'otp_verified',
                 'login_log_id',
             ]);
@@ -171,11 +206,8 @@ class LoginController extends Controller
                 ->withErrors(['email' => 'OTP expired. Please login again']);
         }
 
-        /**
-         * 2️⃣ OTP INVALID
-         */
+        // 2️⃣ OTP INVALID
         if ($request->otp != $otp) {
-
             if ($logId) {
                 LoginLog::where('id', $logId)->update([
                     'status' => 'FAILED',
@@ -187,9 +219,7 @@ class LoginController extends Controller
             return back()->withErrors(['otp' => 'Invalid OTP code']);
         }
 
-        /**
-         * 3️⃣ OTP SUCCESS
-         */
+        // 3️⃣ OTP SUCCESS
         $user = User::find($userId);
         Auth::login($user);
 
@@ -200,12 +230,18 @@ class LoginController extends Controller
                 'completed_at' => now(),
             ]);
         }
+
+        // ✅ Update user login state and clear OTP in DB
         $user->is_logged_in = true;
         $user->session_id = session()->getId();
+        $user->otp_code = null;
+        $user->otp_expires_at = null;
         $user->save();
-        // Mark OTP as verified
+
+        // ✅ Mark OTP as verified in session
         session(['otp_verified' => true]);
 
+        // ✅ Forget OTP-related session data
         session()->forget([
             'otp_code',
             'otp_expires_at',
@@ -214,22 +250,15 @@ class LoginController extends Controller
         ]);
 
         // Redirect by role
-        switch ($user->user_type) {
-            case User::TYPE_SUPERADMIN:
-                return redirect()->route('superadmin');
-            case User::TYPE_ADMIN:
-                return redirect()->route('admin');
-            case User::TYPE_IDSCAN:
-                return redirect()->route('idscan');
-            case User::TYPE_PACD:
-                return redirect()->route('pacd');
-            case User::TYPE_USER:
-                return redirect()->route('user');
-            case User::TYPE_DISPLAY:
-                return redirect()->route('display');
-            default:
-                return redirect()->route('login');
-        }
+        return match ($user->user_type) {
+            User::TYPE_SUPERADMIN => redirect()->route('superadmin'),
+            User::TYPE_ADMIN => redirect()->route('admin'),
+            User::TYPE_IDSCAN => redirect()->route('idscan'),
+            User::TYPE_PACD => redirect()->route('pacd'),
+            User::TYPE_USER => redirect()->route('user'),
+            User::TYPE_DISPLAY => redirect()->route('display'),
+            default => redirect()->route('login'),
+        };
     }
 
     public function logout(Request $request)

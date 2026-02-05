@@ -2,7 +2,7 @@
     Reset Password Blade View
 </h1>
 
-<form id="registerForm" class="space-y-5" action="{{ route('password.update') }}" method="POST">
+<form class="space-y-5" action="{{ route('password.update') }}" method="POST">
     @csrf
     <div>
         <input type="text" name="token" value="{{ $token }}" hidden>
@@ -11,7 +11,7 @@
     <!-- Position & Email Add-->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="relative">
-            <input type="email" name="email" autocomplete="email" value="{{ old('email') }}" required
+            <input type="email" name="email" autocomplete="email" value="{{ old('email', $email) }}" required
                 placeholder="Email Address"
                 class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
 
