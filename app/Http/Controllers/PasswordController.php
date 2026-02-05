@@ -6,7 +6,6 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 
@@ -25,9 +24,14 @@ class PasswordController extends Controller
             $request->only('email')
         );
 
-        return $status === Password::ResetLinkSent
-            ? back()->with(['status' => __($status)])
-            : back()->withErrors(['email' => __($status)]);
+        // ✅ Redirect to login page on success
+        if ($status === Password::ResetLinkSent) {
+            return redirect()->route('login')
+                ->with('status', 'Password reset link sent! Please check your email.');
+        }
+
+        // ❌ Keep user on the same page if email is invalid
+        return back()->withErrors(['email' => __($status)]);
     }
 
     public function resetPassword(Request $request, string $token)
@@ -59,7 +63,7 @@ class PasswordController extends Controller
                  * 🔄 Reset auth, OTP, and login state
                  */
                 $user->forceFill([
-                    'password' => Hash::make($password),
+                    'password' => $password, // ✅ plain password
                     'remember_token' => Str::random(60),
                     'is_logged_in' => false,
                     'session_id' => null,
@@ -80,7 +84,7 @@ class PasswordController extends Controller
                 event(new PasswordReset($user));
             }
         );
-        dd($status);
+        // dd($status);
 
         /**
          * 🔥 Clear current browser session

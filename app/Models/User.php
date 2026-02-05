@@ -72,7 +72,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password' => 'string',
             'assigned_category' => 'string',
             'window_id' => 'integer',
             'status' => 'integer',
@@ -80,15 +80,6 @@ class User extends Authenticatable
             'otp_expires_at' => 'datetime', // <-- add this line
             'email_is_verified' => 'boolean',
         ];
-    }
-
-    protected static function booted()
-    {
-        static::creating(function ($user) {
-            if (empty($user->password)) {
-                $user->password = 'Password@123'; // Will be hashed by the mutator
-            }
-        });
     }
 
     public function setPasswordAttribute($value)

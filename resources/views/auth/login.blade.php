@@ -52,8 +52,11 @@
                 </script>
             @endif
 
-            {{-- <div id="termsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-            </div> --}}
+            @if (session('status'))
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                    {{ session('status') }}
+                </div>
+            @endif
 
             @if ($errors->has('email'))
                 <p class="mt-2 text-sm text-red-600">
