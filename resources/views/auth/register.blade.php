@@ -1,18 +1,207 @@
 @extends('layouts.auth')
 @section('content')
-    <div id="auth-login">
-        <div class="w-full max-w-md bg-[#f6f6f6] rounded-2xl shadow-lg p-6 space-y-6">
-            <div class="text-center flex flex-col items-center">
-                <h2 class="text-2xl font-bold text-gray-900">Welcome to</h2>
-
-                <div class="flex items-center mt-2">
-                    <img x-show="show" src="{{ Vite::asset('resources/images/dswd-color.png') }}" class="w-30">
-                    &nbsp;&nbsp;
-                    <img x-show="show" src="{{ Vite::asset('resources/images/qidra-logo3.png') }}" class="w-30">
+    <div id="auth-register">
+        <div class="w-full max-w-5xl bg-[#f6f6f6] rounded-2xl shadow-lg p-8">
+            <div class="grid grid-cols-1 2xl:grid-cols-[1fr_2fr] gap-4">
+                <div class="">
+                    <div class="text-center flex flex-col items-center">
+                        <h1 class="mt-2 text-2xl font-bold text-gray-500">
+                            Create an account
+                        </h1>
+                        <div class="flex items-center mt-2">
+                            <img x-show="show" src="{{ Vite::asset('resources/images/dswd-color.png') }}" class="w-30">
+                            &nbsp;&nbsp;
+                            <img x-show="show" src="{{ Vite::asset('resources/images/qidra-logo3.png') }}" class="w-30">
+                        </div>
+                    </div>
                 </div>
-                <p class="mt-2 text-sm text-gray-500">
-                    Create an account
-                </p>
+
+                <div class="">
+                    <form id="registerForm" class="space-y-5" action="{{ route('register.store') }}" method="POST">
+                        @csrf
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="relative">
+                                <input type="text" name="firstName" value="{{ old('firstName') }}" required
+                                    placeholder="First Name"
+                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                            </div>
+                            <div class="relative">
+                                <input type="text" name="lastName" value="{{ old('lastName') }}" required
+                                    placeholder="Last Name"
+                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                            </div>
+                            <div class="relative">
+                                <select name="divisionId" id="division_id" required
+                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                                    <option value="" disabled {{ old('divisionId') ? '' : 'selected' }}>Area of
+                                        Assignment
+                                    </option>
+
+                                    @foreach ($divisions as $dvsn)
+                                        <option value="{{ $dvsn->id }}"
+                                            {{ old('divisionId') == $dvsn->id ? 'selected' : '' }}>
+                                            {{ $dvsn->division_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="relative">
+                                <select name="sectionId" id="section_id" required
+                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
+                                    {{ old('divisionId') ? '' : 'disabled' }}>
+                                    <option value="" disabled {{ old('sectionId') ? '' : 'selected' }}>
+                                        Section/Office</option>
+
+                                    @foreach ($sections as $section)
+                                        <option value="{{ $section->id }}"
+                                            {{ old('sectionId') == $section->id ? 'selected' : '' }}>
+                                            {{ $section->section_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="relative">
+                                <select name="position" required
+                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                                    <option value="" disabled {{ old('position') ? '' : 'selected' }}>
+                                        Select Position
+                                    </option>
+
+                                    @foreach ($positions as $pstn)
+                                        <option value="{{ $pstn->position_name }}"
+                                            {{ old('position') == $pstn->position_name ? 'selected' : '' }}>
+                                            {{ $pstn->position_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="relative">
+                                <input type="email" name="email" autocomplete="email" value="{{ old('email') }}"
+                                    required placeholder="Email Address"
+                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+
+                                @error('email')
+                                    <p id="emailMessage" class="form-error text-red-600 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="relative">
+                                <select name="stepId" id="step_id" required
+                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
+                                    {{ old('sectionId') ? '' : 'disabled' }}>
+                                    <option value="" disabled selected>Step</option>
+
+                                    @foreach ($steps as $stp)
+                                        <option value="{{ $stp->id }}"
+                                            {{ old('stepId') == $stp->id ? 'selected' : '' }}>
+                                            {{ $stp->step_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="relative">
+                                <select name="windowId" id="window_id" required
+                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
+                                    {{ old('stepId') ? '' : 'disabled' }}>
+                                    <option value="" disabled selected>Window</option>
+
+                                    @foreach ($windows as $wndw)
+                                        <option value="{{ $wndw->id }}"
+                                            {{ old('windowId') == $wndw->id ? 'selected' : '' }}>
+                                            {{ $wndw->window_number }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="relative">
+                                <select name="category" required
+                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                                    <option value="" disabled {{ old('category') ? '' : 'selected' }}>
+                                        Category
+                                    </option>
+
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->value }}"
+                                            {{ old('category') == $category->value ? 'selected' : '' }}>
+                                            {{ $category->description() }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="relative" x-data="{ show: false }">
+                                <input :type="show ? 'text' : 'password'" name="password" required placeholder="Password"
+                                    class="block w-full h-14 pl-3 pr-12 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+
+                                <button type="button" @click="show = !show"
+                                    class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                    <img x-show="!show" src="{{ Vite::asset('resources/images/icons/eye-close.png') }}"
+                                        class="w-5 h-5">
+                                    <img x-show="show" src="{{ Vite::asset('resources/images/icons/eye-open.png') }}"
+                                        class="w-5 h-5">
+                                </button>
+                            </div>
+
+                            <div class="relative" x-data="{ show: false }">
+                                <input :type="show ? 'text' : 'password'" name="password_confirmation" required
+                                    placeholder="Confirm Password"
+                                    class="block w-full h-14 pl-3 pr-12 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+
+                                <button type="button" @click="show = !show"
+                                    class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                    <img x-show="!show" src="{{ Vite::asset('resources/images/icons/eye-close.png') }}"
+                                        class="w-5 h-5">
+                                    <img x-show="show" src="{{ Vite::asset('resources/images/icons/eye-open.png') }}"
+                                        class="w-5 h-5">
+                                </button>
+                            </div>
+                            @error('password')
+                                <p class="form-error text-red-600 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+
+                            @error('password_confirmation')
+                                <p class="form-error text-red-600 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Terms Checkbox -->
+                        <div class="flex items-center space-x-2 pl-2">
+                            <input type="checkbox" name="terms" id="terms" required>
+                            <label for="terms" class="text-sm text-gray-700">
+                                I agree to the <button type="button" id="openTermsModal"
+                                    class="text-indigo-600 hover:underline">
+                                    User Service Agreement & Privacy Notice
+                                </button>.
+                            </label>
+
+                        </div>
+
+                        <div class="flex justify-center mt-4">
+                            <button type="submit"
+                                class="w-75 h-14 rounded-xl bg-[#2e3192] text-white font-semibold hover:bg-indigo-700 transition">
+                                Register
+                            </button>
+                        </div>
+                    </form>
+                    <div class="text-center text-sm text-gray-500 space-y-2 mt-2">
+                        <div>
+                            Already have an account?
+                            <a href="{{ route('login') }}" class="text-indigo-600 hover:underline">Sign
+                                in</a>
+                        </div>
+                        <div>
+                            Need Help? Email us at
+                            <a href="mailto:ictsupport.fo11@dswd.gov.ph"
+                                class="text-indigo-600 hover:underline">ictsupport.fo11@dswd.gov.ph</a>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div id="termsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -162,206 +351,6 @@
                         </button>
                     </div>
                 </div>
-            </div>
-
-            <!-- Form -->
-            <form id="registerForm" class="space-y-5" action="{{ route('register.store') }}" method="POST">
-                @csrf
-                {{-- <input type="hidden" name="recaptcha_token" id="recaptcha_token"> --}}
-
-                <!-- First Name & Last Name -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="relative">
-                        <input type="text" name="firstName" value="{{ old('firstName') }}" required
-                            placeholder="First Name"
-                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                    </div>
-
-                    <div class="relative">
-                        <input type="text" name="lastName" value="{{ old('lastName') }}" required placeholder="Last Name"
-                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Area of Assignment -->
-                    <div class="relative">
-                        <select name="divisionId" id="division_id" required
-                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                            <option value="" disabled {{ old('divisionId') ? '' : 'selected' }}>Area of Assignment
-                            </option>
-
-                            @foreach ($divisions as $dvsn)
-                                <option value="{{ $dvsn->id }}" {{ old('divisionId') == $dvsn->id ? 'selected' : '' }}>
-                                    {{ $dvsn->division_name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Section / Unit -->
-                    <div class="relative">
-                        <select name="sectionId" id="section_id" required
-                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
-                            {{ old('divisionId') ? '' : 'disabled' }}>
-                            <option value="" disabled {{ old('sectionId') ? '' : 'selected' }}>
-                                Section/Office</option>
-
-                            @foreach ($sections as $section)
-                                <option value="{{ $section->id }}"
-                                    {{ old('sectionId') == $section->id ? 'selected' : '' }}>
-                                    {{ $section->section_name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                </div>
-
-                <!-- Position & Email Add-->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="relative">
-                        <select name="position" required
-                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                            <option value="" disabled {{ old('position') ? '' : 'selected' }}>
-                                Select Position
-                            </option>
-
-                            @foreach ($positions as $pstn)
-                                <option value="{{ $pstn->position_name }}"
-                                    {{ old('position') == $pstn->position_name ? 'selected' : '' }}>
-                                    {{ $pstn->position_name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="relative">
-                        <input type="email" name="email" autocomplete="email" value="{{ old('email') }}" required
-                            placeholder="Email Address"
-                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-
-                        @error('email')
-                            <p id="emailMessage" class="form-error text-red-600 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-
-                <!-- Step, Window, Category -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="relative">
-                        <select name="stepId" id="step_id" required
-                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
-                            {{ old('sectionId') ? '' : 'disabled' }}>
-                            <option value="" disabled selected>Step</option>
-
-                            @foreach ($steps as $stp)
-                                <option value="{{ $stp->id }}" {{ old('stepId') == $stp->id ? 'selected' : '' }}>
-                                    {{ $stp->step_name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="relative">
-                        <select name="windowId" id="window_id" required
-                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
-                            {{ old('stepId') ? '' : 'disabled' }}>
-                            <option value="" disabled selected>Window</option>
-
-                            @foreach ($windows as $wndw)
-                                <option value="{{ $wndw->id }}" {{ old('windowId') == $wndw->id ? 'selected' : '' }}>
-                                    {{ $wndw->window_number }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="relative">
-                        <select name="category" required
-                            class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                            <option value="" disabled {{ old('category') ? '' : 'selected' }}>
-                                Category
-                            </option>
-
-                            @foreach ($categories as $category)
-                                <option value="{{ $category->value }}"
-                                    {{ old('category') == $category->value ? 'selected' : '' }}>
-                                    {{ $category->description() }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Password -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="relative" x-data="{ show: false }">
-                        <input :type="show ? 'text' : 'password'" name="password" required placeholder="Password"
-                            class="block w-full h-14 pl-3 pr-12 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-
-                        <button type="button" @click="show = !show"
-                            class="absolute inset-y-0 right-0 flex items-center pr-3">
-                            <img x-show="!show" src="{{ Vite::asset('resources/images/icons/eye-close.png') }}"
-                                class="w-5 h-5">
-                            <img x-show="show" src="{{ Vite::asset('resources/images/icons/eye-open.png') }}"
-                                class="w-5 h-5">
-                        </button>
-                    </div>
-
-                    <div class="relative" x-data="{ show: false }">
-                        <input :type="show ? 'text' : 'password'" name="password_confirmation" required
-                            placeholder="Confirm Password"
-                            class="block w-full h-14 pl-3 pr-12 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-
-                        <button type="button" @click="show = !show"
-                            class="absolute inset-y-0 right-0 flex items-center pr-3">
-                            <img x-show="!show" src="{{ Vite::asset('resources/images/icons/eye-close.png') }}"
-                                class="w-5 h-5">
-                            <img x-show="show" src="{{ Vite::asset('resources/images/icons/eye-open.png') }}"
-                                class="w-5 h-5">
-                        </button>
-                    </div>
-                    @error('password')
-                        <p class="form-error text-red-600 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-
-                    @error('password_confirmation')
-                        <p class="form-error text-red-600 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Terms Checkbox -->
-                <div class="flex items-center space-x-2 pl-2">
-                    <input type="checkbox" name="terms" id="terms" required>
-                    <label for="terms" class="text-sm text-gray-700">
-                        I agree to the <button type="button" id="openTermsModal"
-                            class="text-indigo-600 hover:underline">
-                            User Service Agreement & Privacy Notice
-                        </button>.
-                    </label>
-
-                </div>
-
-                <!-- Submit -->
-                <button type="submit"
-                    class="w-full h-14 rounded-xl bg-[#2e3192] text-white font-semibold hover:bg-indigo-700 transition">
-                    Register
-                </button>
-                <div class="flex items-center space-x-2 pl-2">
-                    <label for="terms" class="text-sm text-gray-700">
-                        Already have an account? <a href="{{ route('login') }}"
-                            class="text-indigo-600 hover:underline">Sign
-                            in</a>
-                    </label>
-                </div>
-            </form>
-
-            <!-- Help -->
-            <div class="text-center text-sm text-gray-500 mt-4">
-                Need Help? Email us at
-                <a href="mailto:ictsupport.fo11@dswd.gov.ph"
-                    class="text-indigo-600 hover:underline">ictsupport.fo11@dswd.gov.ph</a>
             </div>
 
         </div>

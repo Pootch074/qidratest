@@ -14,8 +14,7 @@
 
             <!-- Header -->
             <div class="text-center flex flex-col items-center">
-                <h2 class="text-2xl font-bold text-gray-900">Welcome to</h2>
-
+                <h1 class="mt-2 text-2xl font-bold text-gray-500">Welcome to</h1>
                 <div class="flex items-center mt-2">
                     <img x-show="show" src="{{ Vite::asset('resources/images/dswd-color.png') }}" class="w-30">
                     &nbsp;&nbsp;
@@ -122,7 +121,7 @@
                 </div>
 
                 <div class="flex items-center space-x-2 pl-2">
-                    <label for="terms" class="text-sm text-gray-700">
+                    <label for="terms" class="text-center text-sm text-gray-500 mt-4">
                         Don't have an account? <a href="{{ route('register') }}"
                             class="text-indigo-600 hover:underline">Sign up</a>
                     </label>
