@@ -27,7 +27,7 @@ class PasswordController extends Controller
         // ✅ Redirect to login page on success
         if ($status === Password::ResetLinkSent) {
             return redirect()->route('login')
-                ->with('status', 'Password reset link sent! Please check your email.');
+                ->with('success', 'Password reset link sent! Please check your email.');
         }
 
         // ❌ Keep user on the same page if email is invalid

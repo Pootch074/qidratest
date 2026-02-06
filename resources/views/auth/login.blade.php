@@ -32,33 +32,27 @@
             @enderror --}}
 
             @if (session('error'))
-                <div class="bg-red-100 text-red-700 p-3 rounded-md text-sm">
+                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 10000)" x-transition
+                    class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
                     {{ session('error') }}
-                </div>
             @endif
 
             @if (session('success'))
-                <div id="success-toast"
-                    class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4 text-sm">
+                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 10000)" x-transition
+                    class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-4">
                     {{ session('success') }}
                 </div>
-
-                <script>
-                    setTimeout(() => {
-                        const toast = document.getElementById('success-toast');
-                        if (toast) toast.remove();
-                    }, 10000);
-                </script>
             @endif
 
             @if ($errors->has('email'))
-                <p class="mt-2 text-sm text-red-600">
+                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 10000)" x-transition
+                    class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
                     {{ $errors->first('email') }}
-                </p>
+                </div>
             @endif
             @if (session('status'))
                 <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 10000)" x-transition
-                    class="alert bg-blue-100 border border-blue-300 text-blue-800 px-4 py-2 rounded mb-4">
+                    class="bg-blue-100 border border-blue-300 text-blue-800 px-4 py-2 rounded mb-4">
                     {{ session('status') }}
                 </div>
             @endif
@@ -119,21 +113,21 @@
                     <a href="{{ route('password.request') }}" class="text-sm text-indigo-600 hover:underline">Forgot
                         Password?</a>
                 </div>
-
-                <div class="flex items-center space-x-2 pl-2">
-                    <label for="terms" class="text-center text-sm text-gray-500 mt-4">
-                        Don't have an account? <a href="{{ route('register') }}"
-                            class="text-indigo-600 hover:underline">Sign up</a>
-                    </label>
-                </div>
             </form>
-            {{-- <script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_SITE_KEY') }}"></script> --}}
+            <div class="text-center text-sm text-gray-500 space-y-2 mt-2">
+                <div>
+                    Don't have an account? <a href="{{ route('register') }}" class="text-indigo-600 hover:underline">Sign
+                        up</a>
+                </div>
+                <div>
+                    Need Help? Email us at
+                    <a href="mailto:ictsupport.fo11@dswd.gov.ph"
+                        class="text-indigo-600 hover:underline">ictsupport.fo11@dswd.gov.ph</a>
+                </div>
+            </div>
 
-            <!-- Help -->
             <div class="text-center text-sm text-gray-500 mt-4">
-                Need Help? Email us at
-                <a href="mailto:ictsupport.fo11@dswd.gov.ph"
-                    class="text-indigo-600 hover:underline">ictsupport.fo11@dswd.gov.ph</a>
+
             </div>
 
         </div>

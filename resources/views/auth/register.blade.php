@@ -1,7 +1,7 @@
 @extends('layouts.auth')
 @section('content')
     <div id="auth-register">
-        <div class="w-full max-w-5xl bg-[#f6f6f6] rounded-2xl shadow-lg p-8">
+        <div class="w-full max-w-6xl bg-[#f6f6f6] rounded-2xl shadow-lg p-8">
             <div class="grid grid-cols-1 2xl:grid-cols-[1fr_2fr] gap-4">
                 <div class="">
                     <div class="text-center flex flex-col items-center">
