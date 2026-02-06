@@ -3,7 +3,7 @@
     <div id="auth-register">
         <div class="w-full max-w-6xl bg-[#f6f6f6] rounded-2xl shadow-lg p-8">
             <div class="grid grid-cols-1 2xl:grid-cols-[1fr_2fr] gap-4">
-                <div class="">
+                <div>
                     <div class="text-center flex flex-col items-center">
                         <h1 class="mt-2 text-2xl font-bold text-gray-500">
                             Create an account
@@ -16,7 +16,7 @@
                     </div>
                 </div>
 
-                <div class="">
+                <div>
                     <form id="registerForm" class="space-y-5" action="{{ route('register.store') }}" method="POST">
                         @csrf
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">

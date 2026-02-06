@@ -26,11 +26,6 @@
                 </p>
             </div>
 
-            <!-- Display Errors -->
-            {{-- @error('recaptcha_token')
-                <div class="text-red-500 text-sm">{{ $message }}</div>
-            @enderror --}}
-
             @if (session('error'))
                 <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 10000)" x-transition
                     class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
