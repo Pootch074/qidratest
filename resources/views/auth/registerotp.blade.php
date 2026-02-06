@@ -26,13 +26,17 @@
             <input type="text" name="otp_code" maxlength="6" placeholder="Enter OTP"
                 class="block w-full h-14 pl-4 pr-4 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 text-center text-xl focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
 
-            <div class="flex justify-between items-center">
-                <a href="{{ route('register') }}" class="text-indigo-600 hover:underline self-center">Cancel</a>
-                <button type="submit"
-                    class="px-6 py-3 rounded-xl bg-[#2e3192] text-white font-semibold hover:bg-indigo-700">
-                    Submit
-                </button>
-            </div>
+            <button type="submit"
+                class="w-full px-6 py-3 rounded-xl bg-[#2e3192] text-white font-semibold hover:bg-indigo-700">
+                Submit
+            </button>
+        </form>
+
+        <form action="{{ route('login.otp.cancel') }}" method="POST" class="mt-4 text-center">
+            @csrf
+            <button type="submit" class="text-indigo-600 hover:underline">
+                Cancel
+            </button>
         </form>
 
         <div class="text-center mt-2">
