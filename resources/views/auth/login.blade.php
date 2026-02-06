@@ -52,17 +52,18 @@
                 </script>
             @endif
 
-            @if (session('status'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                    {{ session('status') }}
-                </div>
-            @endif
-
             @if ($errors->has('email'))
                 <p class="mt-2 text-sm text-red-600">
                     {{ $errors->first('email') }}
                 </p>
             @endif
+            @if (session('status'))
+                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 10000)" x-transition
+                    class="alert bg-blue-100 border border-blue-300 text-blue-800 px-4 py-2 rounded mb-4">
+                    {{ session('status') }}
+                </div>
+            @endif
+
             <!-- Form -->
             <form id="loginForm" class="space-y-5" action="{{ route('authenticate') }}" method="POST">
                 @csrf
