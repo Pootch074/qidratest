@@ -322,4 +322,28 @@ class LoginController extends Controller
 
         return redirect()->route('login.show.otp')->with('success', 'A new OTP has been sent to your email.');
     }
+
+    public function cancelOtp(Request $request)
+    {
+        $userId = session('otp_user_id');
+
+        if ($userId) {
+            User::where('id', $userId)->update([
+                'otp_code' => null,
+                'otp_expires_at' => null,
+            ]);
+        }
+
+        // Clear OTP-related session data
+        session()->forget([
+            'otp_code',
+            'otp_expires_at',
+            'otp_user_id',
+            'otp_verified',
+            'login_log_id',
+        ]);
+
+        return redirect()->route('login')
+            ->with('status', 'OTP verification cancelled.');
+    }
 }

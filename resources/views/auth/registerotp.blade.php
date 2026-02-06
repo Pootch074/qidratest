@@ -7,7 +7,7 @@
         @if (isset($otpExpiresAt))
             <p id="otp-timer" class="text-center text-sm text-gray-600 mb-3">
                 Your OTP will expire in
-                <span class="font-semibold text-[#2e3192]">10:00</span>
+                <span class="font-semibold text-[#2e3192]">05:00</span>
             </p>
         @endif
 
