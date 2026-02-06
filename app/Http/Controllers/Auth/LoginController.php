@@ -103,8 +103,7 @@ class LoginController extends Controller
         Auth::logout();
 
         return redirect()
-            ->route('login.show.otp')
-            ->with('success', 'OTP sent to your email (valid for 5 minutes)');
+            ->route('login.show.otp');
     }
 
     // With login OTP deactivated

@@ -95,7 +95,7 @@ class UsersSeeder extends Seeder
                 'user_type' => User::TYPE_ADMIN,
                 'status' => User::STATUS_ACTIVE,
                 'email_is_verified' => true,
-                'password' => 'Password@12345', // ✅ PLAIN TEXT
+                'password' => 'Password@123', // ✅ PLAIN TEXT
             ],
 
             [
@@ -109,7 +109,7 @@ class UsersSeeder extends Seeder
                 //  'assigned_category' => 'regular', 'step' => 'Release', 'window' => 3,
                 'status' => User::STATUS_ACTIVE,
                 'email_is_verified' => true,
-                'password' => 'Blad@12345',
+                'password' => 'Password@123',
             ],
             // ['division' => 'psd', 'section' => 'cis', 'first_name' => 'Yhena', 'last_name' => 'Villamil', 'email' => 'yvvillamil@dswd.gov.ph', 'position' => 'Computer Programmer III',  'user_type' => User::TYPE_ADMIN, 'status' => User::STATUS_ACTIVE, 'email_is_verified' => true],
 

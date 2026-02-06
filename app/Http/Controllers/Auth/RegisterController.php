@@ -83,8 +83,7 @@ class RegisterController extends Controller
         );
 
         return redirect()
-            ->route('register.show.otp')
-            ->with('success', 'OTP sent to your email.');
+            ->route('register.show.otp');
     }
 
     public function registerVerifyOtp(Request $request)
