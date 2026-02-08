@@ -4,7 +4,8 @@
     <div class="h-full px-3 py-4 overflow-y-auto bg-[#2e3192]">
         <div class="flex justify-center mb-6">
             <img src="{{ Vite::asset('resources/images/dswd-white.png') }}" alt="App Logo" class="h-12 w-auto">
-            <img src="{{ Vite::asset('resources/images/qidra-logo-white.png') }}" alt="App Logo" class="h-12 w-auto ml-4">
+            <img src="{{ Vite::asset('resources/images/qidra-logo3-white.png') }}" alt="App Logo"
+                class="h-12 w-auto ml-4">
         </div>
 
         <ul class="space-y-2 font-medium">

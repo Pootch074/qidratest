@@ -1,7 +1,7 @@
 <div x-data="{ open: false }" class="flex items-center justify-between w-full px-4">
     <div class="flex items-center space-x-4">
         <img src="{{ Vite::asset('resources/images/dswd-white.png') }}" class="h-10">
-        <img src="{{ Vite::asset('resources/images/qidra-logo-white.png') }}" class="h-10">
+        <img src="{{ Vite::asset('resources/images/qidra-logo3-white.png') }}" class="h-10">
     </div>
 
     <div id="current-datetime" class="font-semibold text-white"></div>
