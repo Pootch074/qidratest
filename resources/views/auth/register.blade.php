@@ -8,10 +8,9 @@
                         <h1 class="mt-2 text-2xl font-bold text-gray-500">
                             Create an account
                         </h1>
-                        <div class="flex items-center mt-2">
-                            <img x-show="show" src="{{ Vite::asset('resources/images/dswd-color.png') }}" class="w-30">
-                            &nbsp;&nbsp;
-                            <img x-show="show" src="{{ Vite::asset('resources/images/qidra-logo3.png') }}" class="w-30">
+                        <div class="flex flex-col items-center mt-10">
+                            <img x-show="show" src="{{ Vite::asset('resources/images/dswd-trademark.png') }}" class="w-30">
+                            <img x-show="show" src="{{ Vite::asset('resources/images/qidra-logo3.png') }}" class="w-60">
                         </div>
                     </div>
                 </div>
