@@ -55,9 +55,6 @@
             <!-- Form -->
             <form id="loginForm" class="space-y-5" action="{{ route('authenticate') }}" method="POST">
                 @csrf
-                {{-- <input type="hidden" name="recaptcha_token" id="recaptcha_token"> --}}
-
-                <!-- Email Input -->
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                         <img src="{{ Vite::asset('resources/images/icons/icon-email.png') }}" alt="Email"
@@ -68,34 +65,26 @@
                         class="block w-full h-14 pl-12 pr-4 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] transition outline-none">
                 </div>
 
-                <!-- Password Input with Eye Toggle (Alpine) -->
                 <div class="relative" x-data="{ show: false }">
-                    <!-- Left Icon -->
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                         <img src="{{ Vite::asset('resources/images/icons/icon-password.png') }}" alt="Password"
                             class="w-6 h-6">
                     </span>
 
-                    <!-- Password Field -->
                     <input :type="show ? 'text' : 'password'" name="password" id="password" autocomplete="current-password"
                         required placeholder="********"
                         class="block w-full h-14 pl-12 pr-12 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] transition outline-none">
 
-                    <!-- Eye Toggle Button -->
                     <button type="button" @click="show = !show"
                         class="absolute inset-y-0 right-0 flex items-center pr-3 focus:outline-none">
 
-                        <!-- Closed eye (default) -->
                         <img x-show="!show" src="{{ Vite::asset('resources/images/icons/eye-close.png') }}"
                             alt="Show Password" class="w-5 h-5">
 
-                        <!-- Open eye -->
                         <img x-show="show" src="{{ Vite::asset('resources/images/icons/eye-open.png') }}"
                             alt="Hide Password" class="w-5 h-5">
                     </button>
                 </div>
-
-                <!-- Terms Checkbox -->
 
                 <!-- Submit Button -->
                 <div>
