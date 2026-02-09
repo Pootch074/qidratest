@@ -26,7 +26,7 @@
                         <thead class="bg-[#2e3192] text-white sticky top-0 z-10">
                             <tr>
                                 <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider rounded-tl-lg">
-                                    Name</th>
+                                    Full Name</th>
                                 <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">
                                     Section</th>
                                 <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider">
@@ -42,7 +42,7 @@
                             @forelse ($clientlogs as $client)
                                 <tr class="odd:bg-white even:bg-gray-200 hover:bg-indigo-50 transition duration-200">
                                     <td class="px-6 py-4 font-semibold fullname">
-                                        {{ $client->fullname }}
+                                        {{ $client->full_name }}
                                     </td>
                                     <td class="px-6 py-4 section">
                                         {{ $client->section->section_name ?? 'N/A' }}

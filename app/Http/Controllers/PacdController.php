@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ClientLogs;
 use App\Models\Section;
 use App\Models\Step;
 use App\Models\Transaction;
@@ -213,32 +212,11 @@ class PacdController extends Controller
     {
         $user = Auth::user();
 
-        $clientlogs = ClientLogs::where('created_at', '>=', now()->startOfDay())
+        $clientlogs = Transaction::where('created_at', '>=', now()->startOfDay())
             ->where('created_at', '<=', now()->endOfDay())
             ->orderBy('created_at', 'desc')
             ->get();
 
         return view('pacd.clients.table', compact('clientlogs'));
-    }
-
-    public function storeClient(Request $request)
-    {
-        // Validate input
-        $request->validate([
-            'client_name' => 'required|string|max:255',
-            'phone_number' => 'nullable|string|max:11',
-        ]);
-
-        // Get current user's section_id
-        $sectionId = Auth::user()->section_id;
-
-        // Create the client record
-        ClientLogs::create([
-            'fullname' => $request->client_name,
-            'phone_number' => $request->phone_number,
-            'section_id' => $sectionId,
-        ]);
-
-        return redirect()->back()->with('success', 'Client added successfully.');
     }
 }
