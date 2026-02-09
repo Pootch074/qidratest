@@ -58,13 +58,8 @@ class PacdController extends Controller
 
         $transaction = DB::transaction(function () use ($request, $section, $now) {
             $clientType = $request->input('client_type', 'regular');
-            $clientId = $request->input('client_id');
             $clientName = $request->input('manual_client_name');
-
-            // Existing scanned client or new one
-            $client = $clientId
-                ? Transaction::withoutTicket()->findOrFail($clientId)
-                : new Transaction(['full_name' => $clientName, 'ticket_status' => null]);
+            $clientPhone = $request->input('manual_client_phone');
 
             // Compute new queue number safely
             $lastQueue = Transaction::forSection($section->id)
@@ -80,8 +75,12 @@ class PacdController extends Controller
                 ->where('step_number', 1)
                 ->first();
 
-            // Save client queue
+            // Create and save new client transaction
+            $client = new Transaction;
+
             $client->fill([
+                'full_name' => $clientName,
+                'phone_number' => $clientPhone,  // <- now saved correctly
                 'queue_number' => $newQueueNumber,
                 'client_type' => $clientType,
                 'step_id' => $firstStep?->id,
@@ -90,13 +89,15 @@ class PacdController extends Controller
                 'queue_status' => 'waiting',
                 'ticket_status' => 'issued',
                 'updated_at' => $now,
-            ])->save();
+            ]);
+
+            $client->save();
 
             return $client;
         });
 
         $prefixMap = ['priority' => 'P', 'regular' => 'R', 'deferred' => 'D'];
-        $clientTypeValue = $transaction->client_type->value;
+        $clientTypeValue = $transaction->client_type->value ?? $transaction->client_type;
         $prefix = $prefixMap[$clientTypeValue] ?? strtoupper(substr($clientTypeValue, 0, 1));
         $formattedQueue = $prefix.str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT);
 
@@ -104,8 +105,9 @@ class PacdController extends Controller
             return response()->json([
                 'success' => true,
                 'queue_number' => $formattedQueue,
-                'client_type' => ucfirst($transaction->client_type->value),
+                'client_type' => ucfirst($transaction->client_type->value ?? $transaction->client_type),
                 'client_name' => $transaction->full_name,
+                'client_phone' => $transaction->phone_number,  // <- returned in JSON
                 'section' => $transaction->section->section_name,
             ]);
         }

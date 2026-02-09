@@ -21,6 +21,7 @@
                                         @csrf
                                         <input type="hidden" name="client_type" id="client_type_{{ $section->id }}">
                                         <input type="hidden" name="manual_client_name" x-bind:value="clientName">
+                                        <input type="hidden" name="manual_client_phone" x-bind:value="clientPhone">
                                         <button type="button"
                                             @click="showModal = true; selectedSection = {{ $section->id }}"
                                             class="w-full h-24 flex items-center justify-center rounded-lg bg-[#2e3192] text-white font-bold shadow-md transition hover:bg-[#5057c9]">
@@ -58,8 +59,7 @@
                                 </div>
 
                                 <!-- Modal Form -->
-                                <form class="px-6 pb-6 space-y-4" action="{{ route('pacd.storeClient') }}" method="POST"
-                                    id="clientLog" x-data="{ clientType: '', clientName: '' }">
+                                <form class="px-6 pb-6 space-y-4" method="POST" id="clientLog" x-data="{ clientType: '', clientName: '', clientPhone: '' }">
                                     @csrf
                                     <div class="space-y-4 md:space-y-0 md:grid md:grid-cols-2 md:gap-4 items-end">
                                         <div class="flex flex-col">
@@ -77,7 +77,8 @@
                                                 Number</label>
                                             <input type="text" name="phone_number" placeholder="Optional" maxlength="11"
                                                 id="phone_number"
-                                                class="w-full h-14 px-4 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 outline-none transition">
+                                                class="w-full h-14 px-4 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 outline-none transition"
+                                                x-model="clientPhone">
                                         </div>
                                     </div>
 
@@ -139,6 +140,7 @@
                 showModal: false,
                 selectedSection: null,
                 clientName: '',
+                clientPhone: '',
                 userSectionId: userSectionId, // keep track of logged-in user’s section_id
 
                 async generateQueue(sectionId, type) {
@@ -153,7 +155,8 @@
                             },
                             body: JSON.stringify({
                                 client_type: type,
-                                manual_client_name: this.clientName
+                                manual_client_name: this.clientName,
+                                manual_client_phone: this.clientPhone
                             })
                         });
 
@@ -260,6 +263,7 @@
                     this.showModal = false;
                     this.selectedSection = null;
                     this.clientName = '';
+                    this.clientPhone = '';
                 }
             };
         }

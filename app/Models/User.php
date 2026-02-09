@@ -183,8 +183,7 @@ class User extends Authenticatable
     }
 
     public function isAdmin(): bool
-{
-    return $this->user_type === self::TYPE_ADMIN;
-}
-
+    {
+        return $this->user_type === self::TYPE_ADMIN;
+    }
 }

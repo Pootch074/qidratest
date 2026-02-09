@@ -1,8 +1,71 @@
-Please implement the following requirements:
+Review my codes because still it doesnt save the phone number.
 
-1. The Regular and Priority options must be implemented as radio inputs.
-2. Add a Print button above the Cancel button.
-3. The buttons should be disabled if the Client Name field is empty.
+app\Http\Controllers\PacdController.php
+public function generateQueue(Request $request, Section $section)
+{
+$now = Carbon::now('Asia/Manila');
+
+$transaction = DB::transaction(function () use ($request, $section, $now) {
+$clientType = $request->input('client_type', 'regular');
+$clientName = $request->input('manual_client_name');
+$clientPhone = $request->input('manual_client_phone');
+
+// Create a new client transaction
+$client = new Transaction([
+'full_name' => $clientName,
+'phone_number' => $clientPhone,
+'ticket_status' => null,
+]);
+
+// Compute new queue number safely
+$lastQueue = Transaction::forSection($section->id)
+->ofClientType($clientType)
+->today()
+->lockForUpdate()
+->max('queue_number');
+
+$newQueueNumber = $lastQueue ? $lastQueue + 1 : 1;
+
+// Get first step dynamically
+$firstStep = Step::where('section_id', $section->id)
+->where('step_number', 1)
+->first();
+
+// Save client queue
+$client->fill([
+'queue_number' => $newQueueNumber,
+'client_type' => $clientType,
+'step_id' => $firstStep?->id,
+'window_id' => null,
+'section_id' => $section->id,
+'queue_status' => 'waiting',
+'ticket_status' => 'issued',
+'updated_at' => $now,
+])->save();
+
+return $client;
+});
+
+$prefixMap = ['priority' => 'P', 'regular' => 'R', 'deferred' => 'D'];
+$clientTypeValue = $transaction->client_type->value ?? $transaction->client_type;
+$prefix = $prefixMap[$clientTypeValue] ?? strtoupper(substr($clientTypeValue, 0, 1));
+$formattedQueue = $prefix.str_pad($transaction->queue_number, 3, '0', STR_PAD_LEFT);
+
+if (request()->expectsJson() || request()->ajax()) {
+return response()->json([
+'success' => true,
+'queue_number' => $formattedQueue,
+'client_type' => ucfirst($transaction->client_type->value ?? $transaction->client_type),
+'client_name' => $transaction->full_name,
+'client_phone' => $transaction->phone_number,
+'section' => $transaction->section->section_name,
+]);
+}
+
+return redirect()->back()
+->with('success', "Queue #{$formattedQueue} created for {$transaction->section->section_name} (Client:
+{$transaction->full_name})");
+}
 
 resources\views\pacd\index.blade.php
 @extends('layouts.pacd')
@@ -28,6 +91,7 @@ resources\views\pacd\index.blade.php
                                         @csrf
                                         <input type="hidden" name="client_type" id="client_type_{{ $section->id }}">
                                         <input type="hidden" name="manual_client_name" x-bind:value="clientName">
+                                        <input type="hidden" name="manual_client_phone" x-bind:value="clientPhone">
                                         <button type="button"
                                             @click="showModal = true; selectedSection = {{ $section->id }}"
                                             class="w-full h-24 flex items-center justify-center rounded-lg bg-[#2e3192] text-white font-bold shadow-md transition hover:bg-[#5057c9]">
@@ -61,13 +125,11 @@ resources\views\pacd\index.blade.php
                                 <!-- Modal Header -->
                                 <div class="px-6 pt-6 pb-4 text-center">
                                     <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">Provide client
-                                        information and
-                                        select type</h3>
+                                        information</h3>
                                 </div>
 
                                 <!-- Modal Form -->
-                                <form class="px-6 pb-6 space-y-4" action="{{ route('pacd.storeClient') }}" method="POST"
-                                    id="clientLog">
+                                <form class="px-6 pb-6 space-y-4" method="POST" id="clientLog" x-data="{ clientType: '', clientName: '', clientPhone: '' }">
                                     @csrf
                                     <div class="space-y-4 md:space-y-0 md:grid md:grid-cols-2 md:gap-4 items-end">
                                         <div class="flex flex-col">
@@ -75,8 +137,9 @@ resources\views\pacd\index.blade.php
                                                 class="text-gray-700 dark:text-gray-200 font-medium mb-1">Client Full
                                                 Name</label>
                                             <input type="text" name="client_name" id="client_name" required
-                                                placeholder="Enter client full name..."
-                                                class="w-full h-14 px-4 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 outline-none transition">
+                                                placeholder="Ex. Juan Dela Cruz"
+                                                class="w-full h-14 px-4 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 outline-none transition"
+                                                x-model="clientName">
                                         </div>
                                         <div class="flex flex-col">
                                             <label for="phone_number"
@@ -84,26 +147,37 @@ resources\views\pacd\index.blade.php
                                                 Number</label>
                                             <input type="text" name="phone_number" placeholder="Optional" maxlength="11"
                                                 id="phone_number"
-                                                class="w-full h-14 px-4 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 outline-none transition">
+                                                class="w-full h-14 px-4 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 outline-none transition"
+                                                x-model="clientPhone">
                                         </div>
                                     </div>
 
-                                    <!-- Client Type Buttons -->
-                                    <div class="mt-6 flex justify-center gap-4 flex-wrap">
+                                    <!-- Client Type Radio Buttons -->
+                                    <div class="mt-6 flex flex-col md:flex-row justify-center gap-4 items-center">
+                                        <label class="inline-flex items-center gap-2">
+                                            <input type="radio" name="client_type" value="regular" x-model="clientType"
+                                                :disabled="!clientName" class="form-radio h-5 w-5 text-blue-600">
+                                            <span class="text-gray-700 dark:text-gray-200 font-medium">Regular</span>
+                                        </label>
+                                        <label class="inline-flex items-center gap-2">
+                                            <input type="radio" name="client_type" value="priority" x-model="clientType"
+                                                :disabled="!clientName" class="form-radio h-5 w-5 text-red-500">
+                                            <span class="text-gray-700 dark:text-gray-200 font-medium">Priority</span>
+                                        </label>
+                                    </div>
+
+                                    <!-- Print Button -->
+                                    <div class="mt-6 flex justify-center">
                                         <button type="button"
-                                            @click="generateQueue(selectedSection, 'regular').then(() => reset())"
-                                            class="px-6 py-3 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:from-blue-600 hover:via-blue-700 hover:to-blue-800 text-white font-semibold rounded-xl shadow-md transition transform hover:scale-105">
-                                            Regular
-                                        </button>
-                                        <button type="button"
-                                            @click="generateQueue(selectedSection, 'priority').then(() => reset())"
-                                            class="px-6 py-3 bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:from-red-500 hover:via-red-600 hover:to-red-700 text-white font-semibold rounded-xl shadow-md transition transform hover:scale-105">
-                                            Priority
+                                            @click="generateQueue(selectedSection, clientType).then(() => reset())"
+                                            :disabled="!clientName || !clientType"
+                                            class="px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed">
+                                            Print
                                         </button>
                                     </div>
 
                                     <!-- Cancel Button -->
-                                    <div class="mt-6 text-center">
+                                    <div class="mt-4 text-center">
                                         <button type="button" @click="reset()"
                                             class="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100 transition">
                                             Cancel
@@ -113,6 +187,7 @@ resources\views\pacd\index.blade.php
                             </div>
                         </div>
                     </div>
+
 
 
                     {{-- Success Message --}}
@@ -135,6 +210,7 @@ resources\views\pacd\index.blade.php
                 showModal: false,
                 selectedSection: null,
                 clientName: '',
+                clientPhone: '',
                 userSectionId: userSectionId, // keep track of logged-in user’s section_id
 
                 async generateQueue(sectionId, type) {
@@ -149,7 +225,8 @@ resources\views\pacd\index.blade.php
                             },
                             body: JSON.stringify({
                                 client_type: type,
-                                manual_client_name: this.clientName
+                                manual_client_name: this.clientName,
+                                manual_client_phone: this.clientPhone
                             })
                         });
 
@@ -239,7 +316,6 @@ resources\views\pacd\index.blade.php
                             <div class="section">${this.escapeHtml(data.section)}</div>
                             <div class="number">${this.escapeHtml(data.queue_number)}</div>
                             <div class="meta">${this.escapeHtml(data.client_type)} Client</div>
-                            <div class="meta">${this.escapeHtml(data.client_name)}</div>
                             <small class="small">${this.escapeHtml(new Date().toLocaleString())}</small>
                         </div>
                     </body>

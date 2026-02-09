@@ -17,6 +17,7 @@ class Transaction extends Model
         'section_id',
         'queue_number',
         'full_name',
+        'phone_number',
         'client_type',
         'step_id',
         'window_id',

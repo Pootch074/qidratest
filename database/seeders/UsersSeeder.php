@@ -117,12 +117,12 @@ class UsersSeeder extends Seeder
                 'last_name' => 'Verify',
                 'email' => 'ybaliobladymer@gmail.com',
                 'position' => 'Project Development Officer II',
-                'user_type' =>  User::TYPE_USER,
+                'user_type' => User::TYPE_USER,
                 'assigned_category' => 'regular', 'step' => 'Pre-assessment', 'window' => 1,
                 'status' => User::STATUS_ACTIVE,
                 'email_is_verified' => true,
                 'password' => 'Password@123',
-                
+
             ],
             // ['division' => 'psd', 'section' => 'cis', 'first_name' => 'Yhena', 'last_name' => 'Villamil', 'email' => 'yvvillamil@dswd.gov.ph', 'position' => 'Computer Programmer III',  'user_type' => User::TYPE_ADMIN, 'status' => User::STATUS_ACTIVE, 'email_is_verified' => true],
 
