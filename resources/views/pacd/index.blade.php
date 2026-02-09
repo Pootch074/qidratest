@@ -243,7 +243,6 @@
                             <div class="section">${this.escapeHtml(data.section)}</div>
                             <div class="number">${this.escapeHtml(data.queue_number)}</div>
                             <div class="meta">${this.escapeHtml(data.client_type)} Client</div>
-                            <div class="meta">${this.escapeHtml(data.client_name)}</div>
                             <small class="small">${this.escapeHtml(new Date().toLocaleString())}</small>
                         </div>
                     </body>
