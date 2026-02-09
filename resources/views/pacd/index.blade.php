@@ -36,14 +36,14 @@
                     <div x-show="showModal"
                         class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/30 p-4"
                         x-cloak>
-                        <div class="relative w-full max-w-xl max-h-full">
+                        <div class="relative w-full max-w-3xl max-h-full">
                             <!-- Modal Container -->
                             <div
-                                class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-blue-900 transform transition-all duration-200 scale-95 opacity-100">
+                                class="relative bg-gray-200 rounded-2xl shadow-2xl border-2 border-blue-900 transform transition-all duration-200 scale-95 opacity-100">
 
                                 <!-- Close Button -->
                                 <button type="button" @click="reset()"
-                                    class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 bg-transparent rounded-full w-8 h-8 flex items-center justify-center transition">
+                                    class="absolute top-3 right-3 text-gray-700 hover:text-gray-400 bg-transparent rounded-full w-8 h-8 flex items-center justify-center transition">
                                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none"
                                         viewBox="0 0 14 14" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -54,30 +54,29 @@
 
                                 <!-- Modal Header -->
                                 <div class="px-6 pt-6 pb-4 text-center">
-                                    <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">Provide client
+                                    <h3 class="text-3xl font-bold text-gray-700 mb-2">Provide client
                                         information</h3>
                                 </div>
 
                                 <!-- Modal Form -->
-                                <form class="px-6 pb-6 space-y-4" method="POST" id="clientLog" x-data="{ clientType: '', clientName: '', clientPhone: '' }">
+                                <form class="px-6 pb-6 space-y-6" method="POST" id="clientLog" x-data="{ clientType: '', clientName: '', clientPhone: '' }">
                                     @csrf
                                     <div class="space-y-4 md:space-y-0 md:grid md:grid-cols-2 md:gap-4 items-end">
                                         <div class="flex flex-col">
-                                            <label for="client_name"
-                                                class="text-gray-700 dark:text-gray-200 font-medium mb-1">Client Full
+                                            <label for="client_name" class="text-gray-700 text-2xl font-medium mb-1">Client
+                                                Full
                                                 Name</label>
                                             <input type="text" name="client_name" id="client_name" required
                                                 placeholder="Ex. Juan Dela Cruz"
-                                                class="w-full h-14 px-4 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 outline-none transition"
+                                                class="w-full h-14 px-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 outline-none transition"
                                                 x-model="clientName">
                                         </div>
                                         <div class="flex flex-col">
-                                            <label for="phone_number"
-                                                class="text-gray-700 dark:text-gray-200 font-medium mb-1">Phone
+                                            <label for="phone_number" class="text-gray-700 text-2xl font-medium mb-1">Phone
                                                 Number</label>
                                             <input type="text" name="phone_number" placeholder="Optional" maxlength="11"
                                                 id="phone_number"
-                                                class="w-full h-14 px-4 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 outline-none transition"
+                                                class="w-full h-14 px-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 outline-none transition"
                                                 x-model="clientPhone">
                                         </div>
                                     </div>
@@ -86,13 +85,13 @@
                                     <div class="mt-6 flex flex-col md:flex-row justify-center gap-4 items-center">
                                         <label class="inline-flex items-center gap-2">
                                             <input type="radio" name="client_type" value="regular" x-model="clientType"
-                                                :disabled="!clientName" class="form-radio h-5 w-5 text-blue-600">
-                                            <span class="text-gray-700 dark:text-gray-200 font-medium">Regular</span>
+                                                :disabled="!clientName" class="form-radio h-8 w-8 text-blue-600">
+                                            <span class="text-gray-700 text-2xl font-medium">Regular</span>
                                         </label>
                                         <label class="inline-flex items-center gap-2">
                                             <input type="radio" name="client_type" value="priority" x-model="clientType"
-                                                :disabled="!clientName" class="form-radio h-5 w-5 text-red-500">
-                                            <span class="text-gray-700 dark:text-gray-200 font-medium">Priority</span>
+                                                :disabled="!clientName" class="form-radio h-8 w-8 text-red-500">
+                                            <span class="text-gray-700 text-2xl font-medium">Priority</span>
                                         </label>
                                     </div>
 
@@ -101,15 +100,15 @@
                                         <button type="button"
                                             @click="generateQueue(selectedSection, clientType).then(() => reset())"
                                             :disabled="!clientName || !clientType"
-                                            class="px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed">
+                                            class="px-6 py-3 bg-green-500 hover:bg-green-600 text-gray-700 font-semibold rounded-xl shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed">
                                             Print
                                         </button>
                                     </div>
 
                                     <!-- Cancel Button -->
-                                    <div class="mt-4 text-center">
+                                    <div class="mt-4 flex justify-end text-center">
                                         <button type="button" @click="reset()"
-                                            class="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100 transition">
+                                            class="text-gray-700 hover:text-gray-400 transition">
                                             Cancel
                                         </button>
                                     </div>
