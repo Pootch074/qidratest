@@ -16,6 +16,6 @@ class DatabaseSeeder extends Seeder
         $this->call(WindowsSeeder::class);
         $this->call(UsersSeeder::class);
         $this->call(PositionsSeeder::class);
-        $this->call(ClientLogsSeeder::class);
+        // $this->call(ClientLogsSeeder::class);
     }
 }

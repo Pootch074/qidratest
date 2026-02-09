@@ -97,12 +97,11 @@ class UsersSeeder extends Seeder
                 'email_is_verified' => true,
                 'password' => 'Password@123', // ✅ PLAIN TEXT
             ],
-
             [
                 'division' => 'psd',
                 'section' => 'cis',
                 'first_name' => 'Blad',
-                'last_name' => 'Sparrow',
+                'last_name' => 'PACD',
                 'email' => 'bladsparrow74@gmail.com',
                 'position' => 'Project Development Officer II',
                 'user_type' => User::TYPE_PACD,
@@ -110,6 +109,20 @@ class UsersSeeder extends Seeder
                 'status' => User::STATUS_ACTIVE,
                 'email_is_verified' => true,
                 'password' => 'Password@123',
+            ],
+            [
+                'division' => 'psd',
+                'section' => 'cis',
+                'first_name' => 'Blad',
+                'last_name' => 'Verify',
+                'email' => 'ybaliobladymer@gmail.com',
+                'position' => 'Project Development Officer II',
+                'user_type' =>  User::TYPE_USER,
+                'assigned_category' => 'regular', 'step' => 'Pre-assessment', 'window' => 1,
+                'status' => User::STATUS_ACTIVE,
+                'email_is_verified' => true,
+                'password' => 'Password@123',
+                
             ],
             // ['division' => 'psd', 'section' => 'cis', 'first_name' => 'Yhena', 'last_name' => 'Villamil', 'email' => 'yvvillamil@dswd.gov.ph', 'position' => 'Computer Programmer III',  'user_type' => User::TYPE_ADMIN, 'status' => User::STATUS_ACTIVE, 'email_is_verified' => true],
 

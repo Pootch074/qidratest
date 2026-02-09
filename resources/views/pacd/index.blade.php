@@ -10,40 +10,8 @@
             {{-- Scanned ID Table --}}
             <div class="bg-white rounded-lg p-4 shadow-lg h-[84vh] flex flex-col">
                 <h2 class="text-2xl font-semibold text-gray-800 mb-4">Generate Ticket</h2>
-                <form action="{{ route('pacd.storeClient') }}" method="POST" id="clientLog">
-                    @csrf
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-                        <!-- Client Name -->
-                        <div class="relative">
-                            <label for="client_name" class="block text-gray-700 font-medium mb-2">Client Name</label>
-                            <input type="text" name="client_name" id="client_name" required
-                                placeholder="Enter client name..."
-                                class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                        </div>
-
-                        <!-- Phone Number -->
-                        <div class="relative">
-                            <label for="phone_number" class="block text-gray-700 font-medium mb-2">Phone Number</label>
-                            <input type="text" name="phone_number" placeholder="Optional" maxlength="11"
-                                id="phone_number"
-                                class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                        </div>
-
-                        <!-- Submit Button -->
-                        <div class="relative">
-                            <button type="submit"
-                                class="w-1/4 h-14 bg-blue-500 text-white text-lg font-medium rounded-xl hover:bg-blue-600 transition">
-                                Submit
-                            </button>
-                        </div>
-                    </div>
-                </form>
-
-                <br>
 
                 <div class="overflow-x-auto flex-1">
-                    {{-- Section Buttons (always visible) --}}
                     <div x-show="showSections" x-cloak>
                         <div class="grid grid-cols-3 gap-4 mb-6">
                             @foreach ($sections as $section)
@@ -64,41 +32,92 @@
                         </div>
                     </div>
 
-                    {{-- Modal --}}
                     <div x-show="showModal"
-                        class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50" x-cloak>
-                        <div class="bg-white rounded-lg shadow-lg w-80 p-6">
-                            <h3 class="text-2xl font-semibold text-gray-700 mb-4">Choose Client Type</h3>
-                            <div class="flex flex-wrap justify-center gap-3">
-                                {{-- Regular --}}
-                                <button type="button"
-                                    @click="generateQueue(selectedSection, 'regular').then(() => reset())"
-                                    class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 
-                                       hover:bg-gradient-to-br focus:ring-1 focus:outline-none 
-                                       focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 
-                                       dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg 
-                                       text-xl px-5 py-2.5 text-center me-2 mb-2">
-                                    Regular
+                        class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/30 p-4"
+                        x-cloak>
+                        <div class="relative w-full max-w-xl max-h-full">
+                            <!-- Modal Container -->
+                            <div
+                                class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-blue-900 transform transition-all duration-200 scale-95 opacity-100">
+
+                                <!-- Close Button -->
+                                <button type="button" @click="reset()"
+                                    class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 bg-transparent rounded-full w-8 h-8 flex items-center justify-center transition">
+                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        viewBox="0 0 14 14" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M1 1l6 6m0 0 6-6M7 7l6 6M7 7l-6-6" />
+                                    </svg>
+                                    <span class="sr-only">Close modal</span>
                                 </button>
 
-                                {{-- Priority --}}
-                                <button type="button"
-                                    @click="generateQueue(selectedSection, 'priority').then(() => reset())"
-                                    class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 
-                                       hover:bg-gradient-to-br focus:ring-1 focus:outline-none 
-                                       focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-500/50 
-                                       dark:shadow-lg dark:shadow-red-800/80 font-medium rounded-lg 
-                                       text-xl px-5 py-2.5 text-center me-2 mb-2">
-                                    Priority
-                                </button>
-                            </div>
-                            <div class="mt-4 text-right">
-                                <button @click="reset()" class="text-gray-500 hover:text-gray-700">
-                                    Cancel
-                                </button>
+                                <!-- Modal Header -->
+                                <div class="px-6 pt-6 pb-4 text-center">
+                                    <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">Provide client
+                                        information</h3>
+                                </div>
+
+                                <!-- Modal Form -->
+                                <form class="px-6 pb-6 space-y-4" action="{{ route('pacd.storeClient') }}" method="POST"
+                                    id="clientLog" x-data="{ clientType: '', clientName: '' }">
+                                    @csrf
+                                    <div class="space-y-4 md:space-y-0 md:grid md:grid-cols-2 md:gap-4 items-end">
+                                        <div class="flex flex-col">
+                                            <label for="client_name"
+                                                class="text-gray-700 dark:text-gray-200 font-medium mb-1">Client Full
+                                                Name</label>
+                                            <input type="text" name="client_name" id="client_name" required
+                                                placeholder="Ex. Juan Dela Cruz"
+                                                class="w-full h-14 px-4 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 outline-none transition"
+                                                x-model="clientName">
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <label for="phone_number"
+                                                class="text-gray-700 dark:text-gray-200 font-medium mb-1">Phone
+                                                Number</label>
+                                            <input type="text" name="phone_number" placeholder="Optional" maxlength="11"
+                                                id="phone_number"
+                                                class="w-full h-14 px-4 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 outline-none transition">
+                                        </div>
+                                    </div>
+
+                                    <!-- Client Type Radio Buttons -->
+                                    <div class="mt-6 flex flex-col md:flex-row justify-center gap-4 items-center">
+                                        <label class="inline-flex items-center gap-2">
+                                            <input type="radio" name="client_type" value="regular" x-model="clientType"
+                                                :disabled="!clientName" class="form-radio h-5 w-5 text-blue-600">
+                                            <span class="text-gray-700 dark:text-gray-200 font-medium">Regular</span>
+                                        </label>
+                                        <label class="inline-flex items-center gap-2">
+                                            <input type="radio" name="client_type" value="priority" x-model="clientType"
+                                                :disabled="!clientName" class="form-radio h-5 w-5 text-red-500">
+                                            <span class="text-gray-700 dark:text-gray-200 font-medium">Priority</span>
+                                        </label>
+                                    </div>
+
+                                    <!-- Print Button -->
+                                    <div class="mt-6 flex justify-center">
+                                        <button type="button"
+                                            @click="generateQueue(selectedSection, clientType).then(() => reset())"
+                                            :disabled="!clientName || !clientType"
+                                            class="px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed">
+                                            Print
+                                        </button>
+                                    </div>
+
+                                    <!-- Cancel Button -->
+                                    <div class="mt-4 text-center">
+                                        <button type="button" @click="reset()"
+                                            class="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100 transition">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
+
+
 
                     {{-- Success Message --}}
                     @if (session('success'))
