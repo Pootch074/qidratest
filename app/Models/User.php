@@ -181,4 +181,10 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Section::class);
     }
+
+    public function isAdmin(): bool
+{
+    return $this->user_type === self::TYPE_ADMIN;
+}
+
 }

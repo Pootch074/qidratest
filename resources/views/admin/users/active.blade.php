@@ -42,21 +42,19 @@
                                         {{ $u->assigned_category ?? '—' }}</td>
                                     <td class="px-6 py-3 text-center space-x-2">
                                         <div class="flex justify-center space-x-2">
-                                            <!-- Edit Button -->
-                                            <button
-                                                onclick="openEditModal({{ $u->id }}, {{ $u->user_type }}, {{ $u->step_id ?? 'null' }}, {{ $u->window_id ?? 'null' }}, '{{ $u->assigned_category ?? '' }}')"
-                                                class="flex-1 text-white bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:to-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 font-medium rounded-lg text-sm px-4 py-2 transition duration-200">
-                                                Edit
-                                            </button>
-
-                                            <!-- Delete Button -->
-                                            <button onclick="deleteUser({{ $u->id }})"
-                                                class="flex-1 text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:from-red-500 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 font-medium rounded-lg text-sm px-4 py-2 transition duration-200">
-                                                <i class="fas fa-trash-alt mr-1"></i> Delete
-                                            </button>
+                                            @if (!$u->isAdmin())
+                                                <button
+                                                    onclick="openEditModal({{ $u->id }}, {{ $u->user_type }}, {{ $u->step_id ?? 'null' }}, {{ $u->window_id ?? 'null' }}, '{{ $u->assigned_category ?? '' }}')"
+                                                    class="flex-1 text-white bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:to-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 font-medium rounded-lg text-sm px-4 py-2 transition duration-200">
+                                                    Edit
+                                                </button>
+                                                <button onclick="deleteUser({{ $u->id }})"
+                                                    class="flex-1 text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:from-red-500 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 font-medium rounded-lg text-sm px-4 py-2 transition duration-200">
+                                                    <i class="fas fa-trash-alt mr-1"></i> Delete
+                                                </button>
+                                            @endif
                                         </div>
                                     </td>
-
                                 </tr>
                             @empty
                                 <tr>
