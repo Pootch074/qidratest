@@ -16,7 +16,7 @@
             <div class="text-center flex flex-col items-center">
                 <h1 class="mt-2 text-2xl font-bold text-gray-500">Welcome to</h1>
                 <div class="flex items-center mt-2">
-                    <img x-show="show" src="{{ Vite::asset('resources/images/dswd-color.png') }}" class="w-30">
+                    <img x-show="show" src="{{ Vite::asset('resources/images/dswd-trademark.png') }}" class="w-15">
                     &nbsp;&nbsp;
                     <img x-show="show" src="{{ Vite::asset('resources/images/qidra-logo3.png') }}" class="w-30">
                 </div>
