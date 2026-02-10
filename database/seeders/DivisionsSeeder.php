@@ -32,7 +32,7 @@ class DivisionsSeeder extends Seeder
             ['division_name' => 'OFFICE OF THE REGIONAL DIRECTOR', 'office_name' => 'DSWD FO XI'],
             ['division_name' => 'OFFICE OF THE ASSISTANT REGIONAL DIRECTOR FOR OPERATION', 'office_name' => 'DSWD FO XI'],
             ['division_name' => 'OFFICE OF THE ASSISTANT REGIONAL DIRECTOR FOR ADMINISTRATION', 'office_name' => 'DSWD FO XI'],
-            ['division_name' => 'DISASTER RESPONSE MANAGEMENT DIVISION`', 'office_name' => 'DSWD FO XI'],
+            ['division_name' => 'DISASTER RESPONSE MANAGEMENT DIVISION', 'office_name' => 'DSWD FO XI'],
             ['division_name' => 'FINANCIAL MANAGEMENT DIVISION', 'office_name' => 'DSWD FO XI'],
             ['division_name' => 'GENERAL ADMINISTRATIVE SUPPORT SERVICES DIVISION', 'office_name' => 'DSWD FO XI'],
             ['division_name' => 'HUMAN RESOURCE MANAGEMENT AND DEVELOPMENT DIVISION', 'office_name' => 'DSWD FO XI'],

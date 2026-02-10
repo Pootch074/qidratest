@@ -30,7 +30,7 @@ class StepsSeeder extends Seeder
             ['section_name' => 'ACCOUNTING SECTION', 'step_number' => 1, 'step_name' => 'None'],
             ['section_name' => 'PROPERTY AND SUPPLY SECTION', 'step_number' => 1, 'step_name' => 'None'],
             ['section_name' => 'RECORDS AND ARCHIVE MANAGEMENT SECTION', 'step_number' => 1, 'step_name' => 'None'],
-            ['section_name' => 'HR PERSONNEL ADMINISTRATION SECTION', 'step_number' => 1, 'step_name' => 'None'],
+            ['section_name' => 'PERSONNEL ADMINISTRATION SECTION', 'step_number' => 1, 'step_name' => 'None'],
             ['section_name' => 'LEGAL UNIT', 'step_number' => 1, 'step_name' => 'None'],
             ['section_name' => 'SOCIAL MARKETING UNIT', 'step_number' => 1, 'step_name' => 'None'],
             ['section_name' => 'SOCIAL TECHNOLOGY UNIT', 'step_number' => 1, 'step_name' => 'None'],

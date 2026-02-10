@@ -97,15 +97,12 @@ class SectionsSeeder extends Seeder
             ['section_name' => 'TECHNICAL ASSISTANCE AND RESOURCE AUGMENTATION', 'division_name' => 'PROTECTIVE SERVICES DIVISION'],
 
             ['section_name' => 'Provincial Social Welfare and Development Office', 'division_name' => 'PROVINCIAL SOCIAL WELFARE AND DEVELOPMENT OFFICE'],
-
-
-
             
             ['section_name' => 'SWAD DIGOS', 'division_name' => 'POO DAVAO DEL SUR'],
             ['section_name' => 'SWAD TAGUM', 'division_name' => 'POO DAVAO DEL NORTE'],
             ['section_name' => 'SWAD MALITA', 'division_name' => 'POO DAVAO OCCIDENTAL'],
             ['section_name' => 'SWAD MATI', 'division_name' => 'POO DAVAO ORIENTAL'],
-            ['section_name' => 'SWAD NABUNTURAN', 'division_name' => 'POO DAVAO DE ORo'],
+            ['section_name' => 'SWAD NABUNTURAN', 'division_name' => 'POO DAVAO DE ORO'],
         ];
 
         $sections = array_map(function ($section) use ($divisionIds, $now) {
