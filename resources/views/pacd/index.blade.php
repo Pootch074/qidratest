@@ -117,8 +117,6 @@
                         </div>
                     </div>
 
-
-
                     {{-- Success Message --}}
                     @if (session('success'))
                         <div class="mt-4 p-2 bg-green-100 text-green-800 rounded">
