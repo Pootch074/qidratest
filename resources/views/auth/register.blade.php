@@ -409,7 +409,6 @@
                 const selectedSectionText = sectionSelect.options[sectionSelect.selectedIndex]?.text.trim();
                 const selectedStepText = stepSelect.options[stepSelect.selectedIndex]?.text.trim();
 
-                // Steps that trigger 'both'
                 const triggerSteps = ['Assessment', 'Release'];
 
                 if (selectedSectionText === 'CRISIS INTERVENTION SECTION' && triggerSteps.includes(
@@ -419,13 +418,17 @@
                     );
                     if (bothOption) {
                         categorySelect.value = bothOption.value;
+                        categorySelect.disabled = true; // Disable if auto-set
                     }
+                } else {
+                    categorySelect.disabled = false; // Enable for other cases
                 }
             };
 
 
             sectionSelect.addEventListener('change', autoSetCategory);
             stepSelect.addEventListener('change', autoSetCategory);
+            autoSetCategory();
 
             // Division -> Section
             divisionSelect.addEventListener('change', function() {
