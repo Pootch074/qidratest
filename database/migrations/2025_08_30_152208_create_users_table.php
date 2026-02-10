@@ -32,6 +32,8 @@ return new class extends Migration
             $table->string('otp_code')->nullable();
             $table->timestamp('otp_expires_at')->nullable();
             $table->string('password');
+            $table->boolean('is_logged_in')->default(false);
+            $table->string('session_id', 255)->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->timestamp('deleted_at')->nullable()->default(null); // added manually
