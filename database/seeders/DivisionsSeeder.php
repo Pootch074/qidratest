@@ -42,6 +42,13 @@ class DivisionsSeeder extends Seeder
             ['division_name' => 'Promotive Services Division', 'office_id' => $dswdfoxiId, 'created_at' => $now, 'updated_at' => $now],
             ['division_name' => 'Protective Services Division', 'office_id' => $dswdfoxiId, 'created_at' => $now, 'updated_at' => $now],
 
+            ['division_name' => 'Office of the Assistant Regional Director for Operation', 'office_id' => $dswdfoxiId, 'created_at' => $now, 'updated_at' => $now],
+            ['division_name' => 'Office of the Assistant Regional Director for Administration', 'office_id' => $dswdfoxiId, 'created_at' => $now, 'updated_at' => $now],
+            ['division_name' => 'Provincial Social Welfare and Development Office', 'office_id' => $dswdfoxiId, 'created_at' => $now, 'updated_at' => $now],
+            ['division_name' => 'Resource Management', 'office_id' => $dswdfoxiId, 'created_at' => $now, 'updated_at' => $now],
+            ['division_name' => 'Regional Juvenile Justice Welfare Council', 'office_id' => $dswdfoxiId, 'created_at' => $now, 'updated_at' => $now],
+            ['division_name' => 'Innovations Division', 'office_id' => $dswdfoxiId, 'created_at' => $now, 'updated_at' => $now],
+
             ['division_name' => 'POO Davao Del Sur', 'office_id' => $dswdfoxiId, 'created_at' => $now, 'updated_at' => $now],
             ['division_name' => 'POO Davao Del Norte', 'office_id' => $dswdfoxiId, 'created_at' => $now, 'updated_at' => $now],
             ['division_name' => 'POO Davao Occidental', 'office_id' => $dswdfoxiId, 'created_at' => $now, 'updated_at' => $now],
