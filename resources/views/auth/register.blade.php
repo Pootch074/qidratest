@@ -372,14 +372,9 @@
             const sectionSelect = document.getElementById('section_id');
             const stepSelect = document.getElementById('step_id');
             const windowSelect = document.getElementById('window_id');
+            const categorySelect = document.querySelector('select[name="category"]');
 
-            /**
-             * Generic function to populate a dropdown via AJAX
-             * @param {HTMLSelectElement} select - The select element to populate
-             * @param {string} url - The API endpoint to fetch data
-             * @param {string} placeholder - Placeholder text for default option
-             * @param {string} textKey - Object key for option text
-             */
+
             const populateDropdown = (select, url, placeholder, textKey) => {
                 select.disabled = true;
                 select.innerHTML = `<option value="" disabled selected>Loading...</option>`;
@@ -409,6 +404,26 @@
                             `<option value="">Failed to load ${placeholder.toLowerCase()}</option>`;
                     });
             };
+
+            const autoSetCategory = () => {
+                // Get selected section text
+                const selectedSectionText = sectionSelect.options[sectionSelect.selectedIndex]?.text.trim();
+                // Get selected step text
+                const selectedStepText = stepSelect.options[stepSelect.selectedIndex]?.text.trim();
+
+                if (selectedSectionText === 'CRISIS INTERVENTION SECTION' && selectedStepText ===
+                    'Assessment') {
+                    // Set category to 'both' if option exists
+                    const bothOption = Array.from(categorySelect.options).find(opt => opt.value
+                        .toLowerCase() === 'both');
+                    if (bothOption) {
+                        categorySelect.value = bothOption.value;
+                    }
+                }
+            };
+
+            sectionSelect.addEventListener('change', autoSetCategory);
+            stepSelect.addEventListener('change', autoSetCategory);
 
             // Division -> Section
             divisionSelect.addEventListener('change', function() {
