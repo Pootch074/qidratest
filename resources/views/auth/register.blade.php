@@ -406,21 +406,23 @@
             };
 
             const autoSetCategory = () => {
-                // Get selected section text
                 const selectedSectionText = sectionSelect.options[sectionSelect.selectedIndex]?.text.trim();
-                // Get selected step text
                 const selectedStepText = stepSelect.options[stepSelect.selectedIndex]?.text.trim();
 
-                if (selectedSectionText === 'CRISIS INTERVENTION SECTION' && selectedStepText ===
-                    'Assessment') {
-                    // Set category to 'both' if option exists
-                    const bothOption = Array.from(categorySelect.options).find(opt => opt.value
-                        .toLowerCase() === 'both');
+                // Steps that trigger 'both'
+                const triggerSteps = ['Assessment', 'Release'];
+
+                if (selectedSectionText === 'CRISIS INTERVENTION SECTION' && triggerSteps.includes(
+                        selectedStepText)) {
+                    const bothOption = Array.from(categorySelect.options).find(
+                        opt => opt.value.toLowerCase() === 'both'
+                    );
                     if (bothOption) {
                         categorySelect.value = bothOption.value;
                     }
                 }
             };
+
 
             sectionSelect.addEventListener('change', autoSetCategory);
             stepSelect.addEventListener('change', autoSetCategory);
