@@ -418,10 +418,10 @@
                     );
                     if (bothOption) {
                         categorySelect.value = bothOption.value;
-                        categorySelect.disabled = true; // Disable if auto-set
+                        categorySelect.classList.add('pointer-events-none', 'bg-gray-200'); // visually disabled
                     }
                 } else {
-                    categorySelect.disabled = false; // Enable for other cases
+                    categorySelect.classList.remove('pointer-events-none', 'bg-gray-200'); // enable
                 }
             };
 
