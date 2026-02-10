@@ -25,11 +25,11 @@ class UsersSeeder extends Seeder
         ];
 
         $divisions = [
-            'psd' => Division::where('division_name', 'Protective Services Division')->first(),
+            'psd' => Division::where('division_name', 'PROTECTIVE SERVICES DIVISION')->first(),
         ];
 
         $sections = [
-            'cbss' => Section::where('section_name', 'COMMUNITY-BASED SERVICES SECTION (CBSS)')->first(),
+            'cbss' => Section::where('section_name', 'COMMUNITY-BASED SERVICES SECTION')->first(),
             'cis' => Section::where('section_name', 'CRISIS INTERVENTION SECTION')->first(),
         ];
 
