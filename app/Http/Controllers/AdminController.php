@@ -234,7 +234,7 @@ class AdminController extends Controller
 
         return view('admin.users.pending', [
             'users' => $users,
-            'usertypes' => User::getUserTypes(),
+            'usertypes' => User::getAssignableUserTypes(),
             'steps' => Step::where('section_id', $sectionId)->get(),
         ]);
     }

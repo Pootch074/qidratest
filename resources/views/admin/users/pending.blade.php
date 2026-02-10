@@ -91,7 +91,7 @@
                                 <label for="user_role" class="block text-gray-700 font-medium mb-2">Role</label>
                                 <select name="user_role" id="editUserType" required
                                     class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                                    <option value="" disabled>Select Type</option>
+                                    <option value="" disabled>Select Role</option>
                                     @foreach ($usertypes as $key => $label)
                                         <option value="{{ $key }}">{{ $label }}</option>
                                     @endforeach

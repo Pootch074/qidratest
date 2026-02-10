@@ -114,6 +114,16 @@ class User extends Authenticatable
         return self::getUserTypes()[$this->user_type] ?? 'Unknown';
     }
 
+    public static function getAssignableUserTypes(): array
+    {
+        return [
+            self::TYPE_ADMIN => 'Admin',
+            self::TYPE_USER => 'User',
+            self::TYPE_PACD => 'PACD',
+            self::TYPE_DISPLAY => 'Display',
+        ];
+    }
+
     public static function getStatuses()
     {
         return [
