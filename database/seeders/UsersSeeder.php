@@ -134,6 +134,7 @@ class UsersSeeder extends Seeder
                 'user_type' => User::TYPE_ADMIN,
                 'status' => User::STATUS_ACTIVE,
                 'email_is_verified' => true,
+                'password' => 'Password@123',
             ],
             [
                 'division' => 'psd',
@@ -148,6 +149,7 @@ class UsersSeeder extends Seeder
                 'window' => 3,
                 'status' => User::STATUS_ACTIVE,
                 'email_is_verified' => true,
+                'password' => 'Password@123',
             ],
             [
                 'division' => 'psd',
@@ -161,6 +163,7 @@ class UsersSeeder extends Seeder
                 'step' => 'Pre-assessment',
                 'window' => 1, 'status' => User::STATUS_INACTIVE,
                 'email_is_verified' => true,
+                'password' => 'Password@123',
             ],
             [
                 'division' => 'psd',
@@ -174,6 +177,7 @@ class UsersSeeder extends Seeder
                 'step' => 'Pre-assessment',
                 'window' => 1, 'status' => User::STATUS_INACTIVE,
                 'email_is_verified' => true,
+                'password' => 'Password@123',
             ],
             [
                 'division' => 'psd',
@@ -187,6 +191,7 @@ class UsersSeeder extends Seeder
                 'step' => 'Encode', 'window' => 1,
                 'status' => User::STATUS_INACTIVE,
                 'email_is_verified' => true,
+                'password' => 'Password@123',
             ],
             [
                 'division' => 'psd',
@@ -200,6 +205,7 @@ class UsersSeeder extends Seeder
                 'step' => 'Encode', 'window' => 1,
                 'status' => User::STATUS_INACTIVE,
                 'email_is_verified' => true,
+                'password' => 'Password@123',
             ],
             [
                 'division' => 'psd',
@@ -214,6 +220,7 @@ class UsersSeeder extends Seeder
                 'window' => 1,
                 'status' => User::STATUS_INACTIVE,
                 'email_is_verified' => true,
+                'password' => 'Password@123',
             ],
             [
                 'division' => 'psd',
@@ -226,6 +233,7 @@ class UsersSeeder extends Seeder
                 'assigned_category' => 'regular',
                 'status' => User::STATUS_INACTIVE,
                 'email_is_verified' => true,
+                'password' => 'Password@123',
             ],
         ];
 
