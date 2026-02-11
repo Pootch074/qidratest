@@ -30,7 +30,8 @@
                                     class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                             </div>
                             <div class="relative">
-                                <select name="divisionId" id="division_id" required>
+                                <select name="divisionId" id="division_id" required
+                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                                     <option value="" disabled {{ old('divisionId') ? '' : 'selected' }}>Area of
                                         Assignment</option>
                                     @foreach ($divisions as $dvsn)
@@ -45,7 +46,8 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div class="relative">
-                                <select name="sectionId" id="section_id" required {{ old('divisionId') ? '' : 'disabled' }}>
+                                <select name="sectionId" id="section_id" required {{ old('divisionId') ? '' : 'disabled' }}
+                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                                     <option value="" disabled {{ old('sectionId') ? '' : 'selected' }}>Section/Office
                                     </option>
                                     @foreach ($sections as $section)
@@ -57,7 +59,8 @@
                                 </select>
                             </div>
                             <div class="relative">
-                                <select name="position" required>
+                                <select name="position" required
+                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                                     <option value="" disabled {{ old('position') ? '' : 'selected' }}>Select Position
                                     </option>
                                     @foreach ($positions as $pstn)
@@ -80,7 +83,8 @@
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div class="relative">
-                                <select name="stepId" id="step_id" required {{ old('sectionId') ? '' : 'disabled' }}>
+                                <select name="stepId" id="step_id" required {{ old('sectionId') ? '' : 'disabled' }}
+                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                                     <option value="" disabled {{ old('stepId') ? '' : 'selected' }}>Step</option>
                                     @foreach ($steps as $stp)
                                         <option value="{{ $stp->id }}"
@@ -91,7 +95,8 @@
                                 </select>
                             </div>
                             <div class="relative">
-                                <select name="categoryId" id="category_id" required {{ old('stepId') ? '' : 'disabled' }}>
+                                <select name="categoryId" id="category_id" required {{ old('stepId') ? '' : 'disabled' }}
+                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                                     <option value="" disabled {{ old('categoryId') ? '' : 'selected' }}>Category
                                     </option>
                                     @foreach ($categories as $ctgrs)
@@ -103,7 +108,8 @@
                                 </select>
                             </div>
                             <div class="relative">
-                                <select name="windowId" id="window_id" required {{ old('stepId') ? '' : 'disabled' }}>
+                                <select name="windowId" id="window_id" required {{ old('categoryId') ? '' : 'disabled' }}
+                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                                     <option value="" disabled {{ old('windowId') ? '' : 'selected' }}>Window</option>
                                     @foreach ($windows as $wndw)
                                         <option value="{{ $wndw->id }}"
@@ -299,7 +305,7 @@
                 if (stepSelect.value) {
                     populateDropdown(categorySelect, `/auth/categories/${stepSelect.value}`, 'Category',
                         'category_name', autoSetCategory);
-                    populateDropdown(windowSelect, `/auth/windows/${stepSelect.value}`, 'Window',
+                    populateDropdown(windowSelect, `/auth/windows/${categorySelect.value}`, 'Window',
                         'window_number');
                 }
             });
@@ -313,7 +319,7 @@
                 if (selectedSectionText === 'CRISIS INTERVENTION SECTION' && triggerSteps.includes(
                         selectedStepText)) {
                     const bothOption = Array.from(categorySelect.options).find(opt => opt.value
-                    .toLowerCase() === 'both');
+                        .toLowerCase() === 'both');
                     if (bothOption) {
                         categorySelect.value = bothOption.value;
                         categorySelect.classList.add('pointer-events-none', 'bg-gray-200');

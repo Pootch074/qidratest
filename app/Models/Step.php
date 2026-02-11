@@ -13,7 +13,7 @@ class Step extends Model
         return $this->belongsTo(Section::class, 'section_id');
     }
 
-    public function category()
+    public function categories()
     {
         return $this->hasMany(Category::class, 'step_id');
     }

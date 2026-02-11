@@ -224,10 +224,5 @@ class RegisterController extends Controller
         return redirect()->route('register.show.otp')->with('success', 'A new OTP has been sent to your email.');
     }
 
-    public function categoryStep(Step $step)
-    {
-        return $step->categories()
-            ->select('id', 'category_name')
-            ->get();
-    }
+    
 }

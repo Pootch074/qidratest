@@ -50,13 +50,16 @@ Route::get('/', fn () => Auth::check() ? redirect()->intended() : redirect(route
 Route::prefix('auth')->group(function () {
     Route::get('/register', [RegisterController::class, 'index'])->name('register');
     Route::post('/register', [RegisterController::class, 'register'])->name('register.store');
-    Route::get('/sections/{divisionId}', [RegisterController::class, 'sectionsByDivision'])->name('auth.sections.byDivision');
-    Route::get('/steps/{sectionId}', [RegisterController::class, 'stepsBySection'])->name('auth.steps.bySection');
-    Route::get('/windows/{stepId}', [RegisterController::class, 'windowsByStep'])->name('auth.windows.byStep');
+    Route::get('/sections/{divisionId}', [RegisterController::class, 'sectionsByDivision'])->name('sections.byDivision');
+    Route::get('/steps/{sectionId}', [RegisterController::class, 'stepsBySection'])->name('steps.bySection');
+    Route::get('/categories/{stepId}', [RegisterController::class, 'categoriesByStep'])->name('categories.byStep');
+    Route::get('/windows/{categoryId}', [RegisterController::class, 'windowsByCategory'])->name('windows.byCategory');
+
     Route::get('/register-verify-otp', [RegisterController::class, 'registerShowOtp'])->name('register.show.otp');
     Route::post('/register-verify-otp', [RegisterController::class, 'registerVerifyOtp'])->name('register.verify.otp');
     Route::post('/register/resend-otp', [RegisterController::class, 'resendOtp'])->name('register.resend.otp');
-    Route::get('categories/{step}', [RegisterController::class, 'categoryStep']);
+    
+
 
     Route::get('/login', [LoginController::class, 'login'])->name('login');
     Route::post('/login', [LoginController::class, 'authenticate'])->name('authenticate');

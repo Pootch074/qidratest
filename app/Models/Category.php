@@ -12,7 +12,7 @@ class Category extends Model
     {
         return $this->belongsTo(Step::class, 'step_id');
     }
-    public function window()
+    public function windows()
     {
         return $this->hasMany(Window::class, 'category_id');
     }
