@@ -169,7 +169,19 @@
                                     User Service Agreement & Privacy Notice
                                 </button>.
                             </label>
+                        </div>
 
+                        <div id="termsModal"
+                            class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 pointer-events-none">
+                            <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 pointer-events-auto">
+                                <x-privacy-modal />
+
+                                <div class="mt-6 flex justify-end">
+                                    <button id="closeTermsModal" class="px-4 py-2 text-sm text-white bg-blue-600 rounded">
+                                        Close
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="flex justify-center mt-4">
@@ -193,7 +205,7 @@
                     </div>
                 </div>
             </div>
-            <x-privacy-modal name="step_name" :selected="old('step_name')" />
+
         </div>
     </div>
 @endsection
@@ -342,6 +354,26 @@
                 }
             });
 
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const openBtn = document.getElementById('openTermsModal');
+            const closeBtn = document.getElementById('closeTermsModal');
+            const modal = document.getElementById('termsModal');
+
+            if (openBtn && closeBtn && modal) {
+                openBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    modal.classList.remove('hidden');
+                    modal.classList.remove('pointer-events-none');
+                });
+
+                closeBtn.addEventListener('click', function() {
+                    modal.classList.add('hidden');
+                    modal.classList.add('pointer-events-none');
+                });
+            }
         });
     </script>
 @endsection
