@@ -71,7 +71,7 @@ class RegisterController extends Controller
             'step_id' => $data['stepId'],
             'window_id' => $data['windowId'],
             'category_id' => $data['categoryId'],
-            'password' => $data['password'], // ← PLAIN password (temporary)
+            'password' => $data['password'],
             'status' => User::STATUS_INACTIVE,
             'user_type' => User::TYPE_USER,
         ];

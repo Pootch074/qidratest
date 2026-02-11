@@ -41,7 +41,7 @@ class User extends Authenticatable
         'email',
         'position',
         'user_type',
-        'category',
+        'category_id',
         'step_id',
         'window_id',
         'status',
