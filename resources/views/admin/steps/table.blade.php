@@ -19,17 +19,7 @@
 
                     <form id="addStepForm" method="POST" action="{{ route('steps.store') }}">
                         @csrf
-                        <div class="mb-4">
-                            <label for="step_name" class="block text-sm font-medium text-gray-700">Step Name</label>
-                            <select id="stepName" name="step_name" required
-                                class="mt-1 block w-full border rounded-md p-2">
-                                @foreach (\App\Libraries\StepNames::all() as $step_name)
-                                    <option value="{{ $step_name }}">{{ $step_name }}</option>
-                                @endforeach
-                            </select>
-                            <p id="stepNameError" class="text-red-600 text-sm mt-1 hidden"></p>
-                        </div>
-
+                        <x-step-select name="step_name" :selected="old('step_name')" />
                         <div class="flex justify-end space-x-3">
                             <button type="button" id="cancelAddUser"
                                 class="text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br focus:ring-1 focus:outline-none focus:ring-gray-300 dark:focus:ring-gray-800 shadow-lg shadow-gray-500/50 dark:shadow-lg dark:shadow-gray-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
