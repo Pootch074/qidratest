@@ -175,7 +175,6 @@
                             class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 pointer-events-none">
                             <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 pointer-events-auto">
                                 <x-privacy-modal />
-
                                 <div class="mt-6 flex justify-end">
                                     <button id="closeTermsModal" class="px-4 py-2 text-sm text-white bg-blue-600 rounded">
                                         Close

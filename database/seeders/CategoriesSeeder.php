@@ -39,6 +39,18 @@ class CategoriesSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
+            [
+                'step_id' => 17,
+                'category_name' => 'both',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'step_id' => 18,
+                'category_name' => 'both',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
         ];
         DB::table('categories')->insert($categories);
     }
