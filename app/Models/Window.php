@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Window extends Model
 {
-    protected $fillable = ['step_id', 'section_id', 'window_number'];
+    protected $fillable = ['category_id', 'window_number'];
 
     public static function boot()
     {
@@ -28,7 +28,7 @@ class Window extends Model
 
     public function step()
     {
-        return $this->belongsTo(Step::class, 'step_id');
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     /**

@@ -1,11 +1,9 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,8 +11,8 @@ return new class extends Migration
     {
         Schema::create('windows', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('step_id')->nullable();
-            $table->foreign('step_id')->references('id')->on('steps')->onDelete('set null');
+            $table->unsignedBigInteger('category_id')->nullable();
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');
             $table->integer('window_number');
             $table->timestamps();
         });

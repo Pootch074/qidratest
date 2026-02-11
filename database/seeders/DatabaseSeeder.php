@@ -13,9 +13,10 @@ class DatabaseSeeder extends Seeder
         $this->call(DivisionsSeeder::class);
         $this->call(SectionsSeeder::class);
         $this->call(StepsSeeder::class);
+        $this->call(CategoriesSeeder::class);
         $this->call(WindowsSeeder::class);
         $this->call(UsersSeeder::class);
         $this->call(PositionsSeeder::class);
-        $this->call(CategoriesSeeder::class);
+        
     }
 }
