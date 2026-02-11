@@ -117,18 +117,9 @@
                                 </select>
                             </div>
                             <div class="relative">
-                                <select name="category" required
+                                <select name="category" id="category_id" required disabled
                                     class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                                    <option value="" disabled {{ old('category') ? '' : 'selected' }}>
-                                        Category
-                                    </option>
-
-                                    @foreach ($categories as $category)
-                                        <option value="{{ $category->value }}"
-                                            {{ old('category') == $category->value ? 'selected' : '' }}>
-                                            {{ $category->description() }}
-                                        </option>
-                                    @endforeach
+                                    <option value="" disabled selected>Category</option>
                                 </select>
                             </div>
                         </div>
@@ -223,38 +214,70 @@
             const sectionSelect = document.getElementById('section_id');
             const stepSelect = document.getElementById('step_id');
             const windowSelect = document.getElementById('window_id');
-            const categorySelect = document.querySelector('select[name="category"]');
+            const categorySelect = document.getElementById('category_id');
 
-
-            const populateDropdown = (select, url, placeholder, textKey) => {
+            const populateDropdown = (select, url, placeholder, textKey, callback) => {
                 select.disabled = true;
                 select.innerHTML = `<option value="" disabled selected>Loading...</option>`;
 
                 fetch(url)
                     .then(res => res.json())
                     .then(items => {
-                        select.disabled = false;
                         select.innerHTML = `<option value="" disabled selected>${placeholder}</option>`;
 
                         if (!items.length) {
                             select.innerHTML +=
                                 `<option value="">No ${placeholder.toLowerCase()} available</option>`;
-                            return;
+                        } else {
+                            items.forEach(item => {
+                                const option = document.createElement('option');
+                                option.value = item.id;
+                                option.textContent = item[textKey];
+                                select.appendChild(option);
+                            });
                         }
 
-                        items.forEach(item => {
-                            const option = document.createElement('option');
-                            option.value = item.id;
-                            option.textContent = item[textKey];
-                            select.appendChild(option);
-                        });
+                        // Enable dropdown after populating
+                        select.disabled = false;
+
+                        if (callback) callback();
                     })
                     .catch(() => {
-                        select.disabled = false;
                         select.innerHTML =
                             `<option value="">Failed to load ${placeholder.toLowerCase()}</option>`;
+                        select.disabled = false; // Enable even if failed
+                        if (callback) callback();
                     });
             };
+
+            if (divisionSelect.value) {
+                // Trigger change to load sections automatically
+                divisionSelect.dispatchEvent(new Event('change'));
+            }
+
+
+            stepSelect.addEventListener('change', function() {
+                const stepId = this.value;
+
+                // Populate Window
+                populateDropdown(windowSelect, `{{ url('auth/windows') }}/${stepId}`, 'Window',
+                    'window_number');
+
+                // Populate Category with callback to auto-set
+                categorySelect.innerHTML = `<option value="" disabled selected>Category</option>`;
+                categorySelect.disabled = true;
+                if (stepId) {
+                    populateDropdown(
+                        categorySelect,
+                        `{{ url('auth/categories') }}/${stepId}`,
+                        'Category',
+                        'category_name',
+                        autoSetCategory
+                    );
+                }
+            });
+
+
 
             const autoSetCategory = () => {
                 const selectedSectionText = sectionSelect.options[sectionSelect.selectedIndex]?.text.trim();
@@ -277,29 +300,48 @@
             };
 
 
+
+
+
             sectionSelect.addEventListener('change', autoSetCategory);
-            stepSelect.addEventListener('change', autoSetCategory);
             autoSetCategory();
 
-            // Division -> Section
             divisionSelect.addEventListener('change', function() {
                 const divisionId = this.value;
-                populateDropdown(sectionSelect, `{{ url('auth/sections') }}/${divisionId}`,
-                    'Section/Office',
-                    'section_name');
+                sectionSelect.innerHTML = `<option value="" disabled selected>Section/Office</option>`;
+                stepSelect.innerHTML = `<option value="" disabled selected>Step</option>`;
+                windowSelect.innerHTML = `<option value="" disabled selected>Window</option>`;
+                categorySelect.innerHTML = `<option value="" disabled selected>Category</option>`;
+                sectionSelect.disabled = true;
+                stepSelect.disabled = true;
+                windowSelect.disabled = true;
+                categorySelect.disabled = true;
+
+                if (divisionId) {
+                    populateDropdown(sectionSelect, `{{ url('auth/sections') }}/${divisionId}`,
+                        'Section/Office',
+                        'section_name');
+                }
             });
 
-            // Section -> Step
+
             sectionSelect.addEventListener('change', function() {
                 const sectionId = this.value;
-                populateDropdown(stepSelect, `{{ url('auth/steps') }}/${sectionId}`, 'Step', 'step_name');
+
+                // Reset dependent selects
+                stepSelect.innerHTML = `<option value="" disabled selected>Step</option>`;
+                windowSelect.innerHTML = `<option value="" disabled selected>Window</option>`;
+                categorySelect.innerHTML = `<option value="" disabled selected>Category</option>`;
+                stepSelect.disabled = true;
+                windowSelect.disabled = true;
+                categorySelect.disabled = true;
+
+                if (sectionId) {
+                    populateDropdown(stepSelect, `{{ url('auth/steps') }}/${sectionId}`, 'Step',
+                        'step_name');
+                }
             });
 
-            stepSelect.addEventListener('change', function() {
-                const stepId = this.value;
-                populateDropdown(windowSelect, `{{ url('auth/windows') }}/${stepId}`, 'Window',
-                    'window_number');
-            });
         });
     </script>
 @endsection

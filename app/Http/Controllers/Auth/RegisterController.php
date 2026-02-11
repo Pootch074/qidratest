@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
 use App\Mail\RegOtpMail;
 use App\Mail\SendOtpMail;
+use App\Models\Category;
 use App\Models\Division;
 use App\Models\Position;
 use App\Models\Section;
@@ -200,5 +201,12 @@ class RegisterController extends Controller
         Mail::to($user->email)->send(new SendOtpMail($user));
 
         return redirect()->route('register.show.otp')->with('success', 'A new OTP has been sent to your email.');
+    }
+
+    public function categoryStep(Step $step)
+    {
+        return $step->categories()
+            ->select('id', 'category_name')
+            ->get();
     }
 }

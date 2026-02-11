@@ -41,7 +41,7 @@ class SectionsSeeder extends Seeder
             ['section_name' => 'DISASTER RESPONSE AND REHABILITATION SECTION', 'division_name' => 'DISASTER RESPONSE MANAGEMENT DIVISION'],
             ['section_name' => 'REGIONAL RESOURCE OPERATIONS SECTION', 'division_name' => 'DISASTER RESPONSE MANAGEMENT DIVISION'],
             ['section_name' => 'DISASTER RESPONSE INFORMATION MANAGEMENT SECTION', 'division_name' => 'DISASTER RESPONSE MANAGEMENT DIVISION'],
-            
+
             ['section_name' => 'ACCOUNTING SECTION', 'division_name' => 'FINANCIAL MANAGEMENT DIVISION'],
             ['section_name' => 'BUDGET SECTION', 'division_name' => 'FINANCIAL MANAGEMENT DIVISION'],
             ['section_name' => 'CASH SECTION', 'division_name' => 'FINANCIAL MANAGEMENT DIVISION'],
@@ -68,7 +68,7 @@ class SectionsSeeder extends Seeder
             ['section_name' => '4PS DAVAO DEL SUR', 'division_name' => 'PANTAWID PAMILYANG PILIPINO PROGRAM MANAGEMENT DIVISION'],
             ['section_name' => '4PS DAVAO OCCIDENTAL', 'division_name' => 'PANTAWID PAMILYANG PILIPINO PROGRAM MANAGEMENT DIVISION'],
             ['section_name' => '4PS DAVAO ORIENTAL', 'division_name' => 'PANTAWID PAMILYANG PILIPINO PROGRAM MANAGEMENT DIVISION'],
-            
+
             ['section_name' => 'BENEFICIARY FIRST', 'division_name' => 'POLICY AND PLANS DIVISION'],
             ['section_name' => 'INFORMATION AND COMMUNICATIONS TECHNOLOGY MANAGEMENT SECTION', 'division_name' => 'POLICY AND PLANS DIVISION'],
             ['section_name' => 'NATIONAL HOUSEHOLD TARGETING SECTION', 'division_name' => 'POLICY AND PLANS DIVISION'],
@@ -77,10 +77,10 @@ class SectionsSeeder extends Seeder
             ['section_name' => 'TARGETED CASH TRANSFER PROGRAM MANAGEMENT OFFICE', 'division_name' => 'POLICY AND PLANS DIVISION'],
             ['section_name' => 'TECHNICAL ADVISORY ASSISTANCE AND OTHER RELATED SUPPORT SERVICES', 'division_name' => 'POLICY AND PLANS DIVISION'],
             ['section_name' => 'UNCONDITIONAL CASH TRANSFER PROGRAM MANAGEMENT OFFICE', 'division_name' => 'POLICY AND PLANS DIVISION'],
-            
+
             ['section_name' => 'SUSTAINABLE LIVELIHOOD PROGRAM', 'division_name' => 'PROMOTIVE SERVICES DIVISION'],
             ['section_name' => 'KALAHI CIDSS PROGRAM MANAGEMENT OFFICE', 'division_name' => 'PROMOTIVE SERVICES DIVISION'],
-            
+
             ['section_name' => 'CAPABILITY BUILDING SECTION', 'division_name' => 'PROTECTIVE SERVICES DIVISION'],
             ['section_name' => 'CENTER AND RESIDENTIAL CARE FACILITY', 'division_name' => 'PROTECTIVE SERVICES DIVISION'],
             ['section_name' => 'CENTER BASED SERVICES', 'division_name' => 'PROTECTIVE SERVICES DIVISION'],
@@ -97,7 +97,7 @@ class SectionsSeeder extends Seeder
             ['section_name' => 'TECHNICAL ASSISTANCE AND RESOURCE AUGMENTATION', 'division_name' => 'PROTECTIVE SERVICES DIVISION'],
 
             ['section_name' => 'Provincial Social Welfare and Development Office', 'division_name' => 'PROVINCIAL SOCIAL WELFARE AND DEVELOPMENT OFFICE'],
-            
+
             ['section_name' => 'SWAD DIGOS', 'division_name' => 'POO DAVAO DEL SUR'],
             ['section_name' => 'SWAD TAGUM', 'division_name' => 'POO DAVAO DEL NORTE'],
             ['section_name' => 'SWAD MALITA', 'division_name' => 'POO DAVAO OCCIDENTAL'],
