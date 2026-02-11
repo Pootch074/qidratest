@@ -30,12 +30,9 @@
                                     class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
                             </div>
                             <div class="relative">
-                                <select name="divisionId" id="division_id" required
-                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                                <select name="divisionId" id="division_id" required>
                                     <option value="" disabled {{ old('divisionId') ? '' : 'selected' }}>Area of
-                                        Assignment
-                                    </option>
-
+                                        Assignment</option>
                                     @foreach ($divisions as $dvsn)
                                         <option value="{{ $dvsn->id }}"
                                             {{ old('divisionId') == $dvsn->id ? 'selected' : '' }}>
@@ -48,12 +45,9 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div class="relative">
-                                <select name="sectionId" id="section_id" required
-                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
-                                    {{ old('divisionId') ? '' : 'disabled' }}>
-                                    <option value="" disabled {{ old('sectionId') ? '' : 'selected' }}>
-                                        Section/Office</option>
-
+                                <select name="sectionId" id="section_id" required {{ old('divisionId') ? '' : 'disabled' }}>
+                                    <option value="" disabled {{ old('sectionId') ? '' : 'selected' }}>Section/Office
+                                    </option>
                                     @foreach ($sections as $section)
                                         <option value="{{ $section->id }}"
                                             {{ old('sectionId') == $section->id ? 'selected' : '' }}>
@@ -63,12 +57,9 @@
                                 </select>
                             </div>
                             <div class="relative">
-                                <select name="position" required
-                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                                    <option value="" disabled {{ old('position') ? '' : 'selected' }}>
-                                        Select Position
+                                <select name="position" required>
+                                    <option value="" disabled {{ old('position') ? '' : 'selected' }}>Select Position
                                     </option>
-
                                     @foreach ($positions as $pstn)
                                         <option value="{{ $pstn->position_name }}"
                                             {{ old('position') == $pstn->position_name ? 'selected' : '' }}>
@@ -89,11 +80,8 @@
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div class="relative">
-                                <select name="stepId" id="step_id" required
-                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
-                                    {{ old('sectionId') ? '' : 'disabled' }}>
-                                    <option value="" disabled selected>Step</option>
-
+                                <select name="stepId" id="step_id" required {{ old('sectionId') ? '' : 'disabled' }}>
+                                    <option value="" disabled {{ old('stepId') ? '' : 'selected' }}>Step</option>
                                     @foreach ($steps as $stp)
                                         <option value="{{ $stp->id }}"
                                             {{ old('stepId') == $stp->id ? 'selected' : '' }}>
@@ -103,17 +91,20 @@
                                 </select>
                             </div>
                             <div class="relative">
-                                <select name="category" id="category_id" required disabled
-                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                                    <option value="" disabled selected>Category</option>
+                                <select name="categoryId" id="category_id" required {{ old('stepId') ? '' : 'disabled' }}>
+                                    <option value="" disabled {{ old('categoryId') ? '' : 'selected' }}>Category
+                                    </option>
+                                    @foreach ($categories as $ctgrs)
+                                        <option value="{{ $ctgrs->id }}"
+                                            {{ old('categoryId') == $ctgrs->id ? 'selected' : '' }}>
+                                            {{ $ctgrs->category_name }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="relative">
-                                <select name="windowId" id="window_id" required
-                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
-                                    {{ old('stepId') ? '' : 'disabled' }}>
-                                    <option value="" disabled selected>Window</option>
-
+                                <select name="windowId" id="window_id" required {{ old('stepId') ? '' : 'disabled' }}>
+                                    <option value="" disabled {{ old('windowId') ? '' : 'selected' }}>Window</option>
                                     @foreach ($windows as $wndw)
                                         <option value="{{ $wndw->id }}"
                                             {{ old('windowId') == $wndw->id ? 'selected' : '' }}>
@@ -225,135 +216,119 @@
             const divisionSelect = document.getElementById('division_id');
             const sectionSelect = document.getElementById('section_id');
             const stepSelect = document.getElementById('step_id');
-            const windowSelect = document.getElementById('window_id');
             const categorySelect = document.getElementById('category_id');
+            const windowSelect = document.getElementById('window_id');
 
             const populateDropdown = (select, url, placeholder, textKey, callback) => {
                 select.disabled = true;
-                select.innerHTML = `<option value="" disabled selected>Loading...</option>`;
-
+                select.innerHTML = `<option value="" disabled>Loading...</option>`;
                 fetch(url)
                     .then(res => res.json())
                     .then(items => {
                         select.innerHTML = `<option value="" disabled selected>${placeholder}</option>`;
-
-                        if (!items.length) {
-                            select.innerHTML +=
-                                `<option value="">No ${placeholder.toLowerCase()} available</option>`;
-                        } else {
+                        if (items.length) {
                             items.forEach(item => {
                                 const option = document.createElement('option');
                                 option.value = item.id;
                                 option.textContent = item[textKey];
                                 select.appendChild(option);
                             });
+                        } else {
+                            select.innerHTML +=
+                                `<option value="">No ${placeholder.toLowerCase()} available</option>`;
                         }
-
-                        // Enable dropdown after populating
                         select.disabled = false;
-
                         if (callback) callback();
                     })
                     .catch(() => {
                         select.innerHTML =
                             `<option value="">Failed to load ${placeholder.toLowerCase()}</option>`;
-                        select.disabled = false; // Enable even if failed
+                        select.disabled = false;
                         if (callback) callback();
                     });
             };
 
-            if (divisionSelect.value) {
-                // Trigger change to load sections automatically
-                divisionSelect.dispatchEvent(new Event('change'));
-            }
+            const triggerChangeIfOld = (select, callback) => {
+                if (select.value) {
+                    select.dispatchEvent(new Event('change'));
+                    if (callback) callback();
+                }
+            };
 
-
-            stepSelect.addEventListener('change', function() {
-                const stepId = this.value;
-
-                // Populate Window
-                populateDropdown(windowSelect, `{{ url('auth/windows') }}/${stepId}`, 'Window',
-                    'window_number');
-
-                // Populate Category with callback to auto-set
+            // Division → Section
+            divisionSelect.addEventListener('change', () => {
+                sectionSelect.innerHTML = `<option value="" disabled selected>Section/Office</option>`;
+                stepSelect.innerHTML = `<option value="" disabled selected>Step</option>`;
                 categorySelect.innerHTML = `<option value="" disabled selected>Category</option>`;
+                windowSelect.innerHTML = `<option value="" disabled selected>Window</option>`;
+
+                sectionSelect.disabled = true;
+                stepSelect.disabled = true;
                 categorySelect.disabled = true;
-                if (stepId) {
-                    populateDropdown(
-                        categorySelect,
-                        `{{ url('auth/categories') }}/${stepId}`,
-                        'Category',
-                        'category_name',
-                        autoSetCategory
-                    );
+                windowSelect.disabled = true;
+
+                if (divisionSelect.value) {
+                    populateDropdown(sectionSelect, `/auth/sections/${divisionSelect.value}`,
+                        'Section/Office', 'section_name');
                 }
             });
 
+            // Section → Step
+            sectionSelect.addEventListener('change', () => {
+                stepSelect.innerHTML = `<option value="" disabled selected>Step</option>`;
+                categorySelect.innerHTML = `<option value="" disabled selected>Category</option>`;
+                windowSelect.innerHTML = `<option value="" disabled selected>Window</option>`;
 
+                stepSelect.disabled = true;
+                categorySelect.disabled = true;
+                windowSelect.disabled = true;
 
+                if (sectionSelect.value) {
+                    populateDropdown(stepSelect, `/auth/steps/${sectionSelect.value}`, 'Step', 'step_name');
+                }
+            });
+
+            // Step → Category + Window
+            stepSelect.addEventListener('change', () => {
+                categorySelect.innerHTML = `<option value="" disabled selected>Category</option>`;
+                windowSelect.innerHTML = `<option value="" disabled selected>Window</option>`;
+
+                categorySelect.disabled = true;
+                windowSelect.disabled = true;
+
+                if (stepSelect.value) {
+                    populateDropdown(categorySelect, `/auth/categories/${stepSelect.value}`, 'Category',
+                        'category_name', autoSetCategory);
+                    populateDropdown(windowSelect, `/auth/windows/${stepSelect.value}`, 'Window',
+                        'window_number');
+                }
+            });
+
+            // Auto-set "both" for Crisis Intervention Section
             const autoSetCategory = () => {
                 const selectedSectionText = sectionSelect.options[sectionSelect.selectedIndex]?.text.trim();
                 const selectedStepText = stepSelect.options[stepSelect.selectedIndex]?.text.trim();
-
                 const triggerSteps = ['Assessment', 'Release'];
 
                 if (selectedSectionText === 'CRISIS INTERVENTION SECTION' && triggerSteps.includes(
                         selectedStepText)) {
-                    const bothOption = Array.from(categorySelect.options).find(
-                        opt => opt.value.toLowerCase() === 'both'
-                    );
+                    const bothOption = Array.from(categorySelect.options).find(opt => opt.value
+                    .toLowerCase() === 'both');
                     if (bothOption) {
                         categorySelect.value = bothOption.value;
-                        categorySelect.classList.add('pointer-events-none', 'bg-gray-200'); // visually disabled
+                        categorySelect.classList.add('pointer-events-none', 'bg-gray-200');
                     }
                 } else {
-                    categorySelect.classList.remove('pointer-events-none', 'bg-gray-200'); // enable
+                    categorySelect.classList.remove('pointer-events-none', 'bg-gray-200');
                 }
             };
 
-
-
-
-
-            sectionSelect.addEventListener('change', autoSetCategory);
-            autoSetCategory();
-
-            divisionSelect.addEventListener('change', function() {
-                const divisionId = this.value;
-                sectionSelect.innerHTML = `<option value="" disabled selected>Section/Office</option>`;
-                stepSelect.innerHTML = `<option value="" disabled selected>Step</option>`;
-                windowSelect.innerHTML = `<option value="" disabled selected>Window</option>`;
-                categorySelect.innerHTML = `<option value="" disabled selected>Category</option>`;
-                sectionSelect.disabled = true;
-                stepSelect.disabled = true;
-                windowSelect.disabled = true;
-                categorySelect.disabled = true;
-
-                if (divisionId) {
-                    populateDropdown(sectionSelect, `{{ url('auth/sections') }}/${divisionId}`,
-                        'Section/Office',
-                        'section_name');
-                }
+            // Trigger change on page load for old values
+            triggerChangeIfOld(divisionSelect, () => {
+                triggerChangeIfOld(sectionSelect, () => {
+                    triggerChangeIfOld(stepSelect, autoSetCategory);
+                });
             });
-
-
-            sectionSelect.addEventListener('change', function() {
-                const sectionId = this.value;
-
-                // Reset dependent selects
-                stepSelect.innerHTML = `<option value="" disabled selected>Step</option>`;
-                windowSelect.innerHTML = `<option value="" disabled selected>Window</option>`;
-                categorySelect.innerHTML = `<option value="" disabled selected>Category</option>`;
-                stepSelect.disabled = true;
-                windowSelect.disabled = true;
-                categorySelect.disabled = true;
-
-                if (sectionId) {
-                    populateDropdown(stepSelect, `{{ url('auth/steps') }}/${sectionId}`, 'Step',
-                        'step_name');
-                }
-            });
-
         });
     </script>
     <script>

@@ -20,28 +20,43 @@ use Illuminate\Support\Facades\Mail;
 class RegisterController extends Controller
 {
     public function index()
-    {
-        $divisions = Division::all();
+{
+    // 1️⃣ Load all divisions and positions
+    $divisions = Division::orderBy('division_name')->get();
+    $positions = Position::orderBy('position_name')->get();
 
-        $sections = old('divisionId')
-            ? Section::where('division_id', old('divisionId'))->orderBy('section_name')->get()
-            : collect();
+    // 2️⃣ Determine old input for cascading selects
+    $oldDivisionId = old('divisionId');
+    $oldSectionId  = old('sectionId');
+    $oldStepId     = old('stepId');
+    $oldCategoryId = old('categoryId');
 
-        $steps = old('sectionId')
-            ? Step::where('section_id', old('sectionId'))->orderBy('step_number')->get()
-            : collect();
+    // 3️⃣ Load sections based on old division
+    $sections = $oldDivisionId
+        ? Section::where('division_id', $oldDivisionId)->orderBy('section_name')->get()
+        : collect();
 
-        $windows = old('stepId')
-            ? Window::where('step_id', old('stepId'))->orderBy('window_number')->get()
-            : collect();
+    // 4️⃣ Load steps based on old section
+    $steps = $oldSectionId
+        ? Step::where('section_id', $oldSectionId)->orderBy('step_number')->get()
+        : collect();
 
-        return view('auth.register', compact(
-            'divisions', 'sections', 'steps', 'windows'
-        ))->with([
-            'positions' => Position::all(),
-            'categories' => UserCategory::cases(),
-        ]);
-    }
+    // 5️⃣ Load categories based on old step
+    $categories = $oldStepId
+        ? Category::where('step_id', $oldStepId)->orderBy('category_name')->get()
+        : collect();
+
+    // 6️⃣ Load windows based on old category
+    $windows = $oldCategoryId
+        ? Window::where('category_id', $oldCategoryId)->orderBy('window_number')->get()
+        : collect();
+
+    // 7️⃣ Return view with all data
+    return view('auth.register', compact(
+        'divisions', 'sections', 'steps', 'categories', 'windows', 'positions'
+    ));
+}
+
 
     public function register(RegisterRequest $request)
     {
@@ -165,11 +180,17 @@ class RegisterController extends Controller
             $sectionId->steps()->orderBy('step_number')->get(['id', 'step_name'])
         );
     }
-
-    public function windowsByStep(Step $stepId)
+    public function categoriesByStep(Step $stepId)
     {
         return response()->json(
-            $stepId->windows()->orderBy('window_number')->get(['id', 'window_number'])
+            $stepId->categories()->get(['id', 'category_name'])
+        );
+    }
+
+    public function windowsByCategory(Category $categoryId)
+    {
+        return response()->json(
+            $categoryId->windows()->orderBy('window_number')->get(['id', 'window_number'])
         );
     }
 

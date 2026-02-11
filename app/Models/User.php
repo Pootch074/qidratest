@@ -41,7 +41,7 @@ class User extends Authenticatable
         'email',
         'position',
         'user_type',
-        'assigned_category',
+        'category',
         'step_id',
         'window_id',
         'status',
@@ -73,7 +73,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'string',
-            'assigned_category' => 'string',
+            'category' => 'string',
             'window_id' => 'integer',
             'status' => 'integer',
             'user_type' => 'integer',
