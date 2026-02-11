@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Enums\UserCategory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
 use App\Mail\RegOtpMail;
@@ -20,43 +19,42 @@ use Illuminate\Support\Facades\Mail;
 class RegisterController extends Controller
 {
     public function index()
-{
-    // 1️⃣ Load all divisions and positions
-    $divisions = Division::orderBy('division_name')->get();
-    $positions = Position::orderBy('position_name')->get();
+    {
+        // 1️⃣ Load all divisions and positions
+        $divisions = Division::orderBy('division_name')->get();
+        $positions = Position::orderBy('position_name')->get();
 
-    // 2️⃣ Determine old input for cascading selects
-    $oldDivisionId = old('divisionId');
-    $oldSectionId  = old('sectionId');
-    $oldStepId     = old('stepId');
-    $oldCategoryId = old('categoryId');
+        // 2️⃣ Determine old input for cascading selects
+        $oldDivisionId = old('divisionId');
+        $oldSectionId = old('sectionId');
+        $oldStepId = old('stepId');
+        $oldCategoryId = old('categoryId');
 
-    // 3️⃣ Load sections based on old division
-    $sections = $oldDivisionId
-        ? Section::where('division_id', $oldDivisionId)->orderBy('section_name')->get()
-        : collect();
+        // 3️⃣ Load sections based on old division
+        $sections = $oldDivisionId
+            ? Section::where('division_id', $oldDivisionId)->orderBy('section_name')->get()
+            : collect();
 
-    // 4️⃣ Load steps based on old section
-    $steps = $oldSectionId
-        ? Step::where('section_id', $oldSectionId)->orderBy('step_number')->get()
-        : collect();
+        // 4️⃣ Load steps based on old section
+        $steps = $oldSectionId
+            ? Step::where('section_id', $oldSectionId)->orderBy('step_number')->get()
+            : collect();
 
-    // 5️⃣ Load categories based on old step
-    $categories = $oldStepId
-        ? Category::where('step_id', $oldStepId)->orderBy('category_name')->get()
-        : collect();
+        // 5️⃣ Load categories based on old step
+        $categories = $oldStepId
+            ? Category::where('step_id', $oldStepId)->orderBy('category_name')->get()
+            : collect();
 
-    // 6️⃣ Load windows based on old category
-    $windows = $oldCategoryId
-        ? Window::where('category_id', $oldCategoryId)->orderBy('window_number')->get()
-        : collect();
+        // 6️⃣ Load windows based on old category
+        $windows = $oldCategoryId
+            ? Window::where('category_id', $oldCategoryId)->orderBy('window_number')->get()
+            : collect();
 
-    // 7️⃣ Return view with all data
-    return view('auth.register', compact(
-        'divisions', 'sections', 'steps', 'categories', 'windows', 'positions'
-    ));
-}
-
+        // 7️⃣ Return view with all data
+        return view('auth.register', compact(
+            'divisions', 'sections', 'steps', 'categories', 'windows', 'positions'
+        ));
+    }
 
     public function register(RegisterRequest $request)
     {
@@ -72,7 +70,7 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'step_id' => $data['stepId'],
             'window_id' => $data['windowId'],
-            'assigned_category' => $data['category'],
+            'category_id' => $data['categoryId'],
             'password' => $data['password'], // ← PLAIN password (temporary)
             'status' => User::STATUS_INACTIVE,
             'user_type' => User::TYPE_USER,
@@ -180,6 +178,7 @@ class RegisterController extends Controller
             $sectionId->steps()->orderBy('step_number')->get(['id', 'step_name'])
         );
     }
+
     public function categoriesByStep(Step $stepId)
     {
         return response()->json(
@@ -223,6 +222,4 @@ class RegisterController extends Controller
 
         return redirect()->route('register.show.otp')->with('success', 'A new OTP has been sent to your email.');
     }
-
-    
 }

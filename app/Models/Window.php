@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Window extends Model
 {
     protected $fillable = ['category_id', 'window_number'];
-    
+
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id');
@@ -29,8 +29,6 @@ class Window extends Model
     //         }
     //     });
     // }
-
-    
 
     // public static function existsForStepAndSection($stepId, $sectionId, $windowNumber)
     // {

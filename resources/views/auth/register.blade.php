@@ -294,7 +294,7 @@
                 }
             });
 
-            // Step → Category + Window
+            // Step → Category
             stepSelect.addEventListener('change', () => {
                 categorySelect.innerHTML = `<option value="" disabled selected>Category</option>`;
                 windowSelect.innerHTML = `<option value="" disabled selected>Window</option>`;
@@ -304,35 +304,24 @@
 
                 if (stepSelect.value) {
                     populateDropdown(categorySelect, `/auth/categories/${stepSelect.value}`, 'Category',
-                        'category_name', autoSetCategory);
+                        'category_name');
+                }
+            });
+
+            categorySelect.addEventListener('change', () => {
+                windowSelect.innerHTML = `<option value="" disabled selected>Window</option>`;
+                windowSelect.disabled = true;
+
+                if (categorySelect.value) {
                     populateDropdown(windowSelect, `/auth/windows/${categorySelect.value}`, 'Window',
                         'window_number');
                 }
             });
 
-            // Auto-set "both" for Crisis Intervention Section
-            const autoSetCategory = () => {
-                const selectedSectionText = sectionSelect.options[sectionSelect.selectedIndex]?.text.trim();
-                const selectedStepText = stepSelect.options[stepSelect.selectedIndex]?.text.trim();
-                const triggerSteps = ['Assessment', 'Release'];
-
-                if (selectedSectionText === 'CRISIS INTERVENTION SECTION' && triggerSteps.includes(
-                        selectedStepText)) {
-                    const bothOption = Array.from(categorySelect.options).find(opt => opt.value
-                        .toLowerCase() === 'both');
-                    if (bothOption) {
-                        categorySelect.value = bothOption.value;
-                        categorySelect.classList.add('pointer-events-none', 'bg-gray-200');
-                    }
-                } else {
-                    categorySelect.classList.remove('pointer-events-none', 'bg-gray-200');
-                }
-            };
-
             // Trigger change on page load for old values
             triggerChangeIfOld(divisionSelect, () => {
                 triggerChangeIfOld(sectionSelect, () => {
-                    triggerChangeIfOld(stepSelect, autoSetCategory);
+                    triggerChangeIfOld(stepSelect);
                 });
             });
         });

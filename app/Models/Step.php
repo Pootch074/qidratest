@@ -17,5 +17,4 @@ class Step extends Model
     {
         return $this->hasMany(Category::class, 'step_id');
     }
-
 }
