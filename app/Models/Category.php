@@ -12,4 +12,8 @@ class Category extends Model
     {
         return $this->belongsTo(Step::class, 'step_id');
     }
+    public function window()
+    {
+        return $this->hasMany(Window::class, 'category_id');
+    }
 }

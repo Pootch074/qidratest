@@ -103,6 +103,12 @@
                                 </select>
                             </div>
                             <div class="relative">
+                                <select name="category" id="category_id" required disabled
+                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
+                                    <option value="" disabled selected>Category</option>
+                                </select>
+                            </div>
+                            <div class="relative">
                                 <select name="windowId" id="window_id" required
                                     class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none"
                                     {{ old('stepId') ? '' : 'disabled' }}>
@@ -116,12 +122,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="relative">
-                                <select name="category" id="category_id" required disabled
-                                    class="block w-full h-14 pl-3 pr-4 rounded-xl border border-gray-300 bg-gray-50 focus:border-[#2e3192] focus:ring-1 focus:ring-[#2e3192] outline-none">
-                                    <option value="" disabled selected>Category</option>
-                                </select>
-                            </div>
+
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

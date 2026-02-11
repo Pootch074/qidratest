@@ -24,6 +24,18 @@ class WindowsSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
+            [
+                'category_id' => 2,
+                'window_number' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'category_id' => 2,
+                'window_number' => 2,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
         ];
         DB::table('windows')->insert($windows);
     }
